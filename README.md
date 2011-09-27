@@ -4,7 +4,7 @@ It injects compile-time code (using macros) to provide runtime tracking of code 
 
 MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
-MCover is still in early development and is #subject to change#
+MCover is still in early development and is *subject to change*
 
 
 Usage
@@ -54,18 +54,16 @@ To also include  a list of all missing code blocks in the report, set VERBOSE_OU
 
 
 
-
-
 Coverage
 ---------------------
 
-MCover is still in development and currently covers the following code block types:
+MCover is still in development and currently covers the following code block types (more will be added shortly)
 
-*	class instance methods
+*	class instance methods (not static methods)
 
-**	if/else blocks
+*	if/else blocks
 
-**	switch statements
+*	switch statements
 
 
 
