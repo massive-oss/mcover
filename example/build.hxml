@@ -1,10 +1,26 @@
 -main Main
--swf main.swf
+-swf build/main.swf
 -swf-version 10
 -swf-header 1024:769:60:FFFFFF
 -cp ../src
 -cp src
 --macro mcover.MCover.include('', null, ['src'])
 
-#-neko Main.n
-#-cmd neko Main.n
+--next
+
+-main Main
+-js build/main.js
+-cp ../src
+-cp src
+--macro mcover.MCover.include('', null, ['src'])
+
+
+--next
+
+-main Main
+-neko build/main.n
+-cp ../src
+-cp src
+--macro mcover.MCover.include('', null, ['src'])
+
+#-cmd neko build/main.n

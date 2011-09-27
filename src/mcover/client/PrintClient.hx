@@ -52,10 +52,10 @@ class PrintClient implements CoverageClient
 		
 	
 		output = "";
-		newline = "\n";
+		newline = #if js "<br/>" #else "\n" #end;
 		divider = "----------------------------------------------------------------";
-		tab = " ";
 
+		tab = #if js "&nbsp;" #else " " #end;
 		
 	}
 
@@ -67,11 +67,11 @@ class PrintClient implements CoverageClient
 
 
 	var packageTotal:Int;
-	var packageCount:Int;
+	var packageCompletedCount:Int;
 	var packagePartialCount:Int;
 
 	var classTotal:Int;
-	var classCount:Int;
+	var classCompletedCount:Int;
 	var classPartialCount:Int;
 
 
@@ -107,21 +107,45 @@ class PrintClient implements CoverageClient
 		print("");
 		print("OVERALL STATS SUMMARY:");
 		print("");
-		print("total packages: " + packageCount);
-		print("total classes: " + classCount);
-		print("total blocks: " + count);
+
+		printToTabs(["total packages", packagePartialCount], 20);
+		printToTabs(["total classes", classPartialCount], 20);
+		printToTabs(["total blocks", count], 20);
+		
+	
 		
 		print("");
 		print(divider);
 
+		
 
+
+
+		#if js
+
+		var textArea = js.Lib.document.getElementById("haxe:trace");
+		if (textArea == null) 
+		{
+			
+			var error:String = "MissingElementException: 'haxe:trace' element not found in html file";
+			js.Lib.alert(error);
+			return;
+		}
+	
+		textArea.innerHTML += output;
+		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
+
+
+		#else
 		trace(newline + output);
+		#end
+
+		
 
 		return output;
 	}
 
 
-	
 
 
 
@@ -129,7 +153,7 @@ class PrintClient implements CoverageClient
 	{
 		packageTotal = 0;
 		packagePartialCount = 0;
-		packageCount = 0;
+		packageCompletedCount = 0;
 
 		print("");
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
@@ -137,9 +161,9 @@ class PrintClient implements CoverageClient
 		printToTabs(["result","blocks","name"]);
 		for(pckg in packages)
 		{
-			packageTotal ++;
-			if(pckg.count > 0) packagePartialCount ++;
-			if(pckg.percent == 100) packageCount++;
+			packageTotal += 1;
+			if(pckg.count > 0) packagePartialCount += 1;
+			if(pckg.percent == 100) packageCompletedCount += 1;
 
 
 			printToTabs([pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name]);
@@ -154,7 +178,7 @@ class PrintClient implements CoverageClient
 	{
 		classTotal = 0;
 		classPartialCount = 0;
-		classCount = 0;
+		classCompletedCount = 0;
 
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
@@ -162,24 +186,14 @@ class PrintClient implements CoverageClient
 		printToTabs(["result","blocks","name"]);
 		for(cls in classes)
 		{
-			classTotal ++;
-			if(cls.count > 0) classPartialCount ++;
-			if(cls.percent == 100) classCount++;
+			classTotal += 1;
+			if(cls.count > 0) classPartialCount += 1;
+			if(cls.percent == 100) classCompletedCount += 1;
 			printToTabs([cls.percent + "%",cls.count + "/" + cls.total, cls.name]);
 	
 		}
 		
 	}
-
-	function generateDetailedResults()
-	{
-		/*if(VERBOSE_OUTPUT)
-		{
-			result += "\n" + divider + "\n" + "MCOVER RESULTS" + "\n" + divider + "\nMissing Blocks: \n	" + missing.join("\n	") + "\n";
-		}*/
-
-	}
-
 
 	function print(value:Dynamic)
 	{
@@ -187,13 +201,23 @@ class PrintClient implements CoverageClient
 		
 	}
 
-
-	function printToTabs(args:Array<String>)
+	function printToTabs(args:Array<Dynamic>, ?columnWidth:Int=10)
 	{
 		var s:String = "";
 		for(arg in args)
 		{
-			s += StringTools.rpad(arg, tab, 16);
+			arg = Std.string(arg);
+			#if js
+				while(arg.length < columnWidth)
+				{
+					arg += "|";
+				}
+			
+				s += arg.split("|").join(tab);
+			#else
+				s += StringTools.rpad(arg, tab, columnWidth);
+			#end
+			
 		}
 		print(s);
 	}

@@ -4,11 +4,9 @@ package;
 class Main
 {
 	static public function main():Main
-	{
+	{	
 		var app = new Main();	
-		
 		mcover.MCoverRunner.report();
-
 		return app;
 	}
 
@@ -19,7 +17,7 @@ class Main
 
 		methodA();
 
-		//ifMethod(true);
+		ifMethod(true);
 		//ifMethod(false);
 
 		//elseIfMethod(0);
@@ -30,7 +28,7 @@ class Main
 		switchMethod(1);
 		switchMethod(2);
 
-		var example = new example.Example();
+		var exmpl = new example.Example();
 
 	}
 

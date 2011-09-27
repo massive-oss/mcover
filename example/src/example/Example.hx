@@ -20,6 +20,6 @@ class Example
 
 	function mock(?posInfos:haxe.PosInfos)
 	{
-		//trace(posInfos);
+		
 	}
 }

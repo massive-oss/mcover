@@ -18,8 +18,10 @@ import haxe.Timer;
 	**/
 	static public function log(value:String)
 	{	
+
 		if(instance == null) createInstance(new PrintClient());
 		instance.logEntry(value);
+
 	}
 
 	static public function report()
@@ -62,9 +64,6 @@ import haxe.Timer;
 	 */
 	function new(client:CoverageClient)
 	{
-		if(instance != null) throw "Cannot create more than one instance of MCoverRunner";
-		
-
 		clients = new Array();
 		addClient(client);
 
@@ -117,10 +116,10 @@ import haxe.Timer;
 
 		if(!entry.result)
 		{
-			count ++;
+			count += 1;
 		}
 
-		entry.count ++;
+		entry.count += 1;
 
 		for (client in clients) client.logEntry(entry);
 	}
@@ -143,7 +142,11 @@ import haxe.Timer;
 				var percent:Bool = (count == total);
 				var handler:Dynamic = completionHandler;
 				
+				#if !neko
 				Timer.delay(function() { handler(percent); }, 1);
+				#else
+				trace("Warning - neko haxe.Timer has no delay method");
+				#end
 			}
 		}
 	}
