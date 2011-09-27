@@ -1634,17 +1634,13 @@ mcover.client.PrintClient.prototype.report = function(total,count,entries,classe
 	this.printPackageResults(packages);
 	this.print(this.divider);
 	this.print("");
-	this.print("OVERALL COVERAGE SUMMARY:");
-	this.print("");
-	this.printToTabs(["result","blocks","name"]);
-	this.printToTabs([percent + "%",count + "/" + total,"all classes"]);
-	this.print(this.divider);
-	this.print("");
 	this.print("OVERALL STATS SUMMARY:");
 	this.print("");
 	this.printToTabs(["total packages",this.packagePartialCount],20);
 	this.printToTabs(["total classes",this.classPartialCount],20);
 	this.printToTabs(["total blocks",count],20);
+	this.print("");
+	this.printToTabs(["RESULT",percent + "%"],20);
 	this.print("");
 	this.print(this.divider);
 	var textArea = js.Lib.document.getElementById("haxe:trace");
@@ -1664,7 +1660,7 @@ mcover.client.PrintClient.prototype.printPackageResults = function(packages) {
 	this.print("");
 	this.print("COVERAGE BREAKDOWN BY PACKAGE:");
 	this.print("");
-	this.printToTabs(["result","blocks","name"]);
+	this.printToTabs(["result","blocks","package"]);
 	var $it0 = packages.iterator();
 	while( $it0.hasNext() ) {
 		var pckg = $it0.next();
@@ -1681,7 +1677,7 @@ mcover.client.PrintClient.prototype.printClassResults = function(classes) {
 	this.print("");
 	this.print("COVERAGE BREAKDOWN BY CLASSES:");
 	this.print("");
-	this.printToTabs(["result","blocks","name"]);
+	this.printToTabs(["result","blocks","class"]);
 	var $it0 = classes.iterator();
 	while( $it0.hasNext() ) {
 		var cls = $it0.next();

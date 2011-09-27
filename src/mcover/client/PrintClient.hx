@@ -93,16 +93,7 @@ class PrintClient implements CoverageClient
 		printPackageResults(packages);
 
 		print(divider);
-
-
-		print("");
-		print("OVERALL COVERAGE SUMMARY:");
-		print("");
-
-		printToTabs(["result","blocks","name"]);
-		printToTabs([percent + "%",count + "/" + total,"all classes"]);
-
-		print(divider);
+		
 
 		print("");
 		print("OVERALL STATS SUMMARY:");
@@ -112,8 +103,8 @@ class PrintClient implements CoverageClient
 		printToTabs(["total classes", classPartialCount], 20);
 		printToTabs(["total blocks", count], 20);
 		
-	
-		
+		print("");
+		printToTabs(["RESULT", percent + "%"], 20);
 		print("");
 		print(divider);
 
@@ -158,7 +149,7 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
-		printToTabs(["result","blocks","name"]);
+		printToTabs(["result","blocks","package"]);
 		for(pckg in packages)
 		{
 			packageTotal += 1;
@@ -183,7 +174,7 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
 		print("");
-		printToTabs(["result","blocks","name"]);
+		printToTabs(["result","blocks","class"]);
 		for(cls in classes)
 		{
 			classTotal += 1;
