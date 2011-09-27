@@ -12,7 +12,6 @@ package mcover;
 
 	static public function printResults():String
 	{
-		trace("A");
 		return instance.print();
 	}
 
@@ -55,7 +54,7 @@ package mcover;
 
 		if(VERBOSE_OUTPUT)
 		{
-			result += "\n" + divider + "\n" + "MCOVER RESULTS" + "\n" + divider + "\nMissing Blocks: \n" + missing.join("\n	") + "\n";
+			result += "\n" + divider + "\n" + "MCOVER RESULTS" + "\n" + divider + "\nMissing Blocks: \n	" + missing.join("\n	") + "\n";
 		}
 
 		result +=  "\n" + divider + "\nMCover COVERAGE: " + percent + "% (" + count + "/" + total + " code blocks executed)";

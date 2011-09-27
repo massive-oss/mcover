@@ -5,7 +5,8 @@
 -cp ../src
 -cp src
 
-#-neko Main.n
-#--macro include('mcover', true, null, ['mcover'])
+
 --macro mcover.MCover.include('', null, ['src'])
+
+#-neko Main.n
 #-cmd neko Main.n

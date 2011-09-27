@@ -6,12 +6,14 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 
 
+
 /**
 * Macro class used to inject calls to MCoverRunner into application classes
 */
 class MCover
 {
 	
+
 	/**
 	* Class Macro that inserts code coverage into the specified class.
 	* This is injected into each class at runtime via MCover.include
@@ -24,15 +26,17 @@ class MCover
         return fields;
 	}
 
+
+	static var classPathHash:IntHash<String> = new IntHash();
+	static var hash:IntHash<String> = new IntHash();
+
 	
 	#if !macro
 
 		
 	#else
 
-	static var coverCount:Int = 0;
-	static var coverHash:Hash<Bool> = new Hash();
-	static var COVER_PREFIX:String = "__MCOVER__";
+	
 
 
 	/** 
@@ -50,6 +54,28 @@ class MCover
 	{
 		includePackage(pack, ignore, classPaths);
 		haxe.macro.Context.onGenerate(onGenerate);
+	}
+
+	/**
+	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
+	* This resource is used by MCoverRunner to determine code coverage results
+	*/
+	static function onGenerate(types:Array<haxe.macro.Type>):Void
+	{
+		var output = "";
+
+
+		for(i in 0...Lambda.count(hash))
+		{
+			var entry = hash.get(i);
+			if(output != "") output += "\n";
+        	output += entry;
+
+		}
+
+        trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
+
+        Context.addResource("MCover", haxe.io.Bytes.ofString(output));
 	}
 
 	/**
@@ -78,13 +104,18 @@ class MCover
 			cp = cp.substr(0, -1);
 		
 			classPaths[i] = cp;
+			
+			classPathHash.set(Lambda.count(classPathHash), cp);
 		}
 		
 		var prefix = pack == '' ? '' : pack + '.';
 		for( cp in classPaths ) {
 			var path = pack == '' ? cp : cp + "/" + pack.split(".").join("/");
+
+			
 			if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) )
 				continue;
+
 			for( file in neko.FileSystem.readDirectory(path) ) {
 				if( StringTools.endsWith(file, ".hx") ) {
 					var cl = prefix + file.substr(0, file.length - 3);
@@ -102,25 +133,7 @@ class MCover
 		}
 	}
 
-	/**
-	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
-	* This resource is used by MCoverRunner to determine code coverage results
-	*/
-	static function onGenerate(types:Array<haxe.macro.Type>):Void
-	{
-		var output = "";
-		var count = 0;
-        for(key in coverHash.keys())
-        {
-        	if(output != "") output += "\n";
-        	output += key;
-        	count ++;
-        }
-
-        trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + count + "\n");
-
-        Context.addResource("MCover", haxe.io.Bytes.ofString(output));
-	}
+	
 
 
 	static function parseFields(fields:Array<Field>):Array<Field>
@@ -148,7 +161,6 @@ class MCover
 
     	return field;
 	}
-
 
 
 	static function parseExpressions(exprs:Array<Expr>)
@@ -229,16 +241,16 @@ class MCover
 	}
 
 
+	/**
+	* generates a call to the runner to insert into the code block containing a unique key
+	*		mcover.MCoverRunner.cover(xxx)
+	* @see createCoverageEntry for key format
+	**/
 	static function createCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		coverCount ++;
-
-		var posString = Std.string(expr.pos);
-		var s:String = posString.substr(5, posString.length-6);
-
-		//trace(s);
-		coverHash.set(s, false);
-
+		
+		var coverageString:String = createCoverageEntry(pos);
+		
 		var posInfo = Context.getPosInfos(pos);
 
 
@@ -265,10 +277,58 @@ class MCover
 		posInfo.min = posInfo.max;
 		posInfo.max += 7;
 			
-		var argsExpr = {expr:EConst(CString(s)), pos: Context.makePosition(posInfo)};
+		var argsExpr = {expr:EConst(CString(coverageString)), pos: Context.makePosition(posInfo)};
 
 		var coverExpr = {expr:ECall(fieldExpr, [argsExpr]), pos:pos};
 		return coverExpr;
+
+	}
+
+
+	/**
+	* generate a unique key for the entry in the following format:
+	*		id|classPath|package|class name|min character|max character|summary
+	* examples:
+	*		1|src||Main|1012|1161|src/Main.hx:72: lines 72-78
+	*		2|src|example|Example|160|174|src/example/Example.hx:18: characters 2-16
+	**/
+	static function createCoverageEntry(pos:Position, ?type:String="")
+	{
+	
+		var posInfo = Context.getPosInfos(pos);
+		var posString = Std.string(pos);
+		var summary:String = posString.substr(5, posString.length-6);
+
+		var file:String = posInfo.file;
+		var entry:String;
+
+		var count = Lambda.count(hash);
+
+		for (cp in classPathHash)
+		{
+			//trace(cp + ", " + file);
+			if(file.indexOf(cp) == 0)
+			{
+				
+				var cls = file.substr(cp.length+1, file.length-cp.length-4);
+				
+				var parts = cls.split("/");
+
+				var clsName = parts.pop();
+				var packageName = (parts.length > 0) ? parts.join(".") : "";
+	
+				entry = count + "|" + cp + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" +summary;
+
+				break;
+			}
+     		
+		}
+
+		if(entry == null) throw "Invalid coverage position";
+
+		hash.set(count, entry);
+		//trace(entry);
+		return entry;
 
 	}
 
