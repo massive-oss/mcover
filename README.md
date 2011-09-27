@@ -4,7 +4,9 @@ It injects compile-time code (using macros) to provide runtime tracking of code 
 
 MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
-MCover is still in early development and is *subject to change*
+MCover is still in early development and is **subject to change**
+
+**NOTE:** MCover requires Haxe 2.0.8
 
 
 Usage
