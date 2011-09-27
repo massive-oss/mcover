@@ -55,10 +55,10 @@ package mcover;
 
 		if(VERBOSE_OUTPUT)
 		{
-			result += "\n" + divider + "\n" + "MCOVER RESULTS" + "\n" + divider + "\nMissing Blocks: \n" + missing.join("\n	") + "\n" + divider + "\n";
+			result += "\n" + divider + "\n" + "MCOVER RESULTS" + "\n" + divider + "\nMissing Blocks: \n" + missing.join("\n	") + "\n";
 		}
 
-		result += "MCover COVERAGE: " + percent + "% (" + count + "/" + total + " code blocks executed)";
+		result +=  "\n" + divider + "\nMCover COVERAGE: " + percent + "% (" + count + "/" + total + " code blocks executed)";
 		return result;
 	}
 
