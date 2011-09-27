@@ -4,6 +4,8 @@ It injects compile-time code (using macros) to provide runtime tracking of code 
 
 MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
+MCover is still in early development and is #subject to change#
+
 
 Usage
 ---------------------
@@ -48,6 +50,23 @@ The current output provides a basic percentage breakdown of code blocks that hav
 To also include  a list of all missing code blocks in the report, set VERBOSE_OUTPUT to true; 
 
 	mcover.MCoverRunner.VERBOSE_OUTPUT = true;
+
+
+
+
+
+
+Coverage
+---------------------
+
+MCover is still in development and currently covers the following code block types:
+
+*	class instance methods
+
+**	if/else blocks
+
+**	switch statements
+
 
 
 Example
