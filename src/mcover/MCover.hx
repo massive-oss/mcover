@@ -73,7 +73,7 @@ class MCover
 
 		}
 
-        trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
+       // trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
 
         Context.addResource("MCover", haxe.io.Bytes.ofString(output));
 	}
@@ -243,7 +243,7 @@ class MCover
 
 	/**
 	* generates a call to the runner to insert into the code block containing a unique key
-	*		mcover.MCoverRunner.cover(xxx)
+	*		mcover.MCoverRunner.log(xxx)
 	* @see createCoverageEntry for key format
 	**/
 	static function createCoverageExpr(expr:Expr, pos:Position):Expr
@@ -270,7 +270,7 @@ class MCover
 		posInfo.max += 6;
 
 
-		var eField = EField(typeExpr, "cover");
+		var eField = EField(typeExpr, "log");
 		var fieldExpr = {expr:eField, pos:pos};
 
 		posInfo = Context.getPosInfos(fieldExpr.pos);
@@ -287,7 +287,7 @@ class MCover
 
 	/**
 	* generate a unique key for the entry in the following format:
-	*		id|classPath|package|class name|min character|max character|summary
+	*		id|classPath|package|class name|min character|max character|location
 	* examples:
 	*		1|src||Main|1012|1161|src/Main.hx:72: lines 72-78
 	*		2|src|example|Example|160|174|src/example/Example.hx:18: characters 2-16
@@ -297,7 +297,7 @@ class MCover
 	
 		var posInfo = Context.getPosInfos(pos);
 		var posString = Std.string(pos);
-		var summary:String = posString.substr(5, posString.length-6);
+		var location:String = posString.substr(5, posString.length-6);
 
 		var file:String = posInfo.file;
 		var entry:String;
@@ -317,7 +317,7 @@ class MCover
 				var clsName = parts.pop();
 				var packageName = (parts.length > 0) ? parts.join(".") : "";
 	
-				entry = count + "|" + cp + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" +summary;
+				entry = count + "|" + cp + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" +location;
 
 				break;
 			}

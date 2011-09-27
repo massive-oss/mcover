@@ -5,10 +5,9 @@ class Main
 {
 	static public function main():Main
 	{
-		var app = new Main();
+		var app = new Main();	
 		
-		mcover.MCoverRunner.VERBOSE_OUTPUT = true;
-		trace(mcover.MCoverRunner.printResults());
+		mcover.MCoverRunner.report();
 
 		return app;
 	}
@@ -37,17 +36,17 @@ class Main
 
 	public function methodA()
 	{
-		trace("method A");
+		mock();
 	}
 	public function ifMethod(?value:Bool=false)
 	{
 		if(value)
 		{
-			trace("ifMethod if " + value);
+			mock();
 		}
 		else
 		{
-			trace("ifMethod else " + value);	
+			mock();
 		}
 	}
 
@@ -55,15 +54,15 @@ class Main
 	{
 		if(value == 0)
 		{
-			trace("ifElseMethod if " + value);
+			mock();
 		}
 		else if (value == 1)
 		{
-			trace("ifElseMethod elseif " + value);	
+			mock();
 		}
 		else
 		{
-			trace("ifElseMethod else " + value);	
+			mock();
 		}
 	}
 
@@ -71,11 +70,16 @@ class Main
 	{
 		switch(value)
 		{
-			case 0: trace("switch 0 " + value);
-			case 1: trace("switch 1 " + value);
-			default: trace("switch default " + value);
+			case 0: mock();
+			case 1: mock();
+			default: mock();
 			
 		}
 		
+	}
+
+	function mock(?posInfos:haxe.PosInfos)
+	{
+		//trace(posInfos);
 	}
 }

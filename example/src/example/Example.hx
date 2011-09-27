@@ -10,11 +10,16 @@ class Example
 
 	public function testA()
 	{
-		trace("testA");	
+		mock();
 	}
 
 	function testB()
 	{
-		trace("testB");
+		mock();
+	}
+
+	function mock(?posInfos:haxe.PosInfos)
+	{
+		//trace(posInfos);
 	}
 }

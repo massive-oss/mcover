@@ -4,8 +4,6 @@
 -swf-header 1024:769:60:FFFFFF
 -cp ../src
 -cp src
-
-
 --macro mcover.MCover.include('', null, ['src'])
 
 #-neko Main.n
