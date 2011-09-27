@@ -40,19 +40,26 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 At runtime, MCover will automatically log code execution blocks to MCoverRunner.
 
-Once your unit tests (or other code) has completed executing, call MCoverRunner.printResults() to generate code coverage metrics:
+To generate the results call the static report method once your unit tests (or other code) have completed:
 
-	var result:String = mcover.MCoverRunner.printResults();
+	mcover.MCoverRunner.report();
+
+
+By default these are sent to a generic PrintClient that traces output to screen.
+
+You can add additional custom clients to the runner if required:
+
+	mcover.MCoverRunner.instance.addClient(new mcover.client.PrintClient());
+
+
+### Coverage Reports
 
 The current output provides a basic percentage breakdown of code blocks that have been executed:
 
 	MCover COVERAGE: 75% (12/16 code blocks executed)
 
 
-To also include  a list of all missing code blocks in the report, set VERBOSE_OUTPUT to true; 
-
-	mcover.MCoverRunner.VERBOSE_OUTPUT = true;
-
+It also provides summaries for individual classes and packages within the class path.
 
 
 
