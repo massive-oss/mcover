@@ -18,9 +18,9 @@ Include the following macro in your hxml when compiling
 
 
 Where
-* {package} is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
-* {ignoredClasses} is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
-* {classPaths} is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+*	{package} is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
+*	{ignoredClasses} is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
+*	{classPaths} is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
 
 
 Example
