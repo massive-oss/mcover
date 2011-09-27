@@ -1,8 +1,8 @@
-# MassiveCover is a cross-platform haXe code coverage framework.
+######  MassiveCover (MCover) is a cross-platform haXe code coverage framework.
 
 It injects compile-time code (using macros) to provide runtime tracking of code coverage.
 
-MassiveCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
+MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
 
 Usage
