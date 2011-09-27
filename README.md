@@ -1,9 +1,8 @@
-
-MassiveCover is a cross-platform haXe code coverage framework.
+# MassiveCover is a cross-platform haXe code coverage framework.
 
 It injects compile-time code (using macros) to provide runtime tracking of code coverage.
 
-MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
+MassiveCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
 
 Usage
@@ -16,14 +15,17 @@ Include the following macro in your hxml when compiling
 
 	--macro mcover.MCover.include('{package}', {ignoredClasses}, {classPaths})
 
+Where:
 
-Where
-*	{package} is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
-*	{ignoredClasses} is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
-*	{classPaths} is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+*	*package* is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
+
+*	*ignoredClasses* is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
+
+*	*classPaths* is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
 
 
-Example
+Example:
+
 	--macro mcover.MCover.include('com.example', null, ['src'])
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
