@@ -1,0 +1,11 @@
+-main Main
+-swf main.swf
+-swf-version 10
+-swf-header 1024:769:60:FFFFFF
+-cp ../src
+-cp src
+
+#-neko Main.n
+#--macro include('mcover', true, null, ['mcover'])
+--macro mcover.MCover.include('', null, ['src'])
+#-cmd neko Main.n

@@ -1,0 +1,6 @@
+<project name="mcover" url="https://github.com/massiveinteractive/MassiveCover" license="BSD">
+	<user name="massive"/>
+	<tag v="cross" />
+	<description>MassiveCover is a cross-platform haXe code coverage framework from Massive Interactive.</description>
+	<version name="0.0.1">Proof of concept release (requires Haxe 2.0.8)</version>
+</project>
