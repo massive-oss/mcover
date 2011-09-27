@@ -14,7 +14,6 @@ class Main
 
 	public function new()
 	{
-
 		methodA();
 
 		ifMethod(true);
@@ -29,7 +28,6 @@ class Main
 		switchMethod(2);
 
 		var exmpl = new example.Example();
-
 	}
 
 	public function methodA()
@@ -71,9 +69,7 @@ class Main
 			case 0: mock();
 			case 1: mock();
 			default: mock();
-			
-		}
-		
+		}	
 	}
 
 	function mock(?posInfos:haxe.PosInfos)

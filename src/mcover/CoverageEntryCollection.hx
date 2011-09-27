@@ -28,7 +28,6 @@ class CoverageEntryCollection
 		return Math.round(count/total*100);
 	}
 
-
 	function get_count():Int
 	{
 		var n = 0;
@@ -44,6 +43,4 @@ class CoverageEntryCollection
 	{
 		return Lambda.count(entries);
 	}
-
-	
 }

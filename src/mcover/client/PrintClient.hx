@@ -30,7 +30,6 @@ class PrintClient implements CoverageClient
 		return completionHandler = value;
 	}
 
-
 	/**
 	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
 	 * 
@@ -40,31 +39,9 @@ class PrintClient implements CoverageClient
 	 */
 	public var newline:String;
 
-	var originalTrace:Dynamic;
-	var currentEntry:CoverageEntry;
 	var output(default, null):String;
 	var divider:String;
 	var tab:String;
-
-	public function new()
-	{
-		id = DEFAULT_ID;
-		
-	
-		output = "";
-		newline = #if js "<br/>" #else "\n" #end;
-		divider = "----------------------------------------------------------------";
-
-		tab = #if js "&nbsp;" #else " " #end;
-		
-	}
-
-	public function logEntry(entry:CoverageEntry)
-	{
-		//null;
-	}
-
-
 
 	var packageTotal:Int;
 	var packageCompletedCount:Int;
@@ -75,6 +52,21 @@ class PrintClient implements CoverageClient
 	var classPartialCount:Int;
 
 
+	public function new()
+	{
+		id = DEFAULT_ID;
+		
+		output = "";
+		newline = #if js "<br/>" #else "\n" #end;
+		tab = #if js "&nbsp;" #else " " #end;
+		divider = "----------------------------------------------------------------";
+	}
+
+	public function logEntry(entry:CoverageEntry)
+	{
+		//null;
+	}
+
 	public function report(total:Int, count:Int, entries:IntHash<CoverageEntry>,
 		classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic
 	{
@@ -82,18 +74,13 @@ class PrintClient implements CoverageClient
 
 		var percent = Math.round(count/total*1000)/10;
 
-
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		printClassResults(classes);
-
 		print(divider);
-
 		printPackageResults(packages);
-
 		print(divider);
-		
 
 		print("");
 		print("OVERALL STATS SUMMARY:");
@@ -107,10 +94,6 @@ class PrintClient implements CoverageClient
 		printToTabs(["RESULT", percent + "%"], 20);
 		print("");
 		print(divider);
-
-		
-
-
 
 		#if js
 
@@ -126,19 +109,12 @@ class PrintClient implements CoverageClient
 		textArea.innerHTML += output;
 		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
 
-
 		#else
 		trace(newline + output);
 		#end
 
-		
-
 		return output;
 	}
-
-
-
-
 
 	function printPackageResults(packages:Hash<CoverageEntryCollection>)
 	{
@@ -158,12 +134,8 @@ class PrintClient implements CoverageClient
 
 
 			printToTabs([pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name]);
-			
 		}
-		
 	}
-
-
 
 	function printClassResults(classes:Hash<CoverageEntryCollection>)
 	{
@@ -181,15 +153,12 @@ class PrintClient implements CoverageClient
 			if(cls.count > 0) classPartialCount += 1;
 			if(cls.percent == 100) classCompletedCount += 1;
 			printToTabs([cls.percent + "%",cls.count + "/" + cls.total, cls.name]);
-	
 		}
-		
 	}
 
 	function print(value:Dynamic)
 	{
 		output += newline + Std.string(value);
-		
 	}
 
 	function printToTabs(args:Array<Dynamic>, ?columnWidth:Int=10)
@@ -208,15 +177,7 @@ class PrintClient implements CoverageClient
 			#else
 				s += StringTools.rpad(arg, tab, columnWidth);
 			#end
-			
 		}
 		print(s);
 	}
-	
-
-
-
-
-	
-
 }

@@ -1598,8 +1598,8 @@ mcover.client.PrintClient = function(p) {
 	this.id = "print";
 	this.output = "";
 	this.newline = "<br/>";
-	this.divider = "----------------------------------------------------------------";
 	this.tab = "&nbsp;";
+	this.divider = "----------------------------------------------------------------";
 }
 mcover.client.PrintClient.__name__ = ["mcover","client","PrintClient"];
 mcover.client.PrintClient.prototype.id = null;
@@ -1611,19 +1611,17 @@ mcover.client.PrintClient.prototype.set_completeHandler = function(value) {
 	return this.completionHandler = value;
 }
 mcover.client.PrintClient.prototype.newline = null;
-mcover.client.PrintClient.prototype.originalTrace = null;
-mcover.client.PrintClient.prototype.currentEntry = null;
 mcover.client.PrintClient.prototype.output = null;
 mcover.client.PrintClient.prototype.divider = null;
 mcover.client.PrintClient.prototype.tab = null;
-mcover.client.PrintClient.prototype.logEntry = function(entry) {
-}
 mcover.client.PrintClient.prototype.packageTotal = null;
 mcover.client.PrintClient.prototype.packageCompletedCount = null;
 mcover.client.PrintClient.prototype.packagePartialCount = null;
 mcover.client.PrintClient.prototype.classTotal = null;
 mcover.client.PrintClient.prototype.classCompletedCount = null;
 mcover.client.PrintClient.prototype.classPartialCount = null;
+mcover.client.PrintClient.prototype.logEntry = function(entry) {
+}
 mcover.client.PrintClient.prototype.report = function(total,count,entries,classes,packages) {
 	this.output = "";
 	var percent = Math.round(count / total * 1000) / 10;
@@ -1765,7 +1763,7 @@ Hash.prototype.toString = function() {
 Hash.prototype.__class__ = Hash;
 Main = function(p) {
 	if( p === $_ ) return;
-	mcover.MCoverRunner.log("12|src||Main|233|242|src/Main.hx:18: characters 2-11");
+	mcover.MCoverRunner.log("12|src||Main|232|241|src/Main.hx:17: characters 2-11");
 	this.methodA();
 	this.ifMethod(true);
 	this.elseIfMethod(1);
@@ -1783,51 +1781,51 @@ Main.main = function() {
 	return app;
 }
 Main.prototype.mock = function(posInfos) {
-	mcover.MCoverRunner.log("0|src||Main|931|956|src/Main.hx:80: lines 80-82");
+	mcover.MCoverRunner.log("0|src||Main|923|948|src/Main.hx:76: lines 76-78");
 }
 Main.prototype.switchMethod = function(value) {
-	mcover.MCoverRunner.log("3|src||Main|799|882|src/Main.hx:69: lines 69-75");
+	mcover.MCoverRunner.log("3|src||Main|797|876|src/Main.hx:67: lines 67-72");
 	switch(value) {
 	case 0:
-		mcover.MCoverRunner.log("1|src||Main|828|834|src/Main.hx:71: characters 11-17");
-		this.mock({ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "switchMethod"});
+		mcover.MCoverRunner.log("1|src||Main|826|832|src/Main.hx:69: characters 11-17");
+		this.mock({ fileName : "Main.hx", lineNumber : 69, className : "Main", methodName : "switchMethod"});
 		break;
 	case 1:
-		mcover.MCoverRunner.log("2|src||Main|847|853|src/Main.hx:72: characters 11-17");
-		this.mock({ fileName : "Main.hx", lineNumber : 72, className : "Main", methodName : "switchMethod"});
+		mcover.MCoverRunner.log("2|src||Main|845|851|src/Main.hx:70: characters 11-17");
+		this.mock({ fileName : "Main.hx", lineNumber : 70, className : "Main", methodName : "switchMethod"});
 		break;
 	default:
-		this.mock({ fileName : "Main.hx", lineNumber : 73, className : "Main", methodName : "switchMethod"});
+		this.mock({ fileName : "Main.hx", lineNumber : 71, className : "Main", methodName : "switchMethod"});
 	}
 }
 Main.prototype.elseIfMethod = function(value) {
 	if(value == null) value = 0;
-	mcover.MCoverRunner.log("7|src||Main|646|747|src/Main.hx:53: lines 53-64");
+	mcover.MCoverRunner.log("7|src||Main|644|745|src/Main.hx:51: lines 51-62");
 	if(value == 0) {
-		mcover.MCoverRunner.log("6|src||Main|668|674|src/Main.hx:55: characters 3-9");
-		this.mock({ fileName : "Main.hx", lineNumber : 55, className : "Main", methodName : "elseIfMethod"});
+		mcover.MCoverRunner.log("6|src||Main|666|672|src/Main.hx:53: characters 3-9");
+		this.mock({ fileName : "Main.hx", lineNumber : 53, className : "Main", methodName : "elseIfMethod"});
 	} else if(value == 1) {
-		mcover.MCoverRunner.log("5|src||Main|710|716|src/Main.hx:59: characters 3-9");
-		this.mock({ fileName : "Main.hx", lineNumber : 59, className : "Main", methodName : "elseIfMethod"});
+		mcover.MCoverRunner.log("5|src||Main|708|714|src/Main.hx:57: characters 3-9");
+		this.mock({ fileName : "Main.hx", lineNumber : 57, className : "Main", methodName : "elseIfMethod"});
 	} else {
-		mcover.MCoverRunner.log("4|src||Main|736|742|src/Main.hx:63: characters 3-9");
-		this.mock({ fileName : "Main.hx", lineNumber : 63, className : "Main", methodName : "elseIfMethod"});
+		mcover.MCoverRunner.log("4|src||Main|734|740|src/Main.hx:61: characters 3-9");
+		this.mock({ fileName : "Main.hx", lineNumber : 61, className : "Main", methodName : "elseIfMethod"});
 	}
 }
 Main.prototype.ifMethod = function(value) {
 	if(value == null) value = false;
-	mcover.MCoverRunner.log("10|src||Main|538|592|src/Main.hx:41: lines 41-48");
+	mcover.MCoverRunner.log("10|src||Main|536|590|src/Main.hx:39: lines 39-46");
 	if(value) {
-		mcover.MCoverRunner.log("9|src||Main|555|561|src/Main.hx:43: characters 3-9");
-		this.mock({ fileName : "Main.hx", lineNumber : 43, className : "Main", methodName : "ifMethod"});
+		mcover.MCoverRunner.log("9|src||Main|553|559|src/Main.hx:41: characters 3-9");
+		this.mock({ fileName : "Main.hx", lineNumber : 41, className : "Main", methodName : "ifMethod"});
 	} else {
-		mcover.MCoverRunner.log("8|src||Main|581|587|src/Main.hx:47: characters 3-9");
-		this.mock({ fileName : "Main.hx", lineNumber : 47, className : "Main", methodName : "ifMethod"});
+		mcover.MCoverRunner.log("8|src||Main|579|585|src/Main.hx:45: characters 3-9");
+		this.mock({ fileName : "Main.hx", lineNumber : 45, className : "Main", methodName : "ifMethod"});
 	}
 }
 Main.prototype.methodA = function() {
-	mcover.MCoverRunner.log("11|src||Main|477|483|src/Main.hx:37: characters 2-8");
-	this.mock({ fileName : "Main.hx", lineNumber : 37, className : "Main", methodName : "methodA"});
+	mcover.MCoverRunner.log("11|src||Main|475|481|src/Main.hx:35: characters 2-8");
+	this.mock({ fileName : "Main.hx", lineNumber : 35, className : "Main", methodName : "methodA"});
 }
 Main.prototype.fieldA = null;
 Main.prototype.__class__ = Main;
@@ -1915,7 +1913,7 @@ if(typeof(haxe_timers) == "undefined") haxe_timers = [];
 		return f(msg,[url+":"+line]);
 	}
 }
-haxe.Resource.content = [{ name : "MCover", data : "s1328:MHxzcmN8fE1haW58OTMxfDk1NnxzcmMvTWFpbi5oeDo4MDogbGluZXMgODAtODIKMXxzcmN8fE1haW58ODI4fDgzNHxzcmMvTWFpbi5oeDo3MTogY2hhcmFjdGVycyAxMS0xNwoyfHNyY3x8TWFpbnw4NDd8ODUzfHNyYy9NYWluLmh4OjcyOiBjaGFyYWN0ZXJzIDExLTE3CjN8c3JjfHxNYWlufDc5OXw4ODJ8c3JjL01haW4uaHg6Njk6IGxpbmVzIDY5LTc1CjR8c3JjfHxNYWlufDczNnw3NDJ8c3JjL01haW4uaHg6NjM6IGNoYXJhY3RlcnMgMy05CjV8c3JjfHxNYWlufDcxMHw3MTZ8c3JjL01haW4uaHg6NTk6IGNoYXJhY3RlcnMgMy05CjZ8c3JjfHxNYWlufDY2OHw2NzR8c3JjL01haW4uaHg6NTU6IGNoYXJhY3RlcnMgMy05Cjd8c3JjfHxNYWlufDY0Nnw3NDd8c3JjL01haW4uaHg6NTM6IGxpbmVzIDUzLTY0Cjh8c3JjfHxNYWlufDU4MXw1ODd8c3JjL01haW4uaHg6NDc6IGNoYXJhY3RlcnMgMy05Cjl8c3JjfHxNYWlufDU1NXw1NjF8c3JjL01haW4uaHg6NDM6IGNoYXJhY3RlcnMgMy05CjEwfHNyY3x8TWFpbnw1Mzh8NTkyfHNyYy9NYWluLmh4OjQxOiBsaW5lcyA0MS00OAoxMXxzcmN8fE1haW58NDc3fDQ4M3xzcmMvTWFpbi5oeDozNzogY2hhcmFjdGVycyAyLTgKMTJ8c3JjfHxNYWlufDIzM3wyNDJ8c3JjL01haW4uaHg6MTg6IGNoYXJhY3RlcnMgMi0xMQoxM3xzcmN8fE1haW58MTAzfDEyNHxzcmMvTWFpbi5oeDo4OiBjaGFyYWN0ZXJzIDItMjMKMTR8c3JjfGV4YW1wbGV8RXhhbXBsZXwyMDR8MjExfHNyYy9leGFtcGxlL0V4YW1wbGUuaHg6MjI6IGxpbmVzIDIyLTI0CjE1fHNyY3xleGFtcGxlfEV4YW1wbGV8MTUxfDE1N3xzcmMvZXhhbXBsZS9FeGFtcGxlLmh4OjE4OiBjaGFyYWN0ZXJzIDItOAoxNnxzcmN8ZXhhbXBsZXxFeGFtcGxlfDExNnwxMjJ8c3JjL2V4YW1wbGUvRXhhbXBsZS5oeDoxMzogY2hhcmFjdGVycyAyLTgKMTd8c3JjfGV4YW1wbGV8RXhhbXBsZXw2Mnw2OXxzcmMvZXhhbXBsZS9FeGFtcGxlLmh4Ojc6IGNoYXJhY3RlcnMgMi05"}];
+haxe.Resource.content = [{ name : "MCover", data : "s1328:MHxzcmN8fE1haW58OTIzfDk0OHxzcmMvTWFpbi5oeDo3NjogbGluZXMgNzYtNzgKMXxzcmN8fE1haW58ODI2fDgzMnxzcmMvTWFpbi5oeDo2OTogY2hhcmFjdGVycyAxMS0xNwoyfHNyY3x8TWFpbnw4NDV8ODUxfHNyYy9NYWluLmh4OjcwOiBjaGFyYWN0ZXJzIDExLTE3CjN8c3JjfHxNYWlufDc5N3w4NzZ8c3JjL01haW4uaHg6Njc6IGxpbmVzIDY3LTcyCjR8c3JjfHxNYWlufDczNHw3NDB8c3JjL01haW4uaHg6NjE6IGNoYXJhY3RlcnMgMy05CjV8c3JjfHxNYWlufDcwOHw3MTR8c3JjL01haW4uaHg6NTc6IGNoYXJhY3RlcnMgMy05CjZ8c3JjfHxNYWlufDY2Nnw2NzJ8c3JjL01haW4uaHg6NTM6IGNoYXJhY3RlcnMgMy05Cjd8c3JjfHxNYWlufDY0NHw3NDV8c3JjL01haW4uaHg6NTE6IGxpbmVzIDUxLTYyCjh8c3JjfHxNYWlufDU3OXw1ODV8c3JjL01haW4uaHg6NDU6IGNoYXJhY3RlcnMgMy05Cjl8c3JjfHxNYWlufDU1M3w1NTl8c3JjL01haW4uaHg6NDE6IGNoYXJhY3RlcnMgMy05CjEwfHNyY3x8TWFpbnw1MzZ8NTkwfHNyYy9NYWluLmh4OjM5OiBsaW5lcyAzOS00NgoxMXxzcmN8fE1haW58NDc1fDQ4MXxzcmMvTWFpbi5oeDozNTogY2hhcmFjdGVycyAyLTgKMTJ8c3JjfHxNYWlufDIzMnwyNDF8c3JjL01haW4uaHg6MTc6IGNoYXJhY3RlcnMgMi0xMQoxM3xzcmN8fE1haW58MTAzfDEyNHxzcmMvTWFpbi5oeDo4OiBjaGFyYWN0ZXJzIDItMjMKMTR8c3JjfGV4YW1wbGV8RXhhbXBsZXwyMDR8MjExfHNyYy9leGFtcGxlL0V4YW1wbGUuaHg6MjI6IGxpbmVzIDIyLTI0CjE1fHNyY3xleGFtcGxlfEV4YW1wbGV8MTUxfDE1N3xzcmMvZXhhbXBsZS9FeGFtcGxlLmh4OjE4OiBjaGFyYWN0ZXJzIDItOAoxNnxzcmN8ZXhhbXBsZXxFeGFtcGxlfDExNnwxMjJ8c3JjL2V4YW1wbGUvRXhhbXBsZS5oeDoxMzogY2hhcmFjdGVycyAyLTgKMTd8c3JjfGV4YW1wbGV8RXhhbXBsZXw2Mnw2OXxzcmMvZXhhbXBsZS9FeGFtcGxlLmh4Ojc6IGNoYXJhY3RlcnMgMi05"}];
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe.Unserializer.CODES = null;

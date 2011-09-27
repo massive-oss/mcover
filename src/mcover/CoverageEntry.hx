@@ -11,10 +11,8 @@ class CoverageEntry
 	public var max(default, null):Int;
 	public var location(default, null):String;
 
-
 	public var count:Int;
 	public var result(get_result, null):Bool;
-
 
 	/**
 	* generate a result object based on a key for the entry in the following format:
@@ -23,7 +21,6 @@ class CoverageEntry
 	*		1|src||Main|1012|1161|src/Main.hx:72: lines 72-78
 	*		2|src|example|Example|160|174|src/example/Example.hx:18: characters 2-16
 	**/
-
 	public function new(key:String)
 	{
 		this.key = key;

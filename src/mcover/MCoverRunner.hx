@@ -13,15 +13,14 @@ import haxe.Timer;
 		instance = new MCoverRunner(client);
 		return instance;
 	}
+
 	/**
 	* method called from injected code each time a code block executes
 	**/
 	static public function log(value:String)
 	{	
-
 		if(instance == null) createInstance(new PrintClient());
 		instance.logEntry(value);
-
 	}
 
 	static public function report()
@@ -29,7 +28,6 @@ import haxe.Timer;
 		if(instance == null) throw "No instance found.";
 		return instance.reportResults();
 	}
-
 
 	/**
 	 * Handler called when all clients 
@@ -55,8 +53,6 @@ import haxe.Timer;
 	var total(default, null):Int;
 	var count(default, null):Int;
 
-	
-
 	/**
 	 * Class constructor.
 	 * 
@@ -67,14 +63,11 @@ import haxe.Timer;
 		clients = new Array();
 		addClient(client);
 
-
 		entries = new IntHash();
 		classes = new Hash();
 		packages = new Hash();
 
 		parseEntries();	
-
-		
 
 		total = Lambda.count(entries);
 		count = 0;
@@ -95,7 +88,6 @@ import haxe.Timer;
 		clients.push(client);
 	}
 
-	
 	/**
 	 * Log an individual call from within the code base.
 	 * Do not call directly. The method only called via code injection by the compiler
@@ -106,8 +98,6 @@ import haxe.Timer;
 	public function logEntry(value:String)
 	{
 		//trace(value);
-		//entries.set(value, true);
-
 		var temp = new CoverageEntry(value);
 		
 		if(!entries.exists(temp.id)) throw "Unexpected entry " + value;
@@ -123,7 +113,6 @@ import haxe.Timer;
 
 		for (client in clients) client.logEntry(entry);
 	}
-
 
 	public function reportResults()
 	{
@@ -168,7 +157,6 @@ import haxe.Timer;
 	{
 		entries.set(Lambda.count(entries), entry);
 
-
 		var packageKey = entry.packageName != "" ?  entry.packageName : "[default]";
 		if(!packages.exists(packageKey))
 		{
@@ -187,7 +175,5 @@ import haxe.Timer;
 
 		var cls = classes.get(classKey);
 		cls.addEntry(entry);
-
-
 	}
 }

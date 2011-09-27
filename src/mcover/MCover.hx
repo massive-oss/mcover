@@ -6,14 +6,11 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 
 
-
 /**
 * Macro class used to inject calls to MCoverRunner into application classes
 */
 class MCover
 {
-	
-
 	/**
 	* Class Macro that inserts code coverage into the specified class.
 	* This is injected into each class at runtime via MCover.include
@@ -26,18 +23,10 @@ class MCover
         return fields;
 	}
 
-
 	static var classPathHash:IntHash<String> = new IntHash();
 	static var hash:IntHash<String> = new IntHash();
 
-	
-	#if !macro
-
-		
-	#else
-
-	
-
+	#if macro
 
 	/** 
 	* Includes classes/packages for code coverage.
@@ -72,9 +61,7 @@ class MCover
         	output += entry;
 
 		}
-
-       // trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
-
+       	// trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
         Context.addResource("MCover", haxe.io.Bytes.ofString(output));
 	}
 
@@ -86,7 +73,6 @@ class MCover
 	*/
 	static function includePackage(pack : String, ?ignore : Array<String>, ?classPaths : Array<String>)
 	{
-
 		var skip = if(null == ignore) {
 			function(c) return false;
 		} else {
@@ -112,7 +98,6 @@ class MCover
 		for( cp in classPaths ) {
 			var path = pack == '' ? cp : cp + "/" + pack.split(".").join("/");
 
-			
 			if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) )
 				continue;
 
@@ -132,9 +117,6 @@ class MCover
 			}
 		}
 	}
-
-	
-
 
 	static function parseFields(fields:Array<Field>):Array<Field>
 	{
@@ -161,7 +143,6 @@ class MCover
 
     	return field;
 	}
-
 
 	static function parseExpressions(exprs:Array<Expr>)
 	{
@@ -200,7 +181,6 @@ class MCover
 			
 			default: trace(expr.expr);
 		}
-
 		return expr;
 	}
 
@@ -226,7 +206,6 @@ class MCover
 		return expr;
 	}
 
-
 	static function parseBlock(expr:Expr, exprs:Array<Expr>):Expr
 	{
 		parseExpressions(exprs);
@@ -240,7 +219,6 @@ class MCover
 		return expr;
 	}
 
-
 	/**
 	* generates a call to the runner to insert into the code block containing a unique key
 	*		mcover.MCoverRunner.log(xxx)
@@ -248,11 +226,9 @@ class MCover
 	**/
 	static function createCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		
 		var coverageString:String = createCoverageEntry(pos);
 		
 		var posInfo = Context.getPosInfos(pos);
-
 
 		var cIdent = EConst(CIdent("mcover"));
 		var identExpr = {expr:cIdent, pos:Context.makePosition(posInfo)}
@@ -261,14 +237,12 @@ class MCover
 		posInfo.min = posInfo.max;
 		posInfo.max += 6;
 
-
 		var eType = EType(identExpr, "MCoverRunner");
 		var typeExpr = {expr:eType, pos:Context.makePosition(posInfo)};
 
 		posInfo = Context.getPosInfos(typeExpr.pos);
 		posInfo.min = posInfo.max;
 		posInfo.max += 6;
-
 
 		var eField = EField(typeExpr, "log");
 		var fieldExpr = {expr:eField, pos:pos};
@@ -281,9 +255,7 @@ class MCover
 
 		var coverExpr = {expr:ECall(fieldExpr, [argsExpr]), pos:pos};
 		return coverExpr;
-
 	}
-
 
 	/**
 	* generate a unique key for the entry in the following format:
@@ -294,7 +266,6 @@ class MCover
 	**/
 	static function createCoverageEntry(pos:Position, ?type:String="")
 	{
-	
 		var posInfo = Context.getPosInfos(pos);
 		var posString = Std.string(pos);
 		var location:String = posString.substr(5, posString.length-6);
@@ -321,18 +292,12 @@ class MCover
 
 				break;
 			}
-     		
 		}
-
 		if(entry == null) throw "Invalid coverage position";
 
 		hash.set(count, entry);
 		//trace(entry);
 		return entry;
-
 	}
-
 	#end
-
-
 }

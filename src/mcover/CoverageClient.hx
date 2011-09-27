@@ -7,7 +7,6 @@ interface CoverageClient
 	 */
 
 	var completionHandler(get_completeHandler, set_completeHandler):CoverageClient -> Void;
-
 	
 	/**
 	 * The unique identifier for the client.
@@ -21,7 +20,6 @@ interface CoverageClient
 	 */
 	function logEntry(entry:CoverageEntry):Void;
 	
-	
 	/**
 	 * Called when all tests are complete.
 	 *  
@@ -33,10 +31,5 @@ interface CoverageClient
 	 * @param	time			number of milliseconds taken for all tests to be executed
 	 * @return	collated result data if any
 	 */
-	function report(total:Int,
-							count:Int,
-							entries:IntHash<CoverageEntry>,
-							classes:Hash<CoverageEntryCollection>,
-							packages:Hash<CoverageEntryCollection>
-							):Dynamic;
+	function report(total:Int, count:Int, entries:IntHash<CoverageEntry>, classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic;
 }
