@@ -1,5 +1,6 @@
-package mcover;
+package massive.mcover;
 
+@IgnoreCover
 class CoverageEntryCollection
 {
 	public var name:String;

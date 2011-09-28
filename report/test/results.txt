@@ -1,0 +1,3 @@
+Tests PASSED under neko using junit client
+Tests PASSED under as3 using junit client
+Tests PASSED under as2 using junit client

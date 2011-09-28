@@ -1,5 +1,6 @@
-package mcover;
+package massive.mcover;
 
+@IgnoreCover
 class CoverageEntry
 {
 	public var key(default, null):String;
@@ -21,9 +22,10 @@ class CoverageEntry
 	*		1|src||Main|1012|1161|src/Main.hx:72: lines 72-78
 	*		2|src|example|Example|160|174|src/example/Example.hx:18: characters 2-16
 	**/
-	public function new(key:String)
+	
+	public function new(value:String)
 	{
-		this.key = key;
+		key = value;
 
 		var a = key.split("|");
 		if(a.length != 7) throw "Invalid entry format: " + key;

@@ -1,4 +1,5 @@
-package mcover;
+package massive.mcover;
+
 
 interface CoverageClient
 {

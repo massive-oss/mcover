@@ -1,10 +1,10 @@
-package mcover.client;
+package massive.mcover.client;
 
-import mcover.CoverageClient;
-import mcover.CoverageEntry;
-import mcover.CoverageEntryCollection;
+import massive.mcover.CoverageClient;
+import massive.mcover.CoverageEntry;
+import massive.mcover.CoverageEntryCollection;
 
-
+@IgnoreCover
 class PrintClient implements CoverageClient
 {
 	/**
@@ -39,7 +39,7 @@ class PrintClient implements CoverageClient
 	 */
 	public var newline:String;
 
-	var output(default, null):String;
+	public var output(default, null):String;
 	var divider:String;
 	var tab:String;
 
@@ -57,8 +57,8 @@ class PrintClient implements CoverageClient
 		id = DEFAULT_ID;
 		
 		output = "";
-		newline = #if js "<br/>" #else "\n" #end;
-		tab = #if js "&nbsp;" #else " " #end;
+		newline = "\n";
+		tab = " ";
 		divider = "----------------------------------------------------------------";
 	}
 
@@ -67,11 +67,36 @@ class PrintClient implements CoverageClient
 		//null;
 	}
 
+	var total:Int;
+	var count:Int;
+	var entries:IntHash<CoverageEntry>;
+	var classes:Hash<CoverageEntryCollection>;
+	var packages:Hash<CoverageEntryCollection>;
+		
+
 	public function report(total:Int, count:Int, entries:IntHash<CoverageEntry>,
 		classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic
 	{
 		output = "";
 
+		this.total = total;
+		this.count = count;
+		this.entries = entries;
+		this.classes = classes;
+		this.packages = packages;
+
+		printReport();
+
+		if (completionHandler != null)
+		{
+			completionHandler(this);
+		}
+
+		return output;
+	}
+
+	function printReport()
+	{
 		var percent = Math.round(count/total*1000)/10;
 
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
@@ -94,26 +119,6 @@ class PrintClient implements CoverageClient
 		printToTabs(["RESULT", percent + "%"], 20);
 		print("");
 		print(divider);
-
-		#if js
-
-		var textArea = js.Lib.document.getElementById("haxe:trace");
-		if (textArea == null) 
-		{
-			
-			var error:String = "MissingElementException: 'haxe:trace' element not found in html file";
-			js.Lib.alert(error);
-			return;
-		}
-	
-		textArea.innerHTML += output;
-		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
-
-		#else
-		trace(newline + output);
-		#end
-
-		return output;
 	}
 
 	function printPackageResults(packages:Hash<CoverageEntryCollection>)

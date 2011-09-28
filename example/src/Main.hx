@@ -6,7 +6,7 @@ class Main
 	static public function main():Main
 	{	
 		var app = new Main();	
-		mcover.MCoverRunner.report();
+		massive.mcover.MCoverRunner.report();
 		return app;
 	}
 
@@ -28,8 +28,16 @@ class Main
 		switchMethod(2);
 
 		var exmpl = new example.Example();
+
+		example.foo.Foo.bar();
 	}
 
+
+	@IgnoreCover
+	public function ignore()
+	{
+		
+	}
 	public function methodA()
 	{
 		mock();

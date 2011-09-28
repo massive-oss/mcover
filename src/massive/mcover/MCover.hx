@@ -1,16 +1,22 @@
-package mcover;
+package massive.mcover;
 
 import haxe.macro.Expr;
-//import haxe.macro.Type;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
-
 
 /**
 * Macro class used to inject calls to MCoverRunner into application classes
 */
+@IgnoreCover
 class MCover
 {
+
+	static var classPathHash:IntHash<String> = new IntHash();
+	static var hash:IntHash<String> = new IntHash();
+
+	static inline var META_TAG_IGNORE:String = "IgnoreCover";
+
+
 	/**
 	* Class Macro that inserts code coverage into the specified class.
 	* This is injected into each class at runtime via MCover.include
@@ -18,13 +24,23 @@ class MCover
 	**/
 	@:macro public static function build():Array<Field>
 	{
-        var fields = haxe.macro.Context.getBuildFields();
-        fields = parseFields(fields);
+		var fields = haxe.macro.Context.getBuildFields();
+
+		var meta = haxe.macro.Context.getLocalClass().get().meta;
+		
+		if(meta.has(META_TAG_IGNORE))
+		{
+			if(meta.has(":build"))
+			{
+				meta.remove(":build");
+			}
+		}
+		else
+		{
+			fields = parseFields(fields);
+		}
         return fields;
 	}
-
-	static var classPathHash:IntHash<String> = new IntHash();
-	static var hash:IntHash<String> = new IntHash();
 
 	#if macro
 
@@ -52,8 +68,6 @@ class MCover
 	static function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
 		var output = "";
-
-
 		for(i in 0...Lambda.count(hash))
 		{
 			var entry = hash.get(i);
@@ -100,17 +114,16 @@ class MCover
 
 			if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) )
 				continue;
-
+			
 			for( file in neko.FileSystem.readDirectory(path) ) {
 				if( StringTools.endsWith(file, ".hx") ) {
 					var cl = prefix + file.substr(0, file.length - 3);
 					if( skip(cl) )
 						continue;
-	
-					//trace(cl);
-					Compiler.addMetadata("@:build(mcover.MCover.build())", cl);
-					Context.getModule(cl);
+					
 
+					//trace("    " + cl);
+					Compiler.addMetadata("@:build(massive.mcover.MCover.build())", cl);
 					
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, ignore, classPaths);
@@ -129,11 +142,19 @@ class MCover
 
 	static function parseField(field:Field):Field
 	{
+		for(item in field.meta)
+		{
+			if(item.name == META_TAG_IGNORE)
+			{	
+				return field;
+			}
+		}
+
 		switch(field.kind)
     	{
     		case FFun(f):
-    		{
-    			if(f.expr != null)
+    		{	
+    			if(f.expr != null )
 				{
 					f.expr = parseExpression(f.expr);
 				}
@@ -179,7 +200,7 @@ class MCover
 				parseSwtich(expr, e, cases, edef);
 			}
 			
-			default: trace(expr.expr);
+			default: //trace(expr.expr);
 		}
 		return expr;
 	}
@@ -219,6 +240,12 @@ class MCover
 		return expr;
 	}
 
+	static function incrementPos(pos:Position, length:Int):Position
+	{
+		var posInfos = Context.getPosInfos(pos);
+		posInfos.max = posInfos.min + length;
+		return Context.makePosition(posInfos);
+	}
 	/**
 	* generates a call to the runner to insert into the code block containing a unique key
 	*		mcover.MCoverRunner.log(xxx)
@@ -228,32 +255,32 @@ class MCover
 	{
 		var coverageString:String = createCoverageEntry(pos);
 		
-		var posInfo = Context.getPosInfos(pos);
 
-		var cIdent = EConst(CIdent("mcover"));
-		var identExpr = {expr:cIdent, pos:Context.makePosition(posInfo)}
-		
-		posInfo = Context.getPosInfos(identExpr.pos);
-		posInfo.min = posInfo.max;
-		posInfo.max += 6;
+		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
 
-		var eType = EType(identExpr, "MCoverRunner");
-		var typeExpr = {expr:eType, pos:Context.makePosition(posInfo)};
+		var cIdent = EConst(CIdent("massive"));
+		pos = incrementPos(pos, 7);
+		var identExpr = {expr:cIdent, pos:pos};
 
-		posInfo = Context.getPosInfos(typeExpr.pos);
-		posInfo.min = posInfo.max;
-		posInfo.max += 6;
+		var eIdentField = EField(identExpr, "mcover");
+		pos = incrementPos(pos, 7);
+		var identFieldExpr = {expr:eIdentField, pos:pos};
+
+		var eType = EType(identFieldExpr, "MCoverRunner");
+		pos = incrementPos(pos, 13);
+		var typeExpr = {expr:eType, pos:pos};
 
 		var eField = EField(typeExpr, "log");
+		pos = incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
+		
 
-		posInfo = Context.getPosInfos(fieldExpr.pos);
-		posInfo.min = posInfo.max;
-		posInfo.max += 7;
-			
-		var argsExpr = {expr:EConst(CString(coverageString)), pos: Context.makePosition(posInfo)};
+		pos = incrementPos(pos, coverageString.length);
+		var argsExpr = {expr:EConst(CString(coverageString)), pos:pos};
 
+		pos = incrementPos(pos, 2);
 		var coverExpr = {expr:ECall(fieldExpr, [argsExpr]), pos:pos};
+
 		return coverExpr;
 	}
 

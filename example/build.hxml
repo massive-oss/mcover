@@ -4,7 +4,7 @@
 -swf-header 1024:769:60:FFFFFF
 -cp ../src
 -cp src
---macro mcover.MCover.include('', null, ['src'])
+--macro massive.mcover.MCover.include('', null, ['src'])
 
 --next
 
@@ -12,7 +12,7 @@
 -js build/main.js
 -cp ../src
 -cp src
---macro mcover.MCover.include('', null, ['src'])
+--macro massive.mcover.MCover.include('', null, ['src'])
 
 --next
 
@@ -20,6 +20,6 @@
 -neko build/main.n
 -cp ../src
 -cp src
---macro mcover.MCover.include('', null, ['src'])
+--macro massive.mcover.MCover.include('', null, ['src'])
 
-#-cmd neko build/main.n
+-cmd neko build/main.n

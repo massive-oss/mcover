@@ -1,78 +1,36 @@
-package mcover;
+package massive.mcover;
 
-import mcover.client.PrintClient;
-import haxe.Timer;
+import massive.mcover.client.TraceClient;
+import massive.mcover.CoverageClient;
+import massive.mcover.CoverageEntry;
+import massive.mcover.CoverageEntryCollection;
 
-@:keep class MCoverRunner
+import massive.mcover.util.Timer;
+
+
+class MCoverRunner
 {
-	static public var instance(default, null):MCoverRunner;
+	static public var instance:MCoverRunner = new MCoverRunner(); 
 
-	static public function createInstance(?client:CoverageClient, ?posInfos:haxe.PosInfos):MCoverRunner
-	{
-		if(client == null) client = new PrintClient();
-		instance = new MCoverRunner(client);
-		return instance;
-	}
-
+	static var logQueue:Array<String> = [];
+	static var clientQueue:Array<CoverageClient> = [];
+	static var reportPending:Bool = false;
+	
 	/**
 	* method called from injected code each time a code block executes
 	**/
+	@IgnoreCover
 	static public function log(value:String)
 	{	
-		if(instance == null) createInstance(new PrintClient());
-		instance.logEntry(value);
+		logQueue.push(value);
 	}
 
+	/**
+	* Trigger runner to calculate coverage and pass results to registered clients.
+	**/
 	static public function report()
 	{
-		if(instance == null) throw "No instance found.";
-		return instance.reportResults();
-	}
-
-	/**
-	 * Handler called when all clients 
-	 * have completed processing the results.
-	 */
-	public var completionHandler:Bool -> Void;
-
-	public var clientCount(get_clientCount, null):Int;
-	function get_clientCount():Int { return clients.length; }
-
-	var clientCompleteCount:Int;
-
-	var clients:Array<CoverageClient>;
-
-	var isDebug(default, null):Bool;
-
-
-	var entries:IntHash<CoverageEntry>;
-	
-	var classes:Hash<CoverageEntryCollection>;
-	var packages:Hash<CoverageEntryCollection>;
-
-	var total(default, null):Int;
-	var count(default, null):Int;
-
-	/**
-	 * Class constructor.
-	 * 
-	 * @param	client	a client to interpret coverage results
-	 */
-	function new(client:CoverageClient)
-	{
-		clients = new Array();
-		addClient(client);
-
-		entries = new IntHash();
-		classes = new Hash();
-		packages = new Hash();
-
-		parseEntries();	
-
-		total = Lambda.count(entries);
-		count = 0;
-
-		instance = this;
+		reportPending = true;
 	}
 
 	/**
@@ -80,14 +38,87 @@ import haxe.Timer;
 	 * 
 	 * @param	client		a  client to interpret coverage results 
 	 */
-	public function addClient(client:CoverageClient):Void
+	static public function addClient(client:CoverageClient):Void
 	{
-		for (c in clients) if (c == client) return;
-
-		client.completionHandler = clientCompletionHandler;
-		clients.push(client);
+		clientQueue.push(client);
 	}
 
+	/**
+	 * Handler called when all clients 
+	 * have completed processing the results.
+	 */
+	public var completionHandler:Float -> Void;
+
+	public var total(default, null):Int;
+	public var count(default, null):Int;
+
+	var clients:Array<CoverageClient>;
+	var entries:IntHash<CoverageEntry>;
+	var classes:Hash<CoverageEntryCollection>;
+	var packages:Hash<CoverageEntryCollection>;
+
+	var clientCompleteCount:Int;
+	var timer:Timer;
+
+	/**
+	 * Class constructor.
+	 * 
+	 * Initializes timer to handle incoming logs on a set interval.
+	 * This is to prevent logs being parsed before instance is initialized
+	 * (edge case but always occurs when running against MCover!!)
+	 */
+	public function new()
+	{
+		reset();
+	}
+
+	public function reset()
+	{
+		clients = [];
+
+		entries = new IntHash();
+		classes = new Hash();
+		packages = new Hash();
+
+		parseEntries();		
+		
+		total = Lambda.count(entries);
+		count = 0;
+
+		if(timer != null) timer.stop();
+		timer = new Timer(10);
+		timer.run = tick;	
+	}
+
+	@IgnoreCover
+	function tick()
+	{
+		var localClients = clientQueue.concat([]);
+		clientQueue = [];
+		
+		for(client in localClients)
+		{
+			client.completionHandler = clientCompletionHandler;
+			clients.push(client);
+		}
+
+		var localLogs = logQueue.concat([]);
+		logQueue = [];
+
+		for(value in localLogs)
+		{
+			logEntry(value);
+		}
+
+		if(reportPending == true)
+		{
+			reportPending = false;
+			reportResults();
+			timer.stop();
+			timer = null;
+		}
+	}
+	
 	/**
 	 * Log an individual call from within the code base.
 	 * Do not call directly. The method only called via code injection by the compiler
@@ -95,8 +126,8 @@ import haxe.Timer;
 	 * @param	value		a string representation of a CoverageEntry
 	 * @see mcover.CoverageEntry
 	 */
-	public function logEntry(value:String)
-	{
+	function logEntry(value:String)
+	{		
 		//trace(value);
 		var temp = new CoverageEntry(value);
 		
@@ -113,11 +144,20 @@ import haxe.Timer;
 
 		for (client in clients) client.logEntry(entry);
 	}
-
-	public function reportResults()
+	
+	function reportResults()
 	{
-		for (client in clients)
+		clientCompleteCount = 0;
+
+		if(clients.length == 0)
 		{
+			var client = new TraceClient();
+			client.completionHandler = clientCompletionHandler;
+			clients.push(client);
+		}
+			
+		for (client in clients)
+		{	
 			client.report(total, count, entries, classes, packages);
 		}
 	}
@@ -128,14 +168,9 @@ import haxe.Timer;
 		{
 			if (completionHandler != null)
 			{
-				var percent:Bool = (count == total);
+				var percent:Float = count/total;
 				var handler:Dynamic = completionHandler;
-				
-				#if !neko
 				Timer.delay(function() { handler(percent); }, 1);
-				#else
-				trace("Warning - neko haxe.Timer has no delay method");
-				#end
 			}
 		}
 	}
@@ -143,10 +178,14 @@ import haxe.Timer;
 	function parseEntries()
 	{
 		var file = haxe.Resource.getString("MCover");
+
+		if(file == null) return;
 		var lines = file.split("\n");
 
 		for(line in lines)
 		{
+			line = StringTools.trim(line);
+			if(line.length == 0) continue;
 			var entry = new CoverageEntry(line);
 		
 			addEntryToHashes(entry);
