@@ -17,7 +17,7 @@ Usage
 Include the following macro in your hxml when compiling
 
 
-	--macro mcover.MCover.include('{package}', {ignoredClasses}, {classPaths})
+	--macro massive.mcover.MCover.include('{package}', {ignoredClasses}, {classPaths})
 
 Where:
 
@@ -30,7 +30,7 @@ Where:
 
 Example:
 
-	--macro mcover.MCover.include('com.example', null, ['src'])
+	--macro massive.mcover.MCover.include('com.example', null, ['src'])
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
@@ -42,14 +42,14 @@ At runtime, MCover will automatically log code execution blocks to MCoverRunner.
 
 To generate the results call the static report method once your unit tests (or other code) have completed:
 
-	mcover.MCoverRunner.report();
+	massive.mcover.MCoverRunner.report();
 
 
 By default these are sent to a generic PrintClient that traces output to screen.
 
 You can add additional custom clients to the runner if required:
 
-	mcover.MCoverRunner.instance.addClient(new mcover.client.PrintClient());
+	massive.mcover.MCoverRunner.instance.addClient(new massive.mcover.client.PrintClient());
 
 
 ### Coverage Reports
