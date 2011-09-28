@@ -16,7 +16,6 @@ class TraceClient extends PrintClient
 		output += newline;
 
 		#if js
-		trace("@@@");
 		var textArea = js.Lib.document.getElementById("haxe:trace");
 		if (textArea == null) 
 		{	

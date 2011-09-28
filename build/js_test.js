@@ -1544,7 +1544,6 @@ for(var k in massive.mcover.client.PrintClient.prototype ) massive.mcover.client
 massive.mcover.client.TraceClient.prototype.printReport = function() {
 	massive.mcover.client.PrintClient.prototype.printReport.call(this);
 	this.output += this.newline;
-	haxe.Log.trace("@@@",{ fileName : "TraceClient.hx", lineNumber : 19, className : "massive.mcover.client.TraceClient", methodName : "printReport"});
 	var textArea = js.Lib.document.getElementById("haxe:trace");
 	if(textArea == null) {
 		var error = "MissingElementException: 'haxe:trace' element not found in html file";
@@ -1610,6 +1609,7 @@ IntHash.prototype.__class__ = IntHash;
 if(!massive.mcover.util) massive.mcover.util = {}
 massive.mcover.util.Timer = function(time_ms) {
 	if( time_ms === $_ ) return;
+	if(massive.mcover.util.Timer.arr == null) massive.mcover.util.Timer.arr = [];
 	this.id = massive.mcover.util.Timer.arr.length;
 	massive.mcover.util.Timer.arr[this.id] = this;
 	this.timerId = window.setInterval("massive.mcover.util.Timer.arr[" + this.id + "].run();",time_ms);
@@ -1626,6 +1626,7 @@ massive.mcover.util.Timer.delay = function(f,time_ms) {
 	};
 	return t;
 }
+massive.mcover.util.Timer.arr = null;
 massive.mcover.util.Timer.prototype.run = function() {
 }
 massive.mcover.util.Timer.prototype.stop = function() {
@@ -3266,7 +3267,6 @@ massive.mcover.client.PrintClient.__meta__ = { obj : { IgnoreCover : null}};
 massive.mcover.client.PrintClient.DEFAULT_ID = "print";
 massive.mcover.client.TraceClient.__meta__ = { obj : { IgnoreCover : null}};
 massive.mcover.util.Timer.__meta__ = { obj : { IgnoreCover : null}};
-massive.mcover.util.Timer.arr = new Array();
 massive.munit.Assert.assertionCount = 0;
 massive.mcover.MCoverRunner.__meta__ = { statics : { log : { IgnoreCover : null}}, fields : { tick : { IgnoreCover : null}}};
 massive.mcover.MCoverRunner.reportPending = false;

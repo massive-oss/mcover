@@ -22,4 +22,6 @@
 -cp src
 --macro massive.mcover.MCover.include('', null, ['src'])
 
+--next
+
 -cmd neko build/main.n

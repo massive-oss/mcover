@@ -4,7 +4,7 @@ package;
 class Main
 {
 	static public function main():Main
-	{	
+	{
 		var app = new Main();	
 		massive.mcover.MCoverRunner.report();
 		return app;
@@ -33,11 +33,11 @@ class Main
 	}
 
 
-	@IgnoreCover
-	public function ignore()
-	{
+	// @IgnoreCover
+	// public function ignore()
+	// {
 		
-	}
+	// }
 	public function methodA()
 	{
 		mock();

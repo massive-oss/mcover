@@ -23,19 +23,19 @@
  * DAMAGE.
  */
 package massive.mcover.util;
-@IgnoreCover
-class Timer 
+
+@IgnoreCover class Timer 
 {
 	#if (php)
 	#else
 
-	private var id:Null<Int>;
+	var id:Null<Int>;
 
 	#if js
-	private static var arr = new Array<Timer>();
-	private var timerId:Int;
+	static public var arr:Array<Timer>;
+	var timerId:Int;
 	#elseif neko
-	private var runThread:neko.vm.Thread;
+	var runThread:neko.vm.Thread;
 	#end
 
 	public function new(time_ms:Int)
@@ -47,6 +47,7 @@ class Timer
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif js
+			if(arr == null) arr = [];
 			id = arr.length;
 			arr[id] = this;
 			timerId = untyped window.setInterval("massive.mcover.util.Timer.arr["+id+"].run();",time_ms);
@@ -86,7 +87,7 @@ class Timer
 	{}
 
 	#if neko
-	private function runLoop(time_ms)
+	function runLoop(time_ms)
 	{
 		var shouldStop = false;
 		while( !shouldStop )

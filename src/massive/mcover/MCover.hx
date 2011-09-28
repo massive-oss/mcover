@@ -10,12 +10,10 @@ import haxe.macro.Compiler;
 @IgnoreCover
 class MCover
 {
-
 	static var classPathHash:IntHash<String> = new IntHash();
 	static var hash:IntHash<String> = new IntHash();
 
 	static inline var META_TAG_IGNORE:String = "IgnoreCover";
-
 
 	/**
 	* Class Macro that inserts code coverage into the specified class.
@@ -120,10 +118,10 @@ class MCover
 					var cl = prefix + file.substr(0, file.length - 3);
 					if( skip(cl) )
 						continue;
-					
-
+				
 					//trace("    " + cl);
 					Compiler.addMetadata("@:build(massive.mcover.MCover.build())", cl);
+					Compiler.addMetadata("@:keep", cl);
 					
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, ignore, classPaths);
@@ -184,19 +182,16 @@ class MCover
 			case EReturn(e): null;
 			case EBlock(exprs): 
 			{
-			
 				expr = parseBlock(expr, exprs);
 			}
 			case EIf(econd, eif, eelse):
 			{
 				if(eelse != null) eelse = parseExpression(eelse);
 				eif = parseExpression(eif);
-				//expr = parseIf(expr, econd, eif, eelse);
-				
+				//expr = parseIf(expr, econd, eif, eelse);	
 			}
 			case ESwitch(e, cases, edef):
-			{
-				
+			{	
 				parseSwtich(expr, e, cases, edef);
 			}
 			
@@ -255,7 +250,6 @@ class MCover
 	{
 		var coverageString:String = createCoverageEntry(pos);
 		
-
 		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
 
 		var cIdent = EConst(CIdent("massive"));

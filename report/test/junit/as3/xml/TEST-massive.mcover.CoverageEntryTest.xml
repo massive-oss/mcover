@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite name="massive.mcover.CoverageEntryTest" time="0.003" errors="0" hostname="" failures="0" tests="5" timestamp="2011-09-28 23:21:40">
-<testcase name="shouldChangeResultWhenCountChanges" time="0.001" classname="massive.mcover.CoverageEntryTest"/>
+<testsuite name="massive.mcover.CoverageEntryTest" time="0.003" errors="0" hostname="" failures="0" tests="5" timestamp="2011-09-28 23:58:16">
+<testcase name="shouldChangeResultWhenCountChanges" time="0.002" classname="massive.mcover.CoverageEntryTest"/>
 <testcase name="shouldDeserializeKeyInConstructor" time="0" classname="massive.mcover.CoverageEntryTest"/>
 <testcase name="shouldSerialiseToKey" time="0.001" classname="massive.mcover.CoverageEntryTest"/>
-<testcase name="shouldThrowErrorOnEmptyKey" time="0.001" classname="massive.mcover.CoverageEntryTest"/>
+<testcase name="shouldThrowErrorOnEmptyKey" time="0" classname="massive.mcover.CoverageEntryTest"/>
 <testcase name="shouldThrowErrorOnInvalidKeyFormat" time="0" classname="massive.mcover.CoverageEntryTest"/>
 <system-out></system-out>
 <system-err></system-err>
