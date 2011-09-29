@@ -47,7 +47,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	var entries:IntHash<CoverageEntry>;
 	var classes:Hash<CoverageEntryCollection>;
 	var packages:Hash<CoverageEntryCollection>;
-
+	
 	var clientCompleteCount:Int;
 	var timer:Timer;
 
@@ -178,6 +178,11 @@ class MCoverRunnerImpc implements MCoverRunner
 			count += 1;
 		}
 		entry.count += 1;
+
+		for (client in clients)
+		{	
+			client.logEntry(entry);
+		}
 	}
 	
 	function reportResults()

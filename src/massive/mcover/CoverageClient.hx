@@ -11,6 +11,15 @@ interface CoverageClient
 	 * The unique identifier for the client.
 	 */
 	var id(default, null):String;
+
+		
+	/**
+	 * Called when an entry is executed at runtime.
+	 *  
+	 * @param	entry		an entry 
+	 */
+	function logEntry(entry:CoverageEntry):Void;
+	
 	
 	/**
 	 * Called when all tests are complete.

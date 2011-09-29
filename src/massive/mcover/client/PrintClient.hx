@@ -51,15 +51,22 @@ class PrintClient implements CoverageClient
 	var classPartialCount:Int;
 
 
-	public function new()
+	public function new(?id:String=null)
 	{
-		id = DEFAULT_ID;
+		if(id == null) id = DEFAULT_ID;
+		this.id = id;
 		
 		output = "";
 		newline = "\n";
 		tab = " ";
 		divider = "----------------------------------------------------------------";
 	}
+
+	public function logEntry(entry:CoverageEntry)
+	{
+		//null;
+	}
+	
 
 	var total:Int;
 	var count:Int;
