@@ -1,3 +1,8 @@
 /example/build/main.js
 /example/build/main.n
 /example/build/main.swf
+/report/test/results.txt
+/report/test/junit/neko/xml/TEST-massive.mcover.CoverageEntryTest.xml
+/report/test/junit/js/xml/TEST-massive.mcover.CoverageEntryTest.xml
+/report/test/junit/as3/xml/TEST-massive.mcover.CoverageEntryTest.xml
+/report/test/junit/as2/xml/TEST-massive.mcover.CoverageEntryTest.xml
