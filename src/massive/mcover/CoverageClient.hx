@@ -1,12 +1,10 @@
 package massive.mcover;
 
-
 interface CoverageClient
 {
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-
 	var completionHandler(get_completeHandler, set_completeHandler):CoverageClient -> Void;
 	
 	/**

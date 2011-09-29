@@ -1,6 +1,5 @@
 package massive.mcover;
 
-@IgnoreCover
 class CoverageEntry
 {
 	public var key(default, null):String;

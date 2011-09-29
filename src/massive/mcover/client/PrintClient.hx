@@ -4,7 +4,6 @@ import massive.mcover.CoverageClient;
 import massive.mcover.CoverageEntry;
 import massive.mcover.CoverageEntryCollection;
 
-@IgnoreCover
 class PrintClient implements CoverageClient
 {
 	/**

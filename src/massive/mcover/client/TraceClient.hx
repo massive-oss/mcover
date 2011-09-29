@@ -1,6 +1,5 @@
 package massive.mcover.client;
 
-@IgnoreCover
 class TraceClient extends PrintClient
 {
 	public function new()

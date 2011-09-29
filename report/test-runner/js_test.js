@@ -785,6 +785,7 @@ Reflect.makeVarArgs = function(f) {
 Reflect.prototype.__class__ = Reflect;
 massive.mcover.CoverageEntry = function(value) {
 	if( value === $_ ) return;
+	massive.mcover.MCoverRunner.log("2|src|massive.mcover|CoverageEntry|792|803|src/massive/mcover/CoverageEntry.hx:27: characters 2-13");
 	this.key = value;
 	var a = this.key.split("|");
 	if(a.length != 7) throw "Invalid entry format: " + this.key;
@@ -799,10 +800,12 @@ massive.mcover.CoverageEntry = function(value) {
 }
 massive.mcover.CoverageEntry.__name__ = ["massive","mcover","CoverageEntry"];
 massive.mcover.CoverageEntry.prototype.toString = function() {
+	massive.mcover.MCoverRunner.log("0|src|massive.mcover|CoverageEntry|1167|1248|src/massive/mcover/CoverageEntry.hx:49: characters 2-83");
 	var parts = [this.id,this.classPath,this.packageName,this.className,this.min,this.max,this.location];
 	return parts.join("|");
 }
 massive.mcover.CoverageEntry.prototype.get_result = function() {
+	massive.mcover.MCoverRunner.log("1|src|massive.mcover|CoverageEntry|1105|1121|src/massive/mcover/CoverageEntry.hx:44: characters 2-18");
 	return this.count > 0;
 }
 massive.mcover.CoverageEntry.prototype.result = null;
@@ -1418,6 +1421,7 @@ js.Boot.prototype.__class__ = js.Boot;
 if(!massive.mcover.client) massive.mcover.client = {}
 massive.mcover.client.PrintClient = function(p) {
 	if( p === $_ ) return;
+	massive.mcover.MCoverRunner.log("16|src|massive.mcover.client|PrintClient|1306|1321|src/massive/mcover/client/PrintClient.hx:56: characters 2-17");
 	this.id = "print";
 	this.output = "";
 	this.newline = "\n";
@@ -1427,6 +1431,7 @@ massive.mcover.client.PrintClient = function(p) {
 massive.mcover.client.PrintClient.__name__ = ["massive","mcover","client","PrintClient"];
 massive.mcover.client.PrintClient.prototype.printToTabs = function(args,columnWidth) {
 	if(columnWidth == null) columnWidth = 10;
+	massive.mcover.MCoverRunner.log("8|src|massive.mcover.client|PrintClient|3827|3845|src/massive/mcover/client/PrintClient.hx:170: characters 2-20");
 	var s = "";
 	var _g = 0;
 	while(_g < args.length) {
@@ -1439,9 +1444,11 @@ massive.mcover.client.PrintClient.prototype.printToTabs = function(args,columnWi
 	this.print(s);
 }
 massive.mcover.client.PrintClient.prototype.print = function(value) {
+	massive.mcover.MCoverRunner.log("9|src|massive.mcover.client|PrintClient|3715|3752|src/massive/mcover/client/PrintClient.hx:165: characters 2-39");
 	this.output += this.newline + Std.string(value);
 }
 massive.mcover.client.PrintClient.prototype.printClassResults = function(classes) {
+	massive.mcover.MCoverRunner.log("10|src|massive.mcover.client|PrintClient|3271|3285|src/massive/mcover/client/PrintClient.hx:146: characters 2-16");
 	this.classTotal = 0;
 	this.classPartialCount = 0;
 	this.classCompletedCount = 0;
@@ -1459,6 +1466,7 @@ massive.mcover.client.PrintClient.prototype.printClassResults = function(classes
 	}
 }
 massive.mcover.client.PrintClient.prototype.printPackageResults = function(packages) {
+	massive.mcover.MCoverRunner.log("11|src|massive.mcover.client|PrintClient|2767|2783|src/massive/mcover/client/PrintClient.hx:125: characters 2-18");
 	this.packageTotal = 0;
 	this.packagePartialCount = 0;
 	this.packageCompletedCount = 0;
@@ -1476,6 +1484,7 @@ massive.mcover.client.PrintClient.prototype.printPackageResults = function(packa
 	}
 }
 massive.mcover.client.PrintClient.prototype.printReport = function() {
+	massive.mcover.MCoverRunner.log("12|src|massive.mcover.client|PrintClient|2131|2177|src/massive/mcover/client/PrintClient.hx:99: characters 2-48");
 	var percent = Math.round(this.count / this.total * 1000) / 10;
 	this.print("MCover v0 Coverage Report, generated " + Date.now().toString());
 	this.print(this.divider);
@@ -1495,6 +1504,7 @@ massive.mcover.client.PrintClient.prototype.printReport = function() {
 	this.print(this.divider);
 }
 massive.mcover.client.PrintClient.prototype.report = function(total,count,entries,classes,packages) {
+	massive.mcover.MCoverRunner.log("14|src|massive.mcover.client|PrintClient|1854|1865|src/massive/mcover/client/PrintClient.hx:79: characters 2-13");
 	this.output = "";
 	this.total = total;
 	this.count = count;
@@ -1502,7 +1512,10 @@ massive.mcover.client.PrintClient.prototype.report = function(total,count,entrie
 	this.classes = classes;
 	this.packages = packages;
 	this.printReport();
-	if(this.get_completeHandler() != null) (this.get_completeHandler())(this);
+	if(this.get_completeHandler() != null) {
+		massive.mcover.MCoverRunner.log("13|src|massive.mcover.client|PrintClient|2051|2074|src/massive/mcover/client/PrintClient.hx:91: characters 3-26");
+		(this.get_completeHandler())(this);
+	}
 	return this.output;
 }
 massive.mcover.client.PrintClient.prototype.packages = null;
@@ -1511,6 +1524,7 @@ massive.mcover.client.PrintClient.prototype.entries = null;
 massive.mcover.client.PrintClient.prototype.count = null;
 massive.mcover.client.PrintClient.prototype.total = null;
 massive.mcover.client.PrintClient.prototype.logEntry = function(entry) {
+	massive.mcover.MCoverRunner.log("15|src|massive.mcover.client|PrintClient|1504|1518|src/massive/mcover/client/PrintClient.hx:65: lines 65-67");
 }
 massive.mcover.client.PrintClient.prototype.classPartialCount = null;
 massive.mcover.client.PrintClient.prototype.classCompletedCount = null;
@@ -1523,9 +1537,11 @@ massive.mcover.client.PrintClient.prototype.divider = null;
 massive.mcover.client.PrintClient.prototype.output = null;
 massive.mcover.client.PrintClient.prototype.newline = null;
 massive.mcover.client.PrintClient.prototype.set_completeHandler = function(value) {
+	massive.mcover.MCoverRunner.log("17|src|massive.mcover.client|PrintClient|767|799|src/massive/mcover/client/PrintClient.hx:29: characters 2-34");
 	return this.completionHandler = value;
 }
 massive.mcover.client.PrintClient.prototype.get_completeHandler = function() {
+	massive.mcover.MCoverRunner.log("18|src|massive.mcover.client|PrintClient|650|674|src/massive/mcover/client/PrintClient.hx:25: characters 2-26");
 	return this.completionHandler;
 }
 massive.mcover.client.PrintClient.prototype.completionHandler = null;
@@ -1534,6 +1550,7 @@ massive.mcover.client.PrintClient.prototype.__class__ = massive.mcover.client.Pr
 massive.mcover.client.PrintClient.__interfaces__ = [massive.mcover.CoverageClient];
 massive.mcover.client.TraceClient = function(p) {
 	if( p === $_ ) return;
+	massive.mcover.MCoverRunner.log("21|src|massive.mcover.client|TraceClient|100|107|src/massive/mcover/client/TraceClient.hx:7: characters 2-9");
 	massive.mcover.client.PrintClient.call(this);
 	this.newline = "<br/>";
 	this.tab = "&nbsp;";
@@ -1542,10 +1559,12 @@ massive.mcover.client.TraceClient.__name__ = ["massive","mcover","client","Trace
 massive.mcover.client.TraceClient.__super__ = massive.mcover.client.PrintClient;
 for(var k in massive.mcover.client.PrintClient.prototype ) massive.mcover.client.TraceClient.prototype[k] = massive.mcover.client.PrintClient.prototype[k];
 massive.mcover.client.TraceClient.prototype.printReport = function() {
+	massive.mcover.MCoverRunner.log("20|src|massive.mcover.client|TraceClient|235|254|src/massive/mcover/client/TraceClient.hx:14: characters 2-21");
 	massive.mcover.client.PrintClient.prototype.printReport.call(this);
 	this.output += this.newline;
 	var textArea = js.Lib.document.getElementById("haxe:trace");
 	if(textArea == null) {
+		massive.mcover.MCoverRunner.log("19|src|massive.mcover.client|TraceClient|383|473|src/massive/mcover/client/TraceClient.hx:21: characters 3-93");
 		var error = "MissingElementException: 'haxe:trace' element not found in html file";
 		js.Lib.alert(error);
 		return;
@@ -1609,7 +1628,6 @@ IntHash.prototype.__class__ = IntHash;
 if(!massive.mcover.util) massive.mcover.util = {}
 massive.mcover.util.Timer = function(time_ms) {
 	if( time_ms === $_ ) return;
-	massive.mcover.MCoverRunner.log("5|src|massive.mcover.util|Timer|1888|1903|src/massive/mcover/util/Timer.hx:50: characters 3-18");
 	this.id = massive.mcover.util.Timer.arr.length;
 	haxe.Log.trace(this.id,{ fileName : "Timer.hx", lineNumber : 51, className : "massive.mcover.util.Timer", methodName : "new"});
 	massive.mcover.util.Timer.arr[this.id] = this;
@@ -1617,11 +1635,9 @@ massive.mcover.util.Timer = function(time_ms) {
 }
 massive.mcover.util.Timer.__name__ = ["massive","mcover","util","Timer"];
 massive.mcover.util.Timer.stamp = function() {
-	massive.mcover.MCoverRunner.log("0|src|massive.mcover.util|Timer|3457|3491|src/massive/mcover/util/Timer.hx:133: characters 3-37");
 	return Date.now().getTime() / 1000;
 }
 massive.mcover.util.Timer.delay = function(f,time_ms) {
-	massive.mcover.MCoverRunner.log("1|src|massive.mcover.util|Timer|3120|3147|src/massive/mcover/util/Timer.hx:111: characters 2-29");
 	var t = new massive.mcover.util.Timer(time_ms);
 	t.run = function() {
 		t.stop();
@@ -1630,15 +1646,12 @@ massive.mcover.util.Timer.delay = function(f,time_ms) {
 	return t;
 }
 massive.mcover.util.Timer.prototype.run = function() {
-	massive.mcover.MCoverRunner.log("2|src|massive.mcover.util|Timer|2751|2753|src/massive/mcover/util/Timer.hx:87: characters 1-3");
 }
 massive.mcover.util.Timer.prototype.stop = function() {
-	massive.mcover.MCoverRunner.log("4|src|massive.mcover.util|Timer|2223|2245|src/massive/mcover/util/Timer.hx:63: characters 3-25");
 	if(this.id == null) return;
 	window.clearInterval(this.timerId);
 	massive.mcover.util.Timer.arr[this.id] = null;
 	if(this.id > 100 && this.id == massive.mcover.util.Timer.arr.length - 1) {
-		massive.mcover.MCoverRunner.log("3|src|massive.mcover.util|Timer|2526|2541|src/massive/mcover/util/Timer.hx:75: characters 4-19");
 		var p = this.id - 1;
 		while(p >= 0 && massive.mcover.util.Timer.arr[p] == null) p--;
 		massive.mcover.util.Timer.arr = massive.mcover.util.Timer.arr.slice(0,p + 1);
@@ -1922,41 +1935,41 @@ for(var k in massive.munit.MUnitException.prototype ) massive.munit.async.AsyncT
 massive.munit.async.AsyncTimeoutException.prototype.__class__ = massive.munit.async.AsyncTimeoutException;
 massive.mcover.MCoverRunner = function(p) {
 	if( p === $_ ) return;
-	massive.mcover.MCoverRunner.log("19|src|massive.mcover|MCoverRunner|1516|1523|src/massive/mcover/MCoverRunner.hx:69: characters 2-9");
+	massive.mcover.MCoverRunner.log("35|src|massive.mcover|MCoverRunner|1516|1523|src/massive/mcover/MCoverRunner.hx:69: characters 2-9");
 	this.reset();
 }
 massive.mcover.MCoverRunner.__name__ = ["massive","mcover","MCoverRunner"];
 massive.mcover.MCoverRunner.addClient = function(client) {
-	massive.mcover.MCoverRunner.log("20|src|massive.mcover|MCoverRunner|977|1001|src/massive/mcover/MCoverRunner.hx:43: characters 2-26");
+	massive.mcover.MCoverRunner.log("36|src|massive.mcover|MCoverRunner|977|1001|src/massive/mcover/MCoverRunner.hx:43: characters 2-26");
 	massive.mcover.MCoverRunner.clientQueue.push(client);
 }
 massive.mcover.MCoverRunner.report = function() {
-	massive.mcover.MCoverRunner.log("21|src|massive.mcover|MCoverRunner|741|761|src/massive/mcover/MCoverRunner.hx:33: characters 2-22");
+	massive.mcover.MCoverRunner.log("37|src|massive.mcover|MCoverRunner|741|761|src/massive/mcover/MCoverRunner.hx:33: characters 2-22");
 	massive.mcover.MCoverRunner.reportPending = true;
 }
 massive.mcover.MCoverRunner.log = function(value) {
 	massive.mcover.MCoverRunner.logQueue.push(value);
 }
 massive.mcover.MCoverRunner.prototype.addEntryToHashes = function(entry) {
-	massive.mcover.MCoverRunner.log("8|src|massive.mcover|MCoverRunner|4140|4181|src/massive/mcover/MCoverRunner.hx:211: characters 2-43");
+	massive.mcover.MCoverRunner.log("24|src|massive.mcover|MCoverRunner|4140|4181|src/massive/mcover/MCoverRunner.hx:211: characters 2-43");
 	this.entries.set(Lambda.count(this.entries),entry);
 	var packageKey = entry.packageName != ""?entry.packageName:"[default]";
 	if(!this.packages.exists(packageKey)) {
-		massive.mcover.MCoverRunner.log("6|src|massive.mcover|MCoverRunner|4305|4370|src/massive/mcover/MCoverRunner.hx:216: characters 3-68");
+		massive.mcover.MCoverRunner.log("22|src|massive.mcover|MCoverRunner|4305|4370|src/massive/mcover/MCoverRunner.hx:216: characters 3-68");
 		this.packages.set(packageKey,new massive.mcover.CoverageEntryCollection(packageKey));
 	}
 	var pckg = this.packages.get(packageKey);
 	pckg.addEntry(entry);
 	var classKey = entry.packageName != ""?entry.packageName + "." + entry.className:entry.className;
 	if(!this.classes.exists(classKey)) {
-		massive.mcover.MCoverRunner.log("7|src|massive.mcover|MCoverRunner|4585|4645|src/massive/mcover/MCoverRunner.hx:226: characters 3-63");
+		massive.mcover.MCoverRunner.log("23|src|massive.mcover|MCoverRunner|4585|4645|src/massive/mcover/MCoverRunner.hx:226: characters 3-63");
 		this.classes.set(classKey,new massive.mcover.CoverageEntryCollection(classKey));
 	}
 	var cls = this.classes.get(classKey);
 	cls.addEntry(entry);
 }
 massive.mcover.MCoverRunner.prototype.parseEntries = function() {
-	massive.mcover.MCoverRunner.log("9|src|massive.mcover|MCoverRunner|3808|3853|src/massive/mcover/MCoverRunner.hx:194: characters 2-47");
+	massive.mcover.MCoverRunner.log("25|src|massive.mcover|MCoverRunner|3808|3853|src/massive/mcover/MCoverRunner.hx:194: characters 2-47");
 	var file = haxe.Resource.getString("MCover");
 	if(file == null) return;
 	var lines = file.split("\n");
@@ -1971,11 +1984,11 @@ massive.mcover.MCoverRunner.prototype.parseEntries = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.clientCompletionHandler = function(client) {
-	massive.mcover.MCoverRunner.log("12|src|massive.mcover|MCoverRunner|3541|3773|src/massive/mcover/MCoverRunner.hx:181: lines 181-189");
+	massive.mcover.MCoverRunner.log("28|src|massive.mcover|MCoverRunner|3541|3773|src/massive/mcover/MCoverRunner.hx:181: lines 181-189");
 	if(++this.clientCompleteCount == this.clients.length) {
-		massive.mcover.MCoverRunner.log("11|src|massive.mcover|MCoverRunner|3593|3769|src/massive/mcover/MCoverRunner.hx:183: lines 183-188");
+		massive.mcover.MCoverRunner.log("27|src|massive.mcover|MCoverRunner|3593|3769|src/massive/mcover/MCoverRunner.hx:183: lines 183-188");
 		if(this.completionHandler != null) {
-			massive.mcover.MCoverRunner.log("10|src|massive.mcover|MCoverRunner|3633|3665|src/massive/mcover/MCoverRunner.hx:185: characters 4-36");
+			massive.mcover.MCoverRunner.log("26|src|massive.mcover|MCoverRunner|3633|3665|src/massive/mcover/MCoverRunner.hx:185: characters 4-36");
 			var percent = this.count / this.total;
 			var handler = this.completionHandler;
 			massive.mcover.util.Timer.delay(function() {
@@ -1985,10 +1998,10 @@ massive.mcover.MCoverRunner.prototype.clientCompletionHandler = function(client)
 	}
 }
 massive.mcover.MCoverRunner.prototype.reportResults = function() {
-	massive.mcover.MCoverRunner.log("14|src|massive.mcover|MCoverRunner|3196|3219|src/massive/mcover/MCoverRunner.hx:164: characters 2-25");
+	massive.mcover.MCoverRunner.log("30|src|massive.mcover|MCoverRunner|3196|3219|src/massive/mcover/MCoverRunner.hx:164: characters 2-25");
 	this.clientCompleteCount = 0;
 	if(this.clients.length == 0) {
-		massive.mcover.MCoverRunner.log("13|src|massive.mcover|MCoverRunner|3255|3286|src/massive/mcover/MCoverRunner.hx:168: characters 3-34");
+		massive.mcover.MCoverRunner.log("29|src|massive.mcover|MCoverRunner|3255|3286|src/massive/mcover/MCoverRunner.hx:168: characters 3-34");
 		var client = new massive.mcover.client.TraceClient();
 		client.set_completeHandler($closure(this,"clientCompletionHandler"));
 		this.clients.push(client);
@@ -2001,12 +2014,12 @@ massive.mcover.MCoverRunner.prototype.reportResults = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.logEntry = function(value) {
-	massive.mcover.MCoverRunner.log("16|src|massive.mcover|MCoverRunner|2899|2935|src/massive/mcover/MCoverRunner.hx:146: characters 2-38");
+	massive.mcover.MCoverRunner.log("32|src|massive.mcover|MCoverRunner|2899|2935|src/massive/mcover/MCoverRunner.hx:146: characters 2-38");
 	var temp = new massive.mcover.CoverageEntry(value);
 	if(!this.entries.exists(temp.id)) throw "Unexpected entry " + value;
 	var entry = this.entries.get(temp.id);
 	if(!entry.get_result()) {
-		massive.mcover.MCoverRunner.log("15|src|massive.mcover|MCoverRunner|3072|3082|src/massive/mcover/MCoverRunner.hx:154: characters 3-13");
+		massive.mcover.MCoverRunner.log("31|src|massive.mcover|MCoverRunner|3072|3082|src/massive/mcover/MCoverRunner.hx:154: characters 3-13");
 		this.count += 1;
 	}
 	entry.count += 1;
@@ -2018,7 +2031,7 @@ massive.mcover.MCoverRunner.prototype.logEntry = function(value) {
 	}
 }
 massive.mcover.MCoverRunner.prototype.init = function() {
-	massive.mcover.MCoverRunner.log("17|src|massive.mcover|MCoverRunner|2406|2424|src/massive/mcover/MCoverRunner.hx:121: characters 2-20");
+	massive.mcover.MCoverRunner.log("33|src|massive.mcover|MCoverRunner|2406|2424|src/massive/mcover/MCoverRunner.hx:121: characters 2-20");
 	this.initialized = true;
 	this.clients = [];
 	this.entries = new IntHash();
@@ -2055,7 +2068,7 @@ massive.mcover.MCoverRunner.prototype.tick = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.reset = function() {
-	massive.mcover.MCoverRunner.log("18|src|massive.mcover|MCoverRunner|1779|1798|src/massive/mcover/MCoverRunner.hx:79: characters 2-21");
+	massive.mcover.MCoverRunner.log("34|src|massive.mcover|MCoverRunner|1779|1798|src/massive/mcover/MCoverRunner.hx:79: characters 2-21");
 	this.initialized = false;
 	if(this.timer != null) this.timer.stop();
 	this.timer = new massive.mcover.util.Timer(10);
@@ -2151,14 +2164,17 @@ Hash.prototype.toString = function() {
 Hash.prototype.__class__ = Hash;
 massive.mcover.CoverageEntryCollection = function(name) {
 	if( name === $_ ) return;
+	massive.mcover.MCoverRunner.log("7|src|massive.mcover|CoverageEntryCollection|289|305|src/massive/mcover/CoverageEntryCollection.hx:12: characters 2-18");
 	this.name = name;
 	this.entries = new IntHash();
 }
 massive.mcover.CoverageEntryCollection.__name__ = ["massive","mcover","CoverageEntryCollection"];
 massive.mcover.CoverageEntryCollection.prototype.get_total = function() {
+	massive.mcover.MCoverRunner.log("3|src|massive.mcover|CoverageEntryCollection|783|811|src/massive/mcover/CoverageEntryCollection.hx:44: characters 2-30");
 	return Lambda.count(this.entries);
 }
 massive.mcover.CoverageEntryCollection.prototype.get_count = function() {
+	massive.mcover.MCoverRunner.log("4|src|massive.mcover|CoverageEntryCollection|658|668|src/massive/mcover/CoverageEntryCollection.hx:33: characters 2-12");
 	var n = 0;
 	var $it0 = this.entries.iterator();
 	while( $it0.hasNext() ) {
@@ -2168,9 +2184,11 @@ massive.mcover.CoverageEntryCollection.prototype.get_count = function() {
 	return n;
 }
 massive.mcover.CoverageEntryCollection.prototype.get_percent = function() {
+	massive.mcover.MCoverRunner.log("5|src|massive.mcover|CoverageEntryCollection|587|621|src/massive/mcover/CoverageEntryCollection.hx:28: characters 2-36");
 	return Math.round(this.get_count() / this.get_total() * 100);
 }
 massive.mcover.CoverageEntryCollection.prototype.addEntry = function(entry) {
+	massive.mcover.MCoverRunner.log("6|src|massive.mcover|CoverageEntryCollection|391|496|src/massive/mcover/CoverageEntryCollection.hx:18: lines 18-21");
 	var $it0 = this.entries.iterator();
 	while( $it0.hasNext() ) {
 		var elem = $it0.next();
@@ -2602,12 +2620,7 @@ TestMain = function(p) {
 }
 TestMain.__name__ = ["TestMain"];
 TestMain.main = function() {
-	js.Lib.setErrorHandler(TestMain.foo);
 	new TestMain();
-}
-TestMain.foo = function(e,stack) {
-	js.Lib.alert(e + "\n\n    " + stack.join("\n    "));
-	return false;
 }
 TestMain.prototype.completionHandler = function(successful) {
 	try {
@@ -3204,7 +3217,7 @@ js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject
 	Enum = { };
 	Void = { __ename__ : ["Void"]};
 }
-haxe.Resource.content = [{ name : "MCover", data : "s2894:MHxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwzNDU3fDM0OTF8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6MTMzOiBjaGFyYWN0ZXJzIDMtMzcKMXxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwzMTIwfDMxNDd8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6MTExOiBjaGFyYWN0ZXJzIDItMjkKMnxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwyNzUxfDI3NTN8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6ODc6IGNoYXJhY3RlcnMgMS0zCjN8c3JjfG1hc3NpdmUubWNvdmVyLnV0aWx8VGltZXJ8MjUyNnwyNTQxfHNyYy9tYXNzaXZlL21jb3Zlci91dGlsL1RpbWVyLmh4Ojc1OiBjaGFyYWN0ZXJzIDQtMTkKNHxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwyMjIzfDIyNDV8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6NjM6IGNoYXJhY3RlcnMgMy0yNQo1fHNyY3xtYXNzaXZlLm1jb3Zlci51dGlsfFRpbWVyfDE4ODh8MTkwM3xzcmMvbWFzc2l2ZS9tY292ZXIvdXRpbC9UaW1lci5oeDo1MDogY2hhcmFjdGVycyAzLTE4CjZ8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw0MzA1fDQzNzB8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoyMTY6IGNoYXJhY3RlcnMgMy02OAo3fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8NDU4NXw0NjQ1fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MjI2OiBjaGFyYWN0ZXJzIDMtNjMKOHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDQxNDB8NDE4MXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjIxMTogY2hhcmFjdGVycyAyLTQzCjl8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzODA4fDM4NTN8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxOTQ6IGNoYXJhY3RlcnMgMi00NwoxMHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDM2MzN8MzY2NXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE4NTogY2hhcmFjdGVycyA0LTM2CjExfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzU5M3wzNzY5fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTgzOiBsaW5lcyAxODMtMTg4CjEyfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzU0MXwzNzczfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTgxOiBsaW5lcyAxODEtMTg5CjEzfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzI1NXwzMjg2fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTY4OiBjaGFyYWN0ZXJzIDMtMzQKMTR8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzMTk2fDMyMTl8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNjQ6IGNoYXJhY3RlcnMgMi0yNQoxNXxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDMwNzJ8MzA4MnxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE1NDogY2hhcmFjdGVycyAzLTEzCjE2fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8Mjg5OXwyOTM1fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTQ2OiBjaGFyYWN0ZXJzIDItMzgKMTd8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwyNDA2fDI0MjR8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxMjE6IGNoYXJhY3RlcnMgMi0yMAoxOHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDE3Nzl8MTc5OHxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4Ojc5OiBjaGFyYWN0ZXJzIDItMjEKMTl8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwxNTE2fDE1MjN8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDo2OTogY2hhcmFjdGVycyAyLTkKMjB8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw5Nzd8MTAwMXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjQzOiBjaGFyYWN0ZXJzIDItMjYKMjF8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw3NDF8NzYxfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MzM6IGNoYXJhY3RlcnMgMi0yMg"}];
+haxe.Resource.content = [{ name : "MCover", data : "s5399:MHxzcmN8bWFzc2l2ZS5tY292ZXJ8Q292ZXJhZ2VFbnRyeXwxMTY3fDEyNDh8c3JjL21hc3NpdmUvbWNvdmVyL0NvdmVyYWdlRW50cnkuaHg6NDk6IGNoYXJhY3RlcnMgMi04MwoxfHNyY3xtYXNzaXZlLm1jb3ZlcnxDb3ZlcmFnZUVudHJ5fDExMDV8MTEyMXxzcmMvbWFzc2l2ZS9tY292ZXIvQ292ZXJhZ2VFbnRyeS5oeDo0NDogY2hhcmFjdGVycyAyLTE4CjJ8c3JjfG1hc3NpdmUubWNvdmVyfENvdmVyYWdlRW50cnl8NzkyfDgwM3xzcmMvbWFzc2l2ZS9tY292ZXIvQ292ZXJhZ2VFbnRyeS5oeDoyNzogY2hhcmFjdGVycyAyLTEzCjN8c3JjfG1hc3NpdmUubWNvdmVyfENvdmVyYWdlRW50cnlDb2xsZWN0aW9ufDc4M3w4MTF8c3JjL21hc3NpdmUvbWNvdmVyL0NvdmVyYWdlRW50cnlDb2xsZWN0aW9uLmh4OjQ0OiBjaGFyYWN0ZXJzIDItMzAKNHxzcmN8bWFzc2l2ZS5tY292ZXJ8Q292ZXJhZ2VFbnRyeUNvbGxlY3Rpb258NjU4fDY2OHxzcmMvbWFzc2l2ZS9tY292ZXIvQ292ZXJhZ2VFbnRyeUNvbGxlY3Rpb24uaHg6MzM6IGNoYXJhY3RlcnMgMi0xMgo1fHNyY3xtYXNzaXZlLm1jb3ZlcnxDb3ZlcmFnZUVudHJ5Q29sbGVjdGlvbnw1ODd8NjIxfHNyYy9tYXNzaXZlL21jb3Zlci9Db3ZlcmFnZUVudHJ5Q29sbGVjdGlvbi5oeDoyODogY2hhcmFjdGVycyAyLTM2CjZ8c3JjfG1hc3NpdmUubWNvdmVyfENvdmVyYWdlRW50cnlDb2xsZWN0aW9ufDM5MXw0OTZ8c3JjL21hc3NpdmUvbWNvdmVyL0NvdmVyYWdlRW50cnlDb2xsZWN0aW9uLmh4OjE4OiBsaW5lcyAxOC0yMQo3fHNyY3xtYXNzaXZlLm1jb3ZlcnxDb3ZlcmFnZUVudHJ5Q29sbGVjdGlvbnwyODl8MzA1fHNyYy9tYXNzaXZlL21jb3Zlci9Db3ZlcmFnZUVudHJ5Q29sbGVjdGlvbi5oeDoxMjogY2hhcmFjdGVycyAyLTE4Cjh8c3JjfG1hc3NpdmUubWNvdmVyLmNsaWVudHxQcmludENsaWVudHwzODI3fDM4NDV8c3JjL21hc3NpdmUvbWNvdmVyL2NsaWVudC9QcmludENsaWVudC5oeDoxNzA6IGNoYXJhY3RlcnMgMi0yMAo5fHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8UHJpbnRDbGllbnR8MzcxNXwzNzUyfHNyYy9tYXNzaXZlL21jb3Zlci9jbGllbnQvUHJpbnRDbGllbnQuaHg6MTY1OiBjaGFyYWN0ZXJzIDItMzkKMTB8c3JjfG1hc3NpdmUubWNvdmVyLmNsaWVudHxQcmludENsaWVudHwzMjcxfDMyODV8c3JjL21hc3NpdmUvbWNvdmVyL2NsaWVudC9QcmludENsaWVudC5oeDoxNDY6IGNoYXJhY3RlcnMgMi0xNgoxMXxzcmN8bWFzc2l2ZS5tY292ZXIuY2xpZW50fFByaW50Q2xpZW50fDI3Njd8Mjc4M3xzcmMvbWFzc2l2ZS9tY292ZXIvY2xpZW50L1ByaW50Q2xpZW50Lmh4OjEyNTogY2hhcmFjdGVycyAyLTE4CjEyfHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8UHJpbnRDbGllbnR8MjEzMXwyMTc3fHNyYy9tYXNzaXZlL21jb3Zlci9jbGllbnQvUHJpbnRDbGllbnQuaHg6OTk6IGNoYXJhY3RlcnMgMi00OAoxM3xzcmN8bWFzc2l2ZS5tY292ZXIuY2xpZW50fFByaW50Q2xpZW50fDIwNTF8MjA3NHxzcmMvbWFzc2l2ZS9tY292ZXIvY2xpZW50L1ByaW50Q2xpZW50Lmh4OjkxOiBjaGFyYWN0ZXJzIDMtMjYKMTR8c3JjfG1hc3NpdmUubWNvdmVyLmNsaWVudHxQcmludENsaWVudHwxODU0fDE4NjV8c3JjL21hc3NpdmUvbWNvdmVyL2NsaWVudC9QcmludENsaWVudC5oeDo3OTogY2hhcmFjdGVycyAyLTEzCjE1fHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8UHJpbnRDbGllbnR8MTUwNHwxNTE4fHNyYy9tYXNzaXZlL21jb3Zlci9jbGllbnQvUHJpbnRDbGllbnQuaHg6NjU6IGxpbmVzIDY1LTY3CjE2fHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8UHJpbnRDbGllbnR8MTMwNnwxMzIxfHNyYy9tYXNzaXZlL21jb3Zlci9jbGllbnQvUHJpbnRDbGllbnQuaHg6NTY6IGNoYXJhY3RlcnMgMi0xNwoxN3xzcmN8bWFzc2l2ZS5tY292ZXIuY2xpZW50fFByaW50Q2xpZW50fDc2N3w3OTl8c3JjL21hc3NpdmUvbWNvdmVyL2NsaWVudC9QcmludENsaWVudC5oeDoyOTogY2hhcmFjdGVycyAyLTM0CjE4fHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8UHJpbnRDbGllbnR8NjUwfDY3NHxzcmMvbWFzc2l2ZS9tY292ZXIvY2xpZW50L1ByaW50Q2xpZW50Lmh4OjI1OiBjaGFyYWN0ZXJzIDItMjYKMTl8c3JjfG1hc3NpdmUubWNvdmVyLmNsaWVudHxUcmFjZUNsaWVudHwzODN8NDczfHNyYy9tYXNzaXZlL21jb3Zlci9jbGllbnQvVHJhY2VDbGllbnQuaHg6MjE6IGNoYXJhY3RlcnMgMy05MwoyMHxzcmN8bWFzc2l2ZS5tY292ZXIuY2xpZW50fFRyYWNlQ2xpZW50fDIzNXwyNTR8c3JjL21hc3NpdmUvbWNvdmVyL2NsaWVudC9UcmFjZUNsaWVudC5oeDoxNDogY2hhcmFjdGVycyAyLTIxCjIxfHNyY3xtYXNzaXZlLm1jb3Zlci5jbGllbnR8VHJhY2VDbGllbnR8MTAwfDEwN3xzcmMvbWFzc2l2ZS9tY292ZXIvY2xpZW50L1RyYWNlQ2xpZW50Lmh4Ojc6IGNoYXJhY3RlcnMgMi05CjIyfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8NDMwNXw0MzcwfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MjE2OiBjaGFyYWN0ZXJzIDMtNjgKMjN8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw0NTg1fDQ2NDV8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoyMjY6IGNoYXJhY3RlcnMgMy02MwoyNHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDQxNDB8NDE4MXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjIxMTogY2hhcmFjdGVycyAyLTQzCjI1fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzgwOHwzODUzfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTk0OiBjaGFyYWN0ZXJzIDItNDcKMjZ8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzNjMzfDM2NjV8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxODU6IGNoYXJhY3RlcnMgNC0zNgoyN3xzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDM1OTN8Mzc2OXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE4MzogbGluZXMgMTgzLTE4OAoyOHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDM1NDF8Mzc3M3xzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE4MTogbGluZXMgMTgxLTE4OQoyOXxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDMyNTV8MzI4NnxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE2ODogY2hhcmFjdGVycyAzLTM0CjMwfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzE5NnwzMjE5fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTY0OiBjaGFyYWN0ZXJzIDItMjUKMzF8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzMDcyfDMwODJ8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNTQ6IGNoYXJhY3RlcnMgMy0xMwozMnxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDI4OTl8MjkzNXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE0NjogY2hhcmFjdGVycyAyLTM4CjMzfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MjQwNnwyNDI0fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTIxOiBjaGFyYWN0ZXJzIDItMjAKMzR8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwxNzc5fDE3OTh8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDo3OTogY2hhcmFjdGVycyAyLTIxCjM1fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MTUxNnwxNTIzfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6Njk6IGNoYXJhY3RlcnMgMi05CjM2fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8OTc3fDEwMDF8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDo0MzogY2hhcmFjdGVycyAyLTI2CjM3fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8NzQxfDc2MXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjMzOiBjaGFyYWN0ZXJzIDItMjI"}];
 {
 	js.Lib.document = document;
 	js.Lib.window = window;
@@ -3269,7 +3282,6 @@ massive.munit.client.HTTPClient.CLIENT_HEADER_KEY = "munit-clientId";
 massive.munit.client.HTTPClient.PLATFORM_HEADER_KEY = "munit-platformId";
 massive.munit.client.HTTPClient.queue = [];
 massive.munit.client.HTTPClient.responsePending = false;
-massive.mcover.CoverageEntry.__meta__ = { obj : { IgnoreCover : null}};
 massive.munit.TestClassHelper.META_TAG_BEFORE_CLASS = "BeforeClass";
 massive.munit.TestClassHelper.META_TAG_AFTER_CLASS = "AfterClass";
 massive.munit.TestClassHelper.META_TAG_BEFORE = "Before";
@@ -3280,9 +3292,8 @@ massive.munit.TestClassHelper.META_TAG_IGNORE = "Ignore";
 massive.munit.TestClassHelper.META_PARAM_ASYNC_TEST = "Async";
 massive.munit.TestClassHelper.META_TAG_TEST_DEBUG = "TestDebug";
 massive.munit.TestClassHelper.META_TAGS = ["BeforeClass","AfterClass","Before","After","Test","AsyncTest","TestDebug"];
-massive.mcover.client.PrintClient.__meta__ = { obj : { IgnoreCover : null}};
 massive.mcover.client.PrintClient.DEFAULT_ID = "print";
-massive.mcover.client.TraceClient.__meta__ = { obj : { IgnoreCover : null}};
+massive.mcover.util.Timer.__meta__ = { obj : { IgnoreCover : null}};
 massive.mcover.util.Timer.arr = new Array();
 massive.munit.Assert.assertionCount = 0;
 massive.mcover.MCoverRunner.__meta__ = { statics : { log : { IgnoreCover : null}}, fields : { tick : { IgnoreCover : null}}};
@@ -3290,7 +3301,6 @@ massive.mcover.MCoverRunner.reportPending = false;
 massive.mcover.MCoverRunner.clientQueue = [];
 massive.mcover.MCoverRunner.logQueue = [];
 massive.mcover.MCoverRunner.instance = new massive.mcover.MCoverRunner();
-massive.mcover.CoverageEntryCollection.__meta__ = { obj : { IgnoreCover : null}};
 massive.munit.client.JUnitReportClient.DEFAULT_ID = "junit";
 massive.munit.util.Timer.arr = new Array();
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
