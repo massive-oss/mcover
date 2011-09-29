@@ -17,44 +17,40 @@ Usage
 Include the following macro in your hxml when compiling
 
 
-	--macro massive.mcover.MCover.include('{package}', {ignoredClasses}, {classPaths})
+	--macro massive.mcover.MCover.include('{package}', {classPaths}, {ignoredClasses})
 
 Where:
 
 *	*package* is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
 
+*	*classPaths* is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+
 *	*ignoredClasses* is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
 
-*	*classPaths* is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+
 
 
 Example:
 
-	--macro massive.mcover.MCover.include('com.example', null, ['src'])
+	--macro massive.mcover.MCover.include('com.example', ['src'], null)
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
 
 
-### Runtime Usage
+### Basic Usage
 
-#### 1. 
+#### Step 1. 
 At runtime, MCover cam automatically log code execution blocks.
 
 To capture coverage initialize a coverage runner (MCoverRunner):
 
 	massive.mcover.MCover.createRunner();
 
-You can specify a custom runner by passing through a specific instance:
-
-	massive.mcover.MCover.createRunner(new MCoverRunnerImp());
-
-
-#### 2. 
+#### Step 2. 
 To generate the results call the static report method once your unit tests (or other code) have completed:
 
 	massive.mcover.MCover.report();
-
 
 By default these are sent to a generic TraceClient that outputs to the screen.
 
@@ -99,8 +95,6 @@ The current output provides a basic percentage breakdown of code blocks that hav
 
 
 
-
-
 Coverage
 ---------------------
 
@@ -121,3 +115,44 @@ See the included example for a working test case
 	/example
 
 You can also run the unit tests (requires munit haxelib) to see coverage of the coverage classes :)
+
+
+Advanced Usage
+---------------------
+
+#### Setting a custom runner
+
+You can specify a custom runner by passing through an instance that implements MCoverRunner. By default an instance of MCoverRunnerImp is created.
+
+	massive.mcover.MCover.createRunner(new MCoverRunnerImp());
+
+#### Ignoring individual classes or methods
+
+You can flag a class or method to be excluded from coverage using @IgnoreCover metadata
+	
+	@IgnoreCover class Foo
+	{
+		public function new()
+		{
+			
+		}
+	}
+
+Or
+
+	class Foo
+	{
+		public function new()
+		{
+			
+		}
+
+		@IgnoreCover 
+		function ignore()
+		{
+			
+		}
+	}
+	
+
+

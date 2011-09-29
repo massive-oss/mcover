@@ -16,7 +16,6 @@ class Main
 		return app;
 	}
 
-
 	public var fieldA:String;
 
 	public function new()
@@ -40,11 +39,12 @@ class Main
 	}
 
 
-	// @IgnoreCover
-	// public function ignore()
-	// {
+	@IgnoreCover
+	public function ignore()
+	{
 		
-	// }
+	}
+	
 	public function methodA()
 	{
 		mock();
