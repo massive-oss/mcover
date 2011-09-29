@@ -25,7 +25,7 @@ class Main
 		ifMethod(true);
 		//ifMethod(false);
 
-		//elseIfMethod(0);
+		elseIfMethod(0);
 		elseIfMethod(1);
 		elseIfMethod(2);
 
@@ -35,7 +35,11 @@ class Main
 
 		var exmpl = new example.Example();
 
+		var internal = new InternalClass();
+
 		example.foo.Foo.bar();
+
+		var f = new example.foo.Foo();
 	}
 
 

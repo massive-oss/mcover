@@ -101,13 +101,21 @@ class PrintClient implements CoverageClient
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
+		if(count != total)
+		{
+			printMissingEntries(entries);
+		}
+
+
 		printClassResults(classes);
-		print(divider);
 		printPackageResults(packages);
-		print(divider);
+
 
 		print("");
+		print(divider);
+		print("");
 		print("OVERALL STATS SUMMARY:");
+		
 		print("");
 
 		printToTabs(["total packages", packagePartialCount], 20);
@@ -120,6 +128,19 @@ class PrintClient implements CoverageClient
 		print(divider);
 	}
 
+	function printMissingEntries(entries:IntHash<CoverageEntry>)
+	{
+		print("");
+		print("MISSING CODE BLOCKS:");
+		print("");
+		for(i in 0...Lambda.count(entries))
+		{
+			var entry = entries.get(i);
+			if(!entry.result) printToTabs(["", entry.location]);
+			
+		}
+	}
+
 	function printPackageResults(packages:Hash<CoverageEntryCollection>)
 	{
 		packageTotal = 0;
@@ -129,7 +150,7 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
-		printToTabs(["result","blocks","package"]);
+		printToTabs(["", "result","blocks","package"]);
 		for(pckg in packages)
 		{
 			packageTotal += 1;
@@ -137,8 +158,9 @@ class PrintClient implements CoverageClient
 			if(pckg.percent == 100) packageCompletedCount += 1;
 
 
-			printToTabs([pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name]);
+			printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name]);
 		}
+
 	}
 
 	function printClassResults(classes:Hash<CoverageEntryCollection>)
@@ -150,13 +172,13 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
 		print("");
-		printToTabs(["result","blocks","class"]);
+		printToTabs(["", "result","blocks","class"]);
 		for(cls in classes)
 		{
 			classTotal += 1;
 			if(cls.count > 0) classPartialCount += 1;
 			if(cls.percent == 100) classCompletedCount += 1;
-			printToTabs([cls.percent + "%",cls.count + "/" + cls.total, cls.name]);
+			printToTabs(["", cls.percent + "%",cls.count + "/" + cls.total, cls.name]);
 		}
 	}
 
