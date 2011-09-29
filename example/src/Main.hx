@@ -92,3 +92,19 @@ class Main
 		//trace(posInfos);
 	}
 }
+
+class InternalClass
+{
+	public function new()
+	{
+		trace("InternalClass");
+	}
+}
+
+@IgnoreCover class InternalClassWithIgnore
+{
+	public function new()
+	{
+		trace("InternalClassWithIgnore");
+	}
+}

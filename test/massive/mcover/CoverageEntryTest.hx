@@ -14,7 +14,7 @@ import massive.munit.async.AsyncFactory;
 class CoverageEntryTest 
 {	
 
-	static var DEFAULT_KEY:String = "1|src|foo|Main|1|100|location";
+	static var DEFAULT_KEY:String = "1|src/Main.hx|foo|Main|1|100|location";
 
 	public function new() 
 	{
@@ -49,7 +49,7 @@ class CoverageEntryTest
 
 		Assert.areEqual(DEFAULT_KEY, entry.key);
 		Assert.areEqual(1, entry.id);
-		Assert.areEqual("src", entry.classPath);
+		Assert.areEqual("src/Main.hx", entry.filePath);
 		Assert.areEqual("foo", entry.packageName);
 		Assert.areEqual("Main", entry.className);
 		Assert.areEqual(1, entry.min);

@@ -9,7 +9,6 @@ class CoverClassMacro
 	#if macro
 	
 	static public  var hash:IntHash<String> = new IntHash();
-	static inline var META_TAG_IGNORE:String = "IgnoreCover";
 
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
@@ -29,15 +28,20 @@ class CoverClassMacro
 	}
 
 	/**
-	* Class Macro that inserts code coverage into the specified class.
+	* Inserts code coverage into the specified class.
 	* This is injected into each class at runtime via MCover.include
 	* Recursively steps through class and inserts calls to MCoverRunner in each code block.
 	**/
 	@:macro public static function build():Array<Field>
 	{
-		var fields = haxe.macro.Context.getBuildFields();
 
-		var meta = haxe.macro.Context.getLocalClass().get().meta;
+		var classType = Context.getLocalClass().get();
+		var fields = Context.getBuildFields();
+
+
+		currentClassName = classType.name;
+		
+		var meta = classType.meta;
 
 		if(!meta.has(META_TAG_IGNORE))
 		{
@@ -46,10 +50,15 @@ class CoverClassMacro
         return fields;
 	}
 
+
+	static inline var META_TAG_IGNORE:String = "IgnoreCover";
+	static var currentClassName:String;
+
 	static function parseFields(fields:Array<Field>):Array<Field>
 	{
 		for(field in fields)
         {
+        	//debug(field);
         	field = parseField(field);  	
         }
         return fields;
@@ -197,16 +206,16 @@ class CoverClassMacro
 
 	/**
 	* generate a unique key for the entry in the following format:
-	*		id|classPath|package|class name|min character|max character|location
+	*		id|file|package|class name|min character|max character|location
 	* examples:
-	*		1|src||Main|1012|1161|src/Main.hx:72: lines 72-78
-	*		2|src|example|Example|160|174|src/example/Example.hx:18: characters 2-16
+	*		1|src/Main.hx||Main|1012|1161|src/Main.hx:72: lines 72-78
+	*		2|src/example/Example.hx|example|Example|160|174|src/example/Example.hx:18: characters 2-16
 	**/
 	static function createCoverageEntry(pos:Position, ?type:String="")
 	{
 		var posInfo = Context.getPosInfos(pos);
 		var posString = Std.string(pos);
-		var location:String = posString.substr(5, posString.length-6);
+		var summary:String = posString.substr(5, posString.length-6);
 
 		var file:String = posInfo.file;
 		var entry:String;
@@ -223,10 +232,12 @@ class CoverClassMacro
 				
 				var parts = cls.split("/");
 
-				var clsName = parts.pop();
+				parts.pop();//remve the default class name for this file;
+
+				var clsName = currentClassName;
 				var packageName = (parts.length > 0) ? parts.join(".") : "";
 	
-				entry = count + "|" + cp + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" +location;
+				entry = count + "|" + file + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" + summary;
 
 				break;
 			}
@@ -236,6 +247,14 @@ class CoverClassMacro
 		hash.set(count, entry);
 		//trace(entry);
 		return entry;
+	}
+
+
+	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
+	{
+		#if MCOVER_DEBUG
+			neko.Lib.println(posInfos.fileName+ ":" + posInfos.lineNumber + ": " + value);
+		#end
 	}
 	#end
 }

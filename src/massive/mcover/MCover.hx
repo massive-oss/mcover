@@ -86,6 +86,8 @@ class MCover
 
 
 	static public var classPathHash:IntHash<String> = new IntHash();
+	static public var classHash:IntHash<String> = new IntHash();
+		
 	
 
 	/** 
@@ -102,6 +104,13 @@ class MCover
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
 	{
 		includePackage(pack, classPaths, ignore);
+
+	
+		for(i in 0...Lambda.count(classHash))
+		{
+			debug("    " + classHash.get(i));
+		}
+	
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -143,18 +152,45 @@ class MCover
 			
 			for( file in neko.FileSystem.readDirectory(path) ) {
 				if( StringTools.endsWith(file, ".hx") ) {
-					var cl = prefix + file.substr(0, file.length - 3);
-					if( skip(cl) )
-						continue;
-				
-					//trace("    " + cl);
-					Compiler.addMetadata("@:keep @:build(massive.mcover.macro.CoverClassMacro.build())", cl);
-				
-					
+					var classes = getClassesInFile(path + "/" + file);
+					for(cl in classes)
+					{
+						cl = prefix + cl;
+						if( skip(cl) )
+							continue;
+						classHash.set(Lambda.count(classHash), cl);
+						Compiler.addMetadata("@:keep @:build(massive.mcover.macro.CoverClassMacro.build())", cl);
+					}
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, classPaths, ignore);
 			}
 		}
+	}
+
+	static function getClassesInFile(path:String):Array<String>
+	{
+		var classes:Array<String> = [];
+
+		var contents = neko.io.File.getContent(path);
+
+		var reg:EReg = ~/^(.*)class ([A-Z]([A-Za-z0-9])+)/;
+
+		while(reg.match(contents))
+		{
+			//if(reg.matched(1).indexOf("@IgnoreCover"))
+			//trace(reg.matched(1));
+			classes.push(reg.matched(2));
+			contents = reg.matchedRight();
+		}
+		return classes;
+	}
+
+
+	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
+	{
+		#if MCOVER_DEBUG
+			neko.Lib.println(posInfos.fileName+ ":" + posInfos.lineNumber + ": " + value);
+		#end
 	}
 	
 	#end

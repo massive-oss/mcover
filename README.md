@@ -28,8 +28,6 @@ Where:
 *	*ignoredClasses* is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
 
 
-
-
 Example:
 
 	--macro massive.mcover.MCover.include('com.example', ['src'], null)
