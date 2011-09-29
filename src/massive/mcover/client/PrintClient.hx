@@ -110,10 +110,8 @@ class PrintClient implements CoverageClient
 			printMissingEntries(entries);
 		}
 
-
 		printClassResults(classes);
 		printPackageResults(packages);
-
 
 		print("");
 		print(divider);
@@ -122,9 +120,9 @@ class PrintClient implements CoverageClient
 		
 		print("");
 
-		printToTabs(["total packages", packagePartialCount], 20);
-		printToTabs(["total classes", classPartialCount], 20);
-		printToTabs(["total blocks", count], 20);
+		printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 20);
+		printToTabs(["total classes", classPartialCount + " /" + classTotal], 20);
+		printToTabs(["total blocks", count + " /" + total], 20);
 		
 		print("");
 		printToTabs(["RESULT", percent + "%"], 20);

@@ -100,66 +100,148 @@ class CoverClassMacro
 
 	static function parseExpression(expr:Expr):Expr
 	{
-		//trace(expr.expr);
+		var tmp:Array<Expr> = [];
+		//debug(expr.expr);
+		
 		switch(expr.expr)
 		{
-			case ECall(e, params):null;// trace(expr.expr);
+			case EContinue: null;
+			case EBreak: null;
 			case EConst(c): null;
-			case EReturn(e): null;
-			case EBlock(exprs): 
+			case EFunction(name, f): 
 			{
-				expr = parseBlock(expr, exprs);
+				tmp = [f.expr];
+				//e.g. var f = function()
 			}
+			case EDisplayNew(t): null;  //no idea what this is??
+			case EDisplay(e, isCall): tmp = [e];//no idea what this is???
+			
+
+			case ECast(e, t): tmp = [e];// case(foo, Foo);
 			case EIf(econd, eif, eelse):
 			{
-				if(eelse != null) eelse = parseExpression(eelse);
-				eif = parseExpression(eif);
-				//expr = parseIf(expr, econd, eif, eelse);	
+				//e.g. if(){}else{}
+				tmp = [econd, eif];
+				if(eelse!=null) tmp.push(eelse);
 			}
+		
 			case ESwitch(e, cases, edef):
 			{	
 				parseSwtich(expr, e, cases, edef);
 			}
 			case ETry(e, catches):
 			{
-				parseTry(expr, e, catches);
+				//e.g. try{...}catch(){}
+				tmp = [e];
+				for(c in catches)
+				{
+					tmp.push(c.expr);
+				}
 			}
-			
+			case EThrow(e): tmp = [e];//e.g. throw "foo";
+			case EWhile(econd, e, normalWhile): tmp = [econd, e];//e.g. while(i<2){}
+			case EField(e, field):tmp = [e];//e.g. Sdt.string()
+			case EParenthesis(e):tmp = [e];//e.g. {}
+			case ENew(t, params): tmp = params;
+			case EType(e, field):tmp = [e];
+			case ECall(e, params):
+			{
+				//e.g. method(); 
+				tmp = [e];
+				tmp = tmp.concat(params);
+			}
+			case EReturn(e): tmp = [e];//e.g. return foo;
+			case EVars(vars):
+			{
+				//e.g. var i=0;
+				for(v in vars)
+				{
+					if(v.expr != null) tmp.push(v.expr);
+				}
+			}
+			case EBinop(op, e1, e2): tmp = [e1, e2];//e.g. i<2;
+			case EUnop(op,postFix,e): tmp = [e];//e.g. i++;
+			case ETernary(econd, eif, eelse): 
+			{
+				tmp = [econd, eif, eelse];
+				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
+			}
+			case EObjectDecl(fields):
+			{
+				//e.g. var o = { a:"a", b:"b" }
+				for(f in fields)
+				{
+					tmp.push(f.expr);
+				}
+			}
+
+			case EFor(it, e): tmp = [it, e];//e.g. for(i in 0...5){}
+			case EIn(e1, e2): tmp = [e1, e2];//e.g. for(i in 0...5){}
+			case EArrayDecl(values):
+			{
+				//e.g. a = [1,2,3];
+				for(v in values)
+				{
+					tmp.push(v);
+				}
+			}
+			case EArray(e1, e2):
+			{
+				tmp = [e1,e2];//not sure
+			}
+			case EBlock(exprs): 
+			{
+				expr = parseBlock(expr, exprs);//e.g. {...}
+			}
 			default: debug(expr.expr);
+		}
+
+		if(tmp.length > 0)
+		{
+			expr = parseGenericExprDef(expr, tmp);
 		}
 		return expr;
 	}
 
-	static function parseIf(expr:Expr, econd:Expr, eif:Expr, eelse:Null<Expr>):Expr
-	{
-		if(eelse != null)
-		{
-			eelse = parseExpression(eelse);
-		}
 
-		eif = parseExpression(eif);
-		
-		return expr;//{expr:EIf(econd, eif, eelse), pos:expr.pos};
+	static function parseGenericExprDef(expr:Expr, exprs:Array<Expr>):Expr
+	{
+		for(e in exprs)
+		{
+			if(e == null) continue;
+			e = parseExpression(e);
+		}
+		return expr;
 	}
 
+	
 	static function parseSwtich(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>):Expr
 	{
-		//trace(expr.expr);
+		e = parseExpression(e);
+
 		for(c in cases)
 		{
 			c.expr = parseExpression(c.expr);
 		}
+
 		return expr;
 	}
 
-	static function parseTry(expr:Expr, e:Expr, catches:Array<{ type : ComplexType, name : String, expr : Expr }>):Expr
+	/*static function parseTry(expr:Expr, e:Expr, catches:Array<{ type : ComplexType, name : String, expr : Expr }>):Expr
 	{
 		e = parseExpression(e);
-
 		for(ctch in catches)
 		{
 			ctch.expr = parseExpression(ctch.expr);	
 		}
+		return expr;
+	}*/
+
+
+	static function parseWhile(expr:Expr, econd:Expr, e:Expr, normalWhile:Bool)
+	{
+		econd = parseExpression(econd);
+		e = parseExpression(e);
 		return expr;
 	}
 

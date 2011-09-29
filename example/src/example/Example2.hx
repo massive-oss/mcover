@@ -1,21 +1,18 @@
 package example;
 
 @IgnoreCover
-class Example2
+class Example2 extends Example
 {
 	public function new()
 	{
-		testA();
-		testB();
+		super();
+		testC();
+	
 	}
 
-	public function testA()
+	public function testC()
 	{
 		Main.here();
 	}
 
-	function testB()
-	{
-		Main.here();
-	}
 }

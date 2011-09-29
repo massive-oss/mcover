@@ -19,7 +19,7 @@ class Main
 	static public function here(?posInfos:haxe.PosInfos)
 	{
 		#if MCOVER_DEBUG
-		trace(Std.string(posInfos));
+		//trace(Std.string(posInfos));
 		#end
 	}
 
@@ -45,6 +45,8 @@ class Main
 		tryCatch(false);
 		tryCatch(true);
 
+		whileLoop();
+
 		var exmpl = new example.Example();
 
 		var internal = new InternalClass();
@@ -53,13 +55,38 @@ class Main
 
 		var f = new example.foo.Foo();
 
+		var n = (1 + 1 == 2) ? 4 : 5;
+
+		var o = {
+			a:"a",
+			b:"b"
+		}
+
+		for(i in 0...5)
+		{
+			here();
+		}
+
+		var f = function()
+		{
+			here();
+		}
+
+
+		var e2 = new example.Example2();
+		var e = cast(e2, example.Example);
+
+		var a = [1,2,3];
+
+
+
 	}
 
-	public function methodA()
+	function methodA()
 	{
 		here();
 	}
-	public function ifMethod(?value:Bool=false)
+	function ifMethod(?value:Bool=false)
 	{
 		if(value)
 		{
@@ -71,7 +98,7 @@ class Main
 		}
 	}
 
-	public function elseIfMethod(?value:Int=0)
+	function elseIfMethod(?value:Int=0)
 	{
 		if(value == 0)
 		{
@@ -87,7 +114,7 @@ class Main
 		}
 	}
 
-	public function switchMethod(?value:Int)
+	function switchMethod(?value:Int)
 	{
 		switch(value)
 		{
@@ -97,7 +124,7 @@ class Main
 		}	
 	}
 
-	public function tryCatch(?value:Bool=false)
+	function tryCatch(?value:Bool=false)
 	{
 		try
 		{
@@ -113,8 +140,17 @@ class Main
 		}
 	}
 
+	function whileLoop()
+	{
+		var i = 0;
+		while(i < 2)
+		{
+			i++;
+		}
+	}
+
 	@IgnoreCover
-	public function ignore()
+	function ignore()
 	{
 		here();
 	}
