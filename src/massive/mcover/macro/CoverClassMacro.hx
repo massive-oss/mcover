@@ -120,8 +120,12 @@ class CoverClassMacro
 			{	
 				parseSwtich(expr, e, cases, edef);
 			}
+			case ETry(e, catches):
+			{
+				parseTry(expr, e, catches);
+			}
 			
-			default: //trace(expr.expr);
+			default: debug(expr.expr);
 		}
 		return expr;
 	}
@@ -144,6 +148,17 @@ class CoverClassMacro
 		for(c in cases)
 		{
 			c.expr = parseExpression(c.expr);
+		}
+		return expr;
+	}
+
+	static function parseTry(expr:Expr, e:Expr, catches:Array<{ type : ComplexType, name : String, expr : Expr }>):Expr
+	{
+		e = parseExpression(e);
+
+		for(ctch in catches)
+		{
+			ctch.expr = parseExpression(ctch.expr);	
 		}
 		return expr;
 	}

@@ -10,16 +10,11 @@ class Example
 
 	public function testA()
 	{
-		mock();
+		Main.here();
 	}
 
 	function testB()
 	{
-		mock();
-	}
-
-	function mock(?posInfos:haxe.PosInfos)
-	{
-		
+		Main.here();
 	}
 }

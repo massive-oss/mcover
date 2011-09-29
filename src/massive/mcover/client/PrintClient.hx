@@ -101,6 +101,10 @@ class PrintClient implements CoverageClient
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
+		#if MCOVER_DEBUG
+		printCoveredEntries(entries);
+		#end
+
 		if(count != total)
 		{
 			printMissingEntries(entries);
@@ -140,6 +144,20 @@ class PrintClient implements CoverageClient
 			
 		}
 	}
+
+	function printCoveredEntries(entries:IntHash<CoverageEntry>)
+	{
+		print("");
+		print("COVERED CODE BLOCKS:");
+		print("");
+		for(i in 0...Lambda.count(entries))
+		{
+			var entry = entries.get(i);
+			if(entry.result) printToTabs(["", entry.location]);
+			
+		}
+	}
+
 
 	function printPackageResults(packages:Hash<CoverageEntryCollection>)
 	{

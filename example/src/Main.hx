@@ -16,6 +16,13 @@ class Main
 		return app;
 	}
 
+	static public function here(?posInfos:haxe.PosInfos)
+	{
+		#if MCOVER_DEBUG
+		trace(Std.string(posInfos));
+		#end
+	}
+
 	public var fieldA:String;
 
 	public function new()
@@ -23,7 +30,7 @@ class Main
 		methodA();
 
 		ifMethod(true);
-		//ifMethod(false);
+		ifMethod(false);
 
 		elseIfMethod(0);
 		elseIfMethod(1);
@@ -33,6 +40,11 @@ class Main
 		switchMethod(1);
 		switchMethod(2);
 
+		ignore();
+
+		tryCatch(false);
+		tryCatch(true);
+
 		var exmpl = new example.Example();
 
 		var internal = new InternalClass();
@@ -40,28 +52,22 @@ class Main
 		example.foo.Foo.bar();
 
 		var f = new example.foo.Foo();
+
 	}
 
-
-	@IgnoreCover
-	public function ignore()
-	{
-		
-	}
-	
 	public function methodA()
 	{
-		mock();
+		here();
 	}
 	public function ifMethod(?value:Bool=false)
 	{
 		if(value)
 		{
-			mock();
+			here();
 		}
 		else
 		{
-			mock();
+			here();
 		}
 	}
 
@@ -69,15 +75,15 @@ class Main
 	{
 		if(value == 0)
 		{
-			mock();
+			here();
 		}
 		else if (value == 1)
 		{
-			mock();
+			here();
 		}
 		else
 		{
-			mock();
+			here();
 		}
 	}
 
@@ -85,23 +91,41 @@ class Main
 	{
 		switch(value)
 		{
-			case 0: mock();
-			case 1: mock();
-			default: mock();
+			case 0: here();
+			case 1: here();
+			default: here();
 		}	
 	}
 
-	function mock(?posInfos:haxe.PosInfos)
+	public function tryCatch(?value:Bool=false)
 	{
-		//trace(posInfos);
+		try
+		{
+			here();
+			if(value == true)
+			{
+				throw ("exception");
+			}
+		}
+		catch(e:Dynamic)
+		{
+			here();
+		}
 	}
+
+	@IgnoreCover
+	public function ignore()
+	{
+		here();
+	}
+
 }
 
 class InternalClass
 {
 	public function new()
 	{
-		trace("InternalClass");
+		Main.here();
 	}
 }
 
@@ -109,6 +133,6 @@ class InternalClass
 {
 	public function new()
 	{
-		trace("InternalClassWithIgnore");
+		Main.here();
 	}
 }
