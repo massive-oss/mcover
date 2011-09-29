@@ -112,7 +112,7 @@ class MCover
 					if( skip(cl) )
 						continue;
 				
-					trace("    " + cl);
+					//trace("    " + cl);
 					Compiler.addMetadata("@:keep @:build(massive.mcover.MCover.build())", cl);
 				
 					
