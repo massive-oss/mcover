@@ -7,7 +7,7 @@ import haxe.macro.Compiler;
 /**
 * Macro class used to inject calls to MCoverRunner into application classes
 */
-@IgnoreCover
+
 class MCover
 {
 	static var classPathHash:IntHash<String> = new IntHash();

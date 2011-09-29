@@ -24,7 +24,7 @@
  */
 package massive.mcover.util;
 
-@IgnoreCover class Timer 
+class Timer 
 {
 	#if (php)
 	#else
