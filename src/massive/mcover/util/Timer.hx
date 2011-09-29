@@ -32,7 +32,7 @@ class Timer
 	var id:Null<Int>;
 
 	#if js
-	static var arr = new Array<Timer>();
+	static var arr:Array<Timer> = [];
 	var timerId:Int;
 	#elseif neko
 	var runThread:neko.vm.Thread;
@@ -47,8 +47,8 @@ class Timer
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif js
+			if(arr == null) arr = [];
 			id = arr.length;
-			trace(id);
 			arr[id] = this;
 			timerId = untyped window.setInterval("massive.mcover.util.Timer.arr["+id+"].run();",time_ms);
 		#elseif neko

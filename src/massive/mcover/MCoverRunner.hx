@@ -10,8 +10,7 @@ import massive.mcover.util.Timer;
 
 class MCoverRunner
 {
-	static public var instance:MCoverRunner = new MCoverRunner(); 
-
+	static public var instance:MCoverRunner;
 	static var logQueue:Array<String> = [];
 	static var clientQueue:Array<CoverageClient> = [];
 	static var reportPending:Bool = false;
@@ -79,7 +78,7 @@ class MCoverRunner
 		initialized = false;
 		if(timer != null) timer.stop();
 		timer = new Timer(10);
-		timer.run = tick;	
+		timer.run = tick;
 	}
 
 	@IgnoreCover

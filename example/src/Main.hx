@@ -1,14 +1,19 @@
 package;
 
+import massive.mcover.MCoverRunner;
+
 //@:build(mcover.MCoverMacro.build())
 class Main
 {
+	@IgnoreCover
 	static public function main():Main
 	{
+		MCoverRunner.instance = new MCoverRunner();
 		var app = new Main();	
-		massive.mcover.MCoverRunner.report();
+		MCoverRunner.report();
 		return app;
 	}
+
 
 	public var fieldA:String;
 
