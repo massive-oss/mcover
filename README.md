@@ -101,13 +101,23 @@ The current output provides a basic percentage breakdown of code blocks that hav
 Coverage
 ---------------------
 
-MCover is still in development and currently covers the following code block types (more will be added shortly)
+MCover is still in development but it already covers most functional expressions including:
 
 *	class methods
 
 *	if/else blocks
 
 *	switch statements
+
+*	for loops
+
+*	while loops
+
+*   try/catch
+
+*	terniary ops
+
+*	inline functions, arrays and objects (e.g. var o = {f:function(){var a = [1,2,3]}})
 
 
 Examples
