@@ -36,30 +36,68 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 
 
-### Runtime reporting
+### Runtime Usage
 
-At runtime, MCover will automatically log code execution blocks to MCoverRunner.
+#### 1. 
+At runtime, MCover cam automatically log code execution blocks.
 
+To capture coverage initialize a coverage runner (MCoverRunner):
+
+	massive.mcover.MCover.createRunner();
+
+You can specify a custom runner by passing through a specific instance:
+
+	massive.mcover.MCover.createRunner(new MCoverRunnerImp());
+
+
+#### 2. 
 To generate the results call the static report method once your unit tests (or other code) have completed:
 
-	massive.mcover.MCoverRunner.report();
+	massive.mcover.MCover.report();
 
 
-By default these are sent to a generic PrintClient that traces output to screen.
+By default these are sent to a generic TraceClient that outputs to the screen.
 
-You can add additional custom clients to the runner if required:
+You can set multiple custom clients if required:
 
-	massive.mcover.MCoverRunner.instance.addClient(new massive.mcover.client.PrintClient());
+	massive.mcover.MCover.addClient(new massive.mcover.client.PrintClient());
 
 
 ### Coverage Reports
 
-The current output provides a basic percentage breakdown of code blocks that have been executed:
+The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
 
-	MCover COVERAGE: 75% (12/16 code blocks executed)
+	
+	MCover v0 Coverage Report, generated 2011-09-29 12:16:42
+	----------------------------------------------------------------
+
+	COVERAGE BREAKDOWN BY CLASSES:
+
+	result    blocks    class     
+	85%       11/13     Main      
+	100%      4/4       example.Example
+	50%       1/2       example.foo.Foo
+	----------------------------------------------------------------
+
+	COVERAGE BREAKDOWN BY PACKAGE:
+
+	result    blocks    package   
+	85%       11/13     [default] 
+	100%      4/4       example   
+	50%       1/2       example.foo
+	----------------------------------------------------------------
+
+	OVERALL STATS SUMMARY:
+
+	total packages      3                   
+	total classes       3                   
+	total blocks        16                  
+
+	RESULT              84.2%               
+
+	----------------------------------------------------------------
 
 
-It also provides summaries for individual classes and packages within the class path.
 
 
 
@@ -68,15 +106,18 @@ Coverage
 
 MCover is still in development and currently covers the following code block types (more will be added shortly)
 
-*	class instance methods (not static methods)
+*	class methods
 
 *	if/else blocks
 
 *	switch statements
 
 
-
-Example
+Examples
 ---------------------
 
-See the example in /example for a working test case
+See the included example for a working test case
+
+	/example
+
+You can also run the unit tests (requires munit haxelib) to see coverage of the coverage classes :)

@@ -7,46 +7,41 @@ import massive.mcover.CoverageEntryCollection;
 
 import massive.mcover.util.Timer;
 
-
-class MCoverRunner
+interface MCoverRunner
 {
-	static public var instance:MCoverRunner;
-	static var logQueue:Array<String> = [];
-	static var clientQueue:Array<CoverageClient> = [];
-	static var reportPending:Bool = false;
-	
-	/**
-	* method called from injected code each time a code block executes
-	**/
-	@IgnoreCover
-	static public function log(value:String)
-	{	
-		logQueue.push(value);
-	}
-
-	/**
-	* Trigger runner to calculate coverage and pass results to registered clients.
-	**/
-	static public function report()
-	{
-		reportPending = true;
-	}
-
-	/**
-	 * Add one or more coverage clients to interpret coverage results.
-	 * 
-	 * @param	client		a  client to interpret coverage results 
+	/*
+	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	static public function addClient(client:CoverageClient):Void
-	{
-		clientQueue.push(client);
-	}
+	var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
+	
 
+	var total(default, null):Int;
+	var count(default, null):Int;
+
+	function reset():Void;
+
+	function remove():Void;
+}
+
+
+class MCoverRunnerImpc implements MCoverRunner
+{
 	/**
 	 * Handler called when all clients 
 	 * have completed processing the results.
 	 */
-	public var completionHandler:Float -> Void;
+	public var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
+	function get_completeHandler():Float -> Void 
+	{
+		return completionHandler;
+	}
+	function set_completeHandler(value:Float -> Void):Float -> Void
+	{
+		return completionHandler = value;
+	}
+
+
+
 
 	public var total(default, null):Int;
 	public var count(default, null):Int;
@@ -81,6 +76,11 @@ class MCoverRunner
 		timer.run = tick;
 	}
 
+	public function remove()
+	{
+		if(timer != null) timer.stop();
+	}
+
 	@IgnoreCover
 	function tick()
 	{
@@ -89,8 +89,8 @@ class MCoverRunner
 			init();
 	
 		}
-		var localClients = clientQueue.concat([]);
-		clientQueue = [];
+		var localClients = MCover.clientQueue.concat([]);
+		MCover.clientQueue = [];
 		
 		for(client in localClients)
 		{
@@ -98,24 +98,24 @@ class MCoverRunner
 			clients.push(client);
 		}
 
-		var localLogs = logQueue.concat([]);
-		logQueue = [];
+		var localLogs = MCover.logQueue.concat([]);
+		MCover.logQueue = [];
 
 		for(value in localLogs)
 		{
 			logEntry(value);
 		}
 
-		if(reportPending == true)
+		if(MCover.reportPending == true)
 		{
-			reportPending = false;
+			MCover.reportPending = false;
 			reportResults();
 			timer.stop();
 			timer = null;
 		}
 	}
 
-	public function init()
+	function init()
 	{
 		initialized = true;
 		clients = [];
@@ -128,8 +128,6 @@ class MCoverRunner
 		
 		total = Lambda.count(entries);
 		count = 0;
-
-		
 	}
 
 	/**

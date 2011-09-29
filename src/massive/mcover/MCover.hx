@@ -1,8 +1,14 @@
 package massive.mcover;
 
+#if !macro
+import massive.mcover.MCoverRunner;
+import massive.mcover.CoverageClient;
+#else
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
+#end
+
 
 /**
 * Macro class used to inject calls to MCoverRunner into application classes
@@ -10,10 +16,56 @@ import haxe.macro.Compiler;
 
 class MCover
 {
-	static var classPathHash:IntHash<String> = new IntHash();
-	static var hash:IntHash<String> = new IntHash();
+	#if !macro
 
-	static inline var META_TAG_IGNORE:String = "IgnoreCover";
+	static public var runner(default, null):MCoverRunner;
+
+	static public var logQueue:Array<String> = [];
+	static public var clientQueue:Array<CoverageClient> = [];
+	static public var reportPending:Bool = false;
+	
+	static public function createRunner(?inst:MCoverRunner=null)
+	{
+		if(runner != null)
+		{
+			runner.remove();
+		}
+
+		if(inst == null)
+		{
+			inst = new MCoverRunnerImpc();
+		}
+		runner = inst;
+	}
+
+		/**
+	* method called from injected code each time a code block executes
+	**/
+	@IgnoreCover
+	static public function log(value:String)
+	{	
+		logQueue.push(value);
+	}
+
+	/**
+	* Trigger runner to calculate coverage and pass results to registered clients.
+	**/
+	static public function report()
+	{
+		reportPending = true;
+	}
+
+	/**
+	 * Add one or more coverage clients to interpret coverage results.
+	 * 
+	 * @param	client		a  client to interpret coverage results 
+	 */
+	static public function addClient(client:CoverageClient):Void
+	{
+		clientQueue.push(client);
+	}
+
+	#else
 
 	/**
 	* Class Macro that inserts code coverage into the specified class.
@@ -33,7 +85,12 @@ class MCover
         return fields;
 	}
 
-	#if macro
+	
+
+	static var classPathHash:IntHash<String> = new IntHash();
+	static var hash:IntHash<String> = new IntHash();
+
+	static inline var META_TAG_IGNORE:String = "IgnoreCover";
 
 	/** 
 	* Includes classes/packages for code coverage.
@@ -253,7 +310,7 @@ class MCover
 		pos = incrementPos(pos, 7);
 		var identFieldExpr = {expr:eIdentField, pos:pos};
 
-		var eType = EType(identFieldExpr, "MCoverRunner");
+		var eType = EType(identFieldExpr, "MCover");
 		pos = incrementPos(pos, 13);
 		var typeExpr = {expr:eType, pos:pos};
 
