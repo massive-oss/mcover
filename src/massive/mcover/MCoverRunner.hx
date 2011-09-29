@@ -52,6 +52,7 @@ class MCoverRunner
 	public var total(default, null):Int;
 	public var count(default, null):Int;
 
+	var initialized:Bool;
 	var clients:Array<CoverageClient>;
 	var entries:IntHash<CoverageEntry>;
 	var classes:Hash<CoverageEntryCollection>;
@@ -62,29 +63,20 @@ class MCoverRunner
 
 	/**
 	 * Class constructor.
-	 * 
-	 * Initializes timer to handle incoming logs on a set interval.
-	 * This is to prevent logs being parsed before instance is initialized
-	 * (edge case but always occurs when running against MCover!!)
 	 */
 	public function new()
 	{
 		reset();
 	}
 
+	/**
+	 * Initializes timer to handle incoming logs on a set interval.
+	 * This is to prevent logs being parsed before instance is initialized
+	 * (edge case usually, but always occurs when running against MCover!!)
+	 */
 	public function reset()
 	{
-		clients = [];
-
-		entries = new IntHash();
-		classes = new Hash();
-		packages = new Hash();
-
-		parseEntries();		
-		
-		total = Lambda.count(entries);
-		count = 0;
-
+		initialized = false;
 		if(timer != null) timer.stop();
 		timer = new Timer(10);
 		timer.run = tick;	
@@ -93,6 +85,11 @@ class MCoverRunner
 	@IgnoreCover
 	function tick()
 	{
+		if(!initialized)
+		{
+			init();
+	
+		}
 		var localClients = clientQueue.concat([]);
 		clientQueue = [];
 		
@@ -118,7 +115,24 @@ class MCoverRunner
 			timer = null;
 		}
 	}
-	
+
+	public function init()
+	{
+		initialized = true;
+		clients = [];
+
+		entries = new IntHash();
+		classes = new Hash();
+		packages = new Hash();
+
+		parseEntries();		
+		
+		total = Lambda.count(entries);
+		count = 0;
+
+		
+	}
+
 	/**
 	 * Log an individual call from within the code base.
 	 * Do not call directly. The method only called via code injection by the compiler

@@ -32,7 +32,7 @@ package massive.mcover.util;
 	var id:Null<Int>;
 
 	#if js
-	static public var arr:Array<Timer>;
+	static var arr = new Array<Timer>();
 	var timerId:Int;
 	#elseif neko
 	var runThread:neko.vm.Thread;
@@ -47,8 +47,8 @@ package massive.mcover.util;
 			var me = this;
 			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
 		#elseif js
-			if(arr == null) arr = [];
 			id = arr.length;
+			trace(id);
 			arr[id] = this;
 			timerId = untyped window.setInterval("massive.mcover.util.Timer.arr["+id+"].run();",time_ms);
 		#elseif neko
@@ -104,8 +104,8 @@ package massive.mcover.util;
 			if (msg == "stop") shouldStop = true;
 		}
 	}
-	
 	#end
+
 	public static function delay(f:Void -> Void, time_ms:Int):Timer
 	{
 		var t = new Timer(time_ms);

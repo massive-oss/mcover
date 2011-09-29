@@ -1609,16 +1609,19 @@ IntHash.prototype.__class__ = IntHash;
 if(!massive.mcover.util) massive.mcover.util = {}
 massive.mcover.util.Timer = function(time_ms) {
 	if( time_ms === $_ ) return;
-	if(massive.mcover.util.Timer.arr == null) massive.mcover.util.Timer.arr = [];
+	massive.mcover.MCoverRunner.log("5|src|massive.mcover.util|Timer|1888|1903|src/massive/mcover/util/Timer.hx:50: characters 3-18");
 	this.id = massive.mcover.util.Timer.arr.length;
+	haxe.Log.trace(this.id,{ fileName : "Timer.hx", lineNumber : 51, className : "massive.mcover.util.Timer", methodName : "new"});
 	massive.mcover.util.Timer.arr[this.id] = this;
 	this.timerId = window.setInterval("massive.mcover.util.Timer.arr[" + this.id + "].run();",time_ms);
 }
 massive.mcover.util.Timer.__name__ = ["massive","mcover","util","Timer"];
 massive.mcover.util.Timer.stamp = function() {
+	massive.mcover.MCoverRunner.log("0|src|massive.mcover.util|Timer|3457|3491|src/massive/mcover/util/Timer.hx:133: characters 3-37");
 	return Date.now().getTime() / 1000;
 }
 massive.mcover.util.Timer.delay = function(f,time_ms) {
+	massive.mcover.MCoverRunner.log("1|src|massive.mcover.util|Timer|3120|3147|src/massive/mcover/util/Timer.hx:111: characters 2-29");
 	var t = new massive.mcover.util.Timer(time_ms);
 	t.run = function() {
 		t.stop();
@@ -1626,14 +1629,16 @@ massive.mcover.util.Timer.delay = function(f,time_ms) {
 	};
 	return t;
 }
-massive.mcover.util.Timer.arr = null;
 massive.mcover.util.Timer.prototype.run = function() {
+	massive.mcover.MCoverRunner.log("2|src|massive.mcover.util|Timer|2751|2753|src/massive/mcover/util/Timer.hx:87: characters 1-3");
 }
 massive.mcover.util.Timer.prototype.stop = function() {
+	massive.mcover.MCoverRunner.log("4|src|massive.mcover.util|Timer|2223|2245|src/massive/mcover/util/Timer.hx:63: characters 3-25");
 	if(this.id == null) return;
 	window.clearInterval(this.timerId);
 	massive.mcover.util.Timer.arr[this.id] = null;
 	if(this.id > 100 && this.id == massive.mcover.util.Timer.arr.length - 1) {
+		massive.mcover.MCoverRunner.log("3|src|massive.mcover.util|Timer|2526|2541|src/massive/mcover/util/Timer.hx:75: characters 4-19");
 		var p = this.id - 1;
 		while(p >= 0 && massive.mcover.util.Timer.arr[p] == null) p--;
 		massive.mcover.util.Timer.arr = massive.mcover.util.Timer.arr.slice(0,p + 1);
@@ -1917,41 +1922,41 @@ for(var k in massive.munit.MUnitException.prototype ) massive.munit.async.AsyncT
 massive.munit.async.AsyncTimeoutException.prototype.__class__ = massive.munit.async.AsyncTimeoutException;
 massive.mcover.MCoverRunner = function(p) {
 	if( p === $_ ) return;
-	massive.mcover.MCoverRunner.log("12|src|massive.mcover|MCoverRunner|1699|1706|src/massive/mcover/MCoverRunner.hx:72: characters 2-9");
+	massive.mcover.MCoverRunner.log("19|src|massive.mcover|MCoverRunner|1516|1523|src/massive/mcover/MCoverRunner.hx:69: characters 2-9");
 	this.reset();
 }
 massive.mcover.MCoverRunner.__name__ = ["massive","mcover","MCoverRunner"];
 massive.mcover.MCoverRunner.addClient = function(client) {
-	massive.mcover.MCoverRunner.log("13|src|massive.mcover|MCoverRunner|977|1001|src/massive/mcover/MCoverRunner.hx:43: characters 2-26");
+	massive.mcover.MCoverRunner.log("20|src|massive.mcover|MCoverRunner|977|1001|src/massive/mcover/MCoverRunner.hx:43: characters 2-26");
 	massive.mcover.MCoverRunner.clientQueue.push(client);
 }
 massive.mcover.MCoverRunner.report = function() {
-	massive.mcover.MCoverRunner.log("14|src|massive.mcover|MCoverRunner|741|761|src/massive/mcover/MCoverRunner.hx:33: characters 2-22");
+	massive.mcover.MCoverRunner.log("21|src|massive.mcover|MCoverRunner|741|761|src/massive/mcover/MCoverRunner.hx:33: characters 2-22");
 	massive.mcover.MCoverRunner.reportPending = true;
 }
 massive.mcover.MCoverRunner.log = function(value) {
 	massive.mcover.MCoverRunner.logQueue.push(value);
 }
 massive.mcover.MCoverRunner.prototype.addEntryToHashes = function(entry) {
-	massive.mcover.MCoverRunner.log("2|src|massive.mcover|MCoverRunner|3985|4026|src/massive/mcover/MCoverRunner.hx:197: characters 2-43");
+	massive.mcover.MCoverRunner.log("8|src|massive.mcover|MCoverRunner|4140|4181|src/massive/mcover/MCoverRunner.hx:211: characters 2-43");
 	this.entries.set(Lambda.count(this.entries),entry);
 	var packageKey = entry.packageName != ""?entry.packageName:"[default]";
 	if(!this.packages.exists(packageKey)) {
-		massive.mcover.MCoverRunner.log("0|src|massive.mcover|MCoverRunner|4150|4215|src/massive/mcover/MCoverRunner.hx:202: characters 3-68");
+		massive.mcover.MCoverRunner.log("6|src|massive.mcover|MCoverRunner|4305|4370|src/massive/mcover/MCoverRunner.hx:216: characters 3-68");
 		this.packages.set(packageKey,new massive.mcover.CoverageEntryCollection(packageKey));
 	}
 	var pckg = this.packages.get(packageKey);
 	pckg.addEntry(entry);
 	var classKey = entry.packageName != ""?entry.packageName + "." + entry.className:entry.className;
 	if(!this.classes.exists(classKey)) {
-		massive.mcover.MCoverRunner.log("1|src|massive.mcover|MCoverRunner|4430|4490|src/massive/mcover/MCoverRunner.hx:212: characters 3-63");
+		massive.mcover.MCoverRunner.log("7|src|massive.mcover|MCoverRunner|4585|4645|src/massive/mcover/MCoverRunner.hx:226: characters 3-63");
 		this.classes.set(classKey,new massive.mcover.CoverageEntryCollection(classKey));
 	}
 	var cls = this.classes.get(classKey);
 	cls.addEntry(entry);
 }
 massive.mcover.MCoverRunner.prototype.parseEntries = function() {
-	massive.mcover.MCoverRunner.log("3|src|massive.mcover|MCoverRunner|3653|3698|src/massive/mcover/MCoverRunner.hx:180: characters 2-47");
+	massive.mcover.MCoverRunner.log("9|src|massive.mcover|MCoverRunner|3808|3853|src/massive/mcover/MCoverRunner.hx:194: characters 2-47");
 	var file = haxe.Resource.getString("MCover");
 	if(file == null) return;
 	var lines = file.split("\n");
@@ -1966,11 +1971,11 @@ massive.mcover.MCoverRunner.prototype.parseEntries = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.clientCompletionHandler = function(client) {
-	massive.mcover.MCoverRunner.log("6|src|massive.mcover|MCoverRunner|3386|3618|src/massive/mcover/MCoverRunner.hx:167: lines 167-175");
+	massive.mcover.MCoverRunner.log("12|src|massive.mcover|MCoverRunner|3541|3773|src/massive/mcover/MCoverRunner.hx:181: lines 181-189");
 	if(++this.clientCompleteCount == this.clients.length) {
-		massive.mcover.MCoverRunner.log("5|src|massive.mcover|MCoverRunner|3438|3614|src/massive/mcover/MCoverRunner.hx:169: lines 169-174");
+		massive.mcover.MCoverRunner.log("11|src|massive.mcover|MCoverRunner|3593|3769|src/massive/mcover/MCoverRunner.hx:183: lines 183-188");
 		if(this.completionHandler != null) {
-			massive.mcover.MCoverRunner.log("4|src|massive.mcover|MCoverRunner|3478|3510|src/massive/mcover/MCoverRunner.hx:171: characters 4-36");
+			massive.mcover.MCoverRunner.log("10|src|massive.mcover|MCoverRunner|3633|3665|src/massive/mcover/MCoverRunner.hx:185: characters 4-36");
 			var percent = this.count / this.total;
 			var handler = this.completionHandler;
 			massive.mcover.util.Timer.delay(function() {
@@ -1980,10 +1985,10 @@ massive.mcover.MCoverRunner.prototype.clientCompletionHandler = function(client)
 	}
 }
 massive.mcover.MCoverRunner.prototype.reportResults = function() {
-	massive.mcover.MCoverRunner.log("8|src|massive.mcover|MCoverRunner|3041|3064|src/massive/mcover/MCoverRunner.hx:150: characters 2-25");
+	massive.mcover.MCoverRunner.log("14|src|massive.mcover|MCoverRunner|3196|3219|src/massive/mcover/MCoverRunner.hx:164: characters 2-25");
 	this.clientCompleteCount = 0;
 	if(this.clients.length == 0) {
-		massive.mcover.MCoverRunner.log("7|src|massive.mcover|MCoverRunner|3100|3131|src/massive/mcover/MCoverRunner.hx:154: characters 3-34");
+		massive.mcover.MCoverRunner.log("13|src|massive.mcover|MCoverRunner|3255|3286|src/massive/mcover/MCoverRunner.hx:168: characters 3-34");
 		var client = new massive.mcover.client.TraceClient();
 		client.set_completeHandler($closure(this,"clientCompletionHandler"));
 		this.clients.push(client);
@@ -1996,12 +2001,12 @@ massive.mcover.MCoverRunner.prototype.reportResults = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.logEntry = function(value) {
-	massive.mcover.MCoverRunner.log("10|src|massive.mcover|MCoverRunner|2744|2780|src/massive/mcover/MCoverRunner.hx:132: characters 2-38");
+	massive.mcover.MCoverRunner.log("16|src|massive.mcover|MCoverRunner|2899|2935|src/massive/mcover/MCoverRunner.hx:146: characters 2-38");
 	var temp = new massive.mcover.CoverageEntry(value);
 	if(!this.entries.exists(temp.id)) throw "Unexpected entry " + value;
 	var entry = this.entries.get(temp.id);
 	if(!entry.get_result()) {
-		massive.mcover.MCoverRunner.log("9|src|massive.mcover|MCoverRunner|2917|2927|src/massive/mcover/MCoverRunner.hx:140: characters 3-13");
+		massive.mcover.MCoverRunner.log("15|src|massive.mcover|MCoverRunner|3072|3082|src/massive/mcover/MCoverRunner.hx:154: characters 3-13");
 		this.count += 1;
 	}
 	entry.count += 1;
@@ -2012,7 +2017,19 @@ massive.mcover.MCoverRunner.prototype.logEntry = function(value) {
 		client.logEntry(entry);
 	}
 }
+massive.mcover.MCoverRunner.prototype.init = function() {
+	massive.mcover.MCoverRunner.log("17|src|massive.mcover|MCoverRunner|2406|2424|src/massive/mcover/MCoverRunner.hx:121: characters 2-20");
+	this.initialized = true;
+	this.clients = [];
+	this.entries = new IntHash();
+	this.classes = new Hash();
+	this.packages = new Hash();
+	this.parseEntries();
+	this.total = Lambda.count(this.entries);
+	this.count = 0;
+}
 massive.mcover.MCoverRunner.prototype.tick = function() {
+	if(!this.initialized) this.init();
 	var localClients = massive.mcover.MCoverRunner.clientQueue.concat([]);
 	massive.mcover.MCoverRunner.clientQueue = [];
 	var _g = 0;
@@ -2038,14 +2055,8 @@ massive.mcover.MCoverRunner.prototype.tick = function() {
 	}
 }
 massive.mcover.MCoverRunner.prototype.reset = function() {
-	massive.mcover.MCoverRunner.log("11|src|massive.mcover|MCoverRunner|1742|1754|src/massive/mcover/MCoverRunner.hx:77: characters 2-14");
-	this.clients = [];
-	this.entries = new IntHash();
-	this.classes = new Hash();
-	this.packages = new Hash();
-	this.parseEntries();
-	this.total = Lambda.count(this.entries);
-	this.count = 0;
+	massive.mcover.MCoverRunner.log("18|src|massive.mcover|MCoverRunner|1779|1798|src/massive/mcover/MCoverRunner.hx:79: characters 2-21");
+	this.initialized = false;
 	if(this.timer != null) this.timer.stop();
 	this.timer = new massive.mcover.util.Timer(10);
 	this.timer.run = $closure(this,"tick");
@@ -2056,6 +2067,7 @@ massive.mcover.MCoverRunner.prototype.packages = null;
 massive.mcover.MCoverRunner.prototype.classes = null;
 massive.mcover.MCoverRunner.prototype.entries = null;
 massive.mcover.MCoverRunner.prototype.clients = null;
+massive.mcover.MCoverRunner.prototype.initialized = null;
 massive.mcover.MCoverRunner.prototype.count = null;
 massive.mcover.MCoverRunner.prototype.total = null;
 massive.mcover.MCoverRunner.prototype.completionHandler = null;
@@ -2590,7 +2602,12 @@ TestMain = function(p) {
 }
 TestMain.__name__ = ["TestMain"];
 TestMain.main = function() {
+	js.Lib.setErrorHandler(TestMain.foo);
 	new TestMain();
+}
+TestMain.foo = function(e,stack) {
+	js.Lib.alert(e + "\n\n    " + stack.join("\n    "));
+	return false;
 }
 TestMain.prototype.completionHandler = function(successful) {
 	try {
@@ -3187,7 +3204,7 @@ js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject
 	Enum = { };
 	Void = { __ename__ : ["Void"]};
 }
-haxe.Resource.content = [{ name : "MCover", data : "s1990:MHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDQxNTB8NDIxNXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjIwMjogY2hhcmFjdGVycyAzLTY4CjF8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw0NDMwfDQ0OTB8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoyMTI6IGNoYXJhY3RlcnMgMy02MwoyfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8Mzk4NXw0MDI2fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTk3OiBjaGFyYWN0ZXJzIDItNDMKM3xzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDM2NTN8MzY5OHxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE4MDogY2hhcmFjdGVycyAyLTQ3CjR8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzNDc4fDM1MTB8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNzE6IGNoYXJhY3RlcnMgNC0zNgo1fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzQzOHwzNjE0fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTY5OiBsaW5lcyAxNjktMTc0CjZ8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzMzg2fDM2MTh8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNjc6IGxpbmVzIDE2Ny0xNzUKN3xzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDMxMDB8MzEzMXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE1NDogY2hhcmFjdGVycyAzLTM0Cjh8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzMDQxfDMwNjR8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNTA6IGNoYXJhY3RlcnMgMi0yNQo5fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MjkxN3wyOTI3fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTQwOiBjaGFyYWN0ZXJzIDMtMTMKMTB8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwyNzQ0fDI3ODB8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxMzI6IGNoYXJhY3RlcnMgMi0zOAoxMXxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDE3NDJ8MTc1NHxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4Ojc3OiBjaGFyYWN0ZXJzIDItMTQKMTJ8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwxNjk5fDE3MDZ8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDo3MjogY2hhcmFjdGVycyAyLTkKMTN8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw5Nzd8MTAwMXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjQzOiBjaGFyYWN0ZXJzIDItMjYKMTR8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw3NDF8NzYxfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MzM6IGNoYXJhY3RlcnMgMi0yMg"}];
+haxe.Resource.content = [{ name : "MCover", data : "s2894:MHxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwzNDU3fDM0OTF8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6MTMzOiBjaGFyYWN0ZXJzIDMtMzcKMXxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwzMTIwfDMxNDd8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6MTExOiBjaGFyYWN0ZXJzIDItMjkKMnxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwyNzUxfDI3NTN8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6ODc6IGNoYXJhY3RlcnMgMS0zCjN8c3JjfG1hc3NpdmUubWNvdmVyLnV0aWx8VGltZXJ8MjUyNnwyNTQxfHNyYy9tYXNzaXZlL21jb3Zlci91dGlsL1RpbWVyLmh4Ojc1OiBjaGFyYWN0ZXJzIDQtMTkKNHxzcmN8bWFzc2l2ZS5tY292ZXIudXRpbHxUaW1lcnwyMjIzfDIyNDV8c3JjL21hc3NpdmUvbWNvdmVyL3V0aWwvVGltZXIuaHg6NjM6IGNoYXJhY3RlcnMgMy0yNQo1fHNyY3xtYXNzaXZlLm1jb3Zlci51dGlsfFRpbWVyfDE4ODh8MTkwM3xzcmMvbWFzc2l2ZS9tY292ZXIvdXRpbC9UaW1lci5oeDo1MDogY2hhcmFjdGVycyAzLTE4CjZ8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw0MzA1fDQzNzB8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoyMTY6IGNoYXJhY3RlcnMgMy02OAo3fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8NDU4NXw0NjQ1fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MjI2OiBjaGFyYWN0ZXJzIDMtNjMKOHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDQxNDB8NDE4MXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjIxMTogY2hhcmFjdGVycyAyLTQzCjl8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzODA4fDM4NTN8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxOTQ6IGNoYXJhY3RlcnMgMi00NwoxMHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDM2MzN8MzY2NXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE4NTogY2hhcmFjdGVycyA0LTM2CjExfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzU5M3wzNzY5fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTgzOiBsaW5lcyAxODMtMTg4CjEyfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzU0MXwzNzczfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTgxOiBsaW5lcyAxODEtMTg5CjEzfHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8MzI1NXwzMjg2fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTY4OiBjaGFyYWN0ZXJzIDMtMzQKMTR8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwzMTk2fDMyMTl8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxNjQ6IGNoYXJhY3RlcnMgMi0yNQoxNXxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDMwNzJ8MzA4MnxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjE1NDogY2hhcmFjdGVycyAzLTEzCjE2fHNyY3xtYXNzaXZlLm1jb3ZlcnxNQ292ZXJSdW5uZXJ8Mjg5OXwyOTM1fHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MTQ2OiBjaGFyYWN0ZXJzIDItMzgKMTd8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwyNDA2fDI0MjR8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDoxMjE6IGNoYXJhY3RlcnMgMi0yMAoxOHxzcmN8bWFzc2l2ZS5tY292ZXJ8TUNvdmVyUnVubmVyfDE3Nzl8MTc5OHxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4Ojc5OiBjaGFyYWN0ZXJzIDItMjEKMTl8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnwxNTE2fDE1MjN8c3JjL21hc3NpdmUvbWNvdmVyL01Db3ZlclJ1bm5lci5oeDo2OTogY2hhcmFjdGVycyAyLTkKMjB8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw5Nzd8MTAwMXxzcmMvbWFzc2l2ZS9tY292ZXIvTUNvdmVyUnVubmVyLmh4OjQzOiBjaGFyYWN0ZXJzIDItMjYKMjF8c3JjfG1hc3NpdmUubWNvdmVyfE1Db3ZlclJ1bm5lcnw3NDF8NzYxfHNyYy9tYXNzaXZlL21jb3Zlci9NQ292ZXJSdW5uZXIuaHg6MzM6IGNoYXJhY3RlcnMgMi0yMg"}];
 {
 	js.Lib.document = document;
 	js.Lib.window = window;
@@ -3266,7 +3283,7 @@ massive.munit.TestClassHelper.META_TAGS = ["BeforeClass","AfterClass","Before","
 massive.mcover.client.PrintClient.__meta__ = { obj : { IgnoreCover : null}};
 massive.mcover.client.PrintClient.DEFAULT_ID = "print";
 massive.mcover.client.TraceClient.__meta__ = { obj : { IgnoreCover : null}};
-massive.mcover.util.Timer.__meta__ = { obj : { IgnoreCover : null}};
+massive.mcover.util.Timer.arr = new Array();
 massive.munit.Assert.assertionCount = 0;
 massive.mcover.MCoverRunner.__meta__ = { statics : { log : { IgnoreCover : null}}, fields : { tick : { IgnoreCover : null}}};
 massive.mcover.MCoverRunner.reportPending = false;

@@ -25,15 +25,8 @@ class MCover
 		var fields = haxe.macro.Context.getBuildFields();
 
 		var meta = haxe.macro.Context.getLocalClass().get().meta;
-		
-		if(meta.has(META_TAG_IGNORE))
-		{
-			if(meta.has(":build"))
-			{
-				meta.remove(":build");
-			}
-		}
-		else
+
+		if(!meta.has(META_TAG_IGNORE))
 		{
 			fields = parseFields(fields);
 		}
@@ -119,9 +112,9 @@ class MCover
 					if( skip(cl) )
 						continue;
 				
-					//trace("    " + cl);
-					Compiler.addMetadata("@:build(massive.mcover.MCover.build())", cl);
-					Compiler.addMetadata("@:keep", cl);
+					trace("    " + cl);
+					Compiler.addMetadata("@:keep @:build(massive.mcover.MCover.build())", cl);
+				
 					
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, ignore, classPaths);
