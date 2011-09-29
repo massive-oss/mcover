@@ -62,32 +62,37 @@ You can set multiple custom clients if required:
 The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
 
 	
-	MCover v0 Coverage Report, generated 2011-09-29 12:16:42
+	MCover v0 Coverage Report, generated 2011-09-29 14:39:35
 	----------------------------------------------------------------
+
+	MISSING CODE BLOCKS:
+
+	          src/Main.hx:64: characters 3-9
 
 	COVERAGE BREAKDOWN BY CLASSES:
 
-	result    blocks    class     
-	85%       11/13     Main      
-	100%      4/4       example.Example
-	50%       1/2       example.foo.Foo
-	----------------------------------------------------------------
+	          result    blocks    class     
+	          92%       12/13     Main      
+	          100%      1/1       InternalClass
+	          100%      4/4       example.Example
+	          100%      2/2       example.foo.Foo
 
 	COVERAGE BREAKDOWN BY PACKAGE:
 
-	result    blocks    package   
-	85%       11/13     [default] 
-	100%      4/4       example   
-	50%       1/2       example.foo
+	          result    blocks    package   
+	          93%       13/14     [default] 
+	          100%      4/4       example   
+	          100%      2/2       example.foo
+
 	----------------------------------------------------------------
 
 	OVERALL STATS SUMMARY:
 
 	total packages      3                   
-	total classes       3                   
-	total blocks        16                  
+	total classes       4                   
+	total blocks        19                  
 
-	RESULT              84.2%               
+	RESULT              95%                 
 
 	----------------------------------------------------------------
 
