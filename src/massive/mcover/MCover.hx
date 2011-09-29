@@ -3,6 +3,11 @@ package massive.mcover;
 #if !macro
 import massive.mcover.MCoverRunner;
 import massive.mcover.CoverageClient;
+
+	#if neko
+	import neko.vm.Deque;
+	#end
+
 #else
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -31,10 +36,17 @@ class MCover
 	#if !macro
 
 	static public var runner(default, null):MCoverRunner;
-	static public var logQueue:Array<String> = [];
-	static public var clientQueue:Array<CoverageClient> = [];
+	
 	static public var reportPending:Bool = false;
 	
+	#if neko
+	static public var logQueue:Deque<String> = new Deque();
+	static public var clientQueue:Deque<CoverageClient> = new Deque();
+	#else
+	static public var logQueue:Array<String> = [];
+	static public var clientQueue:Array<CoverageClient> = [];
+	#end
+
 	static public function createRunner(?inst:MCoverRunner=null)
 	{
 		if(runner != null)
@@ -56,6 +68,10 @@ class MCover
 	static public function report()
 	{
 		reportPending = true;
+		if(runner != null)
+		{
+			runner.report();
+		}
 	}
 
 	/**
@@ -67,7 +83,11 @@ class MCover
 	 */
 	static public function addClient(client:CoverageClient):Void
 	{
+		#if neko
+		clientQueue.add(client);
+		#else
 		clientQueue.push(client);
+		#end
 	}
 
 
@@ -78,7 +98,12 @@ class MCover
 	@IgnoreCover
 	static public function log(value:String)
 	{	
+		#if neko
+		logQueue.add(value);
+		#else
 		logQueue.push(value);
+		#end
+		
 	}
 
 	#else

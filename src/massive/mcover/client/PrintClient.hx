@@ -61,11 +61,6 @@ class PrintClient implements CoverageClient
 		divider = "----------------------------------------------------------------";
 	}
 
-	public function logEntry(entry:CoverageEntry)
-	{
-		//null;
-	}
-
 	var total:Int;
 	var count:Int;
 	var entries:IntHash<CoverageEntry>;
@@ -77,7 +72,7 @@ class PrintClient implements CoverageClient
 		classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic
 	{
 		output = "";
-
+	
 		this.total = total;
 		this.count = count;
 		this.entries = entries;
@@ -90,7 +85,6 @@ class PrintClient implements CoverageClient
 		{
 			completionHandler(this);
 		}
-
 		return output;
 	}
 
@@ -135,11 +129,11 @@ class PrintClient implements CoverageClient
 		print("");
 		print("MISSING CODE BLOCKS:");
 		print("");
+
 		for(i in 0...Lambda.count(entries))
 		{
 			var entry = entries.get(i);
 			if(!entry.result) printToTabs(["", entry.location]);
-			
 		}
 	}
 

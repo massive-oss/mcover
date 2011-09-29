@@ -11,8 +11,9 @@ class Main
 	static public function main():Main
 	{
 		MCover.createRunner();
-		var app = new Main();	
+		var app = new Main();
 		MCover.report();
+
 		return app;
 	}
 

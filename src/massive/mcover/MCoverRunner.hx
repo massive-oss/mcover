@@ -14,12 +14,11 @@ interface MCoverRunner
 	 */
 	var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
 	
-
 	var total(default, null):Int;
 	var count(default, null):Int;
 
+	function report():Void;
 	function reset():Void;
-
 	function remove():Void;
 }
 
@@ -39,9 +38,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		return completionHandler = value;
 	}
-
-
-
 
 	public var total(default, null):Int;
 	public var count(default, null):Int;
@@ -81,27 +77,52 @@ class MCoverRunnerImpc implements MCoverRunner
 		if(timer != null) timer.stop();
 	}
 
+	public function report()
+	{
+		if(timer != null) timer.stop();
+		tick();
+	}
+
 	@IgnoreCover
 	function tick()
 	{
 		if(!initialized)
 		{
 			init();
-	
 		}
-		var localClients = MCover.clientQueue.concat([]);
-		MCover.clientQueue = [];
-		
-		for(client in localClients)
+
+		var tempClients:Array<CoverageClient> = [];
+		#if neko
+			var client = MCover.clientQueue.pop(false);
+			while(client != null)
+			{
+				tempClients.push(client);
+				client = MCover.clientQueue.pop(false);
+			}
+		#else
+			tempClients = MCover.clientQueue.concat([]);
+			MCover.clientQueue = [];
+		#end
+
+		for(client in tempClients)
 		{
-			client.completionHandler = clientCompletionHandler;
-			clients.push(client);
+			addClient(client);
 		}
 
-		var localLogs = MCover.logQueue.concat([]);
-		MCover.logQueue = [];
+		var tempLogs:Array<String> = [];
+		#if neko
+			var value = MCover.logQueue.pop(false);
+			while(value != null)
+			{
+				tempLogs.push(value);
+				value = MCover.logQueue.pop(false);
+			}
+		#else
+			tempLogs = MCover.logQueue.concat([]);
+			MCover.logQueue = [];
+		#end
 
-		for(value in localLogs)
+		for(value in tempLogs)
 		{
 			logEntry(value);
 		}
@@ -113,6 +134,12 @@ class MCoverRunnerImpc implements MCoverRunner
 			timer.stop();
 			timer = null;
 		}
+	}
+
+	function addClient(client:CoverageClient)
+	{
+		client.completionHandler = clientCompletionHandler;
+		clients.push(client);
 	}
 
 	function init()
@@ -150,10 +177,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			count += 1;
 		}
-
 		entry.count += 1;
-
-		for (client in clients) client.logEntry(entry);
 	}
 	
 	function reportResults()
@@ -215,7 +239,6 @@ class MCoverRunnerImpc implements MCoverRunner
 
 		var pckg = packages.get(packageKey);
 		pckg.addEntry(entry);
-
 
 		var classKey = entry.packageName != "" ? entry.packageName + "." + entry.className : entry.className;
 		if(!classes.exists(classKey))
