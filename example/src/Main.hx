@@ -7,20 +7,36 @@ import massive.mcover.MCoverRunner;
 //@:build(mcover.MCoverMacro.build())
 class Main
 {
+	static var runner:MCoverRunner;
+
 	@IgnoreCover
 	static public function main():Main
 	{
-		MCover.createRunner();
+		runner = MCover.createRunner();
 		var app = new Main();
-		MCover.report();
 
+		keepAlive();
+		runner.report();
 		return app;
+	}
+
+	@IgnoreCover
+	static public function keepAlive()
+	{
+		#if neko
+		var i:Int = 0;
+		while(i<5)
+		{
+			neko.Sys.sleep(.01);
+			i++;
+		}
+		#end
 	}
 
 	static public function here(?posInfos:haxe.PosInfos)
 	{
 		#if MCOVER_DEBUG
-		//trace(Std.string(posInfos));
+		trace(Std.string(posInfos));
 		#end
 	}
 
@@ -78,9 +94,6 @@ class Main
 		var e = cast(e2, example.Example);
 
 		var a = [1,2,3];
-
-
-
 	}
 
 	function methodA()

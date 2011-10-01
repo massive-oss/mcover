@@ -11,20 +11,23 @@ import massive.haxe.util.ReflectUtil;
 import massive.munit.util.Timer;
 
 import massive.mcover.MCover;
+import massive.mcover.MCoverRunner;
+import massive.mcover.client.PrintClient;
 
 class MCoverPrintClient extends PrintClient
 {
+	var runner:MCoverRunner;
 	var coverClient:massive.mcover.client.PrintClient;
 
 	public function new(?includeIgnoredReport:Bool = false)
 	{
 		super(includeIgnoredReport);
 
+		runner = MCover.runner;
+		runner.completionHandler = codeCoverageComplete;
+
 		coverClient = new massive.mcover.client.PrintClient();
-		
-		MCover.createRunner();
-		MCover.runner.completionHandler = codeCoverageComplete;
-		MCover.addClient(coverClient);
+		runner.addClient(coverClient);
 	}
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
@@ -42,12 +45,12 @@ class MCoverPrintClient extends PrintClient
 		print(newline + "Tests: " + testCount + "  Passed: " + passCount + "  Failed: " + failCount + " Errors: " + errorCount + " Ignored: " + ignoreCount + " Time: " + MathUtil.round(time, 5) + newline);
 		print("==============================" + newline);
 			
-		MCover.report();
+		runner.report();
 
-		if (completionHandler != null)
+		/*if (completionHandler != null)
 		{
 			completionHandler(this);
-		}
+		}*/
 
 		return output;	
 	}

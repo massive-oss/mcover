@@ -18,8 +18,28 @@ interface MCoverRunner
 	var count(default, null):Int;
 
 	function report():Void;
+	
+
+	/**
+	 * Add a coverage clients to interpret coverage results.
+	 * 
+	 * @param client  client to interpret coverage results 
+	 * @see massive.mcover.CoverageClient
+	 * @see massive.mcover.client.PrintClient
+	 */
+	function addClient(client:CoverageClient):Void;
+	function removeClient(client:CoverageClient):Void;
+	function getClients():Array<CoverageClient>;
+
+	/**
+	* Completely resets all results, clears all clients/entries and restarts internal timers.
+	**/
 	function reset():Void;
-	function remove():Void;
+
+	/**
+	* Removes timers and contents
+	*/
+	function destroy():Void;
 }
 
 
@@ -56,6 +76,12 @@ class MCoverRunnerImpc implements MCoverRunner
 	 */
 	public function new()
 	{
+		clients = [];
+
+		entries = new IntHash();
+		classes = new Hash();
+		packages = new Hash();
+
 		reset();
 	}
 
@@ -72,16 +98,67 @@ class MCoverRunnerImpc implements MCoverRunner
 		timer.run = tick;
 	}
 
-	public function remove()
-	{
-		if(timer != null) timer.stop();
-	}
-
 	public function report()
 	{
-		if(timer != null) timer.stop();
-		tick();
+		if(timer != null)
+		{
+			timer.stop();
+			timer = null;
+		}
+		tick();//make sure to capture any pending logs
+
+		clientCompleteCount = 0;
+
+		if(clients.length == 0)
+		{
+			var client = new TraceClient();
+			client.completionHandler = clientCompletionHandler;
+			clients.push(client);
+		}
+			
+		for (client in clients)
+		{	
+			client.report(total, count, entries, classes, packages);
+		}
 	}
+
+	public function addClient(client:CoverageClient)
+	{
+		for(c in clients)
+		{
+			if(c == client) return;
+		}
+
+		client.completionHandler = clientCompletionHandler;
+		clients.push(client);
+	}
+
+	public function removeClient(client:CoverageClient)
+	{
+		client.completionHandler = null;
+		for(i in clients.length...0)
+		{
+			var c = clients[i];
+			if(c ==client) clients.splice(i, 1);
+		}
+	}
+
+	public function getClients():Array<CoverageClient>
+	{
+		return clients.concat([]);
+	}
+
+	public function destroy()
+	{
+		initialized = false;
+		if(timer != null) timer.stop();
+		for(c in clients)
+		{
+			c.completionHandler = null;
+		}
+	}
+
+	///////////////////////////////////
 
 	@IgnoreCover
 	function tick()
@@ -91,24 +168,7 @@ class MCoverRunnerImpc implements MCoverRunner
 			init();
 		}
 
-		var tempClients:Array<CoverageClient> = [];
-		#if neko
-			var client = MCover.clientQueue.pop(false);
-			while(client != null)
-			{
-				tempClients.push(client);
-				client = MCover.clientQueue.pop(false);
-			}
-		#else
-			tempClients = MCover.clientQueue.concat([]);
-			MCover.clientQueue = [];
-		#end
-
-		for(client in tempClients)
-		{
-			addClient(client);
-		}
-
+		
 		var tempLogs:Array<String> = [];
 		#if neko
 			var value = MCover.logQueue.pop(false);
@@ -126,20 +186,6 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			logEntry(value);
 		}
-
-		if(MCover.reportPending == true)
-		{
-			MCover.reportPending = false;
-			reportResults();
-			timer.stop();
-			timer = null;
-		}
-	}
-
-	function addClient(client:CoverageClient)
-	{
-		client.completionHandler = clientCompletionHandler;
-		clients.push(client);
 	}
 
 	function init()
@@ -185,23 +231,6 @@ class MCoverRunnerImpc implements MCoverRunner
 		}
 	}
 	
-	function reportResults()
-	{
-		clientCompleteCount = 0;
-
-		if(clients.length == 0)
-		{
-			var client = new TraceClient();
-			client.completionHandler = clientCompletionHandler;
-			clients.push(client);
-		}
-			
-		for (client in clients)
-		{	
-			client.report(total, count, entries, classes, packages);
-		}
-	}
-
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
 		if (++clientCompleteCount == clients.length)

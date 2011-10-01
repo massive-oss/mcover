@@ -37,21 +37,18 @@ class MCover
 
 	static public var runner(default, null):MCoverRunner;
 	
-	static public var reportPending:Bool = false;
-	
 	#if neko
 	static public var logQueue:Deque<String> = new Deque();
-	static public var clientQueue:Deque<CoverageClient> = new Deque();
 	#else
 	static public var logQueue:Array<String> = [];
-	static public var clientQueue:Array<CoverageClient> = [];
 	#end
 
-	static public function createRunner(?inst:MCoverRunner=null)
+	static public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
 	{
 		if(runner != null)
 		{
-			runner.remove();
+			if(overwrite) runner.destroy();
+			else throw "Runner already exists. Set overwrite to true to replace runner.";
 		}
 
 		if(inst == null)
@@ -59,35 +56,8 @@ class MCover
 			inst = new MCoverRunnerImpc();
 		}
 		runner = inst;
-	}
 
-	/**
-	* Trigger runner to calculate coverage and pass results to registered clients.
-	* Note: actual reporting occurs asyncronously in registered clients;
-	**/
-	static public function report()
-	{
-		reportPending = true;
-		if(runner != null)
-		{
-			runner.report();
-		}
-	}
-
-	/**
-	 * Add one or more coverage clients to interpret coverage results.
-	 * 
-	 * @param clientsa  client to interpret coverage results 
-	 * @see massive.mcover.CoverageClient
-	 * @see massive.mcover.client.PrintClient
-	 */
-	static public function addClient(client:CoverageClient):Void
-	{
-		#if neko
-		clientQueue.add(client);
-		#else
-		clientQueue.push(client);
-		#end
+		return runner;
 	}
 
 
