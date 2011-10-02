@@ -2,8 +2,8 @@ package massive.mcover;
 
 import massive.mcover.client.TraceClient;
 import massive.mcover.CoverageClient;
-import massive.mcover.CoverageEntry;
-import massive.mcover.CoverageEntryCollection;
+import massive.mcover.CodeBlock;
+import massive.mcover.CodeBlockCollection;
 
 import massive.mcover.util.Timer;
 
@@ -32,7 +32,7 @@ interface MCoverRunner
 	function getClients():Array<CoverageClient>;
 
 	/**
-	* Completely resets all results, clears all clients/entries and restarts internal timers.
+	* Completely resets all results, clears all clients/blocks and restarts internal timers.
 	**/
 	function reset():Void;
 
@@ -63,10 +63,13 @@ class MCoverRunnerImpc implements MCoverRunner
 	public var count(default, null):Int;
 
 	var initialized:Bool;
+
 	var clients:Array<CoverageClient>;
-	var entries:IntHash<CoverageEntry>;
-	var classes:Hash<CoverageEntryCollection>;
-	var packages:Hash<CoverageEntryCollection>;
+	var data:CoverageData;
+	
+	//var blocks:IntHash<CodeBlock>;
+	//var classes:Hash<CodeBlockCollection>;
+	//var packages:Hash<CodeBlockCollection>;
 	
 	var clientCompleteCount:Int;
 	var timer:Timer;
@@ -78,9 +81,9 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		clients = [];
 
-		entries = new IntHash();
-		classes = new Hash();
-		packages = new Hash();
+		//blocks = new IntHash();
+		//classes = new Hash();
+		//packages = new Hash();
 
 		reset();
 	}
@@ -118,7 +121,7 @@ class MCoverRunnerImpc implements MCoverRunner
 			
 		for (client in clients)
 		{	
-			client.report(total, count, entries, classes, packages);
+			client.report(total, count, data);
 		}
 	}
 
@@ -184,7 +187,7 @@ class MCoverRunnerImpc implements MCoverRunner
 
 		for(value in tempLogs)
 		{
-			logEntry(value);
+			log(value);
 		}
 	}
 
@@ -193,13 +196,13 @@ class MCoverRunnerImpc implements MCoverRunner
 		initialized = true;
 		clients = [];
 
-		entries = new IntHash();
-		classes = new Hash();
-		packages = new Hash();
+		//blocks = new IntHash();
+		//classes = new Hash();
+		//packages = new Hash();
 
-		parseEntries();		
+		loadCoverageData();		
 		
-		total = Lambda.count(entries);
+		total = Lambda.count(data.blocks);
 		count = 0;
 	}
 
@@ -207,27 +210,27 @@ class MCoverRunnerImpc implements MCoverRunner
 	 * Log an individual call from within the code base.
 	 * Do not call directly. The method only called via code injection by the compiler
 	 * 
-	 * @param	value		a string representation of a CoverageEntry
-	 * @see mcover.CoverageEntry
+	 * @param	blockString		a string representation of a code block
+	 * @see mcover.CodeBlock
 	 */
-	function logEntry(value:String)
+	function log(value:String)
 	{		
 		//trace(value);
-		var temp = new CoverageEntry(value);
+		var temp = new CodeBlock(value);
 		
-		if(!entries.exists(temp.id)) throw "Unexpected entry " + value;
+		if(!data.blocks.exists(temp.id)) throw "Unexpected block " + value;
 		
-		var entry = entries.get(temp.id);
+		var block = data.blocks.get(temp.id);
 
-		if(!entry.result)
+		if(!block.result)
 		{
 			count += 1;
 		}
-		entry.count += 1;
+		block.count += 1;
 
 		for (client in clients)
 		{	
-			client.logEntry(entry);
+			client.log(block);
 		}
 	}
 	
@@ -244,43 +247,26 @@ class MCoverRunnerImpc implements MCoverRunner
 		}
 	}
 
-	function parseEntries()
+	function loadCoverageData()
 	{
-		var file = haxe.Resource.getString("MCover");
+		var serializedData:String = haxe.Resource.getString(MCover.RESOURCE_DATA);
 
-		if(file == null) return;
+		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + MCover.RESOURCE_DATA  + "'";
+
+		data = haxe.Unserializer.run(serializedData);
+
+		/*
 		var lines = file.split("\n");
 
 		for(line in lines)
 		{
 			line = StringTools.trim(line);
 			if(line.length == 0) continue;
-			var entry = new CoverageEntry(line);
-		
-			addEntryToHashes(entry);
-		}
-	}
+			var block = new CodeBlock(line);
+			
+			blocks.set(Lambda.count(blocks), block);
+			
+		}*/
 
-	function addEntryToHashes(entry:CoverageEntry)
-	{
-		entries.set(Lambda.count(entries), entry);
-
-		var packageKey = entry.packageName != "" ?  entry.packageName : "[default]";
-		if(!packages.exists(packageKey))
-		{
-			packages.set(packageKey, new CoverageEntryCollection(packageKey));
-		}
-
-		var pckg = packages.get(packageKey);
-		pckg.addEntry(entry);
-
-		var classKey = entry.packageName != "" ? entry.packageName + "." + entry.className : entry.className;
-		if(!classes.exists(classKey))
-		{
-			classes.set(classKey, new CoverageEntryCollection(classKey));
-		}
-
-		var cls = classes.get(classKey);
-		cls.addEntry(entry);
 	}
 }

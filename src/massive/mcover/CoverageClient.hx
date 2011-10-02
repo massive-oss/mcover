@@ -14,23 +14,20 @@ interface CoverageClient
 
 		
 	/**
-	 * Called when an entry is executed at runtime.
+	 * Called when a code block is executed at runtime.
 	 *  
-	 * @param	entry		an entry 
+	 * @param	block		a code block  
 	 */
-	function logEntry(entry:CoverageEntry):Void;
+	function log(block:CodeBlock):Void;
 	
 	
 	/**
 	 * Called when all tests are complete.
 	 *  
-	 * @param	total		total number of entries
-	 * @param	count		total number of entries executed
-	 * @param	entries		hash of entries
-	 * @param	classes		entries by class
-	 * @param	packages	entries by package
-	 * @param	time			number of milliseconds taken for all tests to be executed
+	 * @param	total		total number of blocks
+	 * @param	count		total number of blocks executed
+	 * @param	data		coverage data containing all blocks
 	 * @return	collated result data if any
 	 */
-	function report(total:Int, count:Int, entries:IntHash<CoverageEntry>, classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic;
+	function report(total:Int, count:Int, data:CoverageData):Dynamic;
 }

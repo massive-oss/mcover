@@ -31,10 +31,11 @@ import haxe.macro.Compiler;
 *    report();
 *    addClient(new CoverageClient());
 */
-class MCover
+@:keep class MCover
 {
-	#if !macro
+	static public var RESOURCE_DATA:String = "MCoverData";
 
+	#if !macro
 	static public var runner(default, null):MCoverRunner;
 	
 	#if neko
@@ -99,7 +100,6 @@ class MCover
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
 	{
 		includePackage(pack, classPaths, ignore);
-
 	
 		for(i in 0...Lambda.count(classHash))
 		{

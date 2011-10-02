@@ -1,8 +1,8 @@
 package massive.mcover.client;
 
 import massive.mcover.CoverageClient;
-import massive.mcover.CoverageEntry;
-import massive.mcover.CoverageEntryCollection;
+import massive.mcover.CodeBlock;
+import massive.mcover.CodeBlockCollection;
 
 class PrintClient implements CoverageClient
 {
@@ -62,7 +62,7 @@ class PrintClient implements CoverageClient
 		divider = "----------------------------------------------------------------";
 	}
 
-	public function logEntry(entry:CoverageEntry)
+	public function log(block:CodeBlock)
 	{
 		//null;
 	}
@@ -70,21 +70,23 @@ class PrintClient implements CoverageClient
 
 	var total:Int;
 	var count:Int;
-	var entries:IntHash<CoverageEntry>;
-	var classes:Hash<CoverageEntryCollection>;
-	var packages:Hash<CoverageEntryCollection>;
+	var data:CoverageData;
+	
+	var packages:Hash<CodeBlockCollection>;
+	var files:Hash<CodeBlockCollection>;
+	var classes:Hash<CodeBlockCollection>;
+	var methods:Hash<CodeBlockCollection>;
 		
 
-	public function report(total:Int, count:Int, entries:IntHash<CoverageEntry>,
-		classes:Hash<CoverageEntryCollection>, packages:Hash<CoverageEntryCollection>):Dynamic
+	public function report(total:Int, count:Int, data:CoverageData):Dynamic
 	{
 		output = "";
 	
 		this.total = total;
 		this.count = count;
-		this.entries = entries;
-		this.classes = classes;
-		this.packages = packages;
+		this.data = data;
+
+		sortBlocks();
 
 		printReport();
 
@@ -95,6 +97,57 @@ class PrintClient implements CoverageClient
 		return output;
 	}
 
+	function sortBlocks()
+	{
+		
+		packages = new Hash();
+		files = new Hash();
+		classes = new Hash();
+		methods = new Hash();				
+
+
+		for(i in 0...Lambda.count(data.blocks))
+		{
+			var block = data.blocks.get(i);
+			addBlockToHashes(block);
+		}
+
+	}
+
+	function addBlockToHashes(block:CodeBlock)
+	{
+		var key:String;
+		
+		//by package
+		key =  block.packageName != "" ?  block.packageName : "[default]";
+		if(!packages.exists(key))
+		{
+			packages.set(key, new CodeBlockCollection(key));
+		}
+		var pckg = packages.get(key);
+		pckg.addBlock(block);
+
+		/// by file
+		key = block.filePath;
+		if(!files.exists(key))
+		{
+			files.set(key, new CodeBlockCollection(key));
+		}
+		var file = files.get(key);
+		file.addBlock(block);
+
+		//by class
+		key = block.packageName != "" ? block.packageName + "." + block.className : block.className;
+		if(!classes.exists(key))
+		{
+			classes.set(key, new CodeBlockCollection(key));
+		}
+		var cls = classes.get(key);
+		cls.addBlock(block);
+
+	}
+
+
 	function printReport()
 	{
 		var percent = Math.round(count/total*1000)/10;
@@ -103,12 +156,12 @@ class PrintClient implements CoverageClient
 		print(divider);
 
 		#if MCOVER_DEBUG
-		printCoveredEntries(entries);
+		printCoveredBlocks(data.blocks);
 		#end
 
 		if(count != total)
 		{
-			printMissingEntries(entries);
+			printMissingBlocks(data.blocks);
 		}
 
 		printClassResults(classes);
@@ -131,34 +184,34 @@ class PrintClient implements CoverageClient
 		print(divider);
 	}
 
-	function printMissingEntries(entries:IntHash<CoverageEntry>)
+	function printMissingBlocks(blocks:IntHash<CodeBlock>)
 	{
 		print("");
 		print("MISSING CODE BLOCKS:");
 		print("");
 
-		for(i in 0...Lambda.count(entries))
+		for(i in 0...Lambda.count(data.blocks))
 		{
-			var entry = entries.get(i);
-			if(!entry.result) printToTabs(["", entry.location]);
+			var block = blocks.get(i);
+			if(!block.result) printToTabs(["", block.qualifiedClassName + "#" + block.methodName + " " + block.location]);
 		}
 	}
 
-	function printCoveredEntries(entries:IntHash<CoverageEntry>)
+	function printCoveredBlocks(blocks:IntHash<CodeBlock>)
 	{
 		print("");
 		print("COVERED CODE BLOCKS:");
 		print("");
-		for(i in 0...Lambda.count(entries))
+		for(i in 0...Lambda.count(data.blocks))
 		{
-			var entry = entries.get(i);
-			if(entry.result) printToTabs(["", entry.location]);
+			var block = blocks.get(i);
+			if(!block.result) printToTabs(["", block.qualifiedClassName + "#" + block.methodName + " " + block.location]);
 			
 		}
 	}
 
 
-	function printPackageResults(packages:Hash<CoverageEntryCollection>)
+	function printPackageResults(packages:Hash<CodeBlockCollection>)
 	{
 		packageTotal = 0;
 		packagePartialCount = 0;
@@ -180,7 +233,7 @@ class PrintClient implements CoverageClient
 
 	}
 
-	function printClassResults(classes:Hash<CoverageEntryCollection>)
+	function printClassResults(classes:Hash<CodeBlockCollection>)
 	{
 		classTotal = 0;
 		classPartialCount = 0;

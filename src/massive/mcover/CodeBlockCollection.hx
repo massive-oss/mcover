@@ -1,26 +1,28 @@
 package massive.mcover;
 
-class CoverageEntryCollection
+class CodeBlockCollection
 {
 	public var name:String;
-	public var entries:IntHash<CoverageEntry>;
+	public var blocks:IntHash<CodeBlock>;
 	public var count(get_count, null):Int;
 	public var total(get_total, null):Int;
 	public var percent(get_percent, null):Int;
 	public function new(name:String)
 	{
 		this.name = name;
-		entries = new IntHash();	
+		blocks = new IntHash();
 	}
 
-	public function addEntry(entry:CoverageEntry)
+	public function addBlock(block:CodeBlock)
 	{
-		for ( elem in entries)
+		for ( elem in blocks)
 		{
-    		if(elem == entry) throw "Entry aleady exists in result " + entry;
+    		if(elem == block) throw "Block aleady exists in result " + blocks;
     	}
 
-		entries.set(Lambda.count(entries), entry);
+		blocks.set(Lambda.count(blocks), block);
+
+		
 	}
 
 	public function get_percent():Int
@@ -31,9 +33,9 @@ class CoverageEntryCollection
 	function get_count():Int
 	{
 		var n = 0;
-		for ( elem in entries)
+		for ( block in blocks)
 		{
-    		if(elem.result) n++;
+    		if(block.result) n++;
 
     	}
     	return n;
@@ -41,6 +43,6 @@ class CoverageEntryCollection
 
 	function get_total():Int
 	{
-		return Lambda.count(entries);
+		return Lambda.count(blocks);
 	}
 }

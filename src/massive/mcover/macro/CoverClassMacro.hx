@@ -8,7 +8,8 @@ class CoverClassMacro
 {
 	#if macro
 	
-	static public  var hash:IntHash<String> = new IntHash();
+	static var data:CoverageData = new CoverageData();
+	
 
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
@@ -16,15 +17,11 @@ class CoverClassMacro
 	*/
 	static public function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
-		var output = "";
-		for(i in 0...Lambda.count(hash))
-		{
-			var entry = hash.get(i);
-			if(output != "") output += "\n";
-        	output += entry;
-		}
-       	// trace("\n    " + output.split("\n").join("\n    ") + "\n\n    total:" + Lambda.count(hash) + "\n");
-        Context.addResource("MCover", haxe.io.Bytes.ofString(output));
+
+       	var serializedData = haxe.Serializer.run(data);
+       
+        Context.addResource(MCover.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
+
 	}
 
 	/**
@@ -53,6 +50,7 @@ class CoverClassMacro
 
 	static inline var META_TAG_IGNORE:String = "IgnoreCover";
 	static var currentClassName:String;
+	static var currentMethodName:String;
 
 	static function parseFields(fields:Array<Field>):Array<Field>
 	{
@@ -78,6 +76,7 @@ class CoverClassMacro
     	{
     		case FFun(f):
     		{	
+    			currentMethodName = field.name == "new" ? "constructor" : field.name;
     			if(f.expr != null )
 				{
 					f.expr = parseExpression(f.expr);
@@ -267,11 +266,11 @@ class CoverClassMacro
 	/**
 	* generates a call to the runner to insert into the code block containing a unique key
 	*		mcover.MCoverRunner.log(xxx)
-	* @see createCoverageEntry for key format
+	* @see createCodeBlock for key format
 	**/
 	static function createCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		var coverageString:String = createCoverageEntry(pos);
+		var coverageString:String = createCoverageBlock(pos);
 		
 		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
 
@@ -302,22 +301,26 @@ class CoverClassMacro
 	}
 
 	/**
-	* generate a unique key for the entry in the following format:
-	*		id|file|package|class name|min character|max character|location
+	* generate a unique key for the code block in the following format:
+	*		id|file|package|class name|method name|min character|max character|location
 	* examples:
-	*		1|src/Main.hx||Main|1012|1161|src/Main.hx:72: lines 72-78
-	*		2|src/example/Example.hx|example|Example|160|174|src/example/Example.hx:18: characters 2-16
+	*		1|src/Main.hx||Main|new|1012|1161|src/Main.hx:72: lines 72-78
+	*		2|src/example/Example.hx|example|Example|method|160|174|src/example/Example.hx:18: characters 2-16
 	**/
-	static function createCoverageEntry(pos:Position, ?type:String="")
+	static function createCoverageBlock(pos:Position, ?type:String="")
 	{
 		var posInfo = Context.getPosInfos(pos);
 		var posString = Std.string(pos);
 		var summary:String = posString.substr(5, posString.length-6);
 
 		var file:String = posInfo.file;
-		var entry:String;
+		var blockStr:String;
 
-		var count = Lambda.count(hash);
+		var count = Lambda.count(data.blocks);
+
+		var packageName:String;
+		var qualifiedClassName:String;
+				
 
 		for (cp in MCover.classPathHash)
 		{
@@ -331,20 +334,38 @@ class CoverClassMacro
 
 				parts.pop();//remve the default class name for this file;
 
-				var clsName = currentClassName;
-				var packageName = (parts.length > 0) ? parts.join(".") : "";
+			
+				packageName  = (parts.length > 0) ? parts.join(".") : "";
+				qualifiedClassName  = ((parts.length > 0) ? packageName + "." : "") + currentClassName;
 	
-				entry = count + "|" + file + "|" + packageName + "|" + clsName + "|" + posInfo.min + "|" + posInfo.max + "|" + summary;
+				blockStr = count + "|" + file + "|" + packageName + "|" + currentClassName + "|" + currentMethodName + "|" + posInfo.min + "|" + posInfo.max + "|" + summary;
 
 				break;
 			}
 		}
-		if(entry == null) throw "Invalid coverage position";
+		if(blockStr == null) throw "Invalid coverage position";
 
-		hash.set(count, entry);
-		//trace(entry);
-		return entry;
+
+		var block = new CodeBlock(blockStr);
+
+		data.blocks.set(count, block);
+
+
+		if(!Lambda.has(data.packages, packageName)) data.packages.set(Lambda.count(data.packages), packageName);
+
+
+
+		if(!Lambda.has(data.files, file)) data.files.set(Lambda.count(data.files), file);
+		
+
+		if(!Lambda.has(data.classes, qualifiedClassName)) data.classes.set(Lambda.count(data.classes), qualifiedClassName);
+		
+		//trace(block);
+		return blockStr;
 	}
+
+	
+		
 
 
 	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
