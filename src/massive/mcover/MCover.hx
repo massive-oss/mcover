@@ -39,9 +39,9 @@ import haxe.macro.Compiler;
 	static public var runner(default, null):MCoverRunner;
 	
 	#if neko
-	static public var logQueue:Deque<String> = new Deque();
+	static public var logQueue:Deque<Int> = new Deque();
 	#else
-	static public var logQueue:Array<String> = [];
+	static public var logQueue:Array<Int> = [];
 	#end
 
 	static public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
@@ -67,12 +67,12 @@ import haxe.macro.Compiler;
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
-	static public function log(value:String)
+	static public function log(id:Int)
 	{	
 		#if neko
-		logQueue.add(value);
+		logQueue.add(id);
 		#else
-		logQueue.push(value);
+		logQueue.push(id);
 		#end
 		
 	}
@@ -105,7 +105,7 @@ import haxe.macro.Compiler;
 		{
 			debug("    " + classHash.get(i));
 		}
-	
+
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -134,7 +134,6 @@ import haxe.macro.Compiler;
 			cp = cp.substr(0, -1);
 		
 			classPaths[i] = cp;
-			
 			classPathHash.set(Lambda.count(classPathHash), cp);
 		}
 		
@@ -165,21 +164,16 @@ import haxe.macro.Compiler;
 	static function getClassesInFile(path:String):Array<String>
 	{
 		var classes:Array<String> = [];
-
 		var contents = neko.io.File.getContent(path);
-
 		var reg:EReg = ~/^(.*)class ([A-Z]([A-Za-z0-9])+)/;
 
 		while(reg.match(contents))
 		{
-			//if(reg.matched(1).indexOf("@IgnoreCover"))
-			//trace(reg.matched(1));
 			classes.push(reg.matched(2));
 			contents = reg.matchedRight();
 		}
 		return classes;
 	}
-
 
 	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
 	{
@@ -187,6 +181,5 @@ import haxe.macro.Compiler;
 			neko.Lib.println(posInfos.fileName+ ":" + posInfos.lineNumber + ": " + value);
 		#end
 	}
-	
 	#end
 }

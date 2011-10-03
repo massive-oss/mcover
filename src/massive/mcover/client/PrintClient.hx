@@ -2,7 +2,8 @@ package massive.mcover.client;
 
 import massive.mcover.CoverageClient;
 import massive.mcover.CodeBlock;
-import massive.mcover.CodeBlockCollection;
+import massive.mcover.CoverageData;
+
 
 class PrintClient implements CoverageClient
 {
@@ -50,7 +51,6 @@ class PrintClient implements CoverageClient
 	var classCompletedCount:Int;
 	var classPartialCount:Int;
 
-
 	public function new(?id:String=null)
 	{
 		if(id == null) id = DEFAULT_ID;
@@ -67,26 +67,13 @@ class PrintClient implements CoverageClient
 		//null;
 	}
 	
-
-	var total:Int;
-	var count:Int;
 	var data:CoverageData;
-	
-	var packages:Hash<CodeBlockCollection>;
-	var files:Hash<CodeBlockCollection>;
-	var classes:Hash<CodeBlockCollection>;
-	var methods:Hash<CodeBlockCollection>;
-		
 
-	public function report(total:Int, count:Int, data:CoverageData):Dynamic
+	public function report(data:CoverageData):Dynamic
 	{
 		output = "";
 	
-		this.total = total;
-		this.count = count;
 		this.data = data;
-
-		sortBlocks();
 
 		printReport();
 
@@ -97,75 +84,23 @@ class PrintClient implements CoverageClient
 		return output;
 	}
 
-	function sortBlocks()
-	{
-		
-		packages = new Hash();
-		files = new Hash();
-		classes = new Hash();
-		methods = new Hash();				
-
-
-		for(i in 0...Lambda.count(data.blocks))
-		{
-			var block = data.blocks.get(i);
-			addBlockToHashes(block);
-		}
-
-	}
-
-	function addBlockToHashes(block:CodeBlock)
-	{
-		var key:String;
-		
-		//by package
-		key =  block.packageName != "" ?  block.packageName : "[default]";
-		if(!packages.exists(key))
-		{
-			packages.set(key, new CodeBlockCollection(key));
-		}
-		var pckg = packages.get(key);
-		pckg.addBlock(block);
-
-		/// by file
-		key = block.filePath;
-		if(!files.exists(key))
-		{
-			files.set(key, new CodeBlockCollection(key));
-		}
-		var file = files.get(key);
-		file.addBlock(block);
-
-		//by class
-		key = block.packageName != "" ? block.packageName + "." + block.className : block.className;
-		if(!classes.exists(key))
-		{
-			classes.set(key, new CodeBlockCollection(key));
-		}
-		var cls = classes.get(key);
-		cls.addBlock(block);
-
-	}
-
-
 	function printReport()
 	{
-		var percent = Math.round(count/total*1000)/10;
 
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		#if MCOVER_DEBUG
-		printCoveredBlocks(data.blocks);
+		printCoveredBlocks();
 		#end
 
-		if(count != total)
+		if(data.percent != 100)
 		{
-			printMissingBlocks(data.blocks);
+			printMissingBlocks();
 		}
 
-		printClassResults(classes);
-		printPackageResults(packages);
+		printClassResults();
+		printPackageResults();
 
 		print("");
 		print(divider);
@@ -174,17 +109,19 @@ class PrintClient implements CoverageClient
 		
 		print("");
 
-		printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 20);
-		printToTabs(["total classes", classPartialCount + " /" + classTotal], 20);
-		printToTabs(["total blocks", count + " /" + total], 20);
+		printToTabs(["total files", Lambda.count(data.files)], 16);
+		printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 16);
+		
+		printToTabs(["total classes", classPartialCount + " /" + classTotal], 16);
+		printToTabs(["total blocks", data.count + " /" + data.total], 16);
 		
 		print("");
-		printToTabs(["RESULT", percent + "%"], 20);
+		printToTabs(["RESULT", data.percent + "%"], 16);
 		print("");
 		print(divider);
 	}
 
-	function printMissingBlocks(blocks:IntHash<CodeBlock>)
+	function printMissingBlocks()
 	{
 		print("");
 		print("MISSING CODE BLOCKS:");
@@ -192,26 +129,24 @@ class PrintClient implements CoverageClient
 
 		for(i in 0...Lambda.count(data.blocks))
 		{
-			var block = blocks.get(i);
-			if(!block.result) printToTabs(["", block.qualifiedClassName + "#" + block.methodName + " " + block.location]);
+			var block = data.blocks.get(i);
+			if(!block.hasCount()) printToTabs(["",  block.toString()]);
 		}
 	}
 
-	function printCoveredBlocks(blocks:IntHash<CodeBlock>)
+	function printCoveredBlocks()
 	{
 		print("");
 		print("COVERED CODE BLOCKS:");
 		print("");
 		for(i in 0...Lambda.count(data.blocks))
 		{
-			var block = blocks.get(i);
-			if(!block.result) printToTabs(["", block.qualifiedClassName + "#" + block.methodName + " " + block.location]);
-			
+			var block = data.blocks.get(i);
+			if(block.hasCount()) printToTabs(["", block.toString()]);
 		}
 	}
 
-
-	function printPackageResults(packages:Hash<CodeBlockCollection>)
+	function printPackageResults()
 	{
 		packageTotal = 0;
 		packagePartialCount = 0;
@@ -221,19 +156,17 @@ class PrintClient implements CoverageClient
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
 		printToTabs(["", "result","blocks","package"]);
-		for(pckg in packages)
+		for(pckg in data.packages)
 		{
 			packageTotal += 1;
 			if(pckg.count > 0) packagePartialCount += 1;
 			if(pckg.percent == 100) packageCompletedCount += 1;
 
-
-			printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name]);
+			printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name=="" ? "[Default]": pckg.name]);
 		}
-
 	}
 
-	function printClassResults(classes:Hash<CodeBlockCollection>)
+	function printClassResults()
 	{
 		classTotal = 0;
 		classPartialCount = 0;
@@ -242,13 +175,45 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
 		print("");
-		printToTabs(["", "result","blocks","class"]);
-		for(cls in classes)
+		printToTabs(["", "result","methods","blocks","class"]);
+
+		for(cls in data.classes)
 		{
 			classTotal += 1;
 			if(cls.count > 0) classPartialCount += 1;
 			if(cls.percent == 100) classCompletedCount += 1;
-			printToTabs(["", cls.percent + "%",cls.count + "/" + cls.total, cls.name]);
+
+			var methodTotals:Hash<Int> = new Hash();
+			var methodCounts:Hash<Int> = new Hash();
+
+			for(i in cls.blocks)
+			{
+				var block = data.blocks.get(i);
+		
+				var key:String = block.methodName;
+				var value:Int = block.hasCount() ? 1 : 0;
+
+				if(!methodTotals.exists(key))
+				{
+					methodTotals.set(key, 1);
+					methodCounts.set(key, value);
+				}
+				else
+				{
+					methodTotals.set(key, methodTotals.get(key) + 1);
+					methodCounts.set(key, methodCounts.get(key) + value);
+				}
+			}
+
+			var methodTotal:Int = Lambda.count(methodTotals);
+			var methodCount:Int = 0;
+
+			for(key in methodTotals.keys())
+			{
+				if(methodCounts.get(key) > 0) methodCount += 1;
+			}
+			
+			printToTabs(["", cls.percent + "%",methodCount + "/" + methodTotal, cls.count + "/" + cls.total, cls.name]);
 		}
 	}
 

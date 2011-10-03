@@ -24,10 +24,9 @@ interface CoverageClient
 	/**
 	 * Called when all tests are complete.
 	 *  
-	 * @param	total		total number of blocks
-	 * @param	count		total number of blocks executed
-	 * @param	data		coverage data containing all blocks
+	 * @param	data	arrgregated coverage data containing all blocks, counts, etc
 	 * @return	collated result data if any
+	 * @see massive.mcover.CoverageData;
 	 */
-	function report(total:Int, count:Int, data:CoverageData):Dynamic;
+	function report(data:CoverageData):Dynamic;
 }

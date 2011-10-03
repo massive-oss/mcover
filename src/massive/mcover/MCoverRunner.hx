@@ -3,7 +3,6 @@ package massive.mcover;
 import massive.mcover.client.TraceClient;
 import massive.mcover.CoverageClient;
 import massive.mcover.CodeBlock;
-import massive.mcover.CodeBlockCollection;
 
 import massive.mcover.util.Timer;
 
@@ -14,11 +13,9 @@ interface MCoverRunner
 	 */
 	var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
 	
-	var total(default, null):Int;
-	var count(default, null):Int;
+	var data(default, null):CoverageData;
 
 	function report():Void;
-	
 
 	/**
 	 * Add a coverage clients to interpret coverage results.
@@ -59,18 +56,10 @@ class MCoverRunnerImpc implements MCoverRunner
 		return completionHandler = value;
 	}
 
-	public var total(default, null):Int;
-	public var count(default, null):Int;
+	public var data(default, null):CoverageData;
 
 	var initialized:Bool;
-
 	var clients:Array<CoverageClient>;
-	var data:CoverageData;
-	
-	//var blocks:IntHash<CodeBlock>;
-	//var classes:Hash<CodeBlockCollection>;
-	//var packages:Hash<CodeBlockCollection>;
-	
 	var clientCompleteCount:Int;
 	var timer:Timer;
 
@@ -80,11 +69,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	public function new()
 	{
 		clients = [];
-
-		//blocks = new IntHash();
-		//classes = new Hash();
-		//packages = new Hash();
-
 		reset();
 	}
 
@@ -110,19 +94,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		}
 		tick();//make sure to capture any pending logs
 
-		clientCompleteCount = 0;
-
-		if(clients.length == 0)
-		{
-			var client = new TraceClient();
-			client.completionHandler = clientCompletionHandler;
-			clients.push(client);
-		}
-			
-		for (client in clients)
-		{	
-			client.report(total, count, data);
-		}
+		generateReport();
 	}
 
 	public function addClient(client:CoverageClient)
@@ -170,9 +142,8 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			init();
 		}
-
 		
-		var tempLogs:Array<String> = [];
+		var tempLogs:Array<Int> = [];
 		#if neko
 			var value = MCover.logQueue.pop(false);
 			while(value != null)
@@ -195,55 +166,35 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		initialized = true;
 		clients = [];
-
-		//blocks = new IntHash();
-		//classes = new Hash();
-		//packages = new Hash();
-
 		loadCoverageData();		
-		
-		total = Lambda.count(data.blocks);
-		count = 0;
 	}
 
 	/**
-	 * Log an individual call from within the code base.
-	 * Do not call directly. The method only called via code injection by the compiler
+	 * Log an individual code block being executed within the code base.
 	 * 
-	 * @param	blockString		a string representation of a code block
+	 * @param	id		a block identifier
 	 * @see mcover.CodeBlock
 	 */
-	function log(value:String)
+	function log(id:Int)
 	{		
 		//trace(value);
-		var temp = new CodeBlock(value);
-		
-		if(!data.blocks.exists(temp.id)) throw "Unexpected block " + value;
-		
-		var block = data.blocks.get(temp.id);
+		if(!data.blocks.exists(id)) throw "Unexpected block " + id;
+		var block = data.blocks.get(id);
 
-		if(!block.result)
+		if(!block.hasCount())
 		{
-			count += 1;
+			//this is the first time this block has been called
+			data.count += 1;
+			data.packages.get(block.packageName).count += 1;
+			data.files.get(block.file).count += 1;
+			data.classes.get(block.qualifiedClassName).count += 1;
 		}
+		
 		block.count += 1;
 
 		for (client in clients)
 		{	
 			client.log(block);
-		}
-	}
-	
-	function clientCompletionHandler(client:CoverageClient):Void
-	{
-		if (++clientCompleteCount == clients.length)
-		{
-			if (completionHandler != null)
-			{
-				var percent:Float = count/total;
-				var handler:Dynamic = completionHandler;
-				Timer.delay(function() { handler(percent); }, 1);
-			}
 		}
 	}
 
@@ -254,19 +205,40 @@ class MCoverRunnerImpc implements MCoverRunner
 		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + MCover.RESOURCE_DATA  + "'";
 
 		data = haxe.Unserializer.run(serializedData);
+	}
 
-		/*
-		var lines = file.split("\n");
+	function generateReport()
+	{
+		reportToClients();
+	}
 
-		for(line in lines)
+	function reportToClients()
+	{
+		clientCompleteCount = 0;
+
+		if(clients.length == 0)
 		{
-			line = StringTools.trim(line);
-			if(line.length == 0) continue;
-			var block = new CodeBlock(line);
+			var client = new TraceClient();
+			client.completionHandler = clientCompletionHandler;
+			clients.push(client);
+		}
 			
-			blocks.set(Lambda.count(blocks), block);
-			
-		}*/
-
+		for (client in clients)
+		{	
+			client.report(data);
+		}
+	}
+	
+	function clientCompletionHandler(client:CoverageClient):Void
+	{
+		if (++clientCompleteCount == clients.length)
+		{
+			if (completionHandler != null)
+			{
+				var percent:Float = data.percent;
+				var handler:Dynamic = completionHandler;
+				Timer.delay(function() { handler(percent); }, 1);
+			}
+		}
 	}
 }

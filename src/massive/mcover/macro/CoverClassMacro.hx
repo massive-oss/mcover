@@ -3,6 +3,8 @@ package massive.mcover.macro;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
+
+import massive.mcover.CoverageData;
 #end
 class CoverClassMacro
 {
@@ -264,14 +266,15 @@ class CoverClassMacro
 		return Context.makePosition(posInfos);
 	}
 	/**
-	* generates a call to the runner to insert into the code block containing a unique key
-	*		mcover.MCoverRunner.log(xxx)
+	* generates a call to the runner to insert into the code block containing a unique id
+	*		mcover.MCoverRunner.log(id)
 	* @see createCodeBlock for key format
 	**/
 	static function createCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		var coverageString:String = createCoverageBlock(pos);
-		
+		var block = findBlockInClassPaths(pos);
+		var blockId = Std.string(block.id);
+			
 		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
 
 		var cIdent = EConst(CIdent("massive"));
@@ -291,8 +294,9 @@ class CoverClassMacro
 		var fieldExpr = {expr:eField, pos:pos};
 		
 
-		pos = incrementPos(pos, coverageString.length);
-		var argsExpr = {expr:EConst(CString(coverageString)), pos:pos};
+
+		pos = incrementPos(pos, blockId.length);
+		var argsExpr = {expr:EConst(CInt(blockId)), pos:pos};
 
 		pos = incrementPos(pos, 2);
 		var coverExpr = {expr:ECall(fieldExpr, [argsExpr]), pos:pos};
@@ -300,73 +304,76 @@ class CoverClassMacro
 		return coverExpr;
 	}
 
-	/**
-	* generate a unique key for the code block in the following format:
-	*		id|file|package|class name|method name|min character|max character|location
-	* examples:
-	*		1|src/Main.hx||Main|new|1012|1161|src/Main.hx:72: lines 72-78
-	*		2|src/example/Example.hx|example|Example|method|160|174|src/example/Example.hx:18: characters 2-16
-	**/
-	static function createCoverageBlock(pos:Position, ?type:String="")
+	
+	static function findBlockInClassPaths(pos:Position):CodeBlock
 	{
 		var posInfo = Context.getPosInfos(pos);
-		var posString = Std.string(pos);
-		var summary:String = posString.substr(5, posString.length-6);
-
 		var file:String = posInfo.file;
-		var blockStr:String;
-
-		var count = Lambda.count(data.blocks);
-
-		var packageName:String;
-		var qualifiedClassName:String;
-				
 
 		for (cp in MCover.classPathHash)
 		{
 			//trace(cp + ", " + file);
 			if(file.indexOf(cp) == 0)
-			{
-				
-				var cls = file.substr(cp.length+1, file.length-cp.length-4);
-				
-				var parts = cls.split("/");
-
-				parts.pop();//remve the default class name for this file;
-
-			
-				packageName  = (parts.length > 0) ? parts.join(".") : "";
-				qualifiedClassName  = ((parts.length > 0) ? packageName + "." : "") + currentClassName;
-	
-				blockStr = count + "|" + file + "|" + packageName + "|" + currentClassName + "|" + currentMethodName + "|" + posInfo.min + "|" + posInfo.max + "|" + summary;
-
-				break;
+			{	
+				return createCodeBlock(cp, file, pos);
 			}
 		}
-		if(blockStr == null) throw "Invalid coverage position";
-
-
-		var block = new CodeBlock(blockStr);
-
-		data.blocks.set(count, block);
-
-
-		if(!Lambda.has(data.packages, packageName)) data.packages.set(Lambda.count(data.packages), packageName);
-
-
-
-		if(!Lambda.has(data.files, file)) data.files.set(Lambda.count(data.files), file);
-		
-
-		if(!Lambda.has(data.classes, qualifiedClassName)) data.classes.set(Lambda.count(data.classes), qualifiedClassName);
-		
-		//trace(block);
-		return blockStr;
+		throw "Invalid coverage position " + Std.string(pos);
+		return null;
 	}
 
-	
-		
 
+	static function createCodeBlock(cp:String, file:String, pos:Position):CodeBlock
+	{
+
+		var block = new CodeBlock();
+
+		block.id = Lambda.count(data.blocks);
+		block.file = file;
+
+
+		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
+		var parts = filePath.split("/");
+		parts.pop();
+		block.packageName = (parts.length > 0) ? parts.join(".") : "";
+		block.className = currentClassName;
+		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
+		block.methodName = currentMethodName;
+
+
+		var posInfo = Context.getPosInfos(pos);
+
+		block.min = posInfo.min;
+		block.max = posInfo.max;
+
+		var posString = Std.string(pos);
+
+		block.location = posString.substr(5, posString.length-6);
+		data.blocks.set(block.id, block);
+
+		//add references to other hashes
+
+		var blocksByPackage = getBlockSetInHash(data.packages, block.packageName);
+		blocksByPackage.addBlock(block);
+
+		var blocksByClass = getBlockSetInHash(data.classes, block.qualifiedClassName);
+		blocksByClass.addBlock(block);
+
+		var blocksByFile =getBlockSetInHash(data.files, block.file);
+		blocksByFile.addBlock(block);
+
+		return block;
+	}
+
+	static function getBlockSetInHash(hash:Hash<CoverageDataSet>, key:String):CoverageDataSet
+	{
+		if(!hash.exists(key))
+		{
+			var id:Int = Lambda.count(hash);
+			hash.set(key, new CoverageDataSet(id, key));
+		}
+		return hash.get(key);
+	}
 
 	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
 	{
