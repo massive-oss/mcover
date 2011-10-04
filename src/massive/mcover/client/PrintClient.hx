@@ -1,8 +1,9 @@
 package massive.mcover.client;
 
 import massive.mcover.CoverageClient;
-import massive.mcover.CodeBlock;
-import massive.mcover.CoverageData;
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
+import massive.mcover.data.AllClasses;
 
 
 class PrintClient implements CoverageClient
@@ -62,18 +63,24 @@ class PrintClient implements CoverageClient
 		divider = "----------------------------------------------------------------";
 	}
 
-	public function log(block:CodeBlock)
+	public function logStatement(statement:Statement)
+	{
+		//null;
+	}
+
+	public function logBranch(branch:Branch)
 	{
 		//null;
 	}
 	
-	var data:CoverageData;
+	var allClasses:AllClasses;
 
-	public function report(data:CoverageData):Dynamic
+	public function report(allClasses:AllClasses):Dynamic
 	{
 		output = "";
 	
-		this.data = data;
+		this.allClasses = allClasses;
+
 
 		printReport();
 
@@ -86,136 +93,187 @@ class PrintClient implements CoverageClient
 
 	function printReport()
 	{
-
+		print(divider);
 		print("MCover v0 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
-		#if MCOVER_DEBUG
-		printCoveredBlocks();
-		#end
+		// #if MCOVER_DEBUG
+		// printCoveredBlocks();
+		// #end
 
-		if(data.percent != 100)
+		if(allClasses.getPercentage() != 100)
 		{
 			printMissingBlocks();
 		}
 
-		printClassResults();
-		printPackageResults();
+
+		var r = allClasses.getResults();
+
+		var columnWidth:Int = 20;
+		
 
 		print("");
 		print(divider);
 		print("");
+	
 		print("OVERALL STATS SUMMARY:");
-		
-		print("");
+		printToTabs(["total packages", r.pc + "/" + r.p], columnWidth);
+		printToTabs(["total files", r.fc + "/" + r.f], columnWidth);
 
-		printToTabs(["total files", Lambda.count(data.files)], 16);
-		printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 16);
-		
-		printToTabs(["total classes", classPartialCount + " /" + classTotal], 16);
-		printToTabs(["total blocks", data.count + " /" + data.total], 16);
-		
-		print("");
-		printToTabs(["RESULT", data.percent + "%"], 16);
+		printToTabs(["total classes", r.cc + "/" + r.c], columnWidth);
+		printToTabs(["total methods", r.mc + "/" + r.m], columnWidth);
+		printToTabs(["total statements", r.sc + "/" + r.s], columnWidth);
+		printToTabs(["total branches", r.bc + "/" + r.b], columnWidth);
 		print("");
 		print(divider);
+		printToTabs(["PERCENT", allClasses.getPercentage() + "%"], columnWidth);
+		print(divider);
+		print("");
+		return;
+
+		// print("MCover v0 Coverage Report, generated " + Date.now().toString());
+		// print(divider);
+
+		// #if MCOVER_DEBUG
+		// printCoveredBlocks();
+		// #end
+
+		// if(allClasses.percent != 100)
+		// {
+		// 	printMissingBlocks();
+		// }
+
+		// printClassResults();
+		// printPackageResults();
+
+		// print("");
+		// print(divider);
+		// print("");
+		// print("OVERALL STATS SUMMARY:");
+		
+		// print("");
+
+		// printToTabs(["total files", Lambda.count(data.files)], 16);
+		// printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 16);
+		
+		// printToTabs(["total classes", classPartialCount + " /" + classTotal], 16);
+		// printToTabs(["total blocks", data.count + " /" + data.total], 16);
+		
+		// print("");
+		// printToTabs(["RESULT", data.percent + "%"], 16);
+		// print("");
+		// print(divider);
 	}
 
 	function printMissingBlocks()
 	{
 		print("");
-		print("MISSING CODE BLOCKS:");
+		print("MISSING BRANCHES:");
 		print("");
 
-		for(i in 0...Lambda.count(data.blocks))
+		var branches = allClasses.getMissingBranches();
+
+		for(block in branches)
 		{
-			var block = data.blocks.get(i);
-			if(!block.hasCount()) printToTabs(["",  block.toString()]);
+			printToTabs(["",  block.toString()]);
 		}
+
+		print("");
+		print("MISSING STATEMENTS:");
+		print("");
+
+		var statements = allClasses.getMissingStatements();
+
+		for(block in statements)
+		{
+			printToTabs(["",  block.toString()]);
+		}
+
+	
 	}
 
-	function printCoveredBlocks()
-	{
-		print("");
-		print("COVERED CODE BLOCKS:");
-		print("");
-		for(i in 0...Lambda.count(data.blocks))
-		{
-			var block = data.blocks.get(i);
-			if(block.hasCount()) printToTabs(["", block.toString()]);
-		}
-	}
+	// function printCoveredBlocks()
+	// {
+	// 	print("");
+	// 	print("COVERED CODE BLOCKS:");
+	// 	print("");
+	// 	for(i in 0...Lambda.count(data.blocks))
+	// 	{
+	// 		var block = data.blocks.get(i);
+	// 		if(block.hasCount()) printToTabs(["", block.toString()]);
+	// 	}
+	// }
 
-	function printPackageResults()
-	{
-		packageTotal = 0;
-		packagePartialCount = 0;
-		packageCompletedCount = 0;
+	// function printPackageResults()
+	// {
+	// 	packageTotal = 0;
+	// 	packagePartialCount = 0;
+	// 	packageCompletedCount = 0;
 
-		print("");
-		print("COVERAGE BREAKDOWN BY PACKAGE:");
-		print("");
-		printToTabs(["", "result","blocks","package"]);
-		for(pckg in data.packages)
-		{
-			packageTotal += 1;
-			if(pckg.count > 0) packagePartialCount += 1;
-			if(pckg.percent == 100) packageCompletedCount += 1;
+	// 	print("");
+	// 	print("COVERAGE BREAKDOWN BY PACKAGE:");
+	// 	print("");
+	// 	printToTabs(["", "result","blocks","package"]);
+	// 	for(pckg in data.packages)
+	// 	{
+	// 		packageTotal += 1;
+	// 		if(pckg.count > 0) packagePartialCount += 1;
+	// 		if(pckg.percent == 100) packageCompletedCount += 1;
 
-			printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name=="" ? "[Default]": pckg.name]);
-		}
-	}
+	// 		printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name=="" ? "[Default]": pckg.name]);
+	// 	}
+	// }
 
-	function printClassResults()
-	{
-		classTotal = 0;
-		classPartialCount = 0;
-		classCompletedCount = 0;
+	// function printClassResults()
+	// {
+	// 	classTotal = 0;
+	// 	classPartialCount = 0;
+	// 	classCompletedCount = 0;
 
-		print("");
-		print("COVERAGE BREAKDOWN BY CLASSES:");
-		print("");
-		printToTabs(["", "result","methods","blocks","class"]);
+	// 	print("");
+	// 	print("COVERAGE BREAKDOWN BY CLASSES:");
+	// 	print("");
+	// 	printToTabs(["", "result","methods","blocks","class"]);
 
-		for(cls in data.classes)
-		{
-			classTotal += 1;
-			if(cls.count > 0) classPartialCount += 1;
-			if(cls.percent == 100) classCompletedCount += 1;
+	// 	for(cls in data.classes)
+	// 	{
+	// 		classTotal += 1;
+	// 		if(cls.count > 0) classPartialCount += 1;
+	// 		if(cls.percent == 100) classCompletedCount += 1;
 
-			var methodTotals:Hash<Int> = new Hash();
-			var methodCounts:Hash<Int> = new Hash();
+	// 		var methodTotals:Hash<Int> = new Hash();
+	// 		var methodCounts:Hash<Int> = new Hash();
 
-			for(i in cls.blocks)
-			{
-				var block = data.blocks.get(i);
+	// 		for(i in cls.blocks)
+	// 		{
+	// 			var block = data.blocks.get(i);
 		
-				var key:String = block.methodName;
-				var value:Int = block.hasCount() ? 1 : 0;
+	// 			var key:String = block.methodName;
+	// 			var value:Int = block.hasCount() ? 1 : 0;
 
-				if(!methodTotals.exists(key))
-				{
-					methodTotals.set(key, 1);
-					methodCounts.set(key, value);
-				}
-				else
-				{
-					methodTotals.set(key, methodTotals.get(key) + 1);
-					methodCounts.set(key, methodCounts.get(key) + value);
-				}
-			}
+	// 			if(!methodTotals.exists(key))
+	// 			{
+	// 				methodTotals.set(key, 1);
+	// 				methodCounts.set(key, value);
+	// 			}
+	// 			else
+	// 			{
+	// 				methodTotals.set(key, methodTotals.get(key) + 1);
+	// 				methodCounts.set(key, methodCounts.get(key) + value);
+	// 			}
+	// 		}
 
-			var methodTotal:Int = Lambda.count(methodTotals);
-			var methodCount:Int = 0;
+	// 		var methodTotal:Int = Lambda.count(methodTotals);
+	// 		var methodCount:Int = 0;
 
-			for(key in methodTotals.keys())
-			{
-				if(methodCounts.get(key) > 0) methodCount += 1;
-			}
+	// 		for(key in methodTotals.keys())
+	// 		{
+	// 			if(methodCounts.get(key) > 0) methodCount += 1;
+	// 		}
 			
-			printToTabs(["", cls.percent + "%",methodCount + "/" + methodTotal, cls.count + "/" + cls.total, cls.name]);
-		}
-	}
+	// 		printToTabs(["", cls.percent + "%",methodCount + "/" + methodTotal, cls.count + "/" + cls.total, cls.name]);
+	// 	}
+	// }
 
 	function print(value:Dynamic)
 	{

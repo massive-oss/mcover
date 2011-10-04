@@ -1,5 +1,9 @@
 package massive.mcover;
 
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
+import massive.mcover.data.AllClasses;
+
 interface CoverageClient
 {
 	/**
@@ -14,19 +18,25 @@ interface CoverageClient
 
 		
 	/**
-	 * Called when a code block is executed at runtime.
+	 * Called when a statement code block is executed at runtime.
 	 *  
 	 * @param	block		a code block  
 	 */
-	function log(block:CodeBlock):Void;
+	function logStatement(statement:Statement):Void;
 	
+	/**
+	 * Called when a branch code block is executed at runtime.
+	 *  
+	 * @param	block		a code block  
+	 */
+	function logBranch(branch:Branch):Void;
 	
 	/**
 	 * Called when all tests are complete.
 	 *  
-	 * @param	data	arrgregated coverage data containing all blocks, counts, etc
+	 * @param	allClasses	arrgregated coverage data containing all statements, branches orded by package/file/class/method
 	 * @return	collated result data if any
-	 * @see massive.mcover.CoverageData;
+	 * @see massive.mcover.data.AllClasses;
 	 */
-	function report(data:CoverageData):Dynamic;
+	function report(allClasses:AllClasses):Dynamic;
 }

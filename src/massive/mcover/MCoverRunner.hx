@@ -2,9 +2,11 @@ package massive.mcover;
 
 import massive.mcover.client.TraceClient;
 import massive.mcover.CoverageClient;
-import massive.mcover.CodeBlock;
-
 import massive.mcover.util.Timer;
+import massive.mcover.data.AllClasses;
+
+import massive.mcover.data.CoverageResult;
+import massive.mcover.MCover;
 
 interface MCoverRunner
 {
@@ -13,7 +15,7 @@ interface MCoverRunner
 	 */
 	var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
 	
-	var data(default, null):CoverageData;
+	var allClasses(default, null):AllClasses;
 
 	function report():Void;
 
@@ -56,12 +58,14 @@ class MCoverRunnerImpc implements MCoverRunner
 		return completionHandler = value;
 	}
 
-	public var data(default, null):CoverageData;
+	public var allClasses(default, null):AllClasses;
 
 	var initialized:Bool;
 	var clients:Array<CoverageClient>;
 	var clientCompleteCount:Int;
 	var timer:Timer;
+
+	var coverageResult:CoverageResult;
 
 	/**
 	 * Class constructor.
@@ -143,22 +147,41 @@ class MCoverRunnerImpc implements MCoverRunner
 			init();
 		}
 		
-		var tempLogs:Array<Int> = [];
+		var tempStatements:Array<Int> = [];
 		#if neko
-			var value = MCover.logQueue.pop(false);
+			var value = MCover.statementQueue.pop(false);
 			while(value != null)
 			{
-				tempLogs.push(value);
-				value = MCover.logQueue.pop(false);
+				tempStatements.push(value);
+				value = MCover.statementQueue.pop(false);
 			}
 		#else
-			tempLogs = MCover.logQueue.concat([]);
-			MCover.logQueue = [];
+			tempStatements = MCover.statementQueue.concat([]);
+			MCover.statementQueue = [];
 		#end
 
-		for(value in tempLogs)
+		for(value in tempStatements)
 		{
-			log(value);
+			logStatement(value);
+		}
+
+		var tempBranches:Array<BranchResult> = new Array();
+
+		#if neko
+			var value = MCover.branchQueue.pop(false);
+			while(value != null)
+			{
+				tempBranches.push(value);
+				value = MCover.branchQueue.pop(false);
+			}
+		#else
+			tempBranches = MCover.branchQueue.concat([]);
+			MCover.branchQueue = [];
+		#end
+
+		for(value in tempBranches)
+		{
+			logBranch(value);
 		}
 	}
 
@@ -166,7 +189,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		initialized = true;
 		clients = [];
-		loadCoverageData();		
+		loadGeneratedCoverageData();		
 	}
 
 	/**
@@ -175,40 +198,63 @@ class MCoverRunnerImpc implements MCoverRunner
 	 * @param	id		a block identifier
 	 * @see mcover.CodeBlock
 	 */
-	function log(id:Int)
+	function logStatement(id:Int)
 	{		
-		//trace(value);
-		if(!data.blocks.exists(id)) throw "Unexpected block " + id;
-		var block = data.blocks.get(id);
+		if(!allClasses.statements.exists(id)) throw "Unexpected statement " + id;
 
-		if(!block.hasCount())
-		{
-			//this is the first time this block has been called
-			data.count += 1;
-			data.packages.get(block.packageName).count += 1;
-			data.files.get(block.file).count += 1;
-			data.classes.get(block.qualifiedClassName).count += 1;
-		}
-		
-		block.count += 1;
+		var lookup:Array<Int> = allClasses.statements.get(id).concat([]);
+		var statement = allClasses.lookupStatement(lookup);
+
+		statement.count += 1;
 
 		for (client in clients)
 		{	
-			client.log(block);
+			client.logStatement(statement);
 		}
 	}
 
-	function loadCoverageData()
+	function logBranch(result:BranchResult)
+	{
+		if(!allClasses.branches.exists(result.id)) throw "Unexpected branch " + result.id;
+
+		var lookup:Array<Int> = allClasses.branches.get(result.id).concat([]);
+		var branch = allClasses.lookupBranch(lookup);
+
+		if(result.value)
+		{
+			branch.trueCount += 1;
+		}
+		else
+		{
+			branch.falseCount += 1;
+		}
+		
+		for (client in clients)
+		{	
+			client.logBranch(branch);
+		}
+	}
+
+	function loadGeneratedCoverageData()
 	{
 		var serializedData:String = haxe.Resource.getString(MCover.RESOURCE_DATA);
 
 		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + MCover.RESOURCE_DATA  + "'";
 
-		data = haxe.Unserializer.run(serializedData);
+		try
+		{
+			allClasses = haxe.Unserializer.run(serializedData);
+		}
+		catch(e:Dynamic)
+		{
+			trace("Unable to unserialize coverage data");
+			trace("   ERROR: " + e);
+		}
 	}
 
 	function generateReport()
 	{
+		allClasses.getResults(true);
 		reportToClients();
 	}
 
@@ -216,6 +262,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		clientCompleteCount = 0;
 
+	
 		if(clients.length == 0)
 		{
 			var client = new TraceClient();
@@ -225,7 +272,7 @@ class MCoverRunnerImpc implements MCoverRunner
 			
 		for (client in clients)
 		{	
-			client.report(data);
+			client.report(allClasses);
 		}
 	}
 	
@@ -235,7 +282,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			if (completionHandler != null)
 			{
-				var percent:Float = data.percent;
+				var percent:Float = allClasses.getPercentage();
 				var handler:Dynamic = completionHandler;
 				Timer.delay(function() { handler(percent); }, 1);
 			}

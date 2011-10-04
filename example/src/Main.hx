@@ -36,7 +36,7 @@ class Main
 	static public function here(?posInfos:haxe.PosInfos)
 	{
 		#if MCOVER_DEBUG
-		trace(Std.string(posInfos));
+		//trace(Std.string(posInfos));
 		#end
 	}
 
@@ -75,9 +75,9 @@ class Main
 	function branchTests()
 	{
 		branch(true, false);
-		// branch(false, false);
-		// branch(true, true);
-		// branch(false, false);
+		branch(false, false);
+		branch(true, true);
+		branch(false, false);
 
 
 	

@@ -1,6 +1,6 @@
 import massive.munit.TestSuite;
 
-import massive.mcover.CodeBlockTest;
+import massive.mcover.data.StatementTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -14,6 +14,6 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(massive.mcover.CodeBlockTest);
+		add(massive.mcover.data.StatementTest);
 	}
 }

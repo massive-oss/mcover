@@ -1,36 +1,34 @@
-package massive.mcover;
+package massive.mcover.data;
 
 /**
 * Reprents a unique code block {} within an application
 * Contains a number of properties relating to it's location and context.
 */
-class CodeBlock
+@:keep class AbstractBlock extends AbstractNode
 {
-	public var id:Int;
 	public var file:String;
+	
 	public var packageName:String;
 	public var className:String;
 	public var qualifiedClassName:String;
 	public var methodName:String;
 
-	
 	public var min:Int;
 	public var max:Int;
+
 	public var location:String;
 
-	public var count:Int;
+	public var lookup:Array<Int>;
 
-
-	public function new()
+	function new()
 	{
-		count = 0;
+		super();
 	}
 
-	public function hasCount():Bool
+	public function isCovered():Bool
 	{
-		return count > 0;
+		return false;
 	}
-
 
 	public function toString():String
 	{

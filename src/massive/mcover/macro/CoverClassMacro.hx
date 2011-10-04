@@ -4,13 +4,25 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 
-import massive.mcover.CoverageData;
+import massive.mcover.data.AllClasses;
+import massive.mcover.data.Package;
+import massive.mcover.data.File;
+import massive.mcover.data.Clazz;
+import massive.mcover.data.Method;
+import massive.mcover.data.AbstractBlock;
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
+
 #end
 class CoverClassMacro
 {
 	#if macro
 	
-	static var data:CoverageData = new CoverageData();
+
+	static var statementCount:Int = 0;
+	static var branchCount:Int = 0;
+	static var allClasses = new AllClasses();
+	
 	
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
@@ -19,7 +31,7 @@ class CoverClassMacro
 	static public function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
 
-       	var serializedData = haxe.Serializer.run(data);
+       	var serializedData = haxe.Serializer.run(allClasses);
        
         Context.addResource(MCover.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
 
@@ -327,75 +339,6 @@ class CoverClassMacro
 		return coverExpr;
 	}
 
-	
-	static function createCodeBlockReference(pos:Position):CodeBlock
-	{
-		var posInfo = Context.getPosInfos(pos);
-		var file:String = posInfo.file;
-
-		for (cp in MCover.classPathHash)
-		{
-			//trace(cp + ", " + file);
-			if(file.indexOf(cp) == 0)
-			{	
-				return createActualCodeBlock(cp, file, pos);
-			}
-		}
-		throw "Invalid coverage position " + Std.string(pos);
-		return null;
-	}
-
-
-	static function createActualCodeBlock(cp:String, file:String, pos:Position):CodeBlock
-	{
-		var block = new CodeBlock();
-
-		block.id = Lambda.count(data.blocks);
-		block.file = file;
-
-		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
-		var parts = filePath.split("/");
-		parts.pop();
-
-		block.packageName = (parts.length > 0) ? parts.join(".") : "";
-		block.className = currentClassName;
-		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
-		block.methodName = currentMethodName;
-
-
-		var posInfo = Context.getPosInfos(pos);
-
-		block.min = posInfo.min;
-		block.max = posInfo.max;
-
-		var posString = Std.string(pos);
-
-		block.location = posString.substr(5, posString.length-6);
-		data.blocks.set(block.id, block);
-
-		//add references to other hashes
-		var blocksByPackage = getBlockSetInHash(data.packages, block.packageName);
-		blocksByPackage.addBlock(block);
-
-		var blocksByClass = getBlockSetInHash(data.classes, block.qualifiedClassName);
-		blocksByClass.addBlock(block);
-
-		var blocksByFile =getBlockSetInHash(data.files, block.file);
-		blocksByFile.addBlock(block);
-
-		return block;
-	}
-
-	static function getBlockSetInHash(hash:Hash<CoverageDataSet>, key:String):CoverageDataSet
-	{
-		if(!hash.exists(key))
-		{
-			var id:Int = Lambda.count(hash);
-			hash.set(key, new CoverageDataSet(id, key));
-		}
-		return hash.get(key);
-	}
-
 	/**
 	* wraps a boolean value within a branch in a call to MCover.logBranch(id, value);
 	**/
@@ -403,7 +346,7 @@ class CoverClassMacro
 	{
 		
 		var pos = expr.pos;
-		var block = createCodeBlockReference(pos);
+		var block = createCodeBlockReference(pos, true);
 		var blockId = Std.string(block.id);
 			
 		var cIdent = EConst(CIdent("massive"));
@@ -431,9 +374,81 @@ class CoverClassMacro
 		expr.expr = ECall(fieldExpr, [arg1, arg2]);
 		return expr;
 	}
+	
+	static function createCodeBlockReference(pos:Position, ?isBranch:Bool = false):AbstractBlock
+	{
+		var posInfo = Context.getPosInfos(pos);
+		var file:String = posInfo.file;
+
+		for (cp in MCover.classPathHash)
+		{
+			//trace(cp + ", " + file);
+			if(file.indexOf(cp) == 0)
+			{	
+				return createReference(cp, file, pos, isBranch);
+			}
+		}
+		throw "Invalid coverage position " + Std.string(pos);
+		return null;
+	}
 
 
+	static function createReference(cp:String, file:String, pos:Position, isBranch:Bool):AbstractBlock
+	{
+		var block:AbstractBlock;
+		
+		if(isBranch)
+		{
+			block = new Branch();
+			block.id = branchCount ++;
+		}
+		else
+		{
+			block = new Statement();
+			block.id = statementCount++;
+		}
 
+		block.file = file;
+
+		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
+		var parts = filePath.split("/");
+		parts.pop();
+
+		block.packageName = (parts.length > 0) ? parts.join(".") : "";
+		block.className = currentClassName;
+		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
+		block.methodName = currentMethodName;
+
+
+		var posInfo = Context.getPosInfos(pos);
+
+		block.min = posInfo.min;
+		block.max = posInfo.max;
+
+		var posString = Std.string(pos);
+
+		block.location = posString.substr(5, posString.length-6);
+
+		var _package = cast(allClasses.getItemByName(block.packageName, Package), Package);
+		var _file = cast(_package.getItemByName(block.file, File), File);
+		var _class = cast(_file.getItemByName(block.qualifiedClassName, Clazz), Clazz);
+		var _method = cast(_class.getItemByName(block.methodName, Method), Method);
+
+
+		block.lookup = [_package.id, _file.id, _class.id,_method.id,block.id];
+
+		if(isBranch)
+		{
+			_method.addBranch(cast(block, Branch));
+			allClasses.branches.set(block.id, block.lookup);
+		}
+		else
+		{
+			_method.addStatement(cast(block, Statement));
+			allClasses.statements.set(block.id, block.lookup);
+		}
+		return block;
+	}
 
 	static function incrementPos(pos:Position, length:Int):Position
 	{

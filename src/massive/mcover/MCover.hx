@@ -1,5 +1,11 @@
 package massive.mcover;
 
+
+import massive.mcover.data.Package;
+import massive.mcover.data.File;
+import massive.mcover.data.Clazz;
+import massive.mcover.data.Method;
+
 #if !macro
 import massive.mcover.MCoverRunner;
 import massive.mcover.CoverageClient;
@@ -39,10 +45,13 @@ import haxe.macro.Compiler;
 	static public var runner(default, null):MCoverRunner;
 	
 	#if neko
-	static public var logQueue:Deque<Int> = new Deque();
+	static public var statementQueue:Deque<Int> = new Deque();
+	static public var branchQueue:Deque<BranchResult> = new Deque();
 	#else
-	static public var logQueue:Array<Int> = [];
+	static public var statementQueue:Array<Int> = [];
+	static public var branchQueue:Array<BranchResult> = [];
 	#end
+
 
 	static public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
 	{
@@ -67,12 +76,12 @@ import haxe.macro.Compiler;
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
-	static public function statement(id:Int, value:Bool=true)
+	static public function statement(id:Int)
 	{	
 		#if neko
-		logQueue.add(id);
+		statementQueue.add(id);
 		#else
-		logQueue.push(id);
+		statementQueue.push(id);
 		#end
 	}
 
@@ -83,8 +92,12 @@ import haxe.macro.Compiler;
 	@IgnoreCover
 	static public function branch(id:Int, value:Bool):Bool
 	{
-		trace([id, value]);
-		statement(id, value);
+		var result:BranchResult = {id:id, value:value};
+		#if neko
+		branchQueue.add(result);
+		#else
+		branchQueue.push(result);
+		#end
 		return value;
 	}
 
@@ -193,4 +206,10 @@ import haxe.macro.Compiler;
 		#end
 	}
 	#end
+}
+
+typedef BranchResult =
+{
+	id:Int,
+	value:Bool,
 }
