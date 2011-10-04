@@ -19,13 +19,18 @@ import massive.mcover.data.CoverageResult;
 
 	function hxSerialize( s : haxe.Serializer )
 	{
+        s.serialize(id);
+        s.serialize(name);
         s.serialize(itemsById);
         s.serialize(items);
         s.serialize(itemCount);
-    }
+     } 
 
     function hxUnserialize( s : haxe.Unserializer )
     {
+
+ 		id = s.unserialize();
+        name = s.unserialize();
         itemsById = s.unserialize();
         items = s.unserialize();
         itemCount = s.unserialize();
@@ -61,6 +66,17 @@ import massive.mcover.data.CoverageResult;
 		for(node in itemsById)
 		{
 			var tmp = node.getMissingStatements();
+			a = a.concat(tmp);
+		}
+		return a;
+	}
+
+	override public function getClasses():Array<Clazz>
+	{
+		var a:Array<Clazz> = [];
+		for(node in itemsById)
+		{
+			var tmp = node.getClasses();
 			a = a.concat(tmp);
 		}
 		return a;

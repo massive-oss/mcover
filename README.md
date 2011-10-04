@@ -61,47 +61,114 @@ You can set multiple custom clients if required:
 
 The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
 
-	
-	MCover v0 Coverage Report, generated 2011-09-29 14:39:35
+	----------------------------------------------------------------
+	MCover v0.2 Coverage Report, generated 2011-10-04 17:55:26
 	----------------------------------------------------------------
 
-	MISSING CODE BLOCKS:
+	MISSING BRANCH BLOCKS:
 
-	          src/Main.hx:64: characters 3-9
+	              Main#branch | src/Main.hx:88: characters 10-11 | t
+
+	MISSING STATEMENT BLOCKS:
+
+	              Main#otherTypes | src/Main.hx:119: characters 3-9
 
 	COVERAGE BREAKDOWN BY CLASSES:
 
-	          result    blocks    class     
-	          92%       12/13     Main      
-	          100%      1/1       InternalClass
-	          100%      4/4       example.Example
-	          100%      2/2       example.foo.Foo
+	              result        methods       statements    branches      class         
+	              100%          2/2           2/2           0/0           example.foo.Foo
+	              100%          3/3           3/3           0/0           example.Example
+	              95%           11/11         24/25         1/2           Main          
+	              100%          1/1           1/1           0/0           InternalClass 
 
 	COVERAGE BREAKDOWN BY PACKAGE:
 
-	          result    blocks    package   
-	          93%       13/14     [default] 
-	          100%      4/4       example   
-	          100%      2/2       example.foo
+	              result        files         classes       package       
+	              95.24%        1/1           2/2           [Default]     
+	              100%          1/1           1/1           example       
+	              100%          1/1           1/1           example.foo   
 
 	----------------------------------------------------------------
 
 	OVERALL STATS SUMMARY:
 
-	total packages      3                   
-	total classes       4                   
-	total blocks        19                  
-
-	RESULT              95%                 
+	total packages      3 / 3               
+	total files         3 / 3               
+	total classes       4 / 4               
+	total methods       17 / 17             
+	total statements    30 / 31             
+	total branches      1 / 2               
 
 	----------------------------------------------------------------
-
+	RESULT              96.15%              
+	----------------------------------------------------------------
 
 
 Coverage
 ---------------------
 
+### Overview
+
+MCover reports coverage on code statements and branches
+
+*	*Statement* coverage measures whether a block of code as been executrd
+	
+	function foo()
+	{
+		//one or more lines of code in a statement block
+
+	}
+
+*	*Branch* coverage measures possible code branches where multiple scenarios are possible by recording the boolean result of each operator. In the example if(a||b), branch coverage will determine if 'a' and 'b' have been evaluated to both 'true' and 'false' during execution.
+
+	e.g.
+	function foo(a:Bool, b:Bool)
+	{
+		if(a||b)
+		{
+			//do someting
+		}
+	}
+
+	foo(true, false);
+	for(false, true);
+
+
+*	*Method* coverage measures if one or more statements within a method was entered during execution.
+
+*	*Class* coverage measures if one or more methods within a class (static or instance) was entered during execution.
+
+*	*File* coverage measures if one or more classes within a file was entered during execution.
+
+*	*Package* coverage measures if one or more files within a file was entered during execution.
+
+
+### Coverage Percentage
+
+MCover uses the same formula as Clover (Java Coverage tool) for calculating a coverage percentage
+
+	TPC = (BT + BF + SC + MC)/(2*B + S + M)
+ 
+where
+ 
+	BT - branches that evaluated to "true" at least once
+	BF - branches that evaluated to "false" at least once
+	SC - statements covered
+	MC - methods entered
+	 
+
+	B - total number of branches
+	S - total number of statements
+	M - total number of methods
+
+
+
+### Current Implementation
+	
+
 MCover is still in development but it already covers most functional expressions including:
+
+Currently supported statement blocks
 
 *	class methods
 
@@ -118,6 +185,11 @@ MCover is still in development but it already covers most functional expressions
 *	terniary ops
 
 *	inline functions, arrays and objects (e.g. var o = {f:function(){var a = [1,2,3]}})
+
+
+Currently supported branch scenarios
+
+*	a || b
 
 
 Examples

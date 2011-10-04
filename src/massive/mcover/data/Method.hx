@@ -15,12 +15,16 @@ import massive.mcover.data.CoverageResult;
 
 	function hxSerialize( s : haxe.Serializer )
 	{
+		s.serialize(id);
+        s.serialize(name);
         s.serialize(statementsById);
         s.serialize(branchesById);
     }
     
     function hxUnserialize( s : haxe.Unserializer )
     {
+    	id = s.unserialize();
+        name = s.unserialize();
         statementsById = s.unserialize();
         branchesById = s.unserialize();
     }

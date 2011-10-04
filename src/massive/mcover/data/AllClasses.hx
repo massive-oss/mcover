@@ -42,17 +42,42 @@ import massive.mcover.data.CoverageResult;
 		return a;
 	}
 
+	override public function getClasses():Array<Clazz>
+	{
+
+		var a = super.getClasses();
+
+		a.sort(sortOnClazzId);
+		return a;
+	}
+
+	public function getPackages():Array<Package>
+	{
+		var a:Array<Package> = [];
+		for(item in itemsById)
+		{
+			a.push(cast(item, Package));
+		}
+		a.sort(sortOnPackageId);
+
+		return a;
+
+	}
+
 	function sortOnNodeId(a:AbstractNode, b:AbstractNode)
 	{
 		return a.id-b.id;
 	}
 
 
-
-	public function getPercentage():Float
+	function sortOnClazzId(a:Clazz, b:Clazz)
 	{
-		var r = getResults();
-		return Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+		return a.id-b.id;
+	}
+
+	function sortOnPackageId(a:Package, b:Package)
+	{
+		return a.id-b.id;
 	}
 
 

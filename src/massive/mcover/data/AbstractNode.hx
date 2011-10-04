@@ -30,12 +30,24 @@ package massive.mcover.data;
 		return NO_RESULTS;
 	}
 
+	public function getPercentage():Float
+	{
+		var r = getResults();
+		return Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+	}
+
+
 	public function getMissingBranches():Array<Branch>
 	{
 		return [];
 	}
 
 	public function getMissingStatements():Array<Statement>
+	{
+		return [];
+	}
+
+	public function getClasses():Array<Clazz>
 	{
 		return [];
 	}

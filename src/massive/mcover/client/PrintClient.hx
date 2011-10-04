@@ -94,7 +94,7 @@ class PrintClient implements CoverageClient
 	function printReport()
 	{
 		print(divider);
-		print("MCover v0 Coverage Report, generated " + Date.now().toString());
+		print("MCover v0.2 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		// #if MCOVER_DEBUG
@@ -106,6 +106,8 @@ class PrintClient implements CoverageClient
 			printMissingBlocks();
 		}
 
+		printClassResults();
+		printPackageResults();
 
 		var r = allClasses.getResults();
 
@@ -117,58 +119,26 @@ class PrintClient implements CoverageClient
 		print("");
 	
 		print("OVERALL STATS SUMMARY:");
-		printToTabs(["total packages", r.pc + "/" + r.p], columnWidth);
-		printToTabs(["total files", r.fc + "/" + r.f], columnWidth);
-
-		printToTabs(["total classes", r.cc + "/" + r.c], columnWidth);
-		printToTabs(["total methods", r.mc + "/" + r.m], columnWidth);
-		printToTabs(["total statements", r.sc + "/" + r.s], columnWidth);
-		printToTabs(["total branches", r.bc + "/" + r.b], columnWidth);
 		print("");
+		printToTabs(["total packages", r.pc + " / " + r.p], columnWidth);
+		printToTabs(["total files", r.fc + " / " + r.f], columnWidth);
+		printToTabs(["total classes", r.cc + " / " + r.c], columnWidth);
+		printToTabs(["total methods", r.mc + " / " + r.m], columnWidth);
+		printToTabs(["total statements", r.sc + " / " + r.s], columnWidth);
+		printToTabs(["total branches", r.bc + " / " + r.b], columnWidth);
+		print("");
+
 		print(divider);
-		printToTabs(["PERCENT", allClasses.getPercentage() + "%"], columnWidth);
+		printToTabs(["RESULT", allClasses.getPercentage() + "%"], columnWidth);
 		print(divider);
 		print("");
 		return;
-
-		// print("MCover v0 Coverage Report, generated " + Date.now().toString());
-		// print(divider);
-
-		// #if MCOVER_DEBUG
-		// printCoveredBlocks();
-		// #end
-
-		// if(allClasses.percent != 100)
-		// {
-		// 	printMissingBlocks();
-		// }
-
-		// printClassResults();
-		// printPackageResults();
-
-		// print("");
-		// print(divider);
-		// print("");
-		// print("OVERALL STATS SUMMARY:");
-		
-		// print("");
-
-		// printToTabs(["total files", Lambda.count(data.files)], 16);
-		// printToTabs(["total packages", packagePartialCount + " /" + packageTotal], 16);
-		
-		// printToTabs(["total classes", classPartialCount + " /" + classTotal], 16);
-		// printToTabs(["total blocks", data.count + " /" + data.total], 16);
-		
-		// print("");
-		// printToTabs(["RESULT", data.percent + "%"], 16);
-		// print("");
-		// print(divider);
 	}
 
 	function printMissingBlocks()
 	{
 		print("");
-		print("MISSING BRANCHES:");
+		print("MISSING BRANCH BLOCKS:");
 		print("");
 
 		var branches = allClasses.getMissingBranches();
@@ -179,7 +149,7 @@ class PrintClient implements CoverageClient
 		}
 
 		print("");
-		print("MISSING STATEMENTS:");
+		print("MISSING STATEMENT BLOCKS:");
 		print("");
 
 		var statements = allClasses.getMissingStatements();
@@ -192,95 +162,46 @@ class PrintClient implements CoverageClient
 	
 	}
 
-	// function printCoveredBlocks()
-	// {
-	// 	print("");
-	// 	print("COVERED CODE BLOCKS:");
-	// 	print("");
-	// 	for(i in 0...Lambda.count(data.blocks))
-	// 	{
-	// 		var block = data.blocks.get(i);
-	// 		if(block.hasCount()) printToTabs(["", block.toString()]);
-	// 	}
-	// }
+	function printPackageResults()
+	{
+		print("");
+		print("COVERAGE BREAKDOWN BY PACKAGE:");
+		print("");
+		printToTabs(["", "result","files","classes", "package"]);
 
-	// function printPackageResults()
-	// {
-	// 	packageTotal = 0;
-	// 	packagePartialCount = 0;
-	// 	packageCompletedCount = 0;
-
-	// 	print("");
-	// 	print("COVERAGE BREAKDOWN BY PACKAGE:");
-	// 	print("");
-	// 	printToTabs(["", "result","blocks","package"]);
-	// 	for(pckg in data.packages)
-	// 	{
-	// 		packageTotal += 1;
-	// 		if(pckg.count > 0) packagePartialCount += 1;
-	// 		if(pckg.percent == 100) packageCompletedCount += 1;
-
-	// 		printToTabs(["", pckg.percent + "%",pckg.count + "/" + pckg.total, pckg.name=="" ? "[Default]": pckg.name]);
-	// 	}
-	// }
-
-	// function printClassResults()
-	// {
-	// 	classTotal = 0;
-	// 	classPartialCount = 0;
-	// 	classCompletedCount = 0;
-
-	// 	print("");
-	// 	print("COVERAGE BREAKDOWN BY CLASSES:");
-	// 	print("");
-	// 	printToTabs(["", "result","methods","blocks","class"]);
-
-	// 	for(cls in data.classes)
-	// 	{
-	// 		classTotal += 1;
-	// 		if(cls.count > 0) classPartialCount += 1;
-	// 		if(cls.percent == 100) classCompletedCount += 1;
-
-	// 		var methodTotals:Hash<Int> = new Hash();
-	// 		var methodCounts:Hash<Int> = new Hash();
-
-	// 		for(i in cls.blocks)
-	// 		{
-	// 			var block = data.blocks.get(i);
+		var packages = allClasses.getPackages();
 		
-	// 			var key:String = block.methodName;
-	// 			var value:Int = block.hasCount() ? 1 : 0;
+		for(pckg in packages)
+		{
+			var r = pckg.getResults();
+			var packgName = (pckg.name == "")? "[Default]" : pckg.name;
+			printToTabs(["", pckg.getPercentage() + "%",r.fc + "/" + r.f, r.cc + "/" + r.c, packgName]);
+		}
+	}
 
-	// 			if(!methodTotals.exists(key))
-	// 			{
-	// 				methodTotals.set(key, 1);
-	// 				methodCounts.set(key, value);
-	// 			}
-	// 			else
-	// 			{
-	// 				methodTotals.set(key, methodTotals.get(key) + 1);
-	// 				methodCounts.set(key, methodCounts.get(key) + value);
-	// 			}
-	// 		}
+	function printClassResults()
+	{
+	
+		print("");
+		print("COVERAGE BREAKDOWN BY CLASSES:");
+		print("");
+		printToTabs(["", "result","methods","statements","branches", "class"]);
 
-	// 		var methodTotal:Int = Lambda.count(methodTotals);
-	// 		var methodCount:Int = 0;
-
-	// 		for(key in methodTotals.keys())
-	// 		{
-	// 			if(methodCounts.get(key) > 0) methodCount += 1;
-	// 		}
-			
-	// 		printToTabs(["", cls.percent + "%",methodCount + "/" + methodTotal, cls.count + "/" + cls.total, cls.name]);
-	// 	}
-	// }
+		var classes = allClasses.getClasses();
+		
+		for(cls in classes)
+		{
+			var r = cls.getResults();
+			printToTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, cls.name]);
+		}
+	}
 
 	function print(value:Dynamic)
 	{
 		output += newline + Std.string(value);
 	}
 
-	function printToTabs(args:Array<Dynamic>, ?columnWidth:Int=10)
+	function printToTabs(args:Array<Dynamic>, ?columnWidth:Int=14)
 	{
 		var s:String = "";
 		for(arg in args)

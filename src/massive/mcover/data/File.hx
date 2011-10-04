@@ -7,6 +7,16 @@ import massive.mcover.data.CoverageResult;
 		super();
 	}
 
+	override public function getClasses():Array<Clazz>
+	{
+		var a:Array<Clazz> = [];
+		for(item in itemsById)
+		{
+			a.push(cast(item, Clazz));
+		}
+		return a;
+	}
+
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
 		to = super.appendResults(to, from);
