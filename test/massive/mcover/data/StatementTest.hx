@@ -6,36 +6,40 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-class StatementTest 
+class StatementTest extends AbstractBlockTest
 {	
 	var statement:Statement;
 
 	public function new() 
 	{
-		
+		super();
 	}
-	
+
 	@BeforeClass
-	public function beforeClass():Void
+	override public function beforeClass():Void
 	{
+		super.beforeClass();
 	}
 	
 	@AfterClass
-	public function afterClass():Void
+	override public function afterClass():Void
 	{
+		super.afterClass();
 	}
 	
 	@Before
-	public function setup():Void
+	override public function setup():Void
 	{
-		statement = new Statement();
+		super.setup();
+		statement = createEmptyStatement();
 	}
 	
 	@After
-	public function tearDown():Void
+	override public function tearDown():Void
 	{
+		super.tearDown();
 	}
-	
+
 	@Test
 	public function shouldBeCoveredIfCountIncrements():Void
 	{
@@ -45,13 +49,20 @@ class StatementTest
 		Assert.isTrue(statement.isCovered());
 	}
 
-	@Test
-	public function testToString():Void
-	{
-		statement.qualifiedClassName = "a";
-		statement.methodName = "b";
-		statement.location = "c";
+	////////////////////////////////
 
-		Assert.areEqual("a#b | c", statement.toString());
+	override function createEmptyNode():AbstractNode
+	{
+		return createEmptyBlock();
+	}
+
+	override function createEmptyBlock():AbstractBlock
+	{
+		return createEmptyStatement();
+	}
+
+	function createEmptyStatement():Statement
+	{
+		return new Statement();
 	}
 }

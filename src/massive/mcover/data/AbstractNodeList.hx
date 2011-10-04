@@ -9,7 +9,7 @@ import massive.mcover.data.CoverageResult;
 	var items:Hash<Int>;
 	var itemCount:Int;
 
-	function new()
+	public function new()
 	{
 		super();
 		itemCount = 0;
@@ -17,34 +17,30 @@ import massive.mcover.data.CoverageResult;
 		items = new Hash();
 	}
 
-	function hxSerialize( s : haxe.Serializer )
+	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode
 	{
-        s.serialize(id);
-        s.serialize(name);
-        s.serialize(itemsById);
-        s.serialize(items);
-        s.serialize(itemCount);
-     } 
-
-    function hxUnserialize( s : haxe.Unserializer )
-    {
-
- 		id = s.unserialize();
-        name = s.unserialize();
-        itemsById = s.unserialize();
-        items = s.unserialize();
-        itemCount = s.unserialize();
-    }
+		if(!items.exists(name))
+		{
+			var item = Type.createInstance(cls, []);
+			item.id = itemCount ++;
+			item.name = name;
+			items.set(name, item.id);
+			itemsById.set(item.id, item);
+		}
+		return itemsById.get(items.get(name));
+	}
 
 	override public function lookupBranch(path:Array<Int>):Branch
 	{
 		var itemId = path.shift();
+		if(itemId == null || !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupBranch(path);
 	}
 
 	override public function lookupStatement(path:Array<Int>):Statement
 	{
 		var itemId = path.shift();
+		if(itemId == null|| !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupStatement(path);
 	}
 
@@ -85,7 +81,7 @@ import massive.mcover.data.CoverageResult;
 
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(!cache || resultCache == null)
+		if(resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
 			for(node in itemsById)
@@ -97,6 +93,8 @@ import massive.mcover.data.CoverageResult;
 
 		return resultCache;
 	}
+
+
 
 	function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
@@ -117,16 +115,24 @@ import massive.mcover.data.CoverageResult;
 		return to;
 	}
 
-	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode
+	function hxSerialize( s : haxe.Serializer )
 	{
-		if(!items.exists(name))
-		{
-			var item = Type.createInstance(cls, []);
-			item.id = itemCount ++;
-			item.name = name;
-			items.set(name, item.id);
-			itemsById.set(item.id, item);
-		}
-		return itemsById.get(items.get(name));
-	}
+        s.serialize(id);
+        s.serialize(name);
+        s.serialize(itemsById);
+        s.serialize(items);
+        s.serialize(itemCount);
+     } 
+
+    function hxUnserialize( s : haxe.Unserializer )
+    {
+
+ 		id = s.unserialize();
+        name = s.unserialize();
+        itemsById = s.unserialize();
+        items = s.unserialize();
+        itemCount = s.unserialize();
+    }
+
+	
 }

@@ -14,16 +14,6 @@ package massive.mcover.data;
 
 	}
 
-	public function lookupBranch(path:Array<Int>):Branch
-	{
-		return null;
-	}
-
-	public function lookupStatement(path:Array<Int>):Statement
-	{
-		return null;
-	}
-
 	public function getResults(?cache:Bool=true):CoverageResult
 	{
 		if(NO_RESULTS == null) NO_RESULTS = emptyResult();
@@ -35,8 +25,23 @@ package massive.mcover.data;
 		var r = getResults();
 		return Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
 	}
+	
+	public function getClasses():Array<Clazz>
+	{
+		return [];
+	}
 
+	public function lookupBranch(path:Array<Int>):Branch
+	{
+		return null;
+	}
 
+	public function lookupStatement(path:Array<Int>):Statement
+	{
+		return null;
+	}
+
+	
 	public function getMissingBranches():Array<Branch>
 	{
 		return [];
@@ -47,10 +52,7 @@ package massive.mcover.data;
 		return [];
 	}
 
-	public function getClasses():Array<Clazz>
-	{
-		return [];
-	}
+	
 
 	function emptyResult():CoverageResult
 	{
