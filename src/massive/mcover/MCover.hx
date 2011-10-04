@@ -67,14 +67,25 @@ import haxe.macro.Compiler;
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
-	static public function log(id:Int)
+	static public function statement(id:Int, value:Bool=true)
 	{	
 		#if neko
 		logQueue.add(id);
 		#else
 		logQueue.push(id);
 		#end
-		
+	}
+
+	/**
+	* Method called from injected code each time a binary operation resolves to true or false 
+	* Developers should not class this method directly.
+	**/
+	@IgnoreCover
+	static public function branch(id:Int, value:Bool):Bool
+	{
+		trace([id, value]);
+		statement(id, value);
+		return value;
 	}
 
 	#else

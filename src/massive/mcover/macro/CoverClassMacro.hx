@@ -12,7 +12,6 @@ class CoverClassMacro
 	
 	static var data:CoverageData = new CoverageData();
 	
-
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
 	* This resource is used by MCoverRunner to determine code coverage results
@@ -160,7 +159,11 @@ class CoverClassMacro
 					if(v.expr != null) tmp.push(v.expr);
 				}
 			}
-			case EBinop(op, e1, e2): tmp = [e1, e2];//e.g. i<2;
+			case EBinop(op, e1, e2):
+			{
+				//e.g. i<2; a||b, i==b
+				expr = parseBinop(expr, op, e1, e2);
+			}
 			case EUnop(op,postFix,e): tmp = [e];//e.g. i++;
 			case ETernary(econd, eif, eelse): 
 			{
@@ -246,33 +249,55 @@ class CoverClassMacro
 		return expr;
 	}
 
+
+	//e.g. i<2; a||b, i==b
+	static function parseBinop(expr:Expr, op:Binop, e1:Expr, e2:Expr):Expr
+	{
+		//debug(expr);
+		
+		switch(op)
+		{
+			case OpBoolOr:
+				e1 = createBranchCoverageExpr(e1);
+				e2 = createBranchCoverageExpr(e2);
+			default: null;//debug(expr);
+		}
+
+		//expr.expr = EBinop(op, e1, e2);
+
+		//debug(expr);
+
+		//expr = parseGenericExprDef(expr, [e1, e2]);
+		return expr;
+	}
+
+
+
 	static function parseBlock(expr:Expr, exprs:Array<Expr>):Expr
 	{
 		parseExpressions(exprs);
 
 		var pos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
 
-		var coverageExpr = createCoverageExpr(expr, pos);
+		var coverageExpr = createBlockCoverageExpr(expr, pos);
 
 		exprs.unshift(coverageExpr);
 
 		return expr;
 	}
 
-	static function incrementPos(pos:Position, length:Int):Position
-	{
-		var posInfos = Context.getPosInfos(pos);
-		posInfos.max = posInfos.min + length;
-		return Context.makePosition(posInfos);
-	}
+
+
+
+
 	/**
 	* generates a call to the runner to insert into the code block containing a unique id
 	*		mcover.MCoverRunner.log(id)
 	* @see createCodeBlock for key format
 	**/
-	static function createCoverageExpr(expr:Expr, pos:Position):Expr
+	static function createBlockCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		var block = findBlockInClassPaths(pos);
+		var block = createCodeBlockReference(pos);
 		var blockId = Std.string(block.id);
 			
 		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
@@ -289,23 +314,21 @@ class CoverClassMacro
 		pos = incrementPos(pos, 13);
 		var typeExpr = {expr:eType, pos:pos};
 
-		var eField = EField(typeExpr, "log");
+		var eField = EField(typeExpr, "statement");
 		pos = incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		
-
-
 		pos = incrementPos(pos, blockId.length);
-		var argsExpr = {expr:EConst(CInt(blockId)), pos:pos};
+		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
 
 		pos = incrementPos(pos, 2);
-		var coverExpr = {expr:ECall(fieldExpr, [argsExpr]), pos:pos};
+		var coverExpr = {expr:ECall(fieldExpr, [arg1]), pos:pos};
 
 		return coverExpr;
 	}
 
 	
-	static function findBlockInClassPaths(pos:Position):CodeBlock
+	static function createCodeBlockReference(pos:Position):CodeBlock
 	{
 		var posInfo = Context.getPosInfos(pos);
 		var file:String = posInfo.file;
@@ -315,7 +338,7 @@ class CoverClassMacro
 			//trace(cp + ", " + file);
 			if(file.indexOf(cp) == 0)
 			{	
-				return createCodeBlock(cp, file, pos);
+				return createActualCodeBlock(cp, file, pos);
 			}
 		}
 		throw "Invalid coverage position " + Std.string(pos);
@@ -323,18 +346,17 @@ class CoverClassMacro
 	}
 
 
-	static function createCodeBlock(cp:String, file:String, pos:Position):CodeBlock
+	static function createActualCodeBlock(cp:String, file:String, pos:Position):CodeBlock
 	{
-
 		var block = new CodeBlock();
 
 		block.id = Lambda.count(data.blocks);
 		block.file = file;
 
-
 		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
 		var parts = filePath.split("/");
 		parts.pop();
+
 		block.packageName = (parts.length > 0) ? parts.join(".") : "";
 		block.className = currentClassName;
 		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
@@ -352,7 +374,6 @@ class CoverClassMacro
 		data.blocks.set(block.id, block);
 
 		//add references to other hashes
-
 		var blocksByPackage = getBlockSetInHash(data.packages, block.packageName);
 		blocksByPackage.addBlock(block);
 
@@ -373,6 +394,52 @@ class CoverClassMacro
 			hash.set(key, new CoverageDataSet(id, key));
 		}
 		return hash.get(key);
+	}
+
+	/**
+	* wraps a boolean value within a branch in a call to MCover.logBranch(id, value);
+	**/
+	static function createBranchCoverageExpr(expr:Expr):Expr
+	{
+		
+		var pos = expr.pos;
+		var block = createCodeBlockReference(pos);
+		var blockId = Std.string(block.id);
+			
+		var cIdent = EConst(CIdent("massive"));
+		pos = incrementPos(pos, 7);
+		var identExpr = {expr:cIdent, pos:pos};
+
+		var eIdentField = EField(identExpr, "mcover");
+		pos = incrementPos(pos, 7);
+		var identFieldExpr = {expr:eIdentField, pos:pos};
+
+		var eType = EType(identFieldExpr, "MCover");
+		pos = incrementPos(pos, 13);
+		var typeExpr = {expr:eType, pos:pos};
+
+		var eField = EField(typeExpr, "branch");
+		pos = incrementPos(pos, 4);
+		var fieldExpr = {expr:eField, pos:pos};
+		
+		pos = incrementPos(pos, blockId.length);
+		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
+
+		pos = incrementPos(pos, 5);
+		var arg2 = {expr:expr.expr, pos:pos};
+
+		expr.expr = ECall(fieldExpr, [arg1, arg2]);
+		return expr;
+	}
+
+
+
+
+	static function incrementPos(pos:Position, length:Int):Position
+	{
+		var posInfos = Context.getPosInfos(pos);
+		posInfos.max = posInfos.min + length;
+		return Context.makePosition(posInfos);
 	}
 
 	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
