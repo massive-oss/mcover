@@ -119,49 +119,29 @@ class AbstractNodeListTest extends AbstractNodeTest
 	}
 
 	@Test
-	public function shouldReturnCachedResults()
-	{
-		var r1 = nodeList.getResults();
-	
-		var r2 = nodeList.getResults(true);
-		Assert.areEqual(r1, r2);
-
-		r2 = nodeList.getResults(false);
-		Assert.areNotEqual(r1, r2);
-	}
-	
-
-	@Test
 	public function shouldIncludeResultsFromItems()
 	{
 		var item1 = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
-
-
 		item1.results.sc = 0;
 
 		var r1 = nodeList.getResults();
 		Assert.areEqual(0, r1.sc);
 		Assert.areEqual(0, r1.s);	
 
-
 		item1.results.sc = 1;
-
 		var r2 = nodeList.getResults(true);
 		Assert.areEqual(0, r2.sc);
 		Assert.areEqual(0, r2.s);	
 
-
 		r2 = nodeList.getResults(false);
 		Assert.areEqual(1, r2.sc);
 		Assert.areEqual(0, r2.s);
-
 
 		var item2 = cast(nodeList.getItemByName("item2", NodeMock),NodeMock);
 		item2.results.sc = 1;
 		r2 = nodeList.getResults(false);
 		Assert.areEqual(2, r2.sc);
 		Assert.areEqual(0, r2.s);
-
 	}
 
 	@Test
@@ -169,7 +149,7 @@ class AbstractNodeListTest extends AbstractNodeTest
 	{
 		nodeList.id = 0;
 		nodeList.name = "nodeList";
-		var item1 = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
+		var item1:NodeMock = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
 		item1.id = 0;
 		item1.name = "foo";
 		var string = haxe.Serializer.run(nodeList);
@@ -178,13 +158,13 @@ class AbstractNodeListTest extends AbstractNodeTest
 		Assert.areEqual(nodeList.id, copy.id);
 		Assert.areEqual(nodeList.name, copy.name);
 
+		Assert.isNotNull(copy.getItemByName("item1", NodeMock));
 		var copyItem = cast(copy.getItemByName("item1", NodeMock),NodeMock);
 		Assert.areEqual(item1.id, copyItem.id);
 		Assert.areEqual(item1.name, copyItem.name);
 
 		var item2 =cast(copy.getItemByName("item2", NodeMock),NodeMock);
-		
-		Assert.areEqual(1, item2.id);		
+		Assert.areEqual(1, item2.id);
 	}
 	////////////////////////////////
 
@@ -197,6 +177,4 @@ class AbstractNodeListTest extends AbstractNodeTest
 	{
 		return Type.createInstance(AbstractNodeList, []);
 	}
-
 }
-	

@@ -42,10 +42,70 @@ class AbstractNodeTest
 	}
 
 	@Test
+	public function shouldReturnCachedResults()
+	{
+		var r1 = node.getResults();
+	
+		var r2 = node.getResults(true);
+		Assert.areEqual(r1, r2);
+
+		r2 = node.getResults(false);
+		Assert.areNotEqual(r1, r2);
+	}
+	
+	@Test
 	public function shouldHaveZeroPercentage():Void
 	{
 		var p = node.getPercentage();
 		Assert.areEqual(0, p);
+	}
+
+	@Test
+	public function shouldCalculateAccuratePercentage():Void
+	{
+		var r = node.getResults();
+
+		r = convertResultStringToResult(r, "0,0,0,0,0,0,0");
+		var p = node.getPercentage();
+		Assert.areEqual(0, p);
+
+		r = convertResultStringToResult(r, "0,0,1,0,1,0,1");
+		p = node.getPercentage();
+		Assert.areEqual(0/4, p);
+
+		r = convertResultStringToResult(r, "0,0,1,0,1,1,1");
+		p = node.getPercentage();
+		Assert.areEqual(25, p);
+
+		r = convertResultStringToResult(r, "0,0,1,1,1,1,1");
+		p = node.getPercentage();
+		Assert.areEqual(50, p);
+
+		r = convertResultStringToResult(r, "1,1,1,0,1,0,1");
+		p = node.getPercentage();
+		Assert.areEqual(50, p);
+
+		r = convertResultStringToResult(r, "1,1,1,1,1,0,1");
+		p = node.getPercentage();
+		Assert.areEqual(75, p);
+
+		r = convertResultStringToResult(r, "1,1,1,1,1,1,1");
+		p = node.getPercentage();
+		Assert.areEqual(100, p);
+	}
+
+	function convertResultStringToResult(r:CoverageResult, ?values:String="0,0,0,0,0,0,0"):CoverageResult
+	{
+		var a = values.split(",");
+		r.bt = Std.parseInt(a[0]);
+		r.bf = Std.parseInt(a[1]);
+		r.b = Std.parseInt(a[2]);
+		r.sc = Std.parseInt(a[3]);
+		r.s = Std.parseInt(a[4]);
+		r.mc = Std.parseInt(a[5]);
+		r.m = Std.parseInt(a[6]);
+
+		return r;
 	}
 
 	@Test
@@ -84,8 +144,6 @@ class AbstractNodeTest
 		Assert.areEqual(0, a.length);
 	}
 
-	
-
 	///////////////////////////
 
 	function createEmptyNode():AbstractNode
@@ -110,6 +168,4 @@ class AbstractNodeTest
 		Assert.areEqual(0, r.pc);
 		Assert.areEqual(0, r.p);
 	}
-
-
 }

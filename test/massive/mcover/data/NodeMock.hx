@@ -19,7 +19,7 @@ class NodeMock extends AbstractNode
 		results = emptyResult();
 	}
 
-	override public function getResults(?cache:Bool):CoverageResult
+	override public function getResults(?cache:Bool=true):CoverageResult
 	{
 		return results;
 	}
@@ -48,7 +48,7 @@ class NodeMock extends AbstractNode
 
 	///////////////////
 
-	public static function createClass():Clazz
+	function createClass():Clazz
 	{
 		var cls = new Clazz();
 		cls.id = 0;
@@ -56,7 +56,7 @@ class NodeMock extends AbstractNode
 		return cls;
 	}
 	
-	public static function createBranch():Branch
+	function createBranch():Branch
 	{
 		var branch = new Branch();
 		branch.id = 0;
@@ -64,7 +64,7 @@ class NodeMock extends AbstractNode
 		return branch;
 	}
 
-	public static function createStatement():Statement
+	function createStatement():Statement
 	{
 		var statement = new Statement();
 		statement.id = 0;

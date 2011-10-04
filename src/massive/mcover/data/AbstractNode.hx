@@ -2,8 +2,6 @@ package massive.mcover.data;
 
 @:keep class AbstractNode
 {
-	static var NO_RESULTS:CoverageResult;
-	
 	public var id:Int;
 	public var name:String;
 
@@ -16,14 +14,21 @@ package massive.mcover.data;
 
 	public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(NO_RESULTS == null) NO_RESULTS = emptyResult();
-		return NO_RESULTS;
+		if(resultCache == null || !cache)
+		{
+			resultCache = emptyResult();
+		}
+
+		return resultCache;
 	}
 
 	public function getPercentage():Float
 	{
 		var r = getResults();
-		return Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+		var p = Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+
+		if(Math.isNaN(p)) p = 0;
+		return p;
 	}
 	
 	public function getClasses():Array<Clazz>

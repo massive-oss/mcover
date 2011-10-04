@@ -63,13 +63,8 @@ class Main
 		tryCatch(true);
 
 		whileLoop();
-
 		otherTypes();
-
-		branchTests();
-
-
-		
+		branchTests();	
 	}
 
 	function branchTests()
@@ -78,9 +73,6 @@ class Main
 		branch(false, false);
 		branch(true, true);
 		branch(false, false);
-
-
-	
 	}
 
 	function branch(a:Bool, b:Bool)
@@ -90,7 +82,6 @@ class Main
 			here();
 		}
 	}
-
 
 	function otherTypes()
 	{
@@ -118,7 +109,6 @@ class Main
 		{
 			here();
 		}
-
 
 		var e2 = new example.Example2();
 		var e = cast(e2, example.Example);

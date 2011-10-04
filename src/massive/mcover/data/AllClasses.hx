@@ -10,8 +10,7 @@ import massive.mcover.data.CoverageResult;
 	{
 		super();
 		statements = new IntHash();
-		branches = new IntHash();
-			
+		branches = new IntHash();		
 	}
 
 	override function hxSerialize( s : haxe.Serializer )
@@ -44,9 +43,7 @@ import massive.mcover.data.CoverageResult;
 
 	override public function getClasses():Array<Clazz>
 	{
-
 		var a = super.getClasses();
-
 		a.sort(sortOnClazzId);
 		return a;
 	}
@@ -61,14 +58,12 @@ import massive.mcover.data.CoverageResult;
 		a.sort(sortOnPackageId);
 
 		return a;
-
 	}
 
 	function sortOnNodeId(a:AbstractNode, b:AbstractNode)
 	{
 		return a.id-b.id;
 	}
-
 
 	function sortOnClazzId(a:Clazz, b:Clazz)
 	{
@@ -80,7 +75,6 @@ import massive.mcover.data.CoverageResult;
 		return a.id-b.id;
 	}
 
-
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
 		to = super.appendResults(to, from);
@@ -88,10 +82,4 @@ import massive.mcover.data.CoverageResult;
 		to.p += 1;	
 		return to;
 	}
-
-
-
-	
-
-	
 }

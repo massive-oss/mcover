@@ -115,18 +115,6 @@ class MethodTest extends AbstractNodeTest
 		Assert.areEqual(statement1, missing[0]);
 	}
 
-
-	@Test
-	public function shouldReturnCachedResults()
-	{
-		var r1 = method.getResults();
-		var r2 = method.getResults(true);
-		Assert.areEqual(r1, r2);
-
-		r2 = method.getResults(false);
-		Assert.areNotEqual(r1, r2);
-	}
-
 	@Test
 	public function shouldAppendBranchesToResults()
 	{
@@ -177,7 +165,6 @@ class MethodTest extends AbstractNodeTest
 
 		Assert.areEqual(1, r.sc);
 		Assert.areEqual(1, r.s);
-		
 	}
 
 	@Test
