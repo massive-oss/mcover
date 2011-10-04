@@ -86,6 +86,7 @@ import massive.mcover.data.CoverageResult;
 			resultCache = emptyResult();
 			for(node in itemsById)
 			{
+			
 				var tmp = node.getResults();
 				resultCache = appendResults(resultCache, tmp);
 			}

@@ -121,16 +121,12 @@ class AbstractNodeListTest extends AbstractNodeTest
 	@Test
 	public function shouldReturnCachedResults()
 	{
-		var item1 = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
-		
 		var r1 = nodeList.getResults();
-		assertEmptyResult(r1);
-
+	
 		var r2 = nodeList.getResults(true);
 		Assert.areEqual(r1, r2);
 
 		r2 = nodeList.getResults(false);
-		assertEmptyResult(r2);
 		Assert.areNotEqual(r1, r2);
 	}
 	
@@ -140,13 +136,20 @@ class AbstractNodeListTest extends AbstractNodeTest
 	{
 		var item1 = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
 
+
+		item1.results.sc = 0;
+
 		var r1 = nodeList.getResults();
-		assertEmptyResult(r1);
+		Assert.areEqual(0, r1.sc);
+		Assert.areEqual(0, r1.s);	
+
 
 		item1.results.sc = 1;
 
 		var r2 = nodeList.getResults(true);
-		assertEmptyResult(r2);
+		Assert.areEqual(0, r2.sc);
+		Assert.areEqual(0, r2.s);	
+
 
 		r2 = nodeList.getResults(false);
 		Assert.areEqual(1, r2.sc);
@@ -159,6 +162,29 @@ class AbstractNodeListTest extends AbstractNodeTest
 		Assert.areEqual(2, r2.sc);
 		Assert.areEqual(0, r2.s);
 
+	}
+
+	@Test
+	public function shouldSerializeProperties():Void
+	{
+		nodeList.id = 0;
+		nodeList.name = "nodeList";
+		var item1 = cast(nodeList.getItemByName("item1", NodeMock),NodeMock);
+		item1.id = 0;
+		item1.name = "foo";
+		var string = haxe.Serializer.run(nodeList);
+		var copy:AbstractNodeList = haxe.Unserializer.run(string);
+
+		Assert.areEqual(nodeList.id, copy.id);
+		Assert.areEqual(nodeList.name, copy.name);
+
+		var copyItem = cast(copy.getItemByName("item1", NodeMock),NodeMock);
+		Assert.areEqual(item1.id, copyItem.id);
+		Assert.areEqual(item1.name, copyItem.name);
+
+		var item2 =cast(copy.getItemByName("item2", NodeMock),NodeMock);
+		
+		Assert.areEqual(1, item2.id);		
 	}
 	////////////////////////////////
 

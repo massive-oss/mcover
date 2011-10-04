@@ -12,7 +12,10 @@ import massive.mcover.data.CoverageResult;
 		var a:Array<Clazz> = [];
 		for(item in itemsById)
 		{
-			a.push(cast(item, Clazz));
+			if(Type.getClass(item) == Clazz)
+			{
+				a.push(cast(item, Clazz));	
+			}
 		}
 		return a;
 	}

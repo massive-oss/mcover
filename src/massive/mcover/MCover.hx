@@ -5,6 +5,8 @@ import massive.mcover.data.Package;
 import massive.mcover.data.File;
 import massive.mcover.data.Clazz;
 import massive.mcover.data.Method;
+import massive.mcover.data.Branch;
+import massive.mcover.data.Statement;
 
 #if !macro
 import massive.mcover.MCoverRunner;

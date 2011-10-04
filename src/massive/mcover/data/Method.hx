@@ -13,22 +13,6 @@ import massive.mcover.data.CoverageResult;
 		branchesById = new IntHash();
 	}
 
-	function hxSerialize( s : haxe.Serializer )
-	{
-		s.serialize(id);
-        s.serialize(name);
-        s.serialize(statementsById);
-        s.serialize(branchesById);
-    }
-    
-    function hxUnserialize( s : haxe.Unserializer )
-    {
-    	id = s.unserialize();
-        name = s.unserialize();
-        statementsById = s.unserialize();
-        branchesById = s.unserialize();
-    }
-
 	public function addStatement(value:Statement)
 	{
 		statementsById.set(value.id, value);
@@ -42,12 +26,14 @@ import massive.mcover.data.CoverageResult;
 	override public function lookupBranch(path:Array<Int>):Branch
 	{
 		var itemId = path.shift();
+		if(itemId == null || !branchesById.exists(itemId)) return null;
 		return branchesById.get(itemId);
 	}
 
 	override  public function lookupStatement(path:Array<Int>):Statement
 	{
 		var itemId = path.shift();
+		if(itemId == null || !statementsById.exists(itemId)) return null;
 		return statementsById.get(itemId);
 	}
 
@@ -72,7 +58,7 @@ import massive.mcover.data.CoverageResult;
 	}
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(!cache || resultCache == null)
+		if(resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
 			for(statement in statementsById)
@@ -90,4 +76,23 @@ import massive.mcover.data.CoverageResult;
 		}
 		return resultCache;
 	}
+	
+
+	///////////
+
+	function hxSerialize( s : haxe.Serializer )
+	{
+		s.serialize(id);
+        s.serialize(name);
+        s.serialize(statementsById);
+        s.serialize(branchesById);
+    }
+    
+    function hxUnserialize( s : haxe.Unserializer )
+    {
+    	id = s.unserialize();
+        name = s.unserialize();
+        statementsById = s.unserialize();
+        branchesById = s.unserialize();
+    }
 }

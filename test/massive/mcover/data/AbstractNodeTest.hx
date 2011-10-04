@@ -34,7 +34,6 @@ class AbstractNodeTest
 	{
 	}
 	
-	
 	@Test
 	public function shouldHaveEmptyResults():Void
 	{
@@ -42,14 +41,12 @@ class AbstractNodeTest
 		assertEmptyResult(r);
 	}
 
-
 	@Test
 	public function shouldHaveZeroPercentage():Void
 	{
 		var p = node.getPercentage();
 		Assert.areEqual(0, p);
 	}
-
 
 	@Test
 	public function shouldHaveNoClasses():Void

@@ -249,6 +249,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			trace("Unable to unserialize coverage data");
 			trace("   ERROR: " + e);
+			trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 		}
 	}
 
