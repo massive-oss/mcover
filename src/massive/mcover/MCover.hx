@@ -109,7 +109,6 @@ import haxe.macro.Compiler;
 	@IgnoreCover
 	static public function branch(id:Int, value:Bool):Bool
 	{
-		
 		var r:BranchResult = null;
 		
 		if(branchById.exists(id))
@@ -127,12 +126,19 @@ import haxe.macro.Compiler;
 		else r.falseCount ++;
 
 		r.total ++;
+			
+		if(r.result == "11") return value; //dont push to queue as already covered both scenarios
 
-		//dont push to queue as already covered both scenarios
-		if(r.result == "11") return value;
-
-		if(value) r.result = "1" + r.result.substr(1,1);
-		else r.result = r.result.substr(0,1) + "1";
+		if(value)
+		{
+			if(r.result.charAt(0) == "1") return value; //already logged true
+			r.result = "1" + r.result.substr(1,1);
+		}
+		else
+		{
+			if(r.result.charAt(1) == "1") return value; //already logged false
+			r.result = r.result.substr(0,1) + "1";
+		}
 		
 		#if neko
 		branchQueue.push(r);
