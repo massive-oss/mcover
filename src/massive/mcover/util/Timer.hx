@@ -99,6 +99,7 @@ class Timer
 			catch( ex:Dynamic )
 			{
 				trace(ex);
+				trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 			}
 
 			var msg = neko.vm.Thread.readMessage(false);

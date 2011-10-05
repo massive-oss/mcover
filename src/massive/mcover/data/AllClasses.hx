@@ -3,14 +3,60 @@ package massive.mcover.data;
 import massive.mcover.data.CoverageResult;
 @:keep class AllClasses extends AbstractNodeList
 {
-	public var statements:IntHash<Array<Int>>;
-	public var branches:IntHash<Array<Int>>;
+	var statements:IntHash<Array<Int>>;
+	var branches:IntHash<Array<Int>>;
 	
 	public function new()
 	{
 		super();
 		statements = new IntHash();
 		branches = new IntHash();		
+	}
+
+	public function addStatement(block:Statement)
+	{
+		if(statements.exists(block.id)) throw "Statement already exists" + block.id + " " + block.toString();
+		
+		var packg = cast(getItemByName(block.packageName, Package), Package);
+		var file = cast(packg.getItemByName(block.file, File), File);
+		var clazz = cast(file.getItemByName(block.qualifiedClassName, Clazz), Clazz);
+		var method = cast(clazz.getItemByName(block.methodName, Method), Method);
+
+		method.addStatement(block);
+
+		block.lookup = [packg.id, file.id, clazz.id,method.id,block.id];
+		statements.set(block.id, block.lookup.concat([]));
+	}
+
+	public function addBranch(block:Branch)
+	{
+		if(branches.exists(block.id)) throw "Branch already exists" + block.id + " " + block.toString();
+		
+		var packg = cast(getItemByName(block.packageName, Package), Package);
+		var file = cast(packg.getItemByName(block.file, File), File);
+		var clazz = cast(file.getItemByName(block.qualifiedClassName, Clazz), Clazz);
+		var method = cast(clazz.getItemByName(block.methodName, Method), Method);
+
+		method.addBranch(block);
+
+		block.lookup = [packg.id, file.id, clazz.id,method.id,block.id];
+		branches.set(block.id, block.lookup.concat([]));
+	}
+
+	public function getBranchById(id:Int):Branch
+	{
+		if(!branches.exists(id)) throw "Unexpected branch " + id;
+
+		var lookup:Array<Int> = branches.get(id).concat([]);
+		return lookupBranch(lookup);
+	}
+
+
+	public function getStatementById(id:Int):Statement
+	{
+		if(!statements.exists(id)) throw "Unexpected statement " + id;
+		var lookup:Array<Int> = statements.get(id).concat([]);
+		return lookupStatement(lookup);
 	}
 
 	override function hxSerialize( s : haxe.Serializer )

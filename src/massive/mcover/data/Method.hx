@@ -2,8 +2,8 @@ package massive.mcover.data;
 import massive.mcover.data.CoverageResult;
 @:keep class Method extends AbstractNode
 {
-	public var statementsById:IntHash<Statement>;
-	public var branchesById:IntHash<Branch>;
+	var statementsById:IntHash<Statement>;
+	var branchesById:IntHash<Branch>;
 
 	public function new()
 	{
@@ -21,6 +21,18 @@ import massive.mcover.data.CoverageResult;
 	public function addBranch(value:Branch)
 	{
 		branchesById.set(value.id, value);
+	}
+
+	public function getStatementById(id:Int):Statement
+	{
+		if(statementsById.exists(id)) return statementsById.get(id);
+		return null;
+	}
+
+	public function getBranchById(id:Int):Branch
+	{
+		if(branchesById.exists(id)) return branchesById.get(id);
+		return null;
 	}
 
 	override public function lookupBranch(path:Array<Int>):Branch

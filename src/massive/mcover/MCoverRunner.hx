@@ -6,6 +6,8 @@ import massive.mcover.util.Timer;
 import massive.mcover.data.AllClasses;
 
 import massive.mcover.data.CoverageResult;
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
 import massive.mcover.MCover;
 
 interface MCoverRunner
@@ -66,12 +68,14 @@ class MCoverRunnerImpc implements MCoverRunner
 	var timer:Timer;
 
 	var coverageResult:CoverageResult;
+	var startTime:Float;
 
 	/**
 	 * Class constructor.
 	 */
 	public function new()
 	{
+		startTime = Date.now().getTime();
 		clients = [];
 		reset();
 	}
@@ -96,9 +100,16 @@ class MCoverRunnerImpc implements MCoverRunner
 			timer.stop();
 			timer = null;
 		}
+
 		tick();//make sure to capture any pending logs
 
+		debug("gen report ");
 		generateReport();
+		debug("gen report complete ");
+
+		#if MCOVER_DEBUG
+		generateInternalStats();
+		#end
 	}
 
 	public function addClient(client:CoverageClient)
@@ -146,42 +157,29 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			init();
 		}
-		
-		var tempStatements:Array<Int> = [];
-		#if neko
-			var value = MCover.statementQueue.pop(false);
-			while(value != null)
-			{
-				tempStatements.push(value);
-				value = MCover.statementQueue.pop(false);
-			}
-		#else
-			tempStatements = MCover.statementQueue.concat([]);
-			MCover.statementQueue = [];
-		#end
 
-		for(value in tempStatements)
+		var statements:Array<Int> = [];
+		var value = MCover.statementQueue.pop(#if neko false #end);
+		while(value != null)
 		{
-			logStatement(value);
+			statements.push(value);
+			value = MCover.statementQueue.pop(#if neko false #end);
 		}
-
-		var tempBranches:Array<BranchResult> = new Array();
-
-		#if neko
-			var value = MCover.branchQueue.pop(false);
-			while(value != null)
-			{
-				tempBranches.push(value);
-				value = MCover.branchQueue.pop(false);
-			}
-		#else
-			tempBranches = MCover.branchQueue.concat([]);
-			MCover.branchQueue = [];
-		#end
-
-		for(value in tempBranches)
+		for(s in statements)
 		{
-			logBranch(value);
+			logStatement(s);
+		}
+	
+		var branches:Array<BranchResult> = [];
+		var value = MCover.branchQueue.pop(#if neko false #end);
+		while(value != null)
+		{
+			branches.push(value);
+			value = MCover.branchQueue.pop(#if neko false #end);
+		}
+		for(b in branches)
+		{
+			logBranch(b);
 		}
 	}
 
@@ -200,11 +198,10 @@ class MCoverRunnerImpc implements MCoverRunner
 	 */
 	function logStatement(id:Int)
 	{		
-		if(!allClasses.statements.exists(id)) throw "Unexpected statement " + id;
+		var statement = allClasses.getStatementById(id);
 
-		var lookup:Array<Int> = allClasses.statements.get(id).concat([]);
-		var statement = allClasses.lookupStatement(lookup);
-
+		if(statement == null) throw "Null statement for " + id;
+		
 		statement.count += 1;
 
 		for (client in clients)
@@ -213,21 +210,21 @@ class MCoverRunnerImpc implements MCoverRunner
 		}
 	}
 
-	function logBranch(result:BranchResult)
+	/**
+	* @param id	id of branch
+	* @param value - string representation of true/false branch executions (e.g. 1,ttfftf)
+	*/
+	function logBranch(log:BranchResult)
 	{
-		if(!allClasses.branches.exists(result.id)) throw "Unexpected branch " + result.id;
+		var id = log.id;
+		var value = log.result;
+		var branch = allClasses.getBranchById(id);
 
-		var lookup:Array<Int> = allClasses.branches.get(result.id).concat([]);
-		var branch = allClasses.lookupBranch(lookup);
+		if(branch == null) throw "Null branch for " + id;
+		
 
-		if(result.value)
-		{
-			branch.trueCount += 1;
-		}
-		else
-		{
-			branch.falseCount += 1;
-		}
+		if(value.charAt(0) == "1") branch.trueCount += 1;
+		if(value.charAt(1) == "1") branch.falseCount += 1;
 		
 		for (client in clients)
 		{	
@@ -289,4 +286,82 @@ class MCoverRunnerImpc implements MCoverRunner
 			}
 		}
 	}
+
+	/////////////// DEBUGGING METHODS  ////////////
+
+
+	/**
+	* Outputs all branch and statement logs sorted by highest frequency.
+	* For branches reports also totals for true/false  
+	*/
+	function generateInternalStats()
+	{
+		var output:String = "";
+
+		var statements:IntHash<Int> = MCover.getCopyOfStatements();
+		var s:Array<{statement:Statement, value:Int}> = [];
+		for(key in statements.keys())
+		{
+			s.push({statement:allClasses.getStatementById(key), value:statements.get(key)});
+		}
+		s.sort(function(a, b){return -a.value+b.value;});
+
+		output += "STATEMENTS ORDERED BY EXECUTION COUNT " + getTimer();
+		
+		output += "\n";
+		for(item in s)
+		{
+			output += "\n    ";
+			output += StringTools.rpad(Std.string(item.value), " ", 10);
+			output += item.statement.toString();
+		}
+
+		output += "\n\n";
+
+		var branches:IntHash<BranchResult> = MCover.getCopyOfBranches();
+		var b:Array<{branch:Branch, value:BranchResult}> = [];
+		for(key in branches.keys())
+		{
+			b.push({branch:allClasses.getBranchById(key), value: branches.get(key)});
+		}
+		b.sort(function(a, b){return -a.value.total+b.value.total;});
+
+		output += "BRANCHES ORDERED BY EXECUTION COUNT " + getTimer();
+		
+		output += "\n";
+		
+		output +="\n    ";
+		output += StringTools.rpad("TOTAL", " ", 10);
+		output += StringTools.rpad("TRUE", " ", 10);
+		output += StringTools.rpad("FALSE", " ", 10);
+		
+		output += "\n";
+
+		for(item in b)
+		{
+			output +="\n    ";
+			output += StringTools.rpad(Std.string(item.value.total), " ", 10);
+			output += StringTools.rpad(Std.string(item.value.trueCount), " ", 10);
+			output += StringTools.rpad(Std.string(item.value.falseCount), " ", 10);
+			output += item.branch.toString();
+		}
+		output += "\n\n";
+
+		trace(output);
+	}
+
+	@IgnoreCover
+	function debug(value:Dynamic)
+	{
+		#if MCOVER_DEBUG
+		trace(Std.string(value) + " time: " + getTimer());
+		#end
+	}
+
+	@IgnoreCover
+	function getTimer():Float
+	{
+		return Date.now().getTime()-startTime;
+	}
+
 }

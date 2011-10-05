@@ -7,7 +7,7 @@ import massive.mcover.data.CoverageResult;
 {
 	var itemsById:IntHash<AbstractNode>;
 	var items:Hash<Int>;
-	var itemCount:Int;
+	public var itemCount(default, null):Int;
 
 	public function new()
 	{

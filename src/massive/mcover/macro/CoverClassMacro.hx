@@ -429,23 +429,13 @@ class CoverClassMacro
 
 		block.location = posString.substr(5, posString.length-6);
 
-		var _package = cast(allClasses.getItemByName(block.packageName, Package), Package);
-		var _file = cast(_package.getItemByName(block.file, File), File);
-		var _class = cast(_file.getItemByName(block.qualifiedClassName, Clazz), Clazz);
-		var _method = cast(_class.getItemByName(block.methodName, Method), Method);
-
-
-		block.lookup = [_package.id, _file.id, _class.id,_method.id,block.id];
-
 		if(isBranch)
 		{
-			_method.addBranch(cast(block, Branch));
-			allClasses.branches.set(block.id, block.lookup);
+			allClasses.addBranch(cast(block, Branch));
 		}
 		else
 		{
-			_method.addStatement(cast(block, Statement));
-			allClasses.statements.set(block.id, block.lookup);
+			allClasses.addStatement(cast(block, Statement));
 		}
 		return block;
 	}

@@ -42,8 +42,10 @@ class MethodTest extends AbstractNodeTest
 		statement.id = 0;
 		method.addStatement(statement);
 
-		Assert.isTrue(method.statementsById.exists(0));
-		Assert.areEqual(statement, method.statementsById.get(0));	
+		Assert.isNotNull(method.getStatementById(0));
+		Assert.areEqual(statement, method.getStatementById(0));	
+
+		Assert.isNull(method.getStatementById(1));
 	}
 	@Test
 	public function shouldAddBranch()
@@ -52,8 +54,10 @@ class MethodTest extends AbstractNodeTest
 		branch.id = 0;
 		method.addBranch(branch);
 
-		Assert.isTrue(method.branchesById.exists(0));
-		Assert.areEqual(branch, method.branchesById.get(0));	
+		Assert.isNotNull(method.getBranchById(0));
+		Assert.areEqual(branch, method.getBranchById(0));	
+
+		Assert.isNull(method.getBranchById(1));
 	}
 
 	@Test
@@ -190,13 +194,11 @@ class MethodTest extends AbstractNodeTest
 		Assert.areEqual(method.id, copy.id);
 		Assert.areEqual(method.name, copy.name);
 
-		Assert.areEqual(1, Lambda.count(method.statementsById));
-		Assert.isTrue(method.statementsById.exists(0));
-		Assert.areEqual(statement1.name, method.statementsById.get(0).name);
+		Assert.isNotNull(method.getStatementById(0));
+		Assert.areEqual(statement1.name, method.getStatementById(0).name);
 
-		Assert.areEqual(1, Lambda.count(method.branchesById));
-		Assert.isTrue(method.branchesById.exists(0));
-		Assert.areEqual(branch1.name, method.branchesById.get(0).name);
+		Assert.isNotNull(method.getBranchById(0));
+		Assert.areEqual(branch1.name, method.getBranchById(0).name);
 	}
 
 	//////////////////

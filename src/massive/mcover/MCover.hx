@@ -54,6 +54,9 @@ import haxe.macro.Compiler;
 	static public var branchQueue:Array<BranchResult> = [];
 	#end
 
+	static public var statementById:IntHash<Int> = new IntHash();
+	static public var branchById:IntHash<BranchResult> = new IntHash();
+
 
 	static public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
 	{
@@ -80,12 +83,24 @@ import haxe.macro.Compiler;
 	@IgnoreCover
 	static public function statement(id:Int)
 	{	
+		var count = 1;
+
+		if(statementById.exists(id))
+		{
+			count = statementById.get(id) + 1;
+		}
+
+		statementById.set(id, count);
+
+		if(count > 1) return;
+
 		#if neko
-		statementQueue.add(id);
-		#else
 		statementQueue.push(id);
+		#else
+		statementQueue.unshift(id);
 		#end
 	}
+
 
 	/**
 	* Method called from injected code each time a binary operation resolves to true or false 
@@ -94,14 +109,54 @@ import haxe.macro.Compiler;
 	@IgnoreCover
 	static public function branch(id:Int, value:Bool):Bool
 	{
-		var result:BranchResult = {id:id, value:value};
+		
+		var r:BranchResult = null;
+		
+		if(branchById.exists(id))
+		{
+			r = branchById.get(id);
+		}
+		else
+		{
+			r = {id:id, result:"00", trueCount:0, falseCount:0, total:0};
+			branchById.set(id, r);
+		}
+
+		//record current value
+		if(value) r.trueCount ++;
+		else r.falseCount ++;
+
+		r.total ++;
+
+		//dont push to queue as already covered both scenarios
+		if(r.result == "11") return value;
+
+		if(value) r.result = "1" + r.result.substr(1,1);
+		else r.result = r.result.substr(0,1) + "1";
+		
 		#if neko
-		branchQueue.add(result);
+		branchQueue.push(r);
 		#else
-		branchQueue.push(result);
+		branchQueue.unshift(r);
 		#end
+
 		return value;
 	}
+
+	static public function getCopyOfStatements():IntHash<Int>
+	{
+		var data = haxe.Serializer.run(statementById);
+		var hash:IntHash<Int> = haxe.Unserializer.run(data);
+		return hash;
+	}
+
+	static public function getCopyOfBranches():IntHash<BranchResult>
+	{
+		var data = haxe.Serializer.run(branchById);
+		var hash:IntHash<BranchResult> = haxe.Unserializer.run(data);
+		return hash;
+	}
+
 
 	#else
 	//--------------- MACROS --------------..
@@ -213,5 +268,8 @@ import haxe.macro.Compiler;
 typedef BranchResult =
 {
 	id:Int,
-	value:Bool,
+	result:String,
+	trueCount:Int,
+	falseCount:Int,
+	total:Int,
 }

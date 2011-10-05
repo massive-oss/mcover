@@ -139,6 +139,123 @@ class AllClassesTest extends AbstractNodeListTest
 		Assert.areEqual(1, r.p);	
 	}
 
+	@Test
+	public function shouldAddStatementToMethod()
+	{
+		var block = new NodeMock().createStatement();
+		block.packageName = "p";
+		block.file = "f";
+		block.qualifiedClassName = "c";
+		block.methodName = "m";
+
+		allClasses.addStatement(block);
+
+		var packages = allClasses.getPackages();
+
+		Assert.areEqual(1, packages.length);
+		Assert.areEqual("p", packages[0].name);
+		Assert.areEqual(1, cast(packages[0], Package).itemCount);
+
+		var file = packages[0].getItemByName("f", File);
+
+		Assert.areEqual(1, cast(file, File).itemCount);
+
+
+		var classes = allClasses.getClasses();
+		Assert.areEqual(1, classes.length);
+		Assert.areEqual("c", classes[0].name);
+		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
+
+		var method = cast(classes[0].getItemByName("m", Method), Method);
+
+		Assert.areEqual(block, method.getStatementById(0));
+	}
+
+	@Test
+	public function shouldAddBlockToMethod()
+	{
+		var block = new NodeMock().createBranch();
+		block.packageName = "p";
+		block.file = "f";
+		block.qualifiedClassName = "c";
+		block.methodName = "m";
+
+		allClasses.addBranch(block);
+
+		var packages = allClasses.getPackages();
+
+		Assert.areEqual(1, packages.length);
+		Assert.areEqual("p", packages[0].name);
+		Assert.areEqual(1, cast(packages[0], Package).itemCount);
+
+		var file = packages[0].getItemByName("f", File);
+
+		Assert.areEqual(1, cast(file, File).itemCount);
+
+
+		var classes = allClasses.getClasses();
+		Assert.areEqual(1, classes.length);
+		Assert.areEqual("c", classes[0].name);
+		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
+
+		var method = cast(classes[0].getItemByName("m", Method), Method);
+
+		Assert.areEqual(block, method.getBranchById(0));
+	}
+
+
+
+	@Test
+	public function shouldReturnStatementById()
+	{
+		try
+		{
+			var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
+			
+			item1.statement.id = 1;
+
+			allClasses.addStatement(item1.statement);
+
+			var statement = allClasses.getStatementById(1);
+
+			Assert.isNotNull(statement);
+			Assert.areEqual(item1.statement, statement);
+
+
+			statement = allClasses.getStatementById(2);
+			Assert.fail("invalid statement id should throw exception.");
+		}
+		catch(e:String)
+		{
+			Assert.isTrue(true);
+		}
+	}
+
+	@Test
+	public function shouldReturnBranchById()
+	{
+		try
+		{
+			var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
+			item1.branch.id = 1;
+
+			allClasses.addBranch(item1.branch);
+
+			var branch = allClasses.getBranchById(1);
+
+			Assert.isNotNull(branch);
+			Assert.areEqual(item1.branch, branch);
+
+
+			branch = allClasses.getBranchById(2);
+			Assert.fail("invalid branch id should throw exception.");
+		}
+		catch(e:String)
+		{
+			Assert.isTrue(true);
+		}
+	}
+
 	//////////////////
 
 	override function createEmptyNode():AbstractNode
