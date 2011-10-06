@@ -221,10 +221,10 @@ import haxe.macro.Compiler;
 		return result;
 	}
 
-	public function getNextStatementFromQueue():Int
+	public function getNextStatementFromQueue():Null<Int>
 	{
 		#if neko mutex.acquire(); #end
-		var result:Int = Std.int(Math.NaN);
+		var result:Null<Int> = null;
 		try
 		{
 			#if neko 

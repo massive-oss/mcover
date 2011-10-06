@@ -120,7 +120,6 @@ class MCoverTest
 		var id2 = 1;
 		cover.logStatement(id1);
 		cover.logStatement(id2);
-
 		Assert.areEqual(id1, cover.getNextStatementFromQueue());
 		Assert.areEqual(id2, cover.getNextStatementFromQueue());
 	}

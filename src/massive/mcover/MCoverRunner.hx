@@ -182,9 +182,10 @@ class MCoverRunnerImpc implements MCoverRunner
 	{	
 		var cover = MCover.getInstance();
 		var statements:Array<Int> = [];
+
 		var value = cover.getNextStatementFromQueue();
-		
-		while(!Math.isNaN(value) && value != null)
+	
+		while(!Math.isNaN(value) #if !flash && value != null #end)
 		{
 			statements.push(value);
 			value = cover.getNextStatementFromQueue();
@@ -293,7 +294,6 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
-		trace("!");
 		if (++clientCompleteCount == clients.length)
 		{
 			if (completionHandler != null)
@@ -301,8 +301,8 @@ class MCoverRunnerImpc implements MCoverRunner
 				var percent:Float = allClasses.getPercentage();
 				var handler:Float -> Void = completionHandler;
 
-				handler(percent);
-				//Timer.delay(function() {handler(percent); }, 200);
+				//handler(percent);
+				Timer.delay(function() {handler(percent); }, 200);
 			}
 		}
 	}
