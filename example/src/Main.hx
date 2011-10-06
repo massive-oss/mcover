@@ -3,8 +3,6 @@ package;
 import massive.mcover.MCover;
 import massive.mcover.MCoverRunner;
 
-
-//@:build(mcover.MCoverMacro.build())
 class Main
 {
 	static var runner:MCoverRunner;
@@ -12,7 +10,7 @@ class Main
 	@IgnoreCover
 	static public function main():Main
 	{
-		runner = MCover.createRunner();
+		runner = MCover.instance.createRunner();
 		var app = new Main();
 
 		keepAlive();

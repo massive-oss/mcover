@@ -34,4 +34,33 @@ package massive.mcover.data;
 	{
 		return qualifiedClassName + "#" + methodName + " | " + location;
 	}
+
+	override function hxSerialize( s : haxe.Serializer )
+	{
+		super.hxSerialize(s);
+        s.serialize(file);
+        s.serialize(packageName);
+        s.serialize(className);
+        s.serialize(qualifiedClassName);
+        s.serialize(methodName);
+        s.serialize(min);
+        s.serialize(max);
+        s.serialize(location);
+        s.serialize(lookup);
+     } 
+
+    override function hxUnserialize( s : haxe.Unserializer )
+    {
+    	super.hxUnserialize(s);
+        file = s.unserialize();
+        packageName = s.unserialize();
+        className = s.unserialize();
+        qualifiedClassName = s.unserialize();
+        methodName = s.unserialize();
+        min = s.unserialize();
+        max = s.unserialize();
+        location = s.unserialize();
+        lookup = s.unserialize();
+    }
+
 }

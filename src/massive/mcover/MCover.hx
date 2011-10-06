@@ -1,20 +1,24 @@
 package massive.mcover;
 
-
 import massive.mcover.data.Package;
 import massive.mcover.data.File;
 import massive.mcover.data.Clazz;
 import massive.mcover.data.Method;
 import massive.mcover.data.Branch;
 import massive.mcover.data.Statement;
+import massive.mcover.data.AbstractNode;
+import massive.mcover.data.AbstractBlock;
+import massive.mcover.data.AbstractNodeList;
+import massive.mcover.data.AllClasses;
+import massive.mcover.data.CoverageResult;
 
 #if !macro
 import massive.mcover.MCoverRunner;
 import massive.mcover.CoverageClient;
 
-	#if neko
-	import neko.vm.Deque;
-	#end
+#if neko
+import neko.vm.Deque;
+#end
 
 #else
 import haxe.macro.Expr;
@@ -44,26 +48,65 @@ import haxe.macro.Compiler;
 	static public var RESOURCE_DATA:String = "MCoverData";
 
 	#if !macro
-	static public var runner(default, null):MCoverRunner;
 	
+	static public var instance:MCover = new MCover();
+
 	#if neko
-	static public var statementQueue:Deque<Int> = new Deque();
-	static public var branchQueue:Deque<BranchResult> = new Deque();
+
+	static var mutex:neko.vm.Mutex = new neko.vm.Mutex();
+	
+	public var statementQueue:Deque<Int>;
+	public var branchQueue:Deque<BranchResult>;
+
 	#else
-	static public var statementQueue:Array<Int> = [];
-	static public var branchQueue:Array<BranchResult> = [];
+
+	public var statementQueue:Array<Int>;
+	public var branchQueue:Array<BranchResult>;
+
 	#end
 
-	static public var statementById:IntHash<Int> = new IntHash();
-	static public var branchById:IntHash<BranchResult> = new IntHash();
+	public var statementById:IntHash<Int>;
+	public var branchById:IntHash<BranchResult>;
 
+	public var runner:MCoverRunner;
 
-	static public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
+	@IgnoreCover
+	public static function getInstance():MCover
 	{
+		#if neko mutex.acquire(); #end
+		if(instance == null)
+		{
+			instance = new MCover();
+		}
+		#if neko mutex.release(); #end
+		return instance;
+	}
+	
+	@IgnoreCover
+	public function new()
+	{
+		#if neko
+		statementQueue = new Deque();
+		branchQueue = new Deque();
+		#else
+		statementQueue = [];
+		branchQueue = [];
+		#end
+
+		statementById = new IntHash();
+		branchById = new IntHash();
+	}
+
+	@IgnoreCover
+	public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
+	{
+		#if neko mutex.acquire(); #end
 		if(runner != null)
 		{
-			if(overwrite) runner.destroy();
-			else throw "Runner already exists. Set overwrite to true to replace runner.";
+			if(!overwrite) throw "Runner already exists. Set overwrite to true to replace runner.";
+
+			runner.destroy();
+			runner = null;
 		}
 
 		if(inst == null)
@@ -72,17 +115,18 @@ import haxe.macro.Compiler;
 		}
 		runner = inst;
 
+		#if neko mutex.release(); #end
 		return runner;
 	}
-
 
 	/**
 	* Method called from injected code each time a code block executes. 
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
-	static public function statement(id:Int)
+	public function logStatement(id:Int)
 	{	
+		#if neko mutex.acquire(); #end
 		var count = 1;
 
 		if(statementById.exists(id))
@@ -99,16 +143,18 @@ import haxe.macro.Compiler;
 		#else
 		statementQueue.unshift(id);
 		#end
+		#if neko mutex.release(); #end
 	}
-
-
+	
 	/**
 	* Method called from injected code each time a binary operation resolves to true or false 
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
-	static public function branch(id:Int, value:Bool):Bool
+	public function logBranch(id:Int, value:Bool):Bool
 	{
+		#if neko mutex.acquire(); #end
+
 		var r:BranchResult = null;
 		
 		if(branchById.exists(id))
@@ -146,23 +192,24 @@ import haxe.macro.Compiler;
 		branchQueue.unshift(r);
 		#end
 
+		#if neko mutex.release(); #end
+
 		return value;
 	}
 
-	static public function getCopyOfStatements():IntHash<Int>
+	public function getCopyOfStatements():IntHash<Int>
 	{
 		var data = haxe.Serializer.run(statementById);
 		var hash:IntHash<Int> = haxe.Unserializer.run(data);
 		return hash;
 	}
 
-	static public function getCopyOfBranches():IntHash<BranchResult>
+	public function getCopyOfBranches():IntHash<BranchResult>
 	{
 		var data = haxe.Serializer.run(branchById);
 		var hash:IntHash<BranchResult> = haxe.Unserializer.run(data);
 		return hash;
 	}
-
 
 	#else
 	//--------------- MACROS --------------..

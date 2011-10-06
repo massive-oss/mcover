@@ -23,7 +23,7 @@ class MCoverPrintClient extends PrintClient
 	{
 		super(includeIgnoredReport);
 
-		runner = MCover.runner;
+		runner = MCover.getInstance().createRunner();
 		runner.completionHandler = codeCoverageComplete;
 
 		coverClient = new massive.mcover.client.PrintClient();

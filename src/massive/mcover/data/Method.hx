@@ -1,5 +1,8 @@
 package massive.mcover.data;
 import massive.mcover.data.CoverageResult;
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
+
 @:keep class Method extends AbstractNode
 {
 	var statementsById:IntHash<Statement>;
@@ -92,18 +95,16 @@ import massive.mcover.data.CoverageResult;
 
 	///////////
 
-	function hxSerialize( s : haxe.Serializer )
+	override function hxSerialize( s : haxe.Serializer )
 	{
-		s.serialize(id);
-        s.serialize(name);
+		super.hxSerialize(s);
         s.serialize(statementsById);
         s.serialize(branchesById);
     }
     
-    function hxUnserialize( s : haxe.Unserializer )
+   	override function hxUnserialize( s : haxe.Unserializer )
     {
-    	id = s.unserialize();
-        name = s.unserialize();
+    	super.hxUnserialize(s);
         statementsById = s.unserialize();
         branchesById = s.unserialize();
     }

@@ -59,19 +59,7 @@ import massive.mcover.data.CoverageResult;
 		return lookupStatement(lookup);
 	}
 
-	override function hxSerialize( s : haxe.Serializer )
-	{
-		super.hxSerialize(s);
-        s.serialize(statements);
-        s.serialize(branches);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        statements = s.unserialize();
-        branches = s.unserialize();
-    }
+
 
     override public function getMissingBranches():Array<Branch>
 	{
@@ -106,6 +94,16 @@ import massive.mcover.data.CoverageResult;
 		return a;
 	}
 
+	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
+	{
+		to = super.appendResults(to, from);
+		to.pc += (from.sc > 0) ? 1 : 0; 
+		to.p += 1;	
+		return to;
+	}
+
+	///////////////
+
 	function sortOnNodeId(a:AbstractNode, b:AbstractNode)
 	{
 		return a.id-b.id;
@@ -121,11 +119,17 @@ import massive.mcover.data.CoverageResult;
 		return a.id-b.id;
 	}
 
-	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
+	override function hxSerialize( s : haxe.Serializer )
 	{
-		to = super.appendResults(to, from);
-		to.pc += (from.sc > 0) ? 1 : 0; 
-		to.p += 1;	
-		return to;
-	}
+		super.hxSerialize(s);
+        s.serialize(statements);
+        s.serialize(branches);
+    }
+    
+    override function hxUnserialize( s : haxe.Unserializer )
+    {
+    	super.hxUnserialize(s);
+        statements = s.unserialize();
+        branches = s.unserialize();
+    }
 }

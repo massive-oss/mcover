@@ -35,9 +35,9 @@
 
 ## neko
 -main TestMain
--cp src
--cp test
 -lib munit
 -lib mlib
+-cp src
+-cp test
 -neko build/neko_test.n
 --macro massive.mcover.MCover.include('massive.mcover',['src'])

@@ -30,4 +30,20 @@ package massive.mcover.data;
 		}
 		return s;
 	}
+
+		///////////
+
+	override function hxSerialize( s : haxe.Serializer )
+	{
+		super.hxSerialize(s);
+        s.serialize(trueCount);
+        s.serialize(falseCount);
+    }
+    
+    override function hxUnserialize( s : haxe.Unserializer )
+    {
+    	super.hxUnserialize(s);
+        trueCount = s.unserialize();
+        falseCount = s.unserialize();
+    }
 }

@@ -3,7 +3,7 @@ package massive.mcover.macro;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
-
+#end
 import massive.mcover.data.AllClasses;
 import massive.mcover.data.Package;
 import massive.mcover.data.File;
@@ -13,16 +13,14 @@ import massive.mcover.data.AbstractBlock;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 
-#end
-class CoverClassMacro
+
+@:keep class CoverClassMacro
 {
 	#if macro
-	
 
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
 	static var allClasses = new AllClasses();
-	
 	
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
@@ -30,11 +28,8 @@ class CoverClassMacro
 	*/
 	static public function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
-
        	var serializedData = haxe.Serializer.run(allClasses);
-       
         Context.addResource(MCover.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
-
 	}
 
 	/**
@@ -299,6 +294,27 @@ class CoverClassMacro
 	}
 
 
+	static function createBaseExpr(pos:Position):Expr
+	{
+		var cIdent = EConst(CIdent("massive"));
+		pos = incrementPos(pos, 7);
+		var identExpr = {expr:cIdent, pos:pos};
+
+		var eIdentField = EField(identExpr, "mcover");
+		pos = incrementPos(pos, 7);
+		var identFieldExpr = {expr:eIdentField, pos:pos};
+
+		var eType = EType(identFieldExpr, "MCover");
+		pos = incrementPos(pos, 5);
+		var typeExpr = {expr:eType, pos:pos};
+
+		var eField = EField(typeExpr, "getInstance");
+		pos = incrementPos(pos, 9);
+		var fieldExpr = {expr:eField, pos:pos};
+
+		pos = incrementPos(pos, 2);
+		return {expr:ECall(fieldExpr, []), pos:pos};
+	}
 
 
 
@@ -311,32 +327,20 @@ class CoverClassMacro
 	{
 		var block = createCodeBlockReference(pos);
 		var blockId = Std.string(block.id);
-			
-		//EField({ expr => EConst(CIdent(massive)), pos => #pos(src/Main.hx:9: characters 2-9) },mcover)
+		
+		var baseExpr = createBaseExpr(pos);
+		pos = baseExpr.pos;
 
-		var cIdent = EConst(CIdent("massive"));
-		pos = incrementPos(pos, 7);
-		var identExpr = {expr:cIdent, pos:pos};
-
-		var eIdentField = EField(identExpr, "mcover");
-		pos = incrementPos(pos, 7);
-		var identFieldExpr = {expr:eIdentField, pos:pos};
-
-		var eType = EType(identFieldExpr, "MCover");
+		var eField = EField(baseExpr, "logStatement");
 		pos = incrementPos(pos, 13);
-		var typeExpr = {expr:eType, pos:pos};
-
-		var eField = EField(typeExpr, "statement");
-		pos = incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		
 		pos = incrementPos(pos, blockId.length);
 		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
 
 		pos = incrementPos(pos, 2);
-		var coverExpr = {expr:ECall(fieldExpr, [arg1]), pos:pos};
-
-		return coverExpr;
+		
+		return {expr:ECall(fieldExpr, [arg1]), pos:pos};
 	}
 
 	/**
@@ -344,24 +348,15 @@ class CoverClassMacro
 	**/
 	static function createBranchCoverageExpr(expr:Expr):Expr
 	{
-		
+
 		var pos = expr.pos;
 		var block = createCodeBlockReference(pos, true);
 		var blockId = Std.string(block.id);
-			
-		var cIdent = EConst(CIdent("massive"));
-		pos = incrementPos(pos, 7);
-		var identExpr = {expr:cIdent, pos:pos};
 
-		var eIdentField = EField(identExpr, "mcover");
-		pos = incrementPos(pos, 7);
-		var identFieldExpr = {expr:eIdentField, pos:pos};
+		var baseExpr = createBaseExpr(pos);
+		pos = baseExpr.pos;
 
-		var eType = EType(identFieldExpr, "MCover");
-		pos = incrementPos(pos, 13);
-		var typeExpr = {expr:eType, pos:pos};
-
-		var eField = EField(typeExpr, "branch");
+		var eField = EField(baseExpr, "logBranch");
 		pos = incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		

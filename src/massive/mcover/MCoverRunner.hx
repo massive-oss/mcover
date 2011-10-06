@@ -6,6 +6,11 @@ import massive.mcover.util.Timer;
 import massive.mcover.data.AllClasses;
 
 import massive.mcover.data.CoverageResult;
+
+import massive.mcover.data.Package;
+import massive.mcover.data.File;
+import massive.mcover.data.Clazz;
+import massive.mcover.data.Method;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.MCover;
@@ -157,13 +162,14 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			init();
 		}
+		var cover = MCover.getInstance();
 
 		var statements:Array<Int> = [];
-		var value = MCover.statementQueue.pop(#if neko false #end);
+		var value = cover.statementQueue.pop(#if neko false #end);
 		while(value != null)
 		{
 			statements.push(value);
-			value = MCover.statementQueue.pop(#if neko false #end);
+			value = cover.statementQueue.pop(#if neko false #end);
 		}
 		for(s in statements)
 		{
@@ -171,11 +177,11 @@ class MCoverRunnerImpc implements MCoverRunner
 		}
 	
 		var branches:Array<BranchResult> = [];
-		var value = MCover.branchQueue.pop(#if neko false #end);
+		var value = cover.branchQueue.pop(#if neko false #end);
 		while(value != null)
 		{
 			branches.push(value);
-			value = MCover.branchQueue.pop(#if neko false #end);
+			value = cover.branchQueue.pop(#if neko false #end);
 		}
 		for(b in branches)
 		{
@@ -194,7 +200,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	 * Log an individual code block being executed within the code base.
 	 * 
 	 * @param	id		a block identifier
-	 * @see mcover.CodeBlock
+	 * @see mcover.data.Statement
 	 */
 	function logStatement(id:Int)
 	{		
@@ -235,9 +241,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	function loadGeneratedCoverageData()
 	{
 		var serializedData:String = haxe.Resource.getString(MCover.RESOURCE_DATA);
-
 		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + MCover.RESOURCE_DATA  + "'";
-
 		try
 		{
 			allClasses = haxe.Unserializer.run(serializedData);
@@ -247,6 +251,9 @@ class MCoverRunnerImpc implements MCoverRunner
 			trace("Unable to unserialize coverage data");
 			trace("   ERROR: " + e);
 			trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+			trace(haxe.Stack.toString(haxe.Stack.callStack()));
+
+			#if neko neko.Sys.exit(1); #end
 		}
 	}
 
@@ -260,7 +267,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		clientCompleteCount = 0;
 
-	
 		if(clients.length == 0)
 		{
 			var client = new TraceClient();
@@ -289,7 +295,6 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	/////////////// DEBUGGING METHODS  ////////////
 
-
 	/**
 	* Outputs all branch and statement logs sorted by highest frequency.
 	* For branches reports also totals for true/false  
@@ -298,7 +303,9 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		var output:String = "";
 
-		var statements:IntHash<Int> = MCover.getCopyOfStatements();
+		var cover = MCover.instance;
+
+		var statements:IntHash<Int> = cover.getCopyOfStatements();
 		var s:Array<{statement:Statement, value:Int}> = [];
 		for(key in statements.keys())
 		{
@@ -318,7 +325,7 @@ class MCoverRunnerImpc implements MCoverRunner
 
 		output += "\n\n";
 
-		var branches:IntHash<BranchResult> = MCover.getCopyOfBranches();
+		var branches:IntHash<BranchResult> = cover.getCopyOfBranches();
 		var b:Array<{branch:Branch, value:BranchResult}> = [];
 		for(key in branches.keys())
 		{

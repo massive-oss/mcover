@@ -10,6 +10,7 @@ import massive.mcover.data.FileTest;
 import massive.mcover.data.MethodTest;
 import massive.mcover.data.PackageTest;
 import massive.mcover.data.StatementTest;
+import massive.mcover.MCoverTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -33,5 +34,6 @@ class TestSuite extends massive.munit.TestSuite
 		add(massive.mcover.data.MethodTest);
 		add(massive.mcover.data.PackageTest);
 		add(massive.mcover.data.StatementTest);
+		add(massive.mcover.MCoverTest);
 	}
 }

@@ -57,10 +57,23 @@ package massive.mcover.data;
 		return [];
 	}
 
+	//////////////
 	
 
 	function emptyResult():CoverageResult
 	{
 		return {sc:0, s:0, bt:0, bf:0,bc:0,b:0, mc:0, m:0, cc:0, c:0, fc:0, f:0, pc:0, p:0};
 	}
+
+	function hxSerialize( s : haxe.Serializer )
+	{
+		s.serialize(id);
+        s.serialize(name);
+    }
+    
+    function hxUnserialize( s : haxe.Unserializer )
+    {
+    	id = s.unserialize();
+        name = s.unserialize();
+    }
 }

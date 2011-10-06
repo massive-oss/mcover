@@ -21,7 +21,7 @@ import massive.mcover.data.CoverageResult;
 	{
 		if(!items.exists(name))
 		{
-			var item = Type.createInstance(cls, []);
+			var item:AbstractNode = Type.createInstance(cls, []);
 			item.id = itemCount ++;
 			item.name = name;
 			items.set(name, item.id);
@@ -116,20 +116,17 @@ import massive.mcover.data.CoverageResult;
 		return to;
 	}
 
-	function hxSerialize( s : haxe.Serializer )
+	override function hxSerialize( s : haxe.Serializer )
 	{
-        s.serialize(id);
-        s.serialize(name);
+		super.hxSerialize(s);
         s.serialize(itemsById);
         s.serialize(items);
         s.serialize(itemCount);
      } 
 
-    function hxUnserialize( s : haxe.Unserializer )
+    override function hxUnserialize( s : haxe.Unserializer )
     {
-
- 		id = s.unserialize();
-        name = s.unserialize();
+    	super.hxUnserialize(s);
         itemsById = s.unserialize();
         items = s.unserialize();
         itemCount = s.unserialize();
