@@ -24,6 +24,11 @@
  */
 package massive.mcover.util;
 
+#if (MCOVER_TEST && neko)
+
+typedef Timer = massive.munit.util.Timer;
+
+#else
 class Timer 
 {
 	public var run:Void -> Void;
@@ -143,3 +148,5 @@ class Timer
 		#end
 	}
 }
+
+#end

@@ -67,14 +67,12 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	public var allClasses(default, null):AllClasses;
 
-	var initialized:Bool;
 	var clients:Array<CoverageClient>;
 	var clientCompleteCount:Int;
 	var timer:Timer;
 
 	var coverageResult:CoverageResult;
 	var startTime:Float;
-
 
 	#if neko
 	static var mutex:neko.vm.Mutex;
@@ -89,7 +87,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		mutex = new neko.vm.Mutex();
 		#end
 
-		initialized = false;
+		loadGeneratedCoverageData();
 		startTime = Date.now().getTime();
 		clients = [];
 		reset();
@@ -102,9 +100,8 @@ class MCoverRunnerImpc implements MCoverRunner
 	 */
 	public function reset()
 	{
-		initialized = false;
 		if(timer != null) timer.stop();
-		timer = new Timer(100);
+		timer = new Timer(10);
 		timer.run = tick;
 	}
 
@@ -115,11 +112,12 @@ class MCoverRunnerImpc implements MCoverRunner
 			timer.stop();
 			timer = null;
 		}
-	
+		
 		#if neko mutex.acquire(); #end
+
 		update();//make sure to capture any pending logs
 		#if neko mutex.release(); #end
-		
+
 		debug("gen report ");
 		generateReport();
 		debug("gen report complete ");
@@ -156,8 +154,11 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	public function destroy()
 	{
-		initialized = false;
-		if(timer != null) timer.stop();
+		if(timer != null)
+		{
+			timer.stop();
+			timer = null;
+		}
 		for(c in clients)
 		{
 			c.completionHandler = null;
@@ -172,30 +173,22 @@ class MCoverRunnerImpc implements MCoverRunner
 		#if neko
 		if(mutex.tryAcquire() == false) return;
 		#end
-
 		update();
-
 		#if neko mutex.release(); #end
 	}
 
 	@IgnoreCover
 	function update()
-	{
-		if(!initialized)
-		{
-			init();
-		}
+	{	
 		var cover = MCover.getInstance();
-
 		var statements:Array<Int> = [];
 		var value = cover.getNextStatementFromQueue();
-
-		while(!Math.isNaN(value))
+		
+		while(!Math.isNaN(value) && value != null)
 		{
 			statements.push(value);
 			value = cover.getNextStatementFromQueue();
 		}
-
 		for(s in statements)
 		{
 			logStatement(s);
@@ -203,7 +196,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	
 		var branches:Array<BranchResult> = [];
 		var value = cover.getNextBranchResultFromQueue();
-
 		while(value != null)
 		{
 			branches.push(value);
@@ -213,12 +205,6 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			logBranch(b);
 		}
-	}
-
-	function init()
-	{
-		initialized = true;
-		loadGeneratedCoverageData();		
 	}
 
 	/**
@@ -307,6 +293,7 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
+		trace("!");
 		if (++clientCompleteCount == clients.length)
 		{
 			if (completionHandler != null)

@@ -1,12 +1,12 @@
-## Flash 9+
--main TestMain
--cp src
--cp test
--lib munit
--lib mlib
--swf-version 9
--swf build/as3_test.swf
---macro massive.mcover.MCover.include('massive.mcover',['src'])
+# ## Flash 9+
+# -main TestMain
+# -cp src
+# -cp test
+# -lib munit
+# -lib mlib
+# -swf-version 9
+# -swf build/as3_test.swf
+# --macro massive.mcover.MCover.include('massive.mcover',['src'])
 
 # --next
 
@@ -33,11 +33,12 @@
 
 # --next
 
-# ## neko
-# -main TestMain
-# -lib munit
-# -lib mlib
-# -cp src
-# -cp test
-# -neko build/neko_test.n
-# --macro massive.mcover.MCover.include('massive.mcover',['src'])
+## neko
+-main TestMain
+-lib munit
+-lib mlib
+-cp src
+-cp test
+-neko build/neko_test.n
+-D MCOVER_TEST
+--macro massive.mcover.MCover.include('massive.mcover',['src'])
