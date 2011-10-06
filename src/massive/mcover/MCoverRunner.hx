@@ -75,11 +75,21 @@ class MCoverRunnerImpc implements MCoverRunner
 	var coverageResult:CoverageResult;
 	var startTime:Float;
 
+
+	#if neko
+	static var mutex:neko.vm.Mutex;
+	#end
+
 	/**
 	 * Class constructor.
 	 */
 	public function new()
 	{
+		#if neko
+		mutex = new neko.vm.Mutex();
+		#end
+
+		initialized = false;
 		startTime = Date.now().getTime();
 		clients = [];
 		reset();
@@ -94,7 +104,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		initialized = false;
 		if(timer != null) timer.stop();
-		timer = new Timer(10);
+		timer = new Timer(50);
 		timer.run = tick;
 	}
 
@@ -105,13 +115,15 @@ class MCoverRunnerImpc implements MCoverRunner
 			timer.stop();
 			timer = null;
 		}
-
-		tick();//make sure to capture any pending logs
+	
+		#if neko mutex.acquire(); #end
+		update();//make sure to capture any pending logs
+		#if neko mutex.release(); #end
+		
 
 		debug("gen report ");
 		generateReport();
 		debug("gen report complete ");
-
 		#if MCOVER_DEBUG
 		generateInternalStats();
 		#end
@@ -158,6 +170,18 @@ class MCoverRunnerImpc implements MCoverRunner
 	@IgnoreCover
 	function tick()
 	{
+		#if neko
+		if(mutex.tryAcquire() == false) return;
+		#end
+
+		update();
+
+		#if neko mutex.release(); #end
+	}
+
+	@IgnoreCover
+	function update()
+	{
 		if(!initialized)
 		{
 			init();
@@ -165,28 +189,33 @@ class MCoverRunnerImpc implements MCoverRunner
 		var cover = MCover.getInstance();
 
 		var statements:Array<Int> = [];
-		var value = cover.statementQueue.pop(#if neko false #end);
+		var value = cover.getNextStatementFromQueue();
+
 		while(value != null)
 		{
 			statements.push(value);
-			value = cover.statementQueue.pop(#if neko false #end);
+			value = cover.getNextStatementFromQueue();
 		}
+
 		for(s in statements)
 		{
 			logStatement(s);
 		}
 	
 		var branches:Array<BranchResult> = [];
-		var value = cover.branchQueue.pop(#if neko false #end);
+		var value = cover.getNextBranchResultFromQueue();
+
 		while(value != null)
 		{
 			branches.push(value);
-			value = cover.branchQueue.pop(#if neko false #end);
+			value = cover.getNextBranchResultFromQueue();
 		}
 		for(b in branches)
 		{
 			logBranch(b);
 		}
+
+		
 	}
 
 	function init()
@@ -204,6 +233,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	 */
 	function logStatement(id:Int)
 	{		
+		if(allClasses == null) throw "allClasses is null";
 		var statement = allClasses.getStatementById(id);
 
 		if(statement == null) throw "Null statement for " + id;
@@ -224,6 +254,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		var id = log.id;
 		var value = log.result;
+		if(allClasses == null) throw "allClasses is null";
 		var branch = allClasses.getBranchById(id);
 
 		if(branch == null) throw "Null branch for " + id;
@@ -252,8 +283,7 @@ class MCoverRunnerImpc implements MCoverRunner
 			trace("   ERROR: " + e);
 			trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 			trace(haxe.Stack.toString(haxe.Stack.callStack()));
-
-			#if neko neko.Sys.exit(1); #end
+			throw(e);
 		}
 	}
 

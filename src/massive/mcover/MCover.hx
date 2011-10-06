@@ -49,26 +49,26 @@ import haxe.macro.Compiler;
 
 	#if !macro
 	
-	static var instance:MCover;
+	static public var instance(default, null):MCover;
 
 	#if neko
 
-	static var mutex:neko.vm.Mutex = new neko.vm.Mutex();
+	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
 
-	public var statementQueue:Deque<Int>;
-	public var branchQueue:Deque<BranchResult>;
+	public var statementQueue(default, null):Deque<Int>;
+	public var branchQueue(default, null):Deque<BranchResult>;
 
 	#else
 
-	public var statementQueue:Array<Int>;
-	public var branchQueue:Array<BranchResult>;
+	public var statementQueue(default, null):Array<Int>;
+	public var branchQueue(default, null):Array<BranchResult>;
 
 	#end
 
-	public var statementById:IntHash<Int>;
-	public var branchById:IntHash<BranchResult>;
+	public var statementById(default, null):IntHash<Int>;
+	public var branchById(default, null):IntHash<BranchResult>;
 
-	public var runner:MCoverRunner;
+	public var runner(default, null):MCoverRunner;
 
 	@IgnoreCover
 	public static function getInstance():MCover
@@ -97,7 +97,6 @@ import haxe.macro.Compiler;
 		branchById = new IntHash();
 	}
 
-	@IgnoreCover
 	public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
 	{
 		#if neko mutex.acquire(); #end
@@ -136,13 +135,15 @@ import haxe.macro.Compiler;
 
 		statementById.set(id, count);
 
-		if(count > 1) return;
+		if(count == 1)
+		{
+			#if neko
+			statementQueue.add(id);
+			#else
+			statementQueue.unshift(id);
+			#end
+		}
 
-		#if neko
-		statementQueue.push(id);
-		#else
-		statementQueue.unshift(id);
-		#end
 		#if neko mutex.release(); #end
 	}
 	
@@ -172,29 +173,75 @@ import haxe.macro.Compiler;
 		else r.falseCount ++;
 
 		r.total ++;
-			
-		if(r.result == "11") return value; //dont push to queue as already covered both scenarios
-
-		if(value)
-		{
-			if(r.result.charAt(0) == "1") return value; //already logged true
-			r.result = "1" + r.result.substr(1,1);
-		}
-		else
-		{
-			if(r.result.charAt(1) == "1") return value; //already logged false
-			r.result = r.result.substr(0,1) + "1";
-		}
 		
-		#if neko
-		branchQueue.push(r);
-		#else
-		branchQueue.unshift(r);
-		#end
+		var changed = false;
+			
+		if(r.result == "11")
+		{
+			//both true and false have already been logged
+		}
+		else if(value && r.result.charAt(0) == "0")
+		{
+			//log true
+			r.result = "1" + r.result.substr(1,1);
+			changed = true;
+		}
+		else if(!value && r.result.charAt(1) == "0")
+		{
+			//log false
+			r.result = r.result.substr(0,1) + "1";
+			changed = true;
+		}
+
+		if(changed)
+		{
+			#if neko
+			branchQueue.add(r);
+			#else
+			branchQueue.unshift(r);
+			#end
+		}
 
 		#if neko mutex.release(); #end
 
 		return value;
+	}
+
+
+	public function getNextBranchResultFromQueue():BranchResult
+	{
+		#if neko mutex.acquire(); #end
+		var result:BranchResult = null; 
+		try
+		{
+			#if neko 
+			result = branchQueue.pop(false);
+			#else
+			result = branchQueue.pop();
+			#end
+		}
+		catch(e:Dynamic){}
+		
+		#if neko mutex.release(); #end
+		return result;
+	}
+
+	public function getNextStatementFromQueue():Int
+	{
+		#if neko mutex.acquire(); #end
+		var result:Int = null;
+		try
+		{
+			#if neko 
+			result = statementQueue.pop(false);
+			#else
+			result = statementQueue.pop();
+			#end
+		}
+		catch(e:Dynamic){}
+		
+		#if neko mutex.release(); #end
+		return result;
 	}
 
 	public function getCopyOfStatements():IntHash<Int>

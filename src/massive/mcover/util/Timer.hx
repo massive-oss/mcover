@@ -26,6 +26,7 @@ package massive.mcover.util;
 
 class Timer 
 {
+	static var mutex = new neko.vm.Mutex();
 	#if (php)
 	#else
 
@@ -88,10 +89,12 @@ class Timer
 	#if neko
 	function runLoop(time_ms)
 	{
+		
 		var shouldStop = false;
 		while( !shouldStop )
 		{
 			neko.Sys.sleep(time_ms/1000);
+			//mutex.acquire();
 			try
 			{
 				run();
@@ -101,6 +104,7 @@ class Timer
 				trace(ex);
 				trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 			}
+			//mutex.release();
 
 			var msg = neko.vm.Thread.readMessage(false);
 			if (msg == "stop") shouldStop = true;

@@ -18,7 +18,7 @@ class TestMain
 {		
 	static function main()
 	{
-		//massive.mcover.MCover.instance.createRunner();
+		massive.mcover.MCover.getInstance().createRunner();
 		new TestMain();
 	}
 

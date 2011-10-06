@@ -10,7 +10,7 @@ class Main
 	@IgnoreCover
 	static public function main():Main
 	{
-		runner = MCover.instance.createRunner();
+		runner = MCover.getInstance().createRunner();
 		var app = new Main();
 
 		keepAlive();
