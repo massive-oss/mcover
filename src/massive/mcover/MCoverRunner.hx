@@ -303,7 +303,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		var output:String = "";
 
-		var cover = MCover.instance;
+		var cover = MCover.getInstance();
 
 		var statements:IntHash<Int> = cover.getCopyOfStatements();
 		var s:Array<{statement:Statement, value:Int}> = [];

@@ -49,12 +49,12 @@ import haxe.macro.Compiler;
 
 	#if !macro
 	
-	static public var instance:MCover = new MCover();
+	static var instance:MCover;
 
 	#if neko
 
 	static var mutex:neko.vm.Mutex = new neko.vm.Mutex();
-	
+
 	public var statementQueue:Deque<Int>;
 	public var branchQueue:Deque<BranchResult>;
 
