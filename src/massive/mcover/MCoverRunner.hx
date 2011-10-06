@@ -51,6 +51,7 @@ interface MCoverRunner
 
 class MCoverRunnerImpc implements MCoverRunner
 {
+	static var MAX_COUNT_PER_TICK:Int = 200;
 	/**
 	 * Handler called when all clients 
 	 * have completed processing the results.
@@ -73,6 +74,7 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	var coverageResult:CoverageResult;
 	var startTime:Float;
+	var reportPending:Bool;
 
 	#if neko
 	static var mutex:neko.vm.Mutex;
@@ -87,6 +89,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		mutex = new neko.vm.Mutex();
 		#end
 
+		reportPending = false;
 		loadGeneratedCoverageData();
 		startTime = Date.now().getTime();
 		clients = [];
@@ -107,23 +110,7 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	public function report()
 	{
-		if(timer != null)
-		{
-			timer.stop();
-			timer = null;
-		}
-		
-		#if neko mutex.acquire(); #end
-
-		update();//make sure to capture any pending logs
-		#if neko mutex.release(); #end
-
-		debug("gen report ");
-		generateReport();
-		debug("gen report complete ");
-		#if MCOVER_DEBUG
-		generateInternalStats();
-		#end
+		reportPending = true;
 	}
 
 	public function addClient(client:CoverageClient)
@@ -184,28 +171,58 @@ class MCoverRunnerImpc implements MCoverRunner
 		var statements:Array<Int> = [];
 
 		var value = cover.getNextStatementFromQueue();
+
+		var count = 0;
+		var queuesAreEmpty:Bool = true;
 	
-		while(!Math.isNaN(value) #if !flash && value != null #end)
+		while(value != null && count < MAX_COUNT_PER_TICK)
 		{
 			statements.push(value);
 			value = cover.getNextStatementFromQueue();
+			count ++;
 		}
+
+		if(count >= MAX_COUNT_PER_TICK) queuesAreEmpty = false;
+
 		for(s in statements)
 		{
 			logStatement(s);
 		}
-	
+
 		var branches:Array<BranchResult> = [];
 		var value = cover.getNextBranchResultFromQueue();
-		while(value != null)
+		while(value != null && count < MAX_COUNT_PER_TICK)
 		{
 			branches.push(value);
 			value = cover.getNextBranchResultFromQueue();
 		}
+
+		if(count >= MAX_COUNT_PER_TICK) queuesAreEmpty = false;
+
 		for(b in branches)
 		{
 			logBranch(b);
 		}
+		
+		if(reportPending && queuesAreEmpty)
+		{
+			if(timer != null)
+			{
+				timer.stop();
+				timer = null;
+			}
+
+			debug("gen report ");
+			generateReport();
+			debug("gen report complete ");
+			#if MCOVER_DEBUG
+			generateInternalStats();
+			#end
+
+			reportPending = false;
+		}
+
+		
 	}
 
 	/**
