@@ -39,9 +39,8 @@ import haxe.macro.Compiler;
 * RUNTIME USAGE:
 *
 * See detailed documentation below for the following:
+*    getInstance();
 *    createRunner();
-*    report();
-*    addClient(new CoverageClient());
 */
 @:keep class MCover
 {
@@ -92,14 +91,13 @@ import haxe.macro.Compiler;
 		statementQueue = [];
 		branchQueue = [];
 		#end
-
 		statementById = new IntHash();
 		branchById = new IntHash();
 	}
 
 	public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
 	{
-		#if neko mutex.acquire(); #end
+		// #if neko mutex.acquire(); #end
 		if(runner != null)
 		{
 			if(!overwrite) throw "Runner already exists. Set overwrite to true to replace runner.";
@@ -114,7 +112,7 @@ import haxe.macro.Compiler;
 		}
 		runner = inst;
 
-		#if neko mutex.release(); #end
+		// #if neko mutex.release(); #end
 		return runner;
 	}
 
@@ -143,7 +141,6 @@ import haxe.macro.Compiler;
 			statementQueue.unshift(id);
 			#end
 		}
-
 		#if neko mutex.release(); #end
 	}
 	
@@ -203,14 +200,12 @@ import haxe.macro.Compiler;
 		}
 
 		#if neko mutex.release(); #end
-
 		return value;
 	}
 
-
 	public function getNextBranchResultFromQueue():BranchResult
 	{
-		#if neko mutex.acquire(); #end
+		// #if neko mutex.acquire(); #end
 		var result:BranchResult = null; 
 		try
 		{
@@ -222,14 +217,14 @@ import haxe.macro.Compiler;
 		}
 		catch(e:Dynamic){}
 		
-		#if neko mutex.release(); #end
+		// #if neko mutex.release(); #end
 		return result;
 	}
 
 	public function getNextStatementFromQueue():Int
 	{
-		#if neko mutex.acquire(); #end
-		var result:Int = null;
+		// #if neko mutex.acquire(); #end
+		var result:Int = Std.int(Math.NaN);
 		try
 		{
 			#if neko 
@@ -240,7 +235,7 @@ import haxe.macro.Compiler;
 		}
 		catch(e:Dynamic){}
 		
-		#if neko mutex.release(); #end
+		// #if neko mutex.release(); #end
 		return result;
 	}
 
@@ -261,12 +256,9 @@ import haxe.macro.Compiler;
 	#else
 	//--------------- MACROS --------------..
 
-
 	static public var classPathHash:IntHash<String> = new IntHash();
 	static public var classHash:IntHash<String> = new IntHash();
 		
-	
-
 	/** 
 	* Includes classes/packages for code coverage.
 	* Adds @:build(mcover.MCoverMacro.build()) to all classes/packages referenced

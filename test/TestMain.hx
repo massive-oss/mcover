@@ -18,7 +18,6 @@ class TestMain
 {		
 	static function main()
 	{
-		massive.mcover.MCover.getInstance().createRunner();
 		new TestMain();
 	}
 
@@ -30,8 +29,8 @@ class TestMain
 		var printClient = new munit.client.MCoverPrintClient(true);
 
 		var runner:TestRunner = new TestRunner(printClient);
-		runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.completionHandler = completionHandler;
+		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.run(suites);
 	}
 	

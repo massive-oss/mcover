@@ -26,7 +26,7 @@ package massive.mcover.util;
 
 class Timer 
 {
-	static var mutex = new neko.vm.Mutex();
+	public var run:Void -> Void;
 	#if (php)
 	#else
 
@@ -36,11 +36,14 @@ class Timer
 	static var arr:Array<Timer> = [];
 	var timerId:Int;
 	#elseif neko
+	static var mutex = new neko.vm.Mutex();
 	var runThread:neko.vm.Thread;
 	#end
 
 	public function new(time_ms:Int)
 	{
+		run = defaultRun;
+
 		#if flash9
 			var me = this;
 			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
@@ -56,6 +59,9 @@ class Timer
 			runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );
 		#end
 	}
+
+	function defaultRun()
+	{}
 
 	public function stop()
 	{
@@ -77,24 +83,19 @@ class Timer
 				arr = arr.slice(0, p + 1);
 			}
 		#elseif neko
-			run = function() {};
+			run = defaultRun;
 			runThread.sendMessage("stop");
 		#end
 		id = null;
 	}
 
-	public dynamic function run() 
-	{}
-
 	#if neko
 	function runLoop(time_ms)
 	{
-		
 		var shouldStop = false;
 		while( !shouldStop )
 		{
 			neko.Sys.sleep(time_ms/1000);
-			//mutex.acquire();
 			try
 			{
 				run();
@@ -104,8 +105,6 @@ class Timer
 				trace(ex);
 				trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 			}
-			//mutex.release();
-
 			var msg = neko.vm.Thread.readMessage(false);
 			if (msg == "stop") shouldStop = true;
 		}

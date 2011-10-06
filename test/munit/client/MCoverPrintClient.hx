@@ -23,11 +23,12 @@ class MCoverPrintClient extends PrintClient
 	{
 		super(includeIgnoredReport);
 
-		runner = MCover.getInstance().runner;
-		runner.completionHandler = codeCoverageComplete;
-
+		runner = MCover.getInstance().createRunner();
+		
 		coverClient = new massive.mcover.client.PrintClient();
 		runner.addClient(coverClient);
+
+		runner.completionHandler = codeCoverageComplete;
 	}
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
@@ -46,7 +47,6 @@ class MCoverPrintClient extends PrintClient
 		print("==============================" + newline);
 			
 		runner.report();
-
 		/*if (completionHandler != null)
 		{
 			completionHandler(this);

@@ -104,7 +104,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	{
 		initialized = false;
 		if(timer != null) timer.stop();
-		timer = new Timer(50);
+		timer = new Timer(100);
 		timer.run = tick;
 	}
 
@@ -120,7 +120,6 @@ class MCoverRunnerImpc implements MCoverRunner
 		update();//make sure to capture any pending logs
 		#if neko mutex.release(); #end
 		
-
 		debug("gen report ");
 		generateReport();
 		debug("gen report complete ");
@@ -191,7 +190,7 @@ class MCoverRunnerImpc implements MCoverRunner
 		var statements:Array<Int> = [];
 		var value = cover.getNextStatementFromQueue();
 
-		while(value != null)
+		while(!Math.isNaN(value))
 		{
 			statements.push(value);
 			value = cover.getNextStatementFromQueue();
@@ -214,14 +213,11 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			logBranch(b);
 		}
-
-		
 	}
 
 	function init()
 	{
 		initialized = true;
-		clients = [];
 		loadGeneratedCoverageData();		
 	}
 
@@ -259,7 +255,6 @@ class MCoverRunnerImpc implements MCoverRunner
 
 		if(branch == null) throw "Null branch for " + id;
 		
-
 		if(value.charAt(0) == "1") branch.trueCount += 1;
 		if(value.charAt(1) == "1") branch.falseCount += 1;
 		
@@ -309,7 +304,7 @@ class MCoverRunnerImpc implements MCoverRunner
 			client.report(allClasses);
 		}
 	}
-	
+
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
 		if (++clientCompleteCount == clients.length)
@@ -317,8 +312,10 @@ class MCoverRunnerImpc implements MCoverRunner
 			if (completionHandler != null)
 			{
 				var percent:Float = allClasses.getPercentage();
-				var handler:Dynamic = completionHandler;
-				Timer.delay(function() { handler(percent); }, 1);
+				var handler:Float -> Void = completionHandler;
+
+				handler(percent);
+				//Timer.delay(function() {handler(percent); }, 200);
 			}
 		}
 	}
