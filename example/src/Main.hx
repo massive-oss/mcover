@@ -7,28 +7,27 @@ class Main
 {
 	static var runner:MCoverRunner;
 
+	static var completed:Bool = false;
+
 	@IgnoreCover
-	static public function main():Main
+	static public function main()
 	{
 		runner = MCover.getInstance().createRunner();
 		var app = new Main();
-
-		keepAlive();
+		runner.completionHandler = completionHandler;
 		runner.report();
-		return app;
-	}
 
-	@IgnoreCover
-	static public function keepAlive()
-	{
-		#if neko
-		var i:Int = 0;
-		while(i<5)
+		while(completed != true)
 		{
-			neko.Sys.sleep(.01);
-			i++;
+			neko.Sys.sleep(.1);
+
 		}
-		#end
+
+
+	}
+	static function completionHandler(percent:Float)
+	{
+		completed = true;
 	}
 
 	static public function here(?posInfos:haxe.PosInfos)
