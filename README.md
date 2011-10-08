@@ -207,9 +207,9 @@ Advanced Usage
 
 #### Setting a custom runner
 
-You can specify a custom runner by passing through an instance that implements MCoverRunner. By default an instance of MCoverRunnerImp is created.
+You can specify a custom runner by passing through a class that implements MCoverRunner. By default an instance of MCoverRunnerImp is created.
 
-	massive.mcover.MCover.createRunner(new MCoverRunnerImp());
+	massive.mcover.MCover.createRunner(MCoverRunnerImpl);
 
 #### Ignoring individual classes or methods
 
