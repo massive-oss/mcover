@@ -95,22 +95,25 @@ import haxe.macro.Compiler;
 		branchById = new IntHash();
 	}
 
-	public function createRunner(?inst:MCoverRunner=null, overwrite:Bool=false):MCoverRunner
+	public function createRunner(?runnerClass:Class<MCoverRunner>=null, overwrite:Bool=false):MCoverRunner
 	{
 		#if neko mutex.acquire(); #end
 		if(runner != null)
 		{
-			if(!overwrite) throw "Runner already exists. Set overwrite to true to replace runner.";
+			if(!overwrite)
+			{
+				#if neko mutex.release(); #end
+				throw "Runner already exists. Set overwrite to true to replace runner.";
+			}
 
 			runner.destroy();
 			runner = null;
 		}
 
-		if(inst == null)
-		{
-			inst = new MCoverRunnerImpc();
-		}
-		runner = inst;
+		if(runnerClass == null) runnerClass =MCoverRunnerImpl;
+
+		runner = Type.createInstance(runnerClass, []);
+		runner.initialize(this, RESOURCE_DATA);
 
 		#if neko mutex.release(); #end
 		return runner;
@@ -205,36 +208,31 @@ import haxe.macro.Compiler;
 
 	public function getNextBranchResultFromQueue():BranchResult
 	{
-		#if neko mutex.acquire(); #end
 		var result:BranchResult = null; 
-		try
-		{
-			#if neko 
-			result = branchQueue.pop(false);
-			#else
-			result = branchQueue.pop();
-			#end
-		}
-		catch(e:Dynamic){}
-		
-		#if neko mutex.release(); #end
+
+		#if neko
+		mutex.acquire();
+		result = branchQueue.pop(false);
+		mutex.release();
+		#else
+		result = branchQueue.pop();
+		#end
+
 		return result;
 	}
 
 	public function getNextStatementFromQueue():Null<Int>
 	{
-		#if neko mutex.acquire(); #end
+
 		var result:Null<Int> = null;
-		try
-		{
-			#if neko 
-			result = statementQueue.pop(false);
-			#else
-			result = statementQueue.pop();
-			#end
-		}
-		catch(e:Dynamic){}
-		#if neko mutex.release(); #end
+		#if neko 
+		mutex.acquire();
+		result = statementQueue.pop(false);
+		mutex.release();
+		#else
+		result = statementQueue.pop();
+		#end
+	
 		return result;
 	}
 

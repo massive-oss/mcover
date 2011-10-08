@@ -9,13 +9,7 @@ interface CoverageClient
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	var completionHandler(get_completeHandler, set_completeHandler):CoverageClient -> Void;
-	
-	/**
-	 * The unique identifier for the client.
-	 */
-	var id(default, null):String;
-
+	var completionHandler(default, default):CoverageClient -> Void;
 		
 	/**
 	 * Called when a statement code block is executed at runtime.

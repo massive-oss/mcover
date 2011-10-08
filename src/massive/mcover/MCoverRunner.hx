@@ -20,9 +20,14 @@ interface MCoverRunner
 	/*
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
+	var completionHandler(default, default):Float -> Void;
 	
 	var allClasses(default, null):AllClasses;
+
+	var cover(default, null):MCover;
+
+
+	function initialize(cover:MCover, resourceName:String):Void;
 
 	function report():Void;
 
@@ -38,36 +43,25 @@ interface MCoverRunner
 	function getClients():Array<CoverageClient>;
 
 	/**
-	* Completely resets all results, clears all clients/blocks and restarts internal timers.
-	**/
-	function reset():Void;
-
-	/**
 	* Removes timers and contents
 	*/
 	function destroy():Void;
 }
 
 
-class MCoverRunnerImpc implements MCoverRunner
+class MCoverRunnerImpl implements MCoverRunner
 {
 	static var MAX_COUNT_PER_TICK:Int = 200;
 	/**
 	 * Handler called when all clients 
 	 * have completed processing the results.
 	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):Float -> Void;
-	function get_completeHandler():Float -> Void 
-	{
-		return completionHandler;
-	}
-	function set_completeHandler(value:Float -> Void):Float -> Void
-	{
-		return completionHandler = value;
-	}
+	public var completionHandler(default, default):Float -> Void;
 
 	public var allClasses(default, null):AllClasses;
+	public var cover(default, null):MCover;
 
+	var resourceName:String;
 	var clients:Array<CoverageClient>;
 	var clientCompleteCount:Int;
 	var timer:Timer;
@@ -75,6 +69,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	var coverageResult:CoverageResult;
 	var startTime:Float;
 	var reportPending:Bool;
+
 
 	#if neko
 	static var mutex:neko.vm.Mutex;
@@ -85,14 +80,23 @@ class MCoverRunnerImpc implements MCoverRunner
 	 */
 	public function new()
 	{
+		
+	}
+
+	public function initialize(cover:MCover, resourceName:String)
+	{
+		this.cover = cover;
+		this.resourceName = resourceName;
+
 		#if neko
 		mutex = new neko.vm.Mutex();
 		#end
-
 		reportPending = false;
-		loadGeneratedCoverageData();
 		startTime = Date.now().getTime();
 		clients = [];
+
+		loadGeneratedCoverageData();
+		
 		reset();
 	}
 
@@ -101,7 +105,7 @@ class MCoverRunnerImpc implements MCoverRunner
 	 * This is to prevent logs being parsed before instance is initialized
 	 * (edge case usually, but always occurs when running against MCover!!)
 	 */
-	public function reset()
+	 function reset()
 	{
 		if(timer != null) timer.stop();
 		timer = new Timer(10);
@@ -150,6 +154,8 @@ class MCoverRunnerImpc implements MCoverRunner
 		{
 			c.completionHandler = null;
 		}
+
+		clients = [];
 	}
 
 	///////////////////////////////////
@@ -167,7 +173,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	@IgnoreCover
 	function update()
 	{	
-		var cover = MCover.getInstance();
 		var statements:Array<Int> = [];
 
 		var value = cover.getNextStatementFromQueue();
@@ -221,8 +226,6 @@ class MCoverRunnerImpc implements MCoverRunner
 
 			reportPending = false;
 		}
-
-		
 	}
 
 	/**
@@ -270,8 +273,8 @@ class MCoverRunnerImpc implements MCoverRunner
 
 	function loadGeneratedCoverageData()
 	{
-		var serializedData:String = haxe.Resource.getString(MCover.RESOURCE_DATA);
-		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + MCover.RESOURCE_DATA  + "'";
+		var serializedData:String = haxe.Resource.getString(resourceName);
+		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + resourceName  + "'";
 		try
 		{
 			allClasses = haxe.Unserializer.run(serializedData);
@@ -333,8 +336,6 @@ class MCoverRunnerImpc implements MCoverRunner
 	function generateInternalStats()
 	{
 		var output:String = "";
-
-		var cover = MCover.getInstance();
 
 		var statements:IntHash<Int> = cover.getCopyOfStatements();
 		var s:Array<{statement:Statement, value:Int}> = [];

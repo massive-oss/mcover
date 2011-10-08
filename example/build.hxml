@@ -21,6 +21,6 @@
 -neko build/main.n
 -cp ../src
 -cp src
-#-D MCOVER_DEBUG
+-D MCOVER_DEBUG
 --macro massive.mcover.MCover.include('', ['src'])
 -cmd neko build/main.n

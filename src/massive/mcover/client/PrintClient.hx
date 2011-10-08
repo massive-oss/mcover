@@ -8,28 +8,10 @@ import massive.mcover.data.AllClasses;
 
 class PrintClient implements CoverageClient
 {
-	/**
-	 * Default id of this client.
-	 */
-	public static inline var DEFAULT_ID:String = "print";
-
-	/**
-	 * The unique identifier for the client.
-	 */
-	public var id(default, null):String;
-
-	/**
+		/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):CoverageClient -> Void;
-	function get_completeHandler():CoverageClient -> Void 
-	{
-		return completionHandler;
-	}
-	function set_completeHandler(value:CoverageClient -> Void):CoverageClient -> Void
-	{
-		return completionHandler = value;
-	}
+	public var completionHandler(default, default):CoverageClient -> Void;
 
 	/**
 	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
@@ -52,11 +34,8 @@ class PrintClient implements CoverageClient
 	var classCompletedCount:Int;
 	var classPartialCount:Int;
 
-	public function new(?id:String=null)
+	public function new()
 	{
-		if(id == null) id = DEFAULT_ID;
-		this.id = id;
-		
 		output = "";
 		newline = "\n";
 		tab = " ";

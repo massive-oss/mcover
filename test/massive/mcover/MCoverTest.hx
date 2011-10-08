@@ -5,10 +5,12 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.mcover.MCoverRunner;
 import massive.mcover.MCover;
-@Ignore
+
 class MCoverTest
 {
 	var cover:MCover;
+	var runner:MCoverRunner;
+	var runner2:MCoverRunner;
 
 	public function new()
 	{
@@ -34,8 +36,16 @@ class MCoverTest
 	@After
 	public function tearDown():Void
 	{
-	}
+		if(runner != null)
+		{
+			runner.destroy();
+		}
 
+		if(runner2 != null)
+		{
+			runner2.destroy();
+		}
+	}
 
 	@Test
 	public function shouldGetDefaultInstance()
@@ -43,24 +53,23 @@ class MCoverTest
 		cover = MCover.getInstance();
 		Assert.areEqual(MCover.instance, cover);
 	}
-/*
+
 	@Test
-	@Ignore("Breaks coverage")
 	public function shouldCreateDefaultRunnerIfNonExisting()
 	{
-		var runner = cover.createRunner();
+		runner = cover.createRunner();
 		Assert.isNotNull(runner);
-		Assert.areEqual(MCoverRunnerImpc, Type.getClass(runner));
+		Assert.areEqual(MCoverRunnerImpl, Type.getClass(runner));
+		
 	}
 
 	@Test
-	@Ignore("Breaks coverage")
 	public function shouldThrowExceptionIfOverwritingRunnerWithoutFlag()
 	{
 		try
 		{
-			var runner = cover.createRunner();
-			runner = cover.createRunner();
+			runner = cover.createRunner(MCoverRunnerMock);
+			runner = cover.createRunner(MCoverRunnerMock);
 			Assert.fail("Expected exception for overwriting existing runner cover");
 		}
 		catch(e:String)
@@ -70,26 +79,33 @@ class MCoverTest
 	}
 
 	@Test
-	@Ignore("Breaks coverage")
 	public function shouldCreateNewDefaultRunner()
 	{
-		var runner = cover.createRunner();
-		var runner2 = cover.createRunner(null, true);
+		runner = cover.createRunner(MCoverRunnerMock);
+		runner2 = cover.createRunner(null, true);
 
 		Assert.isNotNull(runner2);
-		Assert.areEqual(MCoverRunnerImpc, Type.getClass(runner2));
+		Assert.areEqual(MCoverRunnerImpl, Type.getClass(runner2));
 		Assert.areNotEqual(runner, runner2);
+		Assert.isTrue(cast(runner, MCoverRunnerMock).isDestroyed);
 	}
 
 	@Test
-	@Ignore("Breaks coverage")
 	public function shouldCreateCustomerRunner()
 	{
-		var runner = new MCoverRunnerImpc();
-		var runner2 = cover.createRunner(runner);
-		Assert.areEqual(runner, runner2);
+		runner = cover.createRunner(MCoverRunnerMock);
+		Assert.areEqual(MCoverRunnerMock,  Type.getClass(runner));
 	}
-*/
+
+
+	@Test
+	public function shouldSetRunnerCoverAndResourceName()
+	{
+		runner = cover.createRunner(MCoverRunnerMock);
+		Assert.areEqual(cover, runner.cover);
+		Assert.areEqual(MCover.RESOURCE_DATA, cast(runner, MCoverRunnerMock).resourceName);
+	}
+
 	@Test
 	public function shouldAddUniqueStatementtoQueue()
 	{
@@ -122,6 +138,14 @@ class MCoverTest
 		cover.logStatement(id2);
 		Assert.areEqual(id1, cover.getNextStatementFromQueue());
 		Assert.areEqual(id2, cover.getNextStatementFromQueue());
+	}
+
+
+	@Test
+	public function shouldGetNullStatementFromQueue()
+	{
+		var id = cover.getNextStatementFromQueue();
+		Assert.isNull(id);
 	}
 
 	@Test
@@ -197,6 +221,13 @@ class MCoverTest
 		Assert.areEqual(1, result2.trueCount);
 		Assert.areEqual(1, result2.falseCount);
 		Assert.areEqual(2, result2.total);
+	}
+
+		@Test
+	public function getNextBranchResultFromQueue()
+	{
+		var result = cover.getNextStatementFromQueue();
+		Assert.isNull(result);
 	}
 
 	@Test
