@@ -13,6 +13,11 @@ class PrintClient implements CoverageClient
 	 */
 	public var completionHandler(default, default):CoverageClient -> Void;
 
+
+	public var includeMissingBlocks(default, default):Bool;
+	public var includeBlockExecutionCounts(default, default):Bool;
+	
+		
 	/**
 	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
 	 * 
@@ -21,6 +26,7 @@ class PrintClient implements CoverageClient
 	 * </p>
 	 */
 	public var newline:String;
+
 
 	public var output(default, null):String;
 	var divider:String;
@@ -36,6 +42,8 @@ class PrintClient implements CoverageClient
 
 	public function new()
 	{
+		includeMissingBlocks = true;
+		includeBlockExecutionCounts = false;
 		output = "";
 		newline = "\n";
 		tab = " ";
@@ -54,33 +62,32 @@ class PrintClient implements CoverageClient
 	
 	var allClasses:AllClasses;
 
-	public function report(allClasses:AllClasses):Dynamic
+	public function report(allClasses:AllClasses):Void
 	{
 		output = "";
 	
 		this.allClasses = allClasses;
-
-
+				
 		printReport();
 
 		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
-		return output;
 	}
 
 	function printReport()
 	{
 		print(divider);
-		print("MCover v0.2 Coverage Report, generated " + Date.now().toString());
+		print("MCover v0.4 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
-		// #if MCOVER_DEBUG
-		// printCoveredBlocks();
-		// #end
+		if(includeBlockExecutionCounts)
+		{
+			printBlockFrequency();
+		}
 
-		if(allClasses.getPercentage() != 100)
+		if(includeMissingBlocks)
 		{
 			printMissingBlocks();
 		}
@@ -88,11 +95,17 @@ class PrintClient implements CoverageClient
 		printClassResults();
 		printPackageResults();
 
+
+		printSummary();
+
+	}
+
+	function printSummary()
+	{
 		var r = allClasses.getResults();
 
 		var columnWidth:Int = 20;
 		
-
 		print("");
 		print(divider);
 		print("");
@@ -111,42 +124,15 @@ class PrintClient implements CoverageClient
 		printToTabs(["RESULT", allClasses.getPercentage() + "%"], columnWidth);
 		print(divider);
 		print("");
-		return;
 	}
 
-	function printMissingBlocks()
-	{
-		print("");
-		print("MISSING BRANCH BLOCKS:");
-		print("");
-
-		var branches = allClasses.getMissingBranches();
-
-		for(block in branches)
-		{
-			printToTabs(["",  block.toString()]);
-		}
-
-		print("");
-		print("MISSING STATEMENT BLOCKS:");
-		print("");
-
-		var statements = allClasses.getMissingStatements();
-
-		for(block in statements)
-		{
-			printToTabs(["",  block.toString()]);
-		}
-
-	
-	}
 
 	function printPackageResults()
 	{
 		print("");
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
-		printToTabs(["", "result","files","classes", "package"]);
+		printToTabs(["", "Result","Files","Classes", "Package"]);
 
 		var packages = allClasses.getPackages();
 		
@@ -164,7 +150,7 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
 		print("");
-		printToTabs(["", "result","methods","statements","branches", "class"]);
+		printToTabs(["", "Result","Methods","Statements","Branches", "Class"]);
 
 		var classes = allClasses.getClasses();
 		
@@ -174,6 +160,101 @@ class PrintClient implements CoverageClient
 			printToTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, cls.name]);
 		}
 	}
+
+	/**
+	* Prints summary of branches and statements that have not been executed
+	*/
+	function printMissingBlocks()
+	{
+		print("");
+		print("NON-EXECUTED BRANCHES:");
+		print("");
+
+		if(allClasses.getPercentage() == 100 )
+		{
+			printToTabs(["",  "None"]);
+		}
+		else
+		{
+			var branches = allClasses.getMissingBranches();
+			for(block in branches)
+			{
+				printToTabs(["",  block.toString()]);
+			}
+		}
+
+		print("");
+		print("NON-EXECUTED statements:");
+		print("");
+
+		if(allClasses.getPercentage() == 100 )
+		{
+			printToTabs(["",  "None"]);
+		}
+		else
+		{
+			var statements = allClasses.getMissingStatements();
+			for(block in statements)
+			{
+				printToTabs(["",  block.toString()]);
+			}
+		}
+	}
+
+	/**
+	* Outputs all branch and statement logs sorted by highest frequency.
+	* For branches reports also totals for true/false  
+	*/
+
+	function printBlockFrequency()
+	{
+		print("");
+		print("STATEMENTS BY EXECUTION FREQUENCY:");
+		print("");
+
+
+		var statements:Array<Statement> = [];
+
+		for(key in allClasses.statementResultsById.keys())
+		{
+			statements.push(allClasses.getStatementById(key));
+		}
+		statements.sort(function(a, b){return -a.count+b.count;});
+
+		printToTabs(["", "Total", "Statement"]);
+
+		for(statement in statements)
+		{
+			printToTabs(["", statement.count, statement.toString()]);
+
+		}
+
+		print("");
+		print("BRANCHES BY EXECUTION FREQUENCY:");
+		print("");
+
+		var branches:Array<Branch> = [];
+
+		for(key in allClasses.branchResultsById.keys())
+		{
+			branches.push(allClasses.getBranchById(key));
+		}
+		
+		branches.sort(function(a, b){return -a.totalCount+b.totalCount;});
+
+		printToTabs(["", "Total", "True", "False", "Branch"]);
+		for(branch in branches)
+		{
+			printToTabs(["",
+				branch.totalCount,
+				branch.trueCount,
+				branch.falseCount,
+				branch.toString()]);
+		}
+	}
+
+
+	///////
 
 	function print(value:Dynamic)
 	{

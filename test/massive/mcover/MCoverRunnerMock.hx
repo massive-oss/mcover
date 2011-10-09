@@ -6,7 +6,6 @@ class MCoverRunnerMock implements MCoverRunner
 	public var completionHandler(default, default):Float -> Void;
 
 	public var cover(default, null):MCover;
-	public var resourceName:String;
 	public var allClasses(default, null):AllClasses;
 
 	public var clients:Array<CoverageClient>;
@@ -21,18 +20,18 @@ class MCoverRunnerMock implements MCoverRunner
 		isDestroyed = false;
 	}
 
-	public function initialize(cover:MCover, resourceName:String)
+	public function initialize(cover:MCover, allClasses:AllClasses)
 	{
 		this.cover = cover;
-		this.resourceName = resourceName;
+		this.allClasses = allClasses;
 	}
 
 	public function report()
 	{
-		var timer = massive.munit.util.Timer.delay(reportComplete, 50);
+		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);
 	}
 
-	function reportComplete()
+	function executeCompletionHandler()
 	{
 		if(completionHandler != null)
 		{

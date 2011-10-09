@@ -3,6 +3,7 @@ package massive.mcover.data;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import massive.mcover.data.Branch;
 
 class AllClassesTest extends AbstractNodeListTest
 {	
@@ -140,13 +141,45 @@ class AllClassesTest extends AbstractNodeListTest
 	}
 
 	@Test
+	public function shouldAppendCountsFromStatementResults()
+	{
+		var statement = NodeMock.createStatement();
+		allClasses.addStatement(statement);
+
+		var hash:IntHash<Int> = new IntHash();
+		hash.set(statement.id, 10);
+		allClasses.setStatementResultsHash(hash);
+
+		var r = allClasses.getResults();
+
+		Assert.areEqual(10, statement.count);
+	}
+
+	@Test
+	public function shouldAppendCountsFromBranchResults()
+	{
+		var branch = NodeMock.createBranch();
+		allClasses.addBranch(branch);
+
+		var hash:IntHash<BranchResult> = new IntHash();
+
+		var result:BranchResult = {id:branch.id, value:false, result:"11", trueCount:5, falseCount:5, total:10};
+
+		hash.set(branch.id, result);
+		allClasses.setBranchResultsHash(hash);
+
+		var r = allClasses.getResults();
+
+		Assert.areEqual(5, branch.trueCount);
+		Assert.areEqual(5, branch.falseCount);
+		Assert.areEqual(10, branch.totalCount);
+	}
+
+	@Test
 	public function shouldAddStatementToMethod()
 	{
-		var block = new NodeMock().createStatement();
-		block.packageName = "p";
-		block.file = "f";
-		block.qualifiedClassName = "c";
-		block.methodName = "m";
+		var block = NodeMock.createStatement();
+	
 
 		allClasses.addStatement(block);
 
@@ -174,11 +207,8 @@ class AllClassesTest extends AbstractNodeListTest
 	@Test
 	public function shouldAddBlockToMethod()
 	{
-		var block = new NodeMock().createBranch();
-		block.packageName = "p";
-		block.file = "f";
-		block.qualifiedClassName = "c";
-		block.methodName = "m";
+		var block = NodeMock.createBranch();
+	
 
 		allClasses.addBranch(block);
 
@@ -203,6 +233,83 @@ class AllClassesTest extends AbstractNodeListTest
 		Assert.areEqual(block, method.getBranchById(0));
 	}
 
+	@Test
+	public function shouldThrowExcepctionIfStatementHasMissingFields()
+	{
+		var createMethod = NodeMock.createStatement;
+		var addMethod = allClasses.addStatement;
+		testMissingBlockFieldsThrowError(createMethod, addMethod);
+	}
+
+
+	@Test
+	public function shouldThrowExcepctionIfBranchHasMissingFields()
+	{
+		var createMethod = NodeMock.createBranch;
+		var addMethod = allClasses.addBranch;		
+		testMissingBlockFieldsThrowError(createMethod, addMethod);
+	}
+
+
+	function testMissingBlockFieldsThrowError(createMethod:Void ->Dynamic, addMethod:Dynamic ->Void)
+	{
+		var block:AbstractBlock;
+
+		try
+		{
+			block = cast(createMethod(), AbstractBlock);
+			block.id = null;
+			addMethod(block);
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(e.message.indexOf("id") != -1);
+		}
+
+		try
+		{
+			block =  cast(createMethod(), AbstractBlock);
+			block.packageName = null;
+			addMethod(block);
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(e.message.indexOf("packageName") != -1);
+		}
+
+		try
+		{
+			block = cast(createMethod(), AbstractBlock);
+			block.file = null;
+			addMethod(block);
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(e.message.indexOf("file") != -1);
+		}
+
+		try
+		{
+			block =  cast(createMethod(), AbstractBlock);
+			block.qualifiedClassName = null;
+			addMethod(block);
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(e.message.indexOf("qualifiedClassName") != -1);
+		}
+
+		try
+		{
+			block =  cast(createMethod(), AbstractBlock);
+			block.methodName = null;
+			addMethod(block);
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(e.message.indexOf("methodName") != -1);
+		}
+	}
 
 
 	@Test
@@ -225,7 +332,7 @@ class AllClassesTest extends AbstractNodeListTest
 			statement = allClasses.getStatementById(2);
 			Assert.fail("invalid statement id should throw exception.");
 		}
-		catch(e:String)
+		catch(e:MCoverException)
 		{
 			Assert.isTrue(true);
 		}
@@ -250,11 +357,13 @@ class AllClassesTest extends AbstractNodeListTest
 			branch = allClasses.getBranchById(2);
 			Assert.fail("invalid branch id should throw exception.");
 		}
-		catch(e:String)
+		catch(e:MCoverException)
 		{
 			Assert.isTrue(true);
 		}
 	}
+
+
 
 	//////////////////
 
@@ -272,6 +381,8 @@ class AllClassesTest extends AbstractNodeListTest
 	{
 		return new AllClasses();
 	}
+
+
 
 
 }

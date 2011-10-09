@@ -15,6 +15,7 @@ import massive.mcover.data.CoverageResult;
 #if !macro
 import massive.mcover.MCoverRunner;
 import massive.mcover.CoverageClient;
+import massive.mcover.MCoverException;
 
 #if neko
 import neko.vm.Deque;
@@ -64,10 +65,20 @@ import haxe.macro.Compiler;
 
 	#end
 
-	public var statementById(default, null):IntHash<Int>;
-	public var branchById(default, null):IntHash<BranchResult>;
-
 	public var runner(default, null):MCoverRunner;
+
+
+	/*
+	 * total execution count for statements by id
+	*/
+	var statementResultsById:IntHash<Int>;
+	
+	/*
+	 * total execution summary for branches by id
+	*/
+	var branchResultsById:IntHash<BranchResult>;
+
+	public var allClasses(default, null):AllClasses;
 
 	@IgnoreCover
 	public static function getInstance():MCover
@@ -91,8 +102,9 @@ import haxe.macro.Compiler;
 		statementQueue = [];
 		branchQueue = [];
 		#end
-		statementById = new IntHash();
-		branchById = new IntHash();
+
+		statementResultsById = new IntHash();
+		branchResultsById = new IntHash();
 	}
 
 	public function createRunner(?runnerClass:Class<MCoverRunner>=null, overwrite:Bool=false):MCoverRunner
@@ -103,20 +115,41 @@ import haxe.macro.Compiler;
 			if(!overwrite)
 			{
 				#if neko mutex.release(); #end
-				throw "Runner already exists. Set overwrite to true to replace runner.";
+				throw new MCoverException("Runner already exists. Set overwrite to true to replace runner.");
 			}
 
 			runner.destroy();
 			runner = null;
 		}
 
+		if(allClasses == null)
+		{
+			loadAllClasses();	
+		}
+
 		if(runnerClass == null) runnerClass =MCoverRunnerImpl;
 
 		runner = Type.createInstance(runnerClass, []);
-		runner.initialize(this, RESOURCE_DATA);
+		runner.initialize(this, allClasses);
 
 		#if neko mutex.release(); #end
 		return runner;
+	}
+
+	public function loadAllClasses()
+	{
+		var serializedData:String = haxe.Resource.getString(RESOURCE_DATA);
+		if(serializedData == null) throw new MCoverException("No generated coverage data found in haxe Resource '" + RESOURCE_DATA  + "'");
+		try
+		{
+			allClasses = haxe.Unserializer.run(serializedData);
+			allClasses.setStatementResultsHash(statementResultsById);
+			allClasses.setBranchResultsHash(branchResultsById);
+		}
+		catch(e:Dynamic)
+		{
+			throw MCoverException.rethrow(e, "Unable to unserialize coverage data");
+		}
 	}
 
 	/**
@@ -129,12 +162,12 @@ import haxe.macro.Compiler;
 		#if neko mutex.acquire(); #end
 		var count = 1;
 
-		if(statementById.exists(id))
+		if(statementResultsById.exists(id))
 		{
-			count = statementById.get(id) + 1;
+			count = statementResultsById.get(id) + 1;
 		}
 
-		statementById.set(id, count);
+		statementResultsById.set(id, count);
 
 		if(count == 1)
 		{
@@ -158,14 +191,15 @@ import haxe.macro.Compiler;
 
 		var r:BranchResult = null;
 		
-		if(branchById.exists(id))
+		if(branchResultsById.exists(id))
 		{
-			r = branchById.get(id);
+			r = branchResultsById.get(id);
+
 		}
 		else
 		{
-			r = {id:id, result:"00", trueCount:0, falseCount:0, total:0};
-			branchById.set(id, r);
+			r = {id:id, value:false, result:"00", trueCount:0, falseCount:0, total:0};
+			branchResultsById.set(id, r);
 		}
 
 		//record current value
@@ -195,10 +229,12 @@ import haxe.macro.Compiler;
 
 		if(changed)
 		{
+			var copy = copyBranchResult(r);
+			copy.value = value;
 			#if neko
-			branchQueue.add(r);
+			branchQueue.add(copy);
 			#else
-			branchQueue.unshift(r);
+			branchQueue.unshift(copy);
 			#end
 		}
 
@@ -236,18 +272,12 @@ import haxe.macro.Compiler;
 		return result;
 	}
 
-	public function getCopyOfStatements():IntHash<Int>
-	{
-		var data = haxe.Serializer.run(statementById);
-		var hash:IntHash<Int> = haxe.Unserializer.run(data);
-		return hash;
-	}
 
-	public function getCopyOfBranches():IntHash<BranchResult>
+	function copyBranchResult(r:BranchResult):BranchResult
 	{
-		var data = haxe.Serializer.run(branchById);
-		var hash:IntHash<BranchResult> = haxe.Unserializer.run(data);
-		return hash;
+		if(r == null) return null;
+
+		return {id:r.id, value:r.value, result:r.result.toString(), trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
 	}
 
 	#else
@@ -354,11 +384,3 @@ import haxe.macro.Compiler;
 	#end
 }
 
-typedef BranchResult =
-{
-	id:Int,
-	result:String,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int,
-}

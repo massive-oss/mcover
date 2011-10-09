@@ -15,6 +15,8 @@ import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.MCover;
 
+import massive.mcover.MCoverException;
+
 interface MCoverRunner
 {
 	/*
@@ -27,7 +29,7 @@ interface MCoverRunner
 	var cover(default, null):MCover;
 
 
-	function initialize(cover:MCover, resourceName:String):Void;
+	function initialize(cover:MCover, allClasses:AllClasses):Void;
 
 	function report():Void;
 
@@ -51,6 +53,7 @@ interface MCoverRunner
 
 class MCoverRunnerImpl implements MCoverRunner
 {
+	static var TICK_INTERVAL_MS:Int = 1;
 	static var MAX_COUNT_PER_TICK:Int = 200;
 	/**
 	 * Handler called when all clients 
@@ -60,6 +63,8 @@ class MCoverRunnerImpl implements MCoverRunner
 
 	public var allClasses(default, null):AllClasses;
 	public var cover(default, null):MCover;
+
+	public var maxLogsToParsePerTick(default, default):Int;
 
 	var resourceName:String;
 	var clients:Array<CoverageClient>;
@@ -80,24 +85,22 @@ class MCoverRunnerImpl implements MCoverRunner
 	 */
 	public function new()
 	{
-		
-	}
-
-	public function initialize(cover:MCover, resourceName:String)
-	{
-		this.cover = cover;
-		this.resourceName = resourceName;
+		startTime = Date.now().getTime();
+		clients = [];
+		reportPending = false;
+		maxLogsToParsePerTick = MAX_COUNT_PER_TICK;
 
 		#if neko
 		mutex = new neko.vm.Mutex();
 		#end
-		reportPending = false;
-		startTime = Date.now().getTime();
-		clients = [];
-
-		loadGeneratedCoverageData();
 		
-		reset();
+	}
+
+	public function initialize(cover:MCover, allClasses:AllClasses)
+	{
+		this.cover = cover;
+		this.allClasses = allClasses;
+		resetTimer();
 	}
 
 	/**
@@ -105,16 +108,17 @@ class MCoverRunnerImpl implements MCoverRunner
 	 * This is to prevent logs being parsed before instance is initialized
 	 * (edge case usually, but always occurs when running against MCover!!)
 	 */
-	 function reset()
+	function resetTimer()
 	{
 		if(timer != null) timer.stop();
-		timer = new Timer(10);
+		timer = new Timer(TICK_INTERVAL_MS);
 		timer.run = tick;
 	}
 
 	public function report()
 	{
 		reportPending = true;
+		if(timer == null) resetTimer();
 	}
 
 	public function addClient(client:CoverageClient)
@@ -131,11 +135,7 @@ class MCoverRunnerImpl implements MCoverRunner
 	public function removeClient(client:CoverageClient)
 	{
 		client.completionHandler = null;
-		for(i in clients.length...0)
-		{
-			var c = clients[i];
-			if(c ==client) clients.splice(i, 1);
-		}
+		clients.remove(client);
 	}
 
 	public function getClients():Array<CoverageClient>
@@ -170,60 +170,73 @@ class MCoverRunnerImpl implements MCoverRunner
 		#if neko mutex.release(); #end
 	}
 
+	/**
+	* For testing purposes only
+	* forceUpdate should not need to be called directly by users.
+	*/
+	public function forceUpdate()
+	{
+		update();
+	}
+
 	@IgnoreCover
 	function update()
 	{	
 		var statements:Array<Int> = [];
 
-		var value = cover.getNextStatementFromQueue();
+		if(cover == null) throw new MCoverException("Runner has not been initialized");
 
 		var count = 0;
-		var queuesAreEmpty:Bool = true;
+		var value = cover.getNextStatementFromQueue();
 	
-		while(value != null && count < MAX_COUNT_PER_TICK)
+		while(value != null && count < maxLogsToParsePerTick)
 		{
-			statements.push(value);
-			value = cover.getNextStatementFromQueue();
 			count ++;
+			statements.push(value);
+			if(count < maxLogsToParsePerTick)
+			{
+				value = cover.getNextStatementFromQueue();
+			}
+			
 		}
-
-		if(count >= MAX_COUNT_PER_TICK) queuesAreEmpty = false;
 
 		for(s in statements)
 		{
 			logStatement(s);
 		}
 
+		if(count >= maxLogsToParsePerTick-1) return;
+
 		var branches:Array<BranchResult> = [];
 		var value = cover.getNextBranchResultFromQueue();
-		while(value != null && count < MAX_COUNT_PER_TICK)
+		while(value != null && count < maxLogsToParsePerTick)
 		{
+			count ++;
 			branches.push(value);
-			value = cover.getNextBranchResultFromQueue();
+			if(count < maxLogsToParsePerTick)
+			{
+				value = cover.getNextBranchResultFromQueue();
+			}
 		}
-
-		if(count >= MAX_COUNT_PER_TICK) queuesAreEmpty = false;
 
 		for(b in branches)
 		{
 			logBranch(b);
 		}
-		
-		if(reportPending && queuesAreEmpty)
+
+		if(count >= maxLogsToParsePerTick) return;
+
+
+		if(reportPending)
 		{
 			if(timer != null)
 			{
 				timer.stop();
 				timer = null;
 			}
-
-			debug("gen report ");
+		
 			generateReport();
-			debug("gen report complete ");
-			#if MCOVER_DEBUG
-			generateInternalStats();
-			#end
-
+			
 			reportPending = false;
 		}
 	}
@@ -236,11 +249,8 @@ class MCoverRunnerImpl implements MCoverRunner
 	 */
 	function logStatement(id:Int)
 	{		
-		if(allClasses == null) throw "allClasses is null";
 		var statement = allClasses.getStatementById(id);
 
-		if(statement == null) throw "Null statement for " + id;
-		
 		statement.count += 1;
 
 		for (client in clients)
@@ -256,14 +266,16 @@ class MCoverRunnerImpl implements MCoverRunner
 	function logBranch(log:BranchResult)
 	{
 		var id = log.id;
-		var value = log.result;
-		if(allClasses == null) throw "allClasses is null";
 		var branch = allClasses.getBranchById(id);
-
-		if(branch == null) throw "Null branch for " + id;
 		
-		if(value.charAt(0) == "1") branch.trueCount += 1;
-		if(value.charAt(1) == "1") branch.falseCount += 1;
+		if(log.value)
+		{
+			branch.trueCount += 1;
+		}
+		else
+		{
+			branch.falseCount += 1;
+		}
 		
 		for (client in clients)
 		{	
@@ -271,32 +283,10 @@ class MCoverRunnerImpl implements MCoverRunner
 		}
 	}
 
-	function loadGeneratedCoverageData()
-	{
-		var serializedData:String = haxe.Resource.getString(resourceName);
-		if(serializedData == null) throw "No generated coverage data found in haxe Resource '" + resourceName  + "'";
-		try
-		{
-			allClasses = haxe.Unserializer.run(serializedData);
-		}
-		catch(e:Dynamic)
-		{
-			trace("Unable to unserialize coverage data");
-			trace("   ERROR: " + e);
-			trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
-			trace(haxe.Stack.toString(haxe.Stack.callStack()));
-			throw(e);
-		}
-	}
-
 	function generateReport()
 	{
 		allClasses.getResults(true);
-		reportToClients();
-	}
 
-	function reportToClients()
-	{
 		clientCompleteCount = 0;
 
 		if(clients.length == 0)
@@ -310,7 +300,12 @@ class MCoverRunnerImpl implements MCoverRunner
 		{	
 			client.report(allClasses);
 		}
+
+		#if MCOVER_DEBUG
+		generateInternalStats();
+		#end
 	}
+
 
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
@@ -318,89 +313,28 @@ class MCoverRunnerImpl implements MCoverRunner
 		{
 			if (completionHandler != null)
 			{
-				var percent:Float = allClasses.getPercentage();
-				var handler:Float -> Void = completionHandler;
-
-				//handler(percent);
-				Timer.delay(function() {handler(percent); }, 200);
+				executeCompletionHandler();
+				//Timer.delay(executeCompletionHandler, 1);
 			}
 		}
 	}
 
+	function executeCompletionHandler()
+	{
+		var percent:Float = allClasses.getPercentage();
+		completionHandler(percent);
+	}
+
 	/////////////// DEBUGGING METHODS  ////////////
 
-	/**
-	* Outputs all branch and statement logs sorted by highest frequency.
-	* For branches reports also totals for true/false  
-	*/
-	function generateInternalStats()
-	{
-		var output:String = "";
-
-		var statements:IntHash<Int> = cover.getCopyOfStatements();
-		var s:Array<{statement:Statement, value:Int}> = [];
-		for(key in statements.keys())
-		{
-			s.push({statement:allClasses.getStatementById(key), value:statements.get(key)});
-		}
-		s.sort(function(a, b){return -a.value+b.value;});
-
-		output += "STATEMENTS ORDERED BY EXECUTION COUNT " + getTimer();
-		
-		output += "\n";
-		for(item in s)
-		{
-			output += "\n    ";
-			output += StringTools.rpad(Std.string(item.value), " ", 10);
-			output += item.statement.toString();
-		}
-
-		output += "\n\n";
-
-		var branches:IntHash<BranchResult> = cover.getCopyOfBranches();
-		var b:Array<{branch:Branch, value:BranchResult}> = [];
-		for(key in branches.keys())
-		{
-			b.push({branch:allClasses.getBranchById(key), value: branches.get(key)});
-		}
-		b.sort(function(a, b){return -a.value.total+b.value.total;});
-
-		output += "BRANCHES ORDERED BY EXECUTION COUNT " + getTimer();
-		
-		output += "\n";
-		
-		output +="\n    ";
-		output += StringTools.rpad("TOTAL", " ", 10);
-		output += StringTools.rpad("TRUE", " ", 10);
-		output += StringTools.rpad("FALSE", " ", 10);
-		
-		output += "\n";
-
-		for(item in b)
-		{
-			output +="\n    ";
-			output += StringTools.rpad(Std.string(item.value.total), " ", 10);
-			output += StringTools.rpad(Std.string(item.value.trueCount), " ", 10);
-			output += StringTools.rpad(Std.string(item.value.falseCount), " ", 10);
-			output += item.branch.toString();
-		}
-		output += "\n\n";
-
-		trace(output);
-	}
 
 	@IgnoreCover
 	function debug(value:Dynamic)
 	{
 		#if MCOVER_DEBUG
-		trace(Std.string(value) + " time: " + getTimer());
+		trace(Std.string(value) + " time: " + Timer.stamp());
 		#end
 	}
 
-	@IgnoreCover
-	function getTimer():Float
-	{
-		return Date.now().getTime()-startTime;
-	}
 
 }

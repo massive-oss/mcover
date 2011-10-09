@@ -5,11 +5,18 @@ package massive.mcover.data;
 	public var trueCount:Int;
 	public var falseCount:Int;
 
+	public var totalCount(get_totalCount, null):Int;
+
 	public function new()
 	{
 		super();
 		trueCount = 0;
 		falseCount = 0;
+	}
+
+	function get_totalCount():Int
+	{
+		return trueCount + falseCount;
 	}
 
 	override public function isCovered():Bool
@@ -46,4 +53,14 @@ package massive.mcover.data;
         trueCount = s.unserialize();
         falseCount = s.unserialize();
     }
+}
+
+typedef BranchResult =
+{
+	id:Int,
+	value:Bool,//current value
+	result:String,//binary string reprentation of true and false coverage ("00")
+	trueCount:Int,
+	falseCount:Int,
+	total:Int, //total true and false counts;
 }

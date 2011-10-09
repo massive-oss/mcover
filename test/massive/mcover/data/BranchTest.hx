@@ -56,6 +56,17 @@ class BranchTest extends AbstractBlockTest
 		Assert.isTrue(branch.isCovered());
 	}
 
+		@Test
+	public function shouldHaveTotalCount():Void
+	{
+		Assert.areEqual(0, branch.totalCount);
+		branch.trueCount = 1;
+		Assert.areEqual(1, branch.totalCount);
+
+		branch.falseCount = 1;
+		Assert.areEqual(2, branch.totalCount);
+	}
+
 	@Test
 	override public function shouldPrintDetailsToString()
 	{

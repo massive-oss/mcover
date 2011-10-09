@@ -1,21 +1,46 @@
 package massive.mcover.data;
 
 import massive.mcover.data.CoverageResult;
+import massive.mcover.data.Branch;
+
 @:keep class AllClasses extends AbstractNodeList
 {
 	var statements:IntHash<Array<Int>>;
 	var branches:IntHash<Array<Int>>;
+
+	/*
+	 * total execution count for statements by id
+	*/
+	public var statementResultsById(default, null):IntHash<Int>;
 	
+	/*
+	 * total execution summary for branches by id
+	*/
+	public var branchResultsById(default, null):IntHash<BranchResult>;
+
 	public function new()
 	{
 		super();
 		statements = new IntHash();
 		branches = new IntHash();		
+		statementResultsById = new IntHash();
+		branchResultsById = new IntHash();
+	}
+
+	public function setStatementResultsHash(hash:IntHash<Int>)
+	{
+		statementResultsById = hash;
+	}
+
+	public function setBranchResultsHash(hash:IntHash<BranchResult>)
+	{
+		branchResultsById = hash;
 	}
 
 	public function addStatement(block:Statement)
 	{
-		if(statements.exists(block.id)) throw "Statement already exists" + block.id + " " + block.toString();
+		verifyBlockData(block);
+		if(statements.exists(block.id)) throw new MCoverException("Statement already exists" + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -30,7 +55,8 @@ import massive.mcover.data.CoverageResult;
 
 	public function addBranch(block:Branch)
 	{
-		if(branches.exists(block.id)) throw "Branch already exists" + block.id + " " + block.toString();
+		verifyBlockData(block);
+		if(branches.exists(block.id)) throw new MCoverException("Branch already exists" + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -43,9 +69,18 @@ import massive.mcover.data.CoverageResult;
 		branches.set(block.id, block.lookup.concat([]));
 	}
 
+	function verifyBlockData(block:AbstractBlock)
+	{
+		if(block.id == null) throw new MCoverException("id cannot be null");
+		if(block.packageName == null) throw new MCoverException("packageName cannot be null");
+		if(block.file == null) throw new MCoverException("file cannot be null");
+		if(block.qualifiedClassName == null) throw new MCoverException("qualifiedClassName cannot be null");
+		if(block.methodName == null) throw new MCoverException("methodName cannot be null");
+	}
+
 	public function getBranchById(id:Int):Branch
 	{
-		if(!branches.exists(id)) throw "Unexpected branch " + id;
+		if(!branches.exists(id)) throw new MCoverException("Branch does not exist: " + id);
 
 		var lookup:Array<Int> = branches.get(id).concat([]);
 		return lookupBranch(lookup);
@@ -54,7 +89,7 @@ import massive.mcover.data.CoverageResult;
 
 	public function getStatementById(id:Int):Statement
 	{
-		if(!statements.exists(id)) throw "Unexpected statement " + id;
+		if(!statements.exists(id)) throw new MCoverException("Statement does not exist: " + id);
 		var lookup:Array<Int> = statements.get(id).concat([]);
 		return lookupStatement(lookup);
 	}
@@ -94,6 +129,31 @@ import massive.mcover.data.CoverageResult;
 		return a;
 	}
 
+	override public function getResults(?cache:Bool=true):CoverageResult
+	{
+		if(resultCache == null || !cache)
+		{
+			super.getResults(cache);
+
+			for(key in statementResultsById.keys())
+			{
+				var statement = getStatementById(key);
+				statement.count = statementResultsById.get(key);
+			}
+
+			for(key in branchResultsById.keys())
+			{
+				var branch = getBranchById(key);
+				var branchResult = branchResultsById.get(key);
+
+				branch.trueCount = branchResult.trueCount;
+				branch.falseCount = branchResult.falseCount;		
+			}
+		}
+
+		return resultCache;
+	}
+
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
 		to = super.appendResults(to, from);
@@ -124,6 +184,9 @@ import massive.mcover.data.CoverageResult;
 		super.hxSerialize(s);
         s.serialize(statements);
         s.serialize(branches);
+        s.serialize(statementResultsById);
+     	s.serialize(branchResultsById);
+           
     }
     
     override function hxUnserialize( s : haxe.Unserializer )
@@ -131,5 +194,7 @@ import massive.mcover.data.CoverageResult;
     	super.hxUnserialize(s);
         statements = s.unserialize();
         branches = s.unserialize();
+       	statementResultsById = s.unserialize();
+        branchResultsById = s.unserialize();
     }
 }

@@ -5,12 +5,14 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.mcover.MCoverRunner;
 import massive.mcover.MCover;
+import massive.mcover.data.AllClasses;
 
 class MCoverRunnerTest
 {
 	var runner:MCoverRunner;
 	var cover:MCover;
 	var client:CoverageClient;
+	var allClasses:AllClasses;
 
 	public function new()
 	{
@@ -33,6 +35,7 @@ class MCoverRunnerTest
 		runner = createRunner();
 		cover = new MCover();
  		client = new CoverageClientMock();
+ 		allClasses = new AllClasses();
 	}
 	
 	@After
@@ -41,22 +44,22 @@ class MCoverRunnerTest
 		if(runner != null)
 		{
 			runner.destroy();	
-		}
-		
+		}	
 	}
 
 
 	@Test
 	public function shouldInitialize()
 	{
-		runner.initialize(cover, MCover.RESOURCE_DATA);
+		initializeRunner();
 		Assert.areEqual(cover, runner.cover);
 	}
 
 	@AsyncTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
-	{
-		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 300);
+	{	
+		initializeRunner();
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 700);
 		runner.completionHandler = handler;
 		runner.report();
 	}
@@ -81,16 +84,22 @@ class MCoverRunnerTest
 	@Test
 	public function shouldDestroy()
 	{
+		runner.addClient(client);
 		runner.destroy();
-
 		Assert.areEqual(0, runner.getClients().length);
 
 	}
 
 	///////////////
 
-	function createRunner()
+	function createRunner():MCoverRunner
 	{
 		return new MCoverRunnerMock();
+	}
+
+	function initializeRunner()
+	{
+		runner.initialize(cover, allClasses);
+		runner.addClient(client);
 	}
 }

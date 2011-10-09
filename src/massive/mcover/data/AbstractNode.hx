@@ -2,7 +2,7 @@ package massive.mcover.data;
 
 @:keep class AbstractNode
 {
-	public var id:Int;
+	public var id:Null<Int>;
 	public var name:String;
 
 	var resultCache:CoverageResult;

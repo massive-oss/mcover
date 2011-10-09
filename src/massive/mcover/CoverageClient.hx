@@ -4,6 +4,7 @@ import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
 
+
 interface CoverageClient
 {
 	/**
@@ -29,8 +30,8 @@ interface CoverageClient
 	 * Called when all tests are complete.
 	 *  
 	 * @param	allClasses	arrgregated coverage data containing all statements, branches orded by package/file/class/method
-	 * @return	collated result data if any
 	 * @see massive.mcover.data.AllClasses;
 	 */
-	function report(allClasses:AllClasses):Dynamic;
+	function report(allClasses:AllClasses):Void;
+
 }
