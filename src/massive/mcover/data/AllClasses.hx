@@ -40,7 +40,7 @@ import massive.mcover.data.Branch;
 	public function addStatement(block:Statement)
 	{
 		verifyBlockData(block);
-		if(statements.exists(block.id)) throw new MCoverException("Statement already exists" + block.id + " " + block.toString());
+		if(statements.exists(block.id)) throw new MCoverException("Statement already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -56,7 +56,7 @@ import massive.mcover.data.Branch;
 	public function addBranch(block:Branch)
 	{
 		verifyBlockData(block);
-		if(branches.exists(block.id)) throw new MCoverException("Branch already exists" + block.id + " " + block.toString());
+		if(branches.exists(block.id)) throw new MCoverException("Branch already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);

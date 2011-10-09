@@ -11,7 +11,7 @@ import massive.mcover.CoverageClient;
 class CoverageClientTest
 {
 	var client:CoverageClient;
-
+	var allClasses:AllClasses;
 	public function new()
 	{
 		
@@ -31,6 +31,7 @@ class CoverageClientTest
 	public function setup():Void
 	{
 		client = createClient();
+		allClasses = new AllClasses();
 	}
 	
 	@After
@@ -44,7 +45,7 @@ class CoverageClientTest
 	{	
 		var handler:Dynamic = factory.createHandler(this, clientCompleteHandler, 500);
 		client.completionHandler = handler;
-		client.report(new AllClasses());
+		client.report(allClasses);
 	}
 	
 	function clientCompleteHandler(c:CoverageClient)

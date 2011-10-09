@@ -186,20 +186,20 @@ class AllClassesTest extends AbstractNodeListTest
 		var packages = allClasses.getPackages();
 
 		Assert.areEqual(1, packages.length);
-		Assert.areEqual("p", packages[0].name);
+		Assert.areEqual("package", packages[0].name);
 		Assert.areEqual(1, cast(packages[0], Package).itemCount);
 
-		var file = packages[0].getItemByName("f", File);
+		var file = packages[0].getItemByName("file", File);
 
 		Assert.areEqual(1, cast(file, File).itemCount);
 
 
 		var classes = allClasses.getClasses();
 		Assert.areEqual(1, classes.length);
-		Assert.areEqual("c", classes[0].name);
+		Assert.areEqual("package.class", classes[0].name);
 		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
 
-		var method = cast(classes[0].getItemByName("m", Method), Method);
+		var method = cast(classes[0].getItemByName("method", Method), Method);
 
 		Assert.areEqual(block, method.getStatementById(0));
 	}
@@ -215,20 +215,20 @@ class AllClassesTest extends AbstractNodeListTest
 		var packages = allClasses.getPackages();
 
 		Assert.areEqual(1, packages.length);
-		Assert.areEqual("p", packages[0].name);
+		Assert.areEqual("package", packages[0].name);
 		Assert.areEqual(1, cast(packages[0], Package).itemCount);
 
-		var file = packages[0].getItemByName("f", File);
+		var file = packages[0].getItemByName("file", File);
 
 		Assert.areEqual(1, cast(file, File).itemCount);
 
 
 		var classes = allClasses.getClasses();
 		Assert.areEqual(1, classes.length);
-		Assert.areEqual("c", classes[0].name);
+		Assert.areEqual("package.class", classes[0].name);
 		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
 
-		var method = cast(classes[0].getItemByName("m", Method), Method);
+		var method = cast(classes[0].getItemByName("method", Method), Method);
 
 		Assert.areEqual(block, method.getBranchById(0));
 	}

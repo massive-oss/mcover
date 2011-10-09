@@ -50,11 +50,13 @@ class PrintClient implements CoverageClient
 		divider = "----------------------------------------------------------------";
 	}
 
+	@IgnoreCover
 	public function logStatement(statement:Statement)
 	{
 		//null;
 	}
 
+	@IgnoreCover
 	public function logBranch(branch:Branch)
 	{
 		//null;
@@ -70,7 +72,12 @@ class PrintClient implements CoverageClient
 				
 		printReport();
 
-		if (completionHandler != null)
+		var timer = massive.munit.util.Timer.delay(reportComplete, 10);
+	}
+
+	function reportComplete()
+	{
+		if(completionHandler != null)
 		{
 			completionHandler(this);
 		}
@@ -200,7 +207,7 @@ class PrintClient implements CoverageClient
 		}
 
 		print("");
-		print("NON-EXECUTED statements:");
+		print("NON-EXECUTED STATEMENTS:");
 		print("");
 
 		var statements = allClasses.getMissingStatements();
@@ -231,7 +238,7 @@ class PrintClient implements CoverageClient
 
 		var statements:Array<Statement> = [];
 
-		if(Lambda.count(statements) == 0)
+		if(Lambda.count(allClasses.statementResultsById) == 0)
 		{
 			printToTabs(["", "None"]);
 		}
@@ -241,7 +248,12 @@ class PrintClient implements CoverageClient
 			{
 				statements.push(allClasses.getStatementById(key));
 			}
-			statements.sort(function(a, b){return -a.count+b.count;});
+
+			var statementSort = function(a:Statement, b:Statement):Int
+			{
+				return -a.count+b.count;
+			}
+			statements.sort(statementSort);
 
 			printToTabs(["", "Total", "Statement"]);
 
@@ -257,7 +269,7 @@ class PrintClient implements CoverageClient
 
 		var branches:Array<Branch> = [];
 
-		if(Lambda.count(statements) == 0)
+		if(Lambda.count(allClasses.branchResultsById) == 0)
 		{
 			printToTabs(["", "None"]);
 		}
@@ -268,8 +280,13 @@ class PrintClient implements CoverageClient
 				branches.push(allClasses.getBranchById(key));
 			}
 			
-			branches.sort(function(a, b){return -a.totalCount+b.totalCount;});
+			var branchSort = function(a:Branch, b:Branch):Int
+			{
+				return -a.totalCount+b.totalCount;
+			}
 
+			branches.sort(branchSort);
+		
 			printToTabs(["", "Total", "True", "False", "Branch"]);
 			for(branch in branches)
 			{
@@ -295,16 +312,16 @@ class PrintClient implements CoverageClient
 		for(arg in args)
 		{
 			arg = Std.string(arg);
-			#if js
-				while(arg.length < columnWidth)
-				{
-					arg += "|";
-				}
+			// #if js
+			// 	while(arg.length < columnWidth)
+			// 	{
+			// 		arg += "|";
+			// 	}
 			
-				s += arg.split("|").join(tab);
-			#else
+			// 	s += arg.split("|").join(tab);
+			// #else
 				s += StringTools.rpad(arg, tab, columnWidth);
-			#end
+			// #end
 		}
 		print(s);
 	}

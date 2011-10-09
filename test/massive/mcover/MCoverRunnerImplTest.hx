@@ -240,8 +240,7 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
-		initializeRunner();
-		instance.removeClient(client);
+		instance.initialize(cover, allClasses);
 
 		Assert.areEqual(0, instance.getClients().length);
 

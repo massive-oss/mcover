@@ -1,4 +1,5 @@
 package massive.mcover.data;
+import massive.mcover.data.Branch;
 
 class NodeMock extends AbstractNode
 {
@@ -74,12 +75,19 @@ class NodeMock extends AbstractNode
 		var block = Type.createInstance(cls, []);
 		block.id = 0;
 		block.name = "block";
-		block.packageName = "p";
-		block.file = "f";
-		block.qualifiedClassName = "c";
-		block.methodName = "m";
-
+		block.packageName = "package";
+		block.file = "file";
+		block.qualifiedClassName = "package.class";
+		block.methodName = "method";
+		block.location = "location";
 		return block;
+	}
+
+	static public function createBranchResult(?branch:Branch):BranchResult
+	{
+		if(branch == null) branch = createBranch();
+		
+		return {id:branch.id, value:false, result:"00", trueCount:branch.trueCount, falseCount:branch.falseCount, total:branch.totalCount};
 	}
 
 }

@@ -93,7 +93,6 @@ class MCoverRunnerImpl implements MCoverRunner
 		#if neko
 		mutex = new neko.vm.Mutex();
 		#end
-		
 	}
 
 	public function initialize(cover:MCover, allClasses:AllClasses)
