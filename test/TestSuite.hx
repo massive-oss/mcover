@@ -1,5 +1,7 @@
 import massive.munit.TestSuite;
 
+import massive.mcover.client.CoverageClientTest;
+import massive.mcover.client.PrintClientTest;
 import massive.mcover.data.AbstractBlockTest;
 import massive.mcover.data.AbstractNodeListTest;
 import massive.mcover.data.AbstractNodeTest;
@@ -27,6 +29,8 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(massive.mcover.client.CoverageClientTest);
+		add(massive.mcover.client.PrintClientTest);
 		add(massive.mcover.data.AbstractBlockTest);
 		add(massive.mcover.data.AbstractNodeListTest);
 		add(massive.mcover.data.AbstractNodeTest);
