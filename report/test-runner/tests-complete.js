@@ -9,20 +9,18 @@ js.Boot.__trace = function(v,i) {
 	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
 	msg += js.Boot.__unhtml(js.Boot.__string_rec(v,"")) + "<br/>";
 	var d = document.getElementById("haxe:trace");
-	if(d == null) alert("No haxe:trace element defined\n" + msg);
-	else d.innerHTML += msg;
+	if(d == null) alert("No haxe:trace element defined\n" + msg); else d.innerHTML += msg;
 }
 js.Boot.__clear_trace = function() {
 	var d = document.getElementById("haxe:trace");
 	if(d != null) d.innerHTML = "";
-	else null;
 }
 js.Boot.__closure = function(o,f) {
 	var m = o[f];
 	if(m == null) return null;
 	var f1 = function() {
 		return m.apply(o,arguments);
-	}
+	};
 	f1.scope = o;
 	f1.method = m;
 	return f1;
@@ -33,19 +31,16 @@ js.Boot.__string_rec = function(o,s) {
 	var t = typeof(o);
 	if(t == "function" && (o.__name__ != null || o.__ename__ != null)) t = "object";
 	switch(t) {
-	case "object":{
+	case "object":
 		if(o instanceof Array) {
 			if(o.__enum__ != null) {
 				if(o.length == 2) return o[0];
 				var str = o[0] + "(";
 				s += "\t";
-				{
-					var _g1 = 2, _g = o.length;
-					while(_g1 < _g) {
-						var i = _g1++;
-						if(i != 2) str += "," + js.Boot.__string_rec(o[i],s);
-						else str += js.Boot.__string_rec(o[i],s);
-					}
+				var _g1 = 2, _g = o.length;
+				while(_g1 < _g) {
+					var i = _g1++;
+					if(i != 2) str += "," + js.Boot.__string_rec(o[i],s); else str += js.Boot.__string_rec(o[i],s);
 				}
 				return str + ")";
 			}
@@ -53,12 +48,10 @@ js.Boot.__string_rec = function(o,s) {
 			var i;
 			var str = "[";
 			s += "\t";
-			{
-				var _g = 0;
-				while(_g < l) {
-					var i1 = _g++;
-					str += (i1 > 0?",":"") + js.Boot.__string_rec(o[i1],s);
-				}
+			var _g = 0;
+			while(_g < l) {
+				var i1 = _g++;
+				str += (i1 > 0?",":"") + js.Boot.__string_rec(o[i1],s);
 			}
 			str += "]";
 			return str;
@@ -66,14 +59,8 @@ js.Boot.__string_rec = function(o,s) {
 		var tostr;
 		try {
 			tostr = o.toString;
-		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					return "???";
-				}
-			}
+		} catch( e ) {
+			return "???";
 		}
 		if(tostr != null && tostr != Object.toString) {
 			var s2 = o.toString();
@@ -84,24 +71,24 @@ js.Boot.__string_rec = function(o,s) {
 		s += "\t";
 		var hasp = o.hasOwnProperty != null;
 		for( var k in o ) { ;
-		if(hasp && !o.hasOwnProperty(k)) continue;
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__") continue;
+		if(hasp && !o.hasOwnProperty(k)) {
+			continue;
+		}
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__") {
+			continue;
+		}
 		if(str.length != 2) str += ", \n";
 		str += s + k + " : " + js.Boot.__string_rec(o[k],s);
 		}
 		s = s.substring(1);
 		str += "\n" + s + "}";
 		return str;
-	}break;
-	case "function":{
+	case "function":
 		return "<function>";
-	}break;
-	case "string":{
+	case "string":
 		return o;
-	}break;
-	default:{
+	default:
 		return String(o);
-	}break;
 	}
 }
 js.Boot.__interfLoop = function(cc,cl) {
@@ -125,35 +112,23 @@ js.Boot.__instanceof = function(o,cl) {
 			return true;
 		}
 		if(js.Boot.__interfLoop(o.__class__,cl)) return true;
-	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
-			{
-				if(cl == null) return false;
-			}
-		}
+	} catch( e ) {
+		if(cl == null) return false;
 	}
 	switch(cl) {
-	case Int:{
+	case Int:
 		return Math.ceil(o%2147483648.0) === o;
-	}break;
-	case Float:{
+	case Float:
 		return typeof(o) == "number";
-	}break;
-	case Bool:{
+	case Bool:
 		return o === true || o === false;
-	}break;
-	case String:{
+	case String:
 		return typeof(o) == "string";
-	}break;
-	case Dynamic:{
+	case Dynamic:
 		return true;
-	}break;
-	default:{
+	default:
 		if(o == null) return false;
 		return o.__enum__ == cl || cl == Class && o.__name__ != null || cl == Enum && o.__ename__ != null;
-	}break;
 	}
 }
 js.Boot.__init = function() {
@@ -162,7 +137,7 @@ js.Boot.__init = function() {
 	Array.prototype.copy = Array.prototype.slice;
 	Array.prototype.insert = function(i,x) {
 		this.splice(i,0,x);
-	}
+	};
 	Array.prototype.remove = Array.prototype.indexOf?function(obj) {
 		var idx = this.indexOf(obj);
 		if(idx == -1) return false;
@@ -179,20 +154,20 @@ js.Boot.__init = function() {
 			i++;
 		}
 		return false;
-	}
+	};
 	Array.prototype.iterator = function() {
 		return { cur : 0, arr : this, hasNext : function() {
 			return this.cur < this.arr.length;
 		}, next : function() {
 			return this.arr[this.cur++];
 		}};
-	}
+	};
 	if(String.prototype.cca == null) String.prototype.cca = String.prototype.charCodeAt;
 	String.prototype.charCodeAt = function(i) {
 		var x = this.cca(i);
 		if(x != x) return null;
 		return x;
-	}
+	};
 	var oldsub = String.prototype.substr;
 	String.prototype.substr = function(pos,len) {
 		if(pos != null && pos != 0 && len != null && len < 0) return "";
@@ -200,22 +175,20 @@ js.Boot.__init = function() {
 		if(pos < 0) {
 			pos = this.length + pos;
 			if(pos < 0) pos = 0;
-		}
-		else if(len < 0) {
-			len = this.length + len - pos;
-		}
+		} else if(len < 0) len = this.length + len - pos;
 		return oldsub.apply(this,[pos,len]);
-	}
+	};
 	$closure = js.Boot.__closure;
 }
 js.Boot.prototype.__class__ = js.Boot;
 if(typeof massive=='undefined') massive = {}
 if(!massive.haxe) massive.haxe = {}
-massive.haxe.Exception = function(message,info) { if( message === $_ ) return; {
+massive.haxe.Exception = function(message,info) {
+	if( message === $_ ) return;
 	this.message = message;
 	this.info = info;
 	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "Exception.hx", lineNumber : 70, className : "massive.haxe.Exception", methodName : "new"}).className;
-}}
+}
 massive.haxe.Exception.__name__ = ["massive","haxe","Exception"];
 massive.haxe.Exception.prototype.type = null;
 massive.haxe.Exception.prototype.message = null;
@@ -244,18 +217,19 @@ js.Lib.setErrorHandler = function(f) {
 js.Lib.prototype.__class__ = js.Lib;
 if(!massive.munit) massive.munit = {}
 if(!massive.munit.util) massive.munit.util = {}
-massive.munit.util.Timer = function(time_ms) { if( time_ms === $_ ) return; {
+massive.munit.util.Timer = function(time_ms) {
+	if( time_ms === $_ ) return;
 	this.id = massive.munit.util.Timer.arr.length;
 	massive.munit.util.Timer.arr[this.id] = this;
 	this.timerId = window.setInterval("massive.munit.util.Timer.arr[" + this.id + "].run();",time_ms);
-}}
+}
 massive.munit.util.Timer.__name__ = ["massive","munit","util","Timer"];
 massive.munit.util.Timer.delay = function(f,time_ms) {
 	var t = new massive.munit.util.Timer(time_ms);
 	t.run = function() {
 		t.stop();
 		f();
-	}
+	};
 	return t;
 }
 massive.munit.util.Timer.stamp = function() {
@@ -275,32 +249,34 @@ massive.munit.util.Timer.prototype.stop = function() {
 	this.id = null;
 }
 massive.munit.util.Timer.prototype.run = function() {
-	null;
 }
 massive.munit.util.Timer.prototype.__class__ = massive.munit.util.Timer;
-massive.munit.MUnitException = function(message,info) { if( message === $_ ) return; {
+massive.munit.MUnitException = function(message,info) {
+	if( message === $_ ) return;
 	massive.haxe.Exception.call(this,message,info);
 	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "MUnitException.hx", lineNumber : 50, className : "massive.munit.MUnitException", methodName : "new"}).className;
-}}
+}
 massive.munit.MUnitException.__name__ = ["massive","munit","MUnitException"];
 massive.munit.MUnitException.__super__ = massive.haxe.Exception;
 for(var k in massive.haxe.Exception.prototype ) massive.munit.MUnitException.prototype[k] = massive.haxe.Exception.prototype[k];
 massive.munit.MUnitException.prototype.__class__ = massive.munit.MUnitException;
-massive.munit.AssertionException = function(msg,info) { if( msg === $_ ) return; {
+massive.munit.AssertionException = function(msg,info) {
+	if( msg === $_ ) return;
 	massive.munit.MUnitException.call(this,msg,info);
 	this.type = massive.haxe.util.ReflectUtil.here({ fileName : "AssertionException.hx", lineNumber : 49, className : "massive.munit.AssertionException", methodName : "new"}).className;
-}}
+}
 massive.munit.AssertionException.__name__ = ["massive","munit","AssertionException"];
 massive.munit.AssertionException.__super__ = massive.munit.MUnitException;
 for(var k in massive.munit.MUnitException.prototype ) massive.munit.AssertionException.prototype[k] = massive.munit.MUnitException.prototype[k];
 massive.munit.AssertionException.prototype.__class__ = massive.munit.AssertionException;
 if(typeof haxe=='undefined') haxe = {}
-haxe.Http = function(url) { if( url === $_ ) return; {
+haxe.Http = function(url) {
+	if( url === $_ ) return;
 	this.url = url;
 	this.headers = new Hash();
 	this.params = new Hash();
 	this.async = true;
-}}
+}
 haxe.Http.__name__ = ["haxe","Http"];
 haxe.Http.requestUrl = function(url) {
 	var h = new haxe.Http(url);
@@ -308,10 +284,10 @@ haxe.Http.requestUrl = function(url) {
 	var r = null;
 	h.onData = function(d) {
 		r = d;
-	}
+	};
 	h.onError = function(e) {
 		throw e;
-	}
+	};
 	h.request(false);
 	return r;
 }
@@ -338,81 +314,65 @@ haxe.Http.prototype.request = function(post) {
 			var $r;
 			try {
 				$r = r.status;
-			}
-			catch( $e0 ) {
-				{
-					var e = $e0;
-					$r = null;
-				}
+			} catch( e ) {
+				$r = null;
 			}
 			return $r;
 		}(this));
 		if(s == undefined) s = null;
 		if(s != null) me.onStatus(s);
-		if(s != null && s >= 200 && s < 400) me.onData(r.responseText);
-		else switch(s) {
-		case null: case undefined:{
+		if(s != null && s >= 200 && s < 400) me.onData(r.responseText); else switch(s) {
+		case null: case undefined:
 			me.onError("Failed to connect or resolve host");
-		}break;
-		case 12029:{
+			break;
+		case 12029:
 			me.onError("Failed to connect to host");
-		}break;
-		case 12007:{
+			break;
+		case 12007:
 			me.onError("Unknown host");
-		}break;
-		default:{
+			break;
+		default:
 			me.onError("Http Error #" + r.status);
-		}break;
 		}
-	}
+	};
 	if(this.async) r.onreadystatechange = onreadystatechange;
 	var uri = this.postData;
-	if(uri != null) post = true;
-	else { var $it1 = this.params.keys();
-	while( $it1.hasNext() ) { var p = $it1.next();
-	{
-		if(uri == null) uri = "";
-		else uri += "&";
-		uri += StringTools.urlDecode(p) + "=" + StringTools.urlEncode(this.params.get(p));
+	if(uri != null) post = true; else {
+		var $it0 = this.params.keys();
+		while( $it0.hasNext() ) {
+			var p = $it0.next();
+			if(uri == null) uri = ""; else uri += "&";
+			uri += StringTools.urlDecode(p) + "=" + StringTools.urlEncode(this.params.get(p));
+		}
 	}
-	}}
 	try {
-		if(post) r.open("POST",this.url,this.async);
-		else if(uri != null) {
+		if(post) r.open("POST",this.url,this.async); else if(uri != null) {
 			var question = this.url.split("?").length <= 1;
 			r.open("GET",this.url + (question?"?":"&") + uri,this.async);
 			uri = null;
-		}
-		else r.open("GET",this.url,this.async);
-	}
-	catch( $e2 ) {
-		{
-			var e = $e2;
-			{
-				this.onError(e.toString());
-				return;
-			}
-		}
+		} else r.open("GET",this.url,this.async);
+	} catch( e ) {
+		this.onError(e.toString());
+		return;
 	}
 	if(this.headers.get("Content-Type") == null && post && this.postData == null) r.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-	{ var $it3 = this.headers.keys();
-	while( $it3.hasNext() ) { var h = $it3.next();
-	r.setRequestHeader(h,this.headers.get(h));
-	}}
+	var $it1 = this.headers.keys();
+	while( $it1.hasNext() ) {
+		var h = $it1.next();
+		r.setRequestHeader(h,this.headers.get(h));
+	}
 	r.send(uri);
 	if(!this.async) onreadystatechange();
 }
 haxe.Http.prototype.onData = function(data) {
-	null;
 }
 haxe.Http.prototype.onError = function(msg) {
-	null;
 }
 haxe.Http.prototype.onStatus = function(status) {
-	null;
 }
 haxe.Http.prototype.__class__ = haxe.Http;
-massive.munit.TestResult = function(p) { if( p === $_ ) return; {
+massive.munit.TestResult = function(p) {
+	if( p === $_ ) return;
 	this.passed = false;
 	this.executionTime = 0.0;
 	this.name = "";
@@ -422,7 +382,7 @@ massive.munit.TestResult = function(p) { if( p === $_ ) return; {
 	this.ignore = false;
 	this.error = null;
 	this.failure = null;
-}}
+}
 massive.munit.TestResult.__name__ = ["massive","munit","TestResult"];
 massive.munit.TestResult.prototype.passed = null;
 massive.munit.TestResult.prototype.executionTime = null;
@@ -448,12 +408,10 @@ massive.munit.ITestResultClient.prototype.addError = null;
 massive.munit.ITestResultClient.prototype.addIgnore = null;
 massive.munit.ITestResultClient.prototype.reportFinalStatistics = null;
 massive.munit.ITestResultClient.prototype.__class__ = massive.munit.ITestResultClient;
-BrowserTestsCompleteReporter = function(p) { if( p === $_ ) return; {
-	null;
-}}
+BrowserTestsCompleteReporter = function(p) {
+}
 BrowserTestsCompleteReporter.__name__ = ["BrowserTestsCompleteReporter"];
 BrowserTestsCompleteReporter.main = function() {
-	null;
 }
 BrowserTestsCompleteReporter.sendReport = function(onData,onError) {
 	var httpRequest = new haxe.Http("http://localhost:2000");
@@ -519,24 +477,14 @@ StringTools.isSpace = function(s,pos) {
 StringTools.ltrim = function(s) {
 	var l = s.length;
 	var r = 0;
-	while(r < l && StringTools.isSpace(s,r)) {
-		r++;
-	}
-	if(r > 0) return s.substr(r,l - r);
-	else return s;
+	while(r < l && StringTools.isSpace(s,r)) r++;
+	if(r > 0) return s.substr(r,l - r); else return s;
 }
 StringTools.rtrim = function(s) {
 	var l = s.length;
 	var r = 0;
-	while(r < l && StringTools.isSpace(s,l - r - 1)) {
-		r++;
-	}
-	if(r > 0) {
-		return s.substr(0,l - r);
-	}
-	else {
-		return s;
-	}
+	while(r < l && StringTools.isSpace(s,l - r - 1)) r++;
+	if(r > 0) return s.substr(0,l - r); else return s;
 }
 StringTools.trim = function(s) {
 	return StringTools.ltrim(StringTools.rtrim(s));
@@ -544,15 +492,12 @@ StringTools.trim = function(s) {
 StringTools.rpad = function(s,c,l) {
 	var sl = s.length;
 	var cl = c.length;
-	while(sl < l) {
-		if(l - sl < cl) {
-			s += c.substr(0,l - sl);
-			sl = l;
-		}
-		else {
-			s += c;
-			sl += cl;
-		}
+	while(sl < l) if(l - sl < cl) {
+		s += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		s += c;
+		sl += cl;
 	}
 	return s;
 }
@@ -561,15 +506,12 @@ StringTools.lpad = function(s,c,l) {
 	var sl = s.length;
 	if(sl >= l) return s;
 	var cl = c.length;
-	while(sl < l) {
-		if(l - sl < cl) {
-			ns += c.substr(0,l - sl);
-			sl = l;
-		}
-		else {
-			ns += c;
-			sl += cl;
-		}
+	while(sl < l) if(l - sl < cl) {
+		ns += c.substr(0,l - sl);
+		sl = l;
+	} else {
+		ns += c;
+		sl += cl;
 	}
 	return ns + s;
 }
@@ -593,14 +535,14 @@ StringTools.isEOF = function(c) {
 	return c != c;
 }
 StringTools.prototype.__class__ = StringTools;
-Hash = function(p) { if( p === $_ ) return; {
+Hash = function(p) {
+	if( p === $_ ) return;
 	this.h = {}
 	if(this.h.__proto__ != null) {
 		this.h.__proto__ = null;
 		delete(this.h.__proto__);
 	}
-	else null;
-}}
+}
 Hash.__name__ = ["Hash"];
 Hash.prototype.h = null;
 Hash.prototype.set = function(key,value) {
@@ -613,18 +555,9 @@ Hash.prototype.exists = function(key) {
 	try {
 		key = "$" + key;
 		return this.hasOwnProperty.call(this.h,key);
-	}
-	catch( $e0 ) {
-		{
-			var e = $e0;
-			{
-				
-				for(var i in this.h)
-					if( i == key ) return true;
-			;
-				return false;
-			}
-		}
+	} catch( e ) {
+		for(var i in this.h) if( i == key ) return true;
+		return false;
 	}
 }
 Hash.prototype.remove = function(key) {
@@ -634,10 +567,7 @@ Hash.prototype.remove = function(key) {
 }
 Hash.prototype.keys = function() {
 	var a = new Array();
-	
-			for(var i in this.h)
-				a.push(i.substr(1));
-		;
+	for(var i in this.h) a.push(i.substr(1));
 	return a.iterator();
 }
 Hash.prototype.iterator = function() {
@@ -650,18 +580,16 @@ Hash.prototype.iterator = function() {
 }
 Hash.prototype.toString = function() {
 	var s = new StringBuf();
-	s.b[s.b.length] = "{";
+	s.b[s.b.length] = "{" == null?"null":"{";
 	var it = this.keys();
-	{ var $it0 = it;
-	while( $it0.hasNext() ) { var i = $it0.next();
-	{
-		s.b[s.b.length] = i;
-		s.b[s.b.length] = " => ";
-		s.b[s.b.length] = Std.string(this.get(i));
-		if(it.hasNext()) s.b[s.b.length] = ", ";
+	while( it.hasNext() ) {
+		var i = it.next();
+		s.b[s.b.length] = i == null?"null":i;
+		s.b[s.b.length] = " => " == null?"null":" => ";
+		s.add(Std.string(this.get(i)));
+		if(it.hasNext()) s.b[s.b.length] = ", " == null?"null":", ";
 	}
-	}}
-	s.b[s.b.length] = "}";
+	s.b[s.b.length] = "}" == null?"null":"}";
 	return s.b.join("");
 }
 Hash.prototype.__class__ = Hash;
@@ -673,14 +601,15 @@ massive.haxe.util.ReflectUtil.here = function(info) {
 }
 massive.haxe.util.ReflectUtil.prototype.__class__ = massive.haxe.util.ReflectUtil;
 if(!massive.munit.client) massive.munit.client = {}
-massive.munit.client.HTTPClient = function(client,url,queueRequest) { if( client === $_ ) return; {
+massive.munit.client.HTTPClient = function(client,url,queueRequest) {
+	if( client === $_ ) return;
 	if(queueRequest == null) queueRequest = true;
 	if(url == null) url = "http://localhost:2000";
 	this.id = "HTTPClient";
 	this.client = client;
 	this.url = url;
 	this.queueRequest = queueRequest;
-}}
+}
 massive.munit.client.HTTPClient.__name__ = ["massive","munit","client","HTTPClient"];
 massive.munit.client.HTTPClient.dispatchNextRequest = function() {
 	if(massive.munit.client.HTTPClient.responsePending || massive.munit.client.HTTPClient.queue.length == 0) return;
@@ -727,10 +656,7 @@ massive.munit.client.HTTPClient.prototype.sendResult = function(result) {
 	if(this.queueRequest) {
 		massive.munit.client.HTTPClient.queue.unshift(this.request);
 		massive.munit.client.HTTPClient.dispatchNextRequest();
-	}
-	else {
-		this.request.send();
-	}
+	} else this.request.send();
 }
 massive.munit.client.HTTPClient.prototype.platform = function() {
 	return "js";
@@ -752,11 +678,12 @@ massive.munit.client.HTTPClient.prototype.onError = function(msg) {
 }
 massive.munit.client.HTTPClient.prototype.__class__ = massive.munit.client.HTTPClient;
 massive.munit.client.HTTPClient.__interfaces__ = [massive.munit.ITestResultClient];
-massive.munit.client.URLRequest = function(url) { if( url === $_ ) return; {
+massive.munit.client.URLRequest = function(url) {
+	if( url === $_ ) return;
 	this.url = url;
 	this.createClient(url);
 	this.setHeader("Content-Type","text/plain");
-}}
+}
 massive.munit.client.URLRequest.__name__ = ["massive","munit","client","URLRequest"];
 massive.munit.client.URLRequest.prototype.onData = null;
 massive.munit.client.URLRequest.prototype.onError = null;
@@ -777,12 +704,13 @@ massive.munit.client.URLRequest.prototype.send = function() {
 	this.client.request(true);
 }
 massive.munit.client.URLRequest.prototype.__class__ = massive.munit.client.URLRequest;
-StringBuf = function(p) { if( p === $_ ) return; {
+StringBuf = function(p) {
+	if( p === $_ ) return;
 	this.b = new Array();
-}}
+}
 StringBuf.__name__ = ["StringBuf"];
 StringBuf.prototype.add = function(x) {
-	this.b[this.b.length] = x;
+	this.b[this.b.length] = x == null?"null":x;
 }
 StringBuf.prototype.addSub = function(s,pos,len) {
 	this.b[this.b.length] = s.substr(pos,len);
@@ -795,10 +723,11 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
-IntIter = function(min,max) { if( min === $_ ) return; {
+IntIter = function(min,max) {
+	if( min === $_ ) return;
 	this.min = min;
 	this.max = max;
-}}
+}
 IntIter.__name__ = ["IntIter"];
 IntIter.prototype.min = null;
 IntIter.prototype.max = null;
@@ -826,15 +755,15 @@ js.Boot.__init();
 	var d = Date;
 	d.now = function() {
 		return new Date();
-	}
+	};
 	d.fromTime = function(t) {
 		var d1 = new Date();
 		d1["setTime"](t);
 		return d1;
-	}
+	};
 	d.fromString = function(s) {
 		switch(s.length) {
-		case 8:{
+		case 8:
 			var k = s.split(":");
 			var d1 = new Date();
 			d1["setTime"](0);
@@ -842,22 +771,18 @@ js.Boot.__init();
 			d1["setUTCMinutes"](k[1]);
 			d1["setUTCSeconds"](k[2]);
 			return d1;
-		}break;
-		case 10:{
+		case 10:
 			var k = s.split("-");
 			return new Date(k[0],k[1] - 1,k[2],0,0,0);
-		}break;
-		case 19:{
+		case 19:
 			var k = s.split(" ");
 			var y = k[0].split("-");
 			var t = k[1].split(":");
 			return new Date(y[0],y[1] - 1,y[2],t[0],t[1],t[2]);
-		}break;
-		default:{
+		default:
 			throw "Invalid date format : " + s;
-		}break;
 		}
-	}
+	};
 	d.prototype["toString"] = function() {
 		var date = this;
 		var m = date.getMonth() + 1;
@@ -866,7 +791,7 @@ js.Boot.__init();
 		var mi = date.getMinutes();
 		var s = date.getSeconds();
 		return date.getFullYear() + "-" + (m < 10?"0" + m:"" + m) + "-" + (d1 < 10?"0" + d1:"" + d1) + " " + (h < 10?"0" + h:"" + h) + ":" + (mi < 10?"0" + mi:"" + mi) + ":" + (s < 10?"0" + s:"" + s);
-	}
+	};
 	d.prototype.__class__ = d;
 	d.__name__ = ["Date"];
 }
@@ -891,40 +816,26 @@ js.Boot.__init();
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
 	Math.isFinite = function(i) {
 		return isFinite(i);
-	}
+	};
 	Math.isNaN = function(i) {
 		return isNaN(i);
-	}
+	};
 }
-{
-	js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject?function() {
+js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject?function() {
+	try {
+		return new ActiveXObject("Msxml2.XMLHTTP");
+	} catch( e ) {
 		try {
-			return new ActiveXObject("Msxml2.XMLHTTP");
+			return new ActiveXObject("Microsoft.XMLHTTP");
+		} catch( e1 ) {
+			throw "Unable to create XMLHttpRequest object.";
 		}
-		catch( $e0 ) {
-			{
-				var e = $e0;
-				{
-					try {
-						return new ActiveXObject("Microsoft.XMLHTTP");
-					}
-					catch( $e1 ) {
-						{
-							var e1 = $e1;
-							{
-								throw "Unable to create XMLHttpRequest object.";
-							}
-						}
-					}
-				}
-			}
-		}
-	}:(function($this) {
-		var $r;
-		throw "Unable to create XMLHttpRequest object.";
-		return $r;
-	}(this));
-}
+	}
+}:(function($this) {
+	var $r;
+	throw "Unable to create XMLHttpRequest object.";
+	return $r;
+}(this));
 js.Lib.onerror = null;
 massive.munit.util.Timer.arr = new Array();
 BrowserTestsCompleteReporter.CLIENT_RUNNER_HOST = "munit-tool-host";

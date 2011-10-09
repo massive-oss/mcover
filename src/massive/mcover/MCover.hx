@@ -136,10 +136,11 @@ import haxe.macro.Compiler;
 		return runner;
 	}
 
-	public function loadAllClasses()
+	public function loadAllClasses(?resourceName:String = null)
 	{
-		var serializedData:String = haxe.Resource.getString(RESOURCE_DATA);
-		if(serializedData == null) throw new MCoverException("No generated coverage data found in haxe Resource '" + RESOURCE_DATA  + "'");
+		if(resourceName == null) resourceName = MCover.RESOURCE_DATA;
+		var serializedData:String = haxe.Resource.getString(resourceName);
+		if(serializedData == null) throw new MCoverException("No generated coverage data found in haxe Resource '" + resourceName  + "'");
 		try
 		{
 			allClasses = haxe.Unserializer.run(serializedData);
@@ -148,7 +149,7 @@ import haxe.macro.Compiler;
 		}
 		catch(e:Dynamic)
 		{
-			throw MCoverException.rethrow(e, "Unable to unserialize coverage data");
+			throw MCoverException.rethrow(e, "Unable to unserialize coverage data in " + resourceName);
 		}
 	}
 

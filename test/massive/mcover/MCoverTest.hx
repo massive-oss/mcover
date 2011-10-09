@@ -162,7 +162,6 @@ class MCoverTest
 		Assert.areEqual(id2, cover.getNextStatementFromQueue());
 	}
 
-
 	@Test
 	public function shouldGetNullStatementFromQueue()
 	{
@@ -179,13 +178,42 @@ class MCoverTest
 	}
 
 	@Test
+	public function shouldThrowExceptionIfNoMatchingResource()
+	{
+		try
+		{
+			cover.loadAllClasses("InvalidMCoverResourceName");
+			Assert.fail("Exception expected");
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(true);
+
+		}
+	}
+
+	@Test
+	public function shouldThrowExceptionForInvalidResource()
+	{
+		try
+		{
+			cover.loadAllClasses("MockMCoverResource");
+			Assert.fail("Exception expected");
+		}
+		catch(e:MCoverException)
+		{
+			Assert.isTrue(true);
+
+		}
+	}
+
+	@Test
 	public function shouldAddUniqueBranchResultToQueue()
 	{
 		var id1 = 0;
 		cover.loadAllClasses();
 		cover.logBranch(id1, true);
 		Assert.isTrue(cover.allClasses.branchResultsById.exists(id1));
-		
 
 		var cachedResult = copyBranchResult(cover.allClasses.branchResultsById.get(id1));
 		Assert.areEqual(0, cachedResult.id);
