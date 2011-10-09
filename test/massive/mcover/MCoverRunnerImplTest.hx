@@ -10,7 +10,7 @@ import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
 
 import massive.mcover.data.NodeMock;
-
+import massive.mcover.client.TraceClient;
 
 class MCoverRunnerImplTest extends MCoverRunnerTest
 {
@@ -74,6 +74,14 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 	{
 		instance.addClient(client);
 		Assert.isNotNull(client.completionHandler);
+	}
+
+	@Test
+	public function shouldNotAddSameClientTwice()
+	{
+		instance.addClient(client);
+		instance.addClient(client);
+		Assert.areEqual(1, instance.getClients().length);
 	}
 
 	@Test
@@ -218,7 +226,7 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 
 		cover.logBranch(branch.id, true);
 		instance.forceUpdate();
-		
+
 		Assert.areEqual(1, branch.trueCount);
 		Assert.areEqual(0, branch.falseCount);
 
@@ -227,6 +235,26 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 
 		Assert.areEqual(1, branch.trueCount);
 		Assert.areEqual(1, branch.falseCount);
+	}
+
+	@Test
+	public function shouldCreateDefaultClientIfNonAvailable()
+	{
+		initializeRunner();
+		instance.removeClient(client);
+
+		Assert.areEqual(0, instance.getClients().length);
+
+		var originalTrace = haxe.Log.trace;
+		haxe.Log.trace = function(value:Dynamic,?infos : haxe.PosInfos){};
+		
+		instance.report();
+		instance.forceUpdate();
+
+		haxe.Log.trace = originalTrace;
+
+		Assert.areEqual(1, instance.getClients().length);
+		Assert.areEqual(TraceClient, Type.getClass(instance.getClients()[0]));
 	}
 
 	///////////////

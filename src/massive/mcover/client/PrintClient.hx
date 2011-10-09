@@ -132,9 +132,16 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
-		printToTabs(["", "Result","Files","Classes", "Package"]);
 
 		var packages = allClasses.getPackages();
+
+		if(Lambda.count(packages) == 0)
+		{
+			printToTabs(["", "None"]);
+			return;
+		}
+
+		printToTabs(["", "Result","Files","Classes", "Package"]);
 		
 		for(pckg in packages)
 		{
@@ -150,9 +157,17 @@ class PrintClient implements CoverageClient
 		print("");
 		print("COVERAGE BREAKDOWN BY CLASSES:");
 		print("");
-		printToTabs(["", "Result","Methods","Statements","Branches", "Class"]);
+		
 
 		var classes = allClasses.getClasses();
+
+		if(Lambda.count(classes) == 0)
+		{
+			printToTabs(["", "None"]);
+			return;
+		}
+
+		printToTabs(["", "Result","Methods","Statements","Branches", "Class"]);
 		
 		for(cls in classes)
 		{
@@ -170,13 +185,14 @@ class PrintClient implements CoverageClient
 		print("NON-EXECUTED BRANCHES:");
 		print("");
 
-		if(allClasses.getPercentage() == 100 )
+		var branches = allClasses.getMissingBranches();
+
+		if(Lambda.count(branches) == 0)
 		{
-			printToTabs(["",  "None"]);
+			printToTabs(["", "None"]);
 		}
 		else
 		{
-			var branches = allClasses.getMissingBranches();
 			for(block in branches)
 			{
 				printToTabs(["",  block.toString()]);
@@ -187,13 +203,14 @@ class PrintClient implements CoverageClient
 		print("NON-EXECUTED statements:");
 		print("");
 
-		if(allClasses.getPercentage() == 100 )
+		var statements = allClasses.getMissingStatements();
+
+		if(Lambda.count(statements) == 0)
 		{
-			printToTabs(["",  "None"]);
+			printToTabs(["", "None"]);
 		}
 		else
 		{
-			var statements = allClasses.getMissingStatements();
 			for(block in statements)
 			{
 				printToTabs(["",  block.toString()]);
@@ -212,21 +229,26 @@ class PrintClient implements CoverageClient
 		print("STATEMENTS BY EXECUTION FREQUENCY:");
 		print("");
 
-
 		var statements:Array<Statement> = [];
 
-		for(key in allClasses.statementResultsById.keys())
+		if(Lambda.count(statements) == 0)
 		{
-			statements.push(allClasses.getStatementById(key));
+			printToTabs(["", "None"]);
 		}
-		statements.sort(function(a, b){return -a.count+b.count;});
-
-		printToTabs(["", "Total", "Statement"]);
-
-		for(statement in statements)
+		else
 		{
-			printToTabs(["", statement.count, statement.toString()]);
+			for(key in allClasses.statementResultsById.keys())
+			{
+				statements.push(allClasses.getStatementById(key));
+			}
+			statements.sort(function(a, b){return -a.count+b.count;});
 
+			printToTabs(["", "Total", "Statement"]);
+
+			for(statement in statements)
+			{
+				printToTabs(["", statement.count, statement.toString()]);
+			}
 		}
 
 		print("");
@@ -235,24 +257,30 @@ class PrintClient implements CoverageClient
 
 		var branches:Array<Branch> = [];
 
-		for(key in allClasses.branchResultsById.keys())
+		if(Lambda.count(statements) == 0)
 		{
-			branches.push(allClasses.getBranchById(key));
+			printToTabs(["", "None"]);
 		}
-		
-		branches.sort(function(a, b){return -a.totalCount+b.totalCount;});
-
-		printToTabs(["", "Total", "True", "False", "Branch"]);
-		for(branch in branches)
+		else
 		{
-			printToTabs(["",
-				branch.totalCount,
-				branch.trueCount,
-				branch.falseCount,
-				branch.toString()]);
+			for(key in allClasses.branchResultsById.keys())
+			{
+				branches.push(allClasses.getBranchById(key));
+			}
+			
+			branches.sort(function(a, b){return -a.totalCount+b.totalCount;});
+
+			printToTabs(["", "Total", "True", "False", "Branch"]);
+			for(branch in branches)
+			{
+				printToTabs(["",
+					branch.totalCount,
+					branch.trueCount,
+					branch.falseCount,
+					branch.toString()]);
+			}
 		}
 	}
-
 
 	///////
 

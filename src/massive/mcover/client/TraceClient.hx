@@ -14,6 +14,9 @@ class TraceClient extends PrintClient
 		super.printReport();
 		output += newline;
 
+		trace(newline + output);
+		/*
+
 		#if js
 		var textArea = js.Lib.document.getElementById("haxe:trace");
 		if (textArea == null) 
@@ -35,5 +38,6 @@ class TraceClient extends PrintClient
 		#else
 			trace(newline + output);
 		#end
+		*/
 	}
 }
