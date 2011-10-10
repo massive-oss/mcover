@@ -308,7 +308,7 @@ import massive.mcover.data.Branch;
 		pos = incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
-		var eField = EField(typeExpr, "getInstance");
+		var eField = EField(typeExpr, "getLogger");
 		pos = incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 

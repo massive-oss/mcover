@@ -36,10 +36,10 @@ class MCoverTest
 	}
 
 	@Test
-	public function shouldGetDefaultInstance()
+	public function shouldGetDefaultLogger()
 	{
-		var logger:CoverageLogger = MCover.getInstance();
-		Assert.areEqual(MCover.instance, logger);
+		var logger:CoverageLogger = MCover.getLogger();
+		Assert.areEqual(MCover.logger, logger);
 	}
 
 }

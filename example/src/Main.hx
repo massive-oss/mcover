@@ -12,7 +12,7 @@ class Main
 	@IgnoreCover
 	static public function main()
 	{
-		reporter = MCover.getInstance().createReporter();
+		reporter = MCover.getLogger().createReporter();
 		var app = new Main();
 		reporter.completionHandler = completionHandler;
 		reporter.report();

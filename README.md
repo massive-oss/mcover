@@ -41,20 +41,20 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 #### Step 1. 
 At runtime, MCover cam automatically log code execution blocks.
 
-To capture coverage initialize a coverage runner (MCoverRunner):
+To capture coverage initialize a coverage reporter (CoverageReporter):
 
-	var runner = massive.mcover.MCover.createRunner();
+	var reporter = MCover.getLogger().createReporter();
 
 #### Step 2. 
 To generate the results call MCoverRunner.report() once your unit tests (or other code) have completed:
 
-	runner.report();
+	reporter.report();
 
 By default these are sent to a generic TraceClient that outputs to the screen.
 
-You can set multiple custom clients if required:
+You can set multiple custom clients (CoverageReportClient) if required:
 
-	runner.addClient(new massive.mcover.client.PrintClient());
+	reporter.addClient(new massive.mcover.client.PrintClient());
 
 
 
@@ -224,11 +224,11 @@ You can also run the unit tests (requires munit haxelib) to see coverage of the 
 Advanced Usage
 ---------------------
 
-#### Setting a custom runner
+#### Setting a custom reporter
 
-You can specify a custom runner by passing through a class that implements MCoverRunner. By default an instance of MCoverRunnerImp is created.
+You can specify a custom reporter by passing through a class that implements CoverageReporter. By default an instance of CoverageReporterImpl is created.
 
-	massive.mcover.MCover.createRunner(MCoverRunnerImpl);
+	MCover.getLogger().createReporter(CoverageReporterImpl);
 
 #### Ignoring individual classes or methods
 

@@ -35,22 +35,22 @@ import haxe.macro.Compiler;
 
 	#if !macro
 	
-	static public var instance(default, null):CoverageLogger;
+	static public var logger(default, null):CoverageLogger;
 
 	#if neko
 	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
 	#end
 
 	@IgnoreCover
-	public static function getInstance():CoverageLogger
+	public static function getLogger():CoverageLogger
 	{
 		#if neko mutex.acquire(); #end
-		if(instance == null)
+		if(logger == null)
 		{
-			instance = new CoverageLoggerImpl();
+			logger = new CoverageLoggerImpl();
 		}
 		#if neko mutex.release(); #end
-		return instance;
+		return logger;
 	}
 
 	#else
