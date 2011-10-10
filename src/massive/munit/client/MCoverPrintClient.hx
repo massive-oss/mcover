@@ -25,11 +25,19 @@ class MCoverPrintClient extends PrintClient
 	public function new(?includeIgnoredReport:Bool = false)
 	{
 		super(includeIgnoredReport);
-
-		reporter = MCover.getLogger().createReporter();
-		coverClient = new massive.mcover.client.PrintClient();
-		reporter.addClient(coverClient);
-		reporter.completionHandler = codeCoverageComplete;
+		
+		try
+		{
+			reporter = MCover.getLogger().createReporter();
+			coverClient = new massive.mcover.client.PrintClient();
+			reporter.addClient(coverClient);
+			reporter.completionHandler = codeCoverageComplete;
+		}
+		catch(e:Dynamic)
+		{
+			trace(e);
+			throw new massive.mcover.Exception("Unable to initialize MCover", e);
+		}
 	}
 
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
