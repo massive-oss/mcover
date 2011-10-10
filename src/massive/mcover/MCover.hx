@@ -149,7 +149,7 @@ import haxe.macro.Compiler;
 		}
 		catch(e:Dynamic)
 		{
-			throw MCoverException.rethrow(e, "Unable to unserialize coverage data in " + resourceName);
+			throw new MCoverException("Unable to unserialize coverage data in " + resourceName, e);
 		}
 	}
 

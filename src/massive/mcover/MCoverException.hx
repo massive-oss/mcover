@@ -5,17 +5,7 @@ import haxe.Stack;
 
 class MCoverException
 {
-	/**
-	* Utility method to generate a new MCoverException instance with a reference to an existing exception 
-	*/
-	static public function rethrow(e:Dynamic, message:String, ?info:PosInfos):MCoverException
-	{
-		var exception = new MCoverException(message, info);
-		exception.originalException = e;
-		return exception;
-	}
 
-	//////////////////
 
 	/**
 	 * The exception type. 
@@ -38,18 +28,25 @@ class MCoverException
 	* An optional reference to a lower level exception that
 	* triggered the current exception to be thrown
 	*/
-	public var originalException(default, set_originalException):Dynamic;
-	public var originalExceptionStack(default, null):Array<StackItem>;
-	public var originalExceptionCallStack(default, null):Array<StackItem>;
+	public var cause(default, null):Dynamic;
+	public var causeExceptionStack(default, null):Array<StackItem>;
+	public var causeCallStack(default, null):Array<StackItem>;
 	
 	/**
 	 * @param	message			a description of the exception
 	 */
-	public function new(message:String, ?info:PosInfos) 
+	public function new(message:String, ?cause:Dynamic, ?info:PosInfos) 
 	{
-		this.message = message;
-		this.info = info;
 		type = here().className;
+		this.message = message;
+		this.cause = cause;
+		this.info = info;
+
+		if(cause != null)
+		{
+			causeExceptionStack = haxe.Stack.exceptionStack();
+			causeCallStack = haxe.Stack.callStack();
+		}
 	}
 
 	/**
@@ -62,23 +59,13 @@ class MCoverException
 		var str:String = type + ": " + message;
 		if (info != null)
 			str += " at " + info.className + "#" + info.methodName + " (" + info.lineNumber + ")";
+		if (cause != null)
+        	str += "\n\t Caused by: " + cause; 
 		return str;
-	}
-
-	public function hasOriginalException():Bool
-	{
-		return originalException != null;
 	}
 
 	//////////////////
 
-	function set_originalException(e:Dynamic):Dynamic
-	{
-		originalException = e;
-		originalExceptionStack = haxe.Stack.exceptionStack();
-		originalExceptionCallStack = haxe.Stack.callStack();
-			
-	}
 	function here(?info:PosInfos):PosInfos
 	{
 		return info;

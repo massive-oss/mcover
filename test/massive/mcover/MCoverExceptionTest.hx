@@ -39,58 +39,62 @@ class MCoverExceptionTest
 	}
 
 	@Test
-	public function shouldSetInforAndTypeInConstructor()
+	public function shouldDefineInfoAndTypeInConstructor()
 	{
 		exception = new MCoverException("message");
 		Assert.areEqual("message", exception.message);
 		Assert.areEqual("massive.mcover.MCoverException", exception.type);
 		Assert.areEqual("massive.mcover.MCoverExceptionTest", exception.info.className);
 		
+		Assert.isNull(exception.cause);
+		Assert.isNull(exception.causeExceptionStack);
+		Assert.isNull(exception.causeCallStack);
+		
 	}
 
 	@Test
-	public function shouldNotAutoSetInfo()
+	public function shouldSetCauseStacksInConstructor()
 	{
-		exception = new MCoverException("message", null);
+		exception = new MCoverException("message", "cause");
+		Assert.areEqual("cause", exception.cause);
+		Assert.isNotNull(exception.causeExceptionStack);
+		Assert.isNotNull(exception.causeCallStack);
+	}
+
+	@Test
+	public function shouldNotSetInfoInConstructor()
+	{
+		exception = new MCoverException("message", null, null);
 		Assert.isNull(exception.info);
 	}
 
 	@Test
-	public function shouldOutputToString()
+	public function shouldOutputToStringWithMessageAndInfo()
 	{
 		exception = new MCoverException("message");
-
 		var str = exception.toString();
-
 		Assert.isTrue(str.indexOf("massive.mcover.MCoverException: message") == 0);
-		Assert.isTrue(str.indexOf( exception.info.className) > -1);
-
+		Assert.isTrue(str.indexOf("at massive.mcover.MCoverExceptionTest") != -1);
+		Assert.isTrue(str.indexOf("Caused by: cause") == -1);
 	}
 
 	@Test
-	public function shouldOutputToStringWithoutPosInfos()
+	public function shouldOutputToStringWithMessageOnly()
 	{
-		exception = new MCoverException("message", null);
+		exception = new MCoverException("message", null, null);
 		var str = exception.toString();
 		Assert.areEqual("massive.mcover.MCoverException: message", str);
+		Assert.isTrue(str.indexOf("at massive.mcover.MCoverExceptionTest") == -1);
+		Assert.isTrue(str.indexOf("Caused by: cause") == -1);
 	}
 
 	@Test
-	public function shouldNotHaveOriginalExceptionByDefault()
+	public function shouldOutputToStringMessageAndCause()
 	{
-		exception = new MCoverException("message");
-		Assert.isFalse(exception.hasOriginalException());
-	}
-
-		@Test
-	public function shouldSetOriginalExceptionStacks()
-	{
-		exception = new MCoverException("message");
-		exception.originalException = "exception";
-
-		Assert.isTrue(exception.hasOriginalException());
-		Assert.isNotNull(exception.originalExceptionStack);
-		Assert.isNotNull(exception.originalExceptionCallStack);
-			
+		exception = new MCoverException("message", "cause", null);
+		var str = exception.toString();
+		Assert.isTrue(str.indexOf("massive.mcover.MCoverException: message") == 0);
+		Assert.isTrue(str.indexOf("at massive.mcover.MCoverExceptionTest") == -1);
+		Assert.isTrue(str.indexOf("Caused by: cause") != -1);
 	}
 }
