@@ -31,6 +31,7 @@ import haxe.macro.Compiler;
 */
 @:keep class MCover
 {
+	static public var VERSION:String = "0.9";
 	static public var RESOURCE_DATA:String = "MCoverData";
 
 	#if !macro

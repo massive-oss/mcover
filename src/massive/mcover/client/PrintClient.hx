@@ -74,7 +74,7 @@ class PrintClient implements CoverageReportClient
 	function printReport()
 	{
 		print(divider);
-		print("MCover v0.6 Coverage Report, generated " + Date.now().toString());
+		print("MCover v" + MCover.VERSION + " Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		if(includeBlockExecutionCounts)
