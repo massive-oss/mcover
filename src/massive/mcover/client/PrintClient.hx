@@ -4,7 +4,7 @@ import massive.mcover.CoverageClient;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
-
+import massive.mcover.util.Timer;
 
 class PrintClient implements CoverageClient
 {
@@ -60,7 +60,7 @@ class PrintClient implements CoverageClient
 				
 		printReport();
 
-		var timer = massive.munit.util.Timer.delay(reportComplete, 10);
+		var timer = Timer.delay(reportComplete, 10);
 	}
 
 	function reportComplete()

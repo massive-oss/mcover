@@ -62,56 +62,46 @@ You can set multiple custom clients if required:
 The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
 
 	----------------------------------------------------------------
-	MCover v0.4 Coverage Report, generated 2011-10-10 11:39:59
+	MCover v0.5 Coverage Report, generated 2011-10-10 11:44:16
 	----------------------------------------------------------------
 
 	NON-EXECUTED BRANCHES:
 
-	              None          
+	              Main#branch | src/Main.hx:77: characters 10-11 | t
 
 	NON-EXECUTED STATEMENTS:
 
-	              None          
+	              Main#otherTypes | src/Main.hx:107: characters 3-9
+	              Main#completionHandler | src/Main.hx:30: characters 2-18
 
 	COVERAGE BREAKDOWN BY CLASSES:
 
 	              Result        Methods       Statements    Branches      Class         
-	              100%          10/10         16/16         0/0           massive.mcover.MCoverRunnerImpl
-	              100%          5/5           10/10         0/0           massive.mcover.MCover
-	              100%          3/3           4/4           0/0           massive.mcover.MCoverException
-	              100%          2/2           2/2           0/0           massive.mcover.client.TraceClient
-	              100%          11/11         35/35         0/0           massive.mcover.client.PrintClient
-	              100%          19/19         23/23         2/2           massive.mcover.data.AllClasses
-	              100%          6/6           7/7           0/0           massive.mcover.data.Branch
-	              100%          5/5           5/5           0/0           massive.mcover.data.AbstractBlock
-	              100%          2/2           2/2           0/0           massive.mcover.data.Clazz
-	              100%          11/11         17/17         6/6           massive.mcover.data.AbstractNodeList
-	              100%          12/12         17/17         6/6           massive.mcover.data.Method
-	              100%          4/4           4/4           0/0           massive.mcover.data.Statement
-	              100%          3/3           5/5           0/0           massive.mcover.data.File
-	              100%          11/11         12/12         2/2           massive.mcover.data.AbstractNode
-	              100%          2/2           2/2           0/0           massive.mcover.data.Package
+	              100%          2/2           2/2           0/0           example.foo.Foo
+	              100%          3/3           3/3           0/0           example.Example
+	              90.48%        11/12         24/26         1/2           Main          
+	              100%          1/1           1/1           0/0           InternalClass 
 
 	COVERAGE BREAKDOWN BY PACKAGE:
 
 	              Result        Files         Classes       Package       
-	              100%          10/10         10/10         massive.mcover.data
-	              100%          2/2           2/2           massive.mcover.client
-	              100%          3/3           3/3           massive.mcover
+	              90.91%        1/1           2/2           [Default]     
+	              100%          1/1           1/1           example       
+	              100%          1/1           1/1           example.foo   
 
 	----------------------------------------------------------------
 
 	OVERALL STATS SUMMARY:
 
 	total packages      3 / 3               
-	total files         15 / 15             
-	total classes       15 / 15             
-	total methods       106 / 106           
-	total statements    161 / 161           
-	total branches      16 / 16             
+	total files         3 / 3               
+	total classes       4 / 4               
+	total methods       17 / 18             
+	total statements    30 / 32             
+	total branches      1 / 2               
 
 	----------------------------------------------------------------
-	RESULT              100%                
+	RESULT              92.59%              
 	----------------------------------------------------------------
 
 

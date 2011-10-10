@@ -142,10 +142,6 @@ class MCoverRunnerImpl implements MCoverRunner
 		{	
 			client.report(allClasses);
 		}
-
-		#if MCOVER_DEBUG
-		generateInternalStats();
-		#end
 	}
 
 	function clientCompletionHandler(client:CoverageClient):Void
