@@ -4,13 +4,13 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.mcover.data.AllClasses;
-import massive.mcover.CoverageClientMock;
-import massive.mcover.CoverageClient;
+import massive.mcover.CoverageReportClientMock;
+import massive.mcover.CoverageReportClient;
 
 
-class CoverageClientTest
+class CoverageReportClientTest
 {
-	var client:CoverageClient;
+	var client:CoverageReportClient;
 	var allClasses:AllClasses;
 	public function new()
 	{
@@ -48,14 +48,14 @@ class CoverageClientTest
 		client.report(allClasses);
 	}
 	
-	function clientCompleteHandler(c:CoverageClient)
+	function clientCompleteHandler(c:CoverageReportClient)
 	{
 		Assert.areEqual(client, c);
 	}
 	////////////
 
-	function createClient():CoverageClient
+	function createClient():CoverageReportClient
 	{
-		return new CoverageClientMock();
+		return new CoverageReportClientMock();
 	}
 }

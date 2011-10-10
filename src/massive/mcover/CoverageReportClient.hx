@@ -5,12 +5,12 @@ import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
 
 
-interface CoverageClient
+interface CoverageReportClient
 {
 	/**
 	 * Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	var completionHandler(default, default):CoverageClient -> Void;
+	var completionHandler(default, default):CoverageReportClient -> Void;
 		
 	/**
 	 * Called when all tests are complete.

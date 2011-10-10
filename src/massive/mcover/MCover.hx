@@ -1,21 +1,7 @@
 package massive.mcover;
 
-import massive.mcover.data.Package;
-import massive.mcover.data.File;
-import massive.mcover.data.Clazz;
-import massive.mcover.data.Method;
-import massive.mcover.data.Branch;
-import massive.mcover.data.Statement;
-import massive.mcover.data.AbstractNode;
-import massive.mcover.data.AbstractBlock;
-import massive.mcover.data.AbstractNodeList;
-import massive.mcover.data.AllClasses;
-import massive.mcover.data.CoverageResult;
-
 #if !macro
-import massive.mcover.MCoverRunner;
-import massive.mcover.CoverageClient;
-import massive.mcover.MCoverException;
+import massive.mcover.CoverageLogger;
 
 #if neko
 import neko.vm.Deque;
@@ -41,7 +27,7 @@ import haxe.macro.Compiler;
 *
 * See detailed documentation below for the following:
 *    getInstance();
-*    createRunner();
+*    createReporter();
 */
 @:keep class MCover
 {
@@ -49,236 +35,22 @@ import haxe.macro.Compiler;
 
 	#if !macro
 	
-	static public var instance(default, null):MCover;
+	static public var instance(default, null):CoverageLogger;
 
 	#if neko
-
 	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
-
-	public var statementQueue(default, null):Deque<Int>;
-	public var branchQueue(default, null):Deque<BranchResult>;
-
-	#else
-
-	public var statementQueue(default, null):Array<Int>;
-	public var branchQueue(default, null):Array<BranchResult>;
-
 	#end
 
-	public var runner(default, null):MCoverRunner;
-
-
-	/*
-	 * total execution count for statements by id
-	*/
-	var statementResultsById:IntHash<Int>;
-	
-	/*
-	 * total execution summary for branches by id
-	*/
-	var branchResultsById:IntHash<BranchResult>;
-
-	public var allClasses(default, null):AllClasses;
-
 	@IgnoreCover
-	public static function getInstance():MCover
+	public static function getInstance():CoverageLogger
 	{
 		#if neko mutex.acquire(); #end
 		if(instance == null)
 		{
-			instance = new MCover();
+			instance = new CoverageLoggerImpl();
 		}
 		#if neko mutex.release(); #end
 		return instance;
-	}
-	
-	@IgnoreCover
-	public function new()
-	{
-		#if neko
-		statementQueue = new Deque();
-		branchQueue = new Deque();
-		#else
-		statementQueue = [];
-		branchQueue = [];
-		#end
-
-		statementResultsById = new IntHash();
-		branchResultsById = new IntHash();
-	}
-
-	public function createRunner(?runnerClass:Class<MCoverRunner>=null, overwrite:Bool=false):MCoverRunner
-	{
-		#if neko mutex.acquire(); #end
-		if(runner != null)
-		{
-			if(!overwrite)
-			{
-				#if neko mutex.release(); #end
-				throw new MCoverException("Runner already exists. Set overwrite to true to replace runner.");
-			}
-
-			runner.destroy();
-			runner = null;
-		}
-
-		if(allClasses == null)
-		{
-			loadAllClasses();	
-		}
-
-		if(runnerClass == null) runnerClass =MCoverRunnerImpl;
-
-		runner = Type.createInstance(runnerClass, []);
-		runner.initialize(this, allClasses);
-
-		#if neko mutex.release(); #end
-		return runner;
-	}
-
-	public function loadAllClasses(?resourceName:String = null)
-	{
-		if(resourceName == null) resourceName = MCover.RESOURCE_DATA;
-		var serializedData:String = haxe.Resource.getString(resourceName);
-		if(serializedData == null) throw new MCoverException("No generated coverage data found in haxe Resource '" + resourceName  + "'");
-		try
-		{
-			allClasses = haxe.Unserializer.run(serializedData);
-			allClasses.setStatementResultsHash(statementResultsById);
-			allClasses.setBranchResultsHash(branchResultsById);
-		}
-		catch(e:Dynamic)
-		{
-			throw new MCoverException("Unable to unserialize coverage data in " + resourceName, e);
-		}
-	}
-
-	/**
-	* Method called from injected code each time a code block executes. 
-	* Developers should not class this method directly.
-	**/
-	@IgnoreCover
-	public function logStatement(id:Int)
-	{	
-		#if neko mutex.acquire(); #end
-		var count = 1;
-
-		if(statementResultsById.exists(id))
-		{
-			count = statementResultsById.get(id) + 1;
-		}
-
-		statementResultsById.set(id, count);
-
-		if(count == 1)
-		{
-			#if neko
-			statementQueue.add(id);
-			#else
-			statementQueue.unshift(id);
-			#end
-		}
-		#if neko mutex.release(); #end
-	}
-	
-	/**
-	* Method called from injected code each time a binary operation resolves to true or false 
-	* Developers should not class this method directly.
-	**/
-	@IgnoreCover
-	public function logBranch(id:Int, value:Bool):Bool
-	{
-		#if neko mutex.acquire(); #end
-
-		var r:BranchResult = null;
-		
-		if(branchResultsById.exists(id))
-		{
-			r = branchResultsById.get(id);
-
-		}
-		else
-		{
-			r = {id:id, value:false, result:"00", trueCount:0, falseCount:0, total:0};
-			branchResultsById.set(id, r);
-		}
-
-		//record current value
-		if(value) r.trueCount ++;
-		else r.falseCount ++;
-
-		r.total ++;
-		
-		var changed = false;
-			
-		if(r.result == "11")
-		{
-			//both true and false have already been logged
-		}
-		else if(value && r.result.charAt(0) == "0")
-		{
-			//log true
-			r.result = "1" + r.result.substr(1,1);
-			changed = true;
-		}
-		else if(!value && r.result.charAt(1) == "0")
-		{
-			//log false
-			r.result = r.result.substr(0,1) + "1";
-			changed = true;
-		}
-
-		if(changed)
-		{
-			var copy = copyBranchResult(r);
-			copy.value = value;
-			#if neko
-			branchQueue.add(copy);
-			#else
-			branchQueue.unshift(copy);
-			#end
-		}
-
-		#if neko mutex.release(); #end
-		return value;
-	}
-
-	public function getNextBranchResultFromQueue():BranchResult
-	{
-		var result:BranchResult = null; 
-
-		#if neko
-		mutex.acquire();
-		result = branchQueue.pop(false);
-		mutex.release();
-		#else
-		result = branchQueue.pop();
-		#end
-
-		return result;
-	}
-
-	public function getNextStatementFromQueue():Null<Int>
-	{
-
-		var result:Null<Int> = null;
-		#if neko 
-		mutex.acquire();
-		result = statementQueue.pop(false);
-		mutex.release();
-		#else
-		result = statementQueue.pop();
-		#end
-	
-		return result;
-	}
-
-
-	function copyBranchResult(r:BranchResult):BranchResult
-	{
-		if(r == null) return null;
-
-		return {id:r.id, value:r.value, result:r.result.toString(), trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
 	}
 
 	#else
@@ -384,4 +156,3 @@ import haxe.macro.Compiler;
 	}
 	#end
 }
-

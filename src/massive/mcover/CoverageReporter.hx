@@ -1,7 +1,7 @@
 package massive.mcover;
 
 import massive.mcover.client.TraceClient;
-import massive.mcover.CoverageClient;
+import massive.mcover.CoverageReportClient;
 import massive.mcover.util.Timer;
 import massive.mcover.data.AllClasses;
 
@@ -15,9 +15,9 @@ import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.MCover;
 
-import massive.mcover.MCoverException;
+import massive.mcover.Exception;
 
-interface MCoverRunner
+interface CoverageReporter
 {
 	/*
 	 * Handler which if present, should be called when the client has completed its processing of the results.
@@ -26,10 +26,10 @@ interface MCoverRunner
 	
 	var allClasses(default, null):AllClasses;
 
-	var cover(default, null):MCover;
+	var logger(default, null):CoverageLogger;
 
 
-	function initialize(cover:MCover, allClasses:AllClasses):Void;
+	function initialize(logger:CoverageLogger, allClasses:AllClasses):Void;
 
 	function report():Void;
 
@@ -37,12 +37,12 @@ interface MCoverRunner
 	 * Add a coverage clients to interpret coverage results.
 	 * 
 	 * @param client  client to interpret coverage results 
-	 * @see massive.mcover.CoverageClient
+	 * @see massive.mcover.CoverageReportClient
 	 * @see massive.mcover.client.PrintClient
 	 */
-	function addClient(client:CoverageClient):Void;
-	function removeClient(client:CoverageClient):Void;
-	function getClients():Array<CoverageClient>;
+	function addClient(client:CoverageReportClient):Void;
+	function removeClient(client:CoverageReportClient):Void;
+	function getClients():Array<CoverageReportClient>;
 
 	/**
 	* Removes timers and contents
@@ -50,8 +50,7 @@ interface MCoverRunner
 	function destroy():Void;
 }
 
-
-class MCoverRunnerImpl implements MCoverRunner
+class CoverageReporterImpl implements CoverageReporter
 {
 	/**
 	 * Handler called when all clients 
@@ -60,9 +59,9 @@ class MCoverRunnerImpl implements MCoverRunner
 	public var completionHandler(default, default):Float -> Void;
 
 	public var allClasses(default, null):AllClasses;
-	public var cover(default, null):MCover;
+	public var logger(default, null):CoverageLogger;
 
-	var clients:Array<CoverageClient>;
+	var clients:Array<CoverageReportClient>;
 	var clientCompleteCount:Int;
 
 	/**
@@ -73,17 +72,17 @@ class MCoverRunnerImpl implements MCoverRunner
 		clients = [];
 	}
 
-	public function initialize(cover:MCover, allClasses:AllClasses)
+	public function initialize(logger:CoverageLogger, allClasses:AllClasses)
 	{
-		this.cover = cover;
+		this.logger = logger;
 		this.allClasses = allClasses;
 	}
 
 	public function report()
 	{
-		if(cover == null) throw new MCoverException("Runner has not been initialized");
+		if(logger == null) throw new Exception("Runner has not been initialized");
 
-		if(allClasses == null) throw new MCoverException("Runner has not been initialized");
+		if(allClasses == null) throw new Exception("Runner has not been initialized");
 
 		if(clients.length == 0)
 		{
@@ -92,13 +91,9 @@ class MCoverRunnerImpl implements MCoverRunner
 			clients.push(client);
 		}
 		generateReport();
-	
 	}
 
-
-
-
-	public function addClient(client:CoverageClient)
+	public function addClient(client:CoverageReportClient)
 	{
 		for(c in clients)
 		{
@@ -109,13 +104,13 @@ class MCoverRunnerImpl implements MCoverRunner
 		clients.push(client);
 	}
 
-	public function removeClient(client:CoverageClient)
+	public function removeClient(client:CoverageReportClient)
 	{
 		client.completionHandler = null;
 		clients.remove(client);
 	}
 
-	public function getClients():Array<CoverageClient>
+	public function getClients():Array<CoverageReportClient>
 	{
 		return clients.concat([]);
 	}
@@ -144,7 +139,7 @@ class MCoverRunnerImpl implements MCoverRunner
 		}
 	}
 
-	function clientCompletionHandler(client:CoverageClient):Void
+	function clientCompletionHandler(client:CoverageReportClient):Void
 	{
 		if (++clientCompleteCount == clients.length)
 		{

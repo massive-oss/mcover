@@ -1,21 +1,21 @@
 package;
 
 import massive.mcover.MCover;
-import massive.mcover.MCoverRunner;
+import massive.mcover.CoverageReporter;
 
 class Main
 {
-	static var runner:MCoverRunner;
+	static var reporter:CoverageReporter;
 
 	static var completed:Bool = false;
 
 	@IgnoreCover
 	static public function main()
 	{
-		runner = MCover.getInstance().createRunner();
+		reporter = MCover.getInstance().createReporter();
 		var app = new Main();
-		runner.completionHandler = completionHandler;
-		runner.report();
+		reporter.completionHandler = completionHandler;
+		reporter.report();
 
 		while(completed != true)
 		{

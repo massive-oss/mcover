@@ -1,14 +1,14 @@
 package massive.mcover;
 import massive.mcover.data.AllClasses;
 
-class MCoverRunnerMock implements MCoverRunner
+class CoverageReporterMock implements CoverageReporter
 {
 	public var completionHandler(default, default):Float -> Void;
 
-	public var cover(default, null):MCover;
+	public var logger(default, null):CoverageLogger;
 	public var allClasses(default, null):AllClasses;
 
-	public var clients:Array<CoverageClient>;
+	public var clients:Array<CoverageReportClient>;
 
 	public var isDestroyed:Bool;
 
@@ -20,9 +20,9 @@ class MCoverRunnerMock implements MCoverRunner
 		isDestroyed = false;
 	}
 
-	public function initialize(cover:MCover, allClasses:AllClasses)
+	public function initialize(logger:CoverageLogger, allClasses:AllClasses)
 	{
-		this.cover = cover;
+		this.logger = logger;
 		this.allClasses = allClasses;
 	}
 
@@ -39,17 +39,17 @@ class MCoverRunnerMock implements MCoverRunner
 		}
 	}
 
-	public function addClient(client:CoverageClient)
+	public function addClient(client:CoverageReportClient)
 	{
 		clients.push(client);
 	}
 
-	public function removeClient(client:CoverageClient)
+	public function removeClient(client:CoverageReportClient)
 	{
 		clients.remove(client);
 	}
 
-	public function getClients():Array<CoverageClient>
+	public function getClients():Array<CoverageReportClient>
 	{
 		return clients;
 	}

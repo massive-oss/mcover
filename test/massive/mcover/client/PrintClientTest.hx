@@ -4,12 +4,12 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.mcover.data.AllClasses;
-import massive.mcover.CoverageClient;
+import massive.mcover.CoverageReportClient;
 import massive.mcover.data.NodeMock;
 import massive.mcover.data.Branch;
 
 
-class PrintClientTest extends CoverageClientTest
+class PrintClientTest extends CoverageReportClientTest
 {
 	var printClient:PrintClient;
 	
@@ -238,7 +238,7 @@ class PrintClientTest extends CoverageClientTest
 
 	///////////
 
-	override function createClient():CoverageClient
+	override function createClient():CoverageReportClient
 	{
 		return new PrintClient();
 	}

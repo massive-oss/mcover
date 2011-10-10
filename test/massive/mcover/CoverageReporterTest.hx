@@ -3,15 +3,15 @@ package massive.mcover;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import massive.mcover.MCoverRunner;
-import massive.mcover.MCover;
+import massive.mcover.CoverageReporter;
+import massive.mcover.CoverageLogger;
 import massive.mcover.data.AllClasses;
 
-class MCoverRunnerTest
+class CoverageReporterTest
 {
-	var runner:MCoverRunner;
-	var cover:MCover;
-	var client:CoverageClient;
+	var runner:CoverageReporter;
+	var logger:CoverageLogger;
+	var client:CoverageReportClient;
 	var allClasses:AllClasses;
 
 	public function new()
@@ -33,8 +33,8 @@ class MCoverRunnerTest
 	public function setup():Void
 	{
 		runner = createRunner();
-		cover = new MCover();
- 		client = new CoverageClientMock();
+		logger = new CoverageLoggerMock();
+ 		client = new CoverageReportClientMock();
  		allClasses = new AllClasses();
 	}
 	
@@ -52,7 +52,7 @@ class MCoverRunnerTest
 	public function shouldInitialize()
 	{
 		initializeRunner();
-		Assert.areEqual(cover, runner.cover);
+		Assert.areEqual(logger, runner.logger);
 	}
 
 	@AsyncTest
@@ -92,14 +92,14 @@ class MCoverRunnerTest
 
 	///////////////
 
-	function createRunner():MCoverRunner
+	function createRunner():CoverageReporter
 	{
-		return new MCoverRunnerMock();
+		return new CoverageReporterMock();
 	}
 
 	function initializeRunner()
 	{
-		runner.initialize(cover, allClasses);
+		runner.initialize(logger, allClasses);
 		runner.addClient(client);
 	}
 }

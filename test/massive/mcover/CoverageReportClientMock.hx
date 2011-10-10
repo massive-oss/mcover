@@ -5,14 +5,14 @@ import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
 
 
-class CoverageClientMock implements CoverageClient
+class CoverageReportClientMock implements CoverageReportClient
 {
 	public var allClasses:AllClasses;
 
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(default, default):CoverageClient -> Void;
+	public var completionHandler(default, default):CoverageReportClient -> Void;
 
 
 	public function new()

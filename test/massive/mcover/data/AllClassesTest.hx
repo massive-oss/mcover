@@ -261,7 +261,7 @@ class AllClassesTest extends AbstractNodeListTest
 			block.id = null;
 			addMethod(block);
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(e.message.indexOf("id") != -1);
 		}
@@ -272,7 +272,7 @@ class AllClassesTest extends AbstractNodeListTest
 			block.packageName = null;
 			addMethod(block);
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(e.message.indexOf("packageName") != -1);
 		}
@@ -283,7 +283,7 @@ class AllClassesTest extends AbstractNodeListTest
 			block.file = null;
 			addMethod(block);
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(e.message.indexOf("file") != -1);
 		}
@@ -294,7 +294,7 @@ class AllClassesTest extends AbstractNodeListTest
 			block.qualifiedClassName = null;
 			addMethod(block);
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(e.message.indexOf("qualifiedClassName") != -1);
 		}
@@ -305,7 +305,7 @@ class AllClassesTest extends AbstractNodeListTest
 			block.methodName = null;
 			addMethod(block);
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(e.message.indexOf("methodName") != -1);
 		}
@@ -332,7 +332,7 @@ class AllClassesTest extends AbstractNodeListTest
 			statement = allClasses.getStatementById(2);
 			Assert.fail("invalid statement id should throw exception.");
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(true);
 		}
@@ -357,7 +357,7 @@ class AllClassesTest extends AbstractNodeListTest
 			branch = allClasses.getBranchById(2);
 			Assert.fail("invalid branch id should throw exception.");
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(true);
 		}

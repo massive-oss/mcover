@@ -3,7 +3,7 @@ package massive.mcover;
 import haxe.PosInfos;
 import haxe.Stack;
 
-class MCoverException
+class Exception
 {
 
 

@@ -1,17 +1,17 @@
 package massive.mcover.client;
 
-import massive.mcover.CoverageClient;
+import massive.mcover.CoverageReportClient;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
 import massive.mcover.util.Timer;
 
-class PrintClient implements CoverageClient
+class PrintClient implements CoverageReportClient
 {
 		/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(default, default):CoverageClient -> Void;
+	public var completionHandler(default, default):CoverageReportClient -> Void;
 
 
 	public var includeMissingBlocks(default, default):Bool;

@@ -3,8 +3,8 @@ package massive.mcover;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import massive.mcover.MCoverRunner;
-import massive.mcover.MCover;
+import massive.mcover.CoverageReporter;
+
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.data.AllClasses;
@@ -12,9 +12,9 @@ import massive.mcover.data.AllClasses;
 import massive.mcover.data.NodeMock;
 import massive.mcover.client.TraceClient;
 
-class MCoverRunnerImplTest extends MCoverRunnerTest
+class CoverageReporterImplTest extends CoverageReporterTest
 {
-	var instance:MCoverRunnerImpl;
+	var instance:CoverageReporterImpl;
 	
 	public function new()
 	{
@@ -37,7 +37,7 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 	override public function setup():Void
 	{
 		super.setup();
-		instance = cast(runner, MCoverRunnerImpl);
+		instance = cast(runner, CoverageReporterImpl);
 	
 	}
 	
@@ -86,9 +86,9 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 		try
 		{
 			instance.report();	
-			Assert.fail("expected MCoverException");
+			Assert.fail("expected Exception");
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(true);
 		}
@@ -97,13 +97,13 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 	@Test
 	public function shouldThrowExceptionIfNotInitializedWithAllClasses()
 	{
-		instance.initialize(cover, null);
+		instance.initialize(logger, null);
 		try
 		{
 			instance.report();	
-			Assert.fail("expected MCoverException");
+			Assert.fail("expected Exception");
 		}
-		catch(e:MCoverException)
+		catch(e:Exception)
 		{
 			Assert.isTrue(true);
 		}
@@ -115,14 +115,14 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 		initializeRunner();
 		instance.report();
 
-		var mockClient = cast(client, CoverageClientMock);
+		var mockClient = cast(client, CoverageReportClientMock);
 		Assert.isNotNull(mockClient.allClasses);
 	}
 
 	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
-		instance.initialize(cover, allClasses);
+		instance.initialize(logger, allClasses);
 
 
 		var originalTrace = haxe.Log.trace;
@@ -143,8 +143,8 @@ class MCoverRunnerImplTest extends MCoverRunnerTest
 
 	///////////////
 
-	override function createRunner():MCoverRunner
+	override function createRunner():CoverageReporter
 	{
-		return new MCoverRunnerImpl();
+		return new CoverageReporterImpl();
 	}
 }

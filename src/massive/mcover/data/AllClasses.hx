@@ -40,7 +40,7 @@ import massive.mcover.data.Branch;
 	public function addStatement(block:Statement)
 	{
 		verifyBlockData(block);
-		if(statements.exists(block.id)) throw new MCoverException("Statement already exists: " + block.id + " " + block.toString());
+		if(statements.exists(block.id)) throw new Exception("Statement already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -56,7 +56,7 @@ import massive.mcover.data.Branch;
 	public function addBranch(block:Branch)
 	{
 		verifyBlockData(block);
-		if(branches.exists(block.id)) throw new MCoverException("Branch already exists: " + block.id + " " + block.toString());
+		if(branches.exists(block.id)) throw new Exception("Branch already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -71,16 +71,16 @@ import massive.mcover.data.Branch;
 
 	function verifyBlockData(block:AbstractBlock)
 	{
-		if(block.id == null) throw new MCoverException("id cannot be null");
-		if(block.packageName == null) throw new MCoverException("packageName cannot be null");
-		if(block.file == null) throw new MCoverException("file cannot be null");
-		if(block.qualifiedClassName == null) throw new MCoverException("qualifiedClassName cannot be null");
-		if(block.methodName == null) throw new MCoverException("methodName cannot be null");
+		if(block.id == null) throw new Exception("id cannot be null");
+		if(block.packageName == null) throw new Exception("packageName cannot be null");
+		if(block.file == null) throw new Exception("file cannot be null");
+		if(block.qualifiedClassName == null) throw new Exception("qualifiedClassName cannot be null");
+		if(block.methodName == null) throw new Exception("methodName cannot be null");
 	}
 
 	public function getBranchById(id:Int):Branch
 	{
-		if(!branches.exists(id)) throw new MCoverException("Branch does not exist: " + id);
+		if(!branches.exists(id)) throw new Exception("Branch does not exist: " + id);
 
 		var lookup:Array<Int> = branches.get(id).concat([]);
 		return lookupBranch(lookup);
@@ -89,7 +89,7 @@ import massive.mcover.data.Branch;
 
 	public function getStatementById(id:Int):Statement
 	{
-		if(!statements.exists(id)) throw new MCoverException("Statement does not exist: " + id);
+		if(!statements.exists(id)) throw new Exception("Statement does not exist: " + id);
 		var lookup:Array<Int> = statements.get(id).concat([]);
 		return lookupStatement(lookup);
 	}
