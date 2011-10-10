@@ -212,7 +212,10 @@ import massive.mcover.data.Branch;
 			}
 			case EBlock(exprs): 
 			{
-				expr = parseBlock(expr, exprs);//e.g. {...}
+				if(exprs.length > 0)
+				{
+					expr = parseBlock(expr, exprs);//e.g. {...}
+				}
 			}
 			default: debug(expr.expr);
 		}
