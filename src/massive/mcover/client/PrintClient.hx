@@ -74,7 +74,7 @@ class PrintClient implements CoverageReportClient
 	function printReport()
 	{
 		print(divider);
-		print("MCover v0.5 Coverage Report, generated " + Date.now().toString());
+		print("MCover v0.6 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		if(includeBlockExecutionCounts)
@@ -86,6 +86,8 @@ class PrintClient implements CoverageReportClient
 		{
 			printMissingBlocks();
 		}
+
+	
 
 		printClassResults();
 		printPackageResults();
@@ -213,6 +215,8 @@ class PrintClient implements CoverageReportClient
 		}
 	}
 
+
+	
 	/**
 	* Outputs all branch and statement logs sorted by highest frequency.
 	* For branches reports also totals for true/false  

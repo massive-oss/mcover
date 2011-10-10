@@ -171,21 +171,17 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		if(r == null) return null;
 
-		return {id:r.id, value:r.value, result:r.result.toString(), trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
+		return {id:r.id,result:r.result.toString(), trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
 	}
 
-	function assertBranchResultsAreEqual(r1:BranchResult, r2:BranchResult, ?includeValue:Bool=false)
+	function assertBranchResultsAreEqual(r1:BranchResult, r2:BranchResult)
 	{
 		Assert.areEqual(r1.id, r2.id);
 		Assert.areEqual(r1.result, r2.result);
 		Assert.areEqual(r1.trueCount, r2.trueCount);
 		Assert.areEqual(r1.falseCount, r2.falseCount);
 		Assert.areEqual(r1.total, r2.total);
-		
-		if(includeValue)
-		{
-			Assert.areEqual(r1.value, r2.value);
-		}			
+			
 	}
 
 

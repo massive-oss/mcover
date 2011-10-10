@@ -87,7 +87,7 @@ class NodeMock extends AbstractNode
 	{
 		if(branch == null) branch = createBranch();
 		
-		return {id:branch.id, value:false, result:"00", trueCount:branch.trueCount, falseCount:branch.falseCount, total:branch.totalCount};
+		return {id:branch.id,result:"00", trueCount:branch.trueCount, falseCount:branch.falseCount, total:branch.totalCount};
 	}
 
 }

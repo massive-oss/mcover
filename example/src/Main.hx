@@ -25,6 +25,7 @@ class Main
 
 
 	}
+	@IgnoreCover
 	static function completionHandler(percent:Float)
 	{
 		completed = true;
@@ -66,19 +67,129 @@ class Main
 
 	function branchTests()
 	{
-		branch(true, false);
-		branch(false, false);
-		branch(true, true);
-		branch(false, false);
+		branchBool(true, false);
+		branchBool(false, true);
+		branchBool(true, true);
+		branchBool(false, false);
+
+		branchInt(1, 0);
+		branchInt(0, 1);
+		branchInt(1, 1);
 	}
 
-	function branch(a:Bool, b:Bool)
+
+	function forLoops()
+	{
+		for(i in 0...5)
+		{
+			here();
+		}
+
+		var a:Array<Int> = [1,2,3,4,5];
+
+		for(i in a)
+		{
+			here();
+		}
+	}
+	function branchBool(a:Bool, b:Bool)
 	{
 		if(a || b)
 		{
 			here();
 		}
+
+		if(a == b)
+		{
+			here();
+		}
+
+		if(a != b)
+		{
+			here();
+		}
+
+		if(a && b)
+		{
+			here();
+		}
 	}
+
+	function branchInt(a:Int, b:Int)
+	{
+		if(a == b)
+		{
+			here();
+		}
+		if(a != b)
+		{
+			here();
+		}
+
+		if(a < b)
+		{
+			here();
+		}
+
+		if(a <= b)
+		{
+			here();
+		}
+
+		if(a > b)
+		{
+			here();
+		}
+
+		if(a >= b)
+		{
+			here();
+		}
+	}
+	function branchString(a:String, b:String)
+	{
+		if(a == b)
+		{
+			here();
+		}
+		if(a != b)
+		{
+			here();
+		}
+	}
+
+	function branchFloat(a:Float, b:Float)
+	{
+		if(a == b)
+		{
+			here();
+		}
+		if(a != b)
+		{
+			here();
+		}
+
+		if(a < b)
+		{
+			here();
+		}
+
+		if(a <= b)
+		{
+			here();
+		}
+
+		if(a > b)
+		{
+			here();
+		}
+
+		if(a >= b)
+		{
+			here();
+		}
+	}
+
 
 	function otherTypes()
 	{
@@ -97,10 +208,6 @@ class Main
 			b:"b"
 		}
 
-		for(i in 0...5)
-		{
-			here();
-		}
 
 		var f = function()
 		{
@@ -177,6 +284,13 @@ class Main
 		while(i < 2)
 		{
 			i++;
+		}
+
+		i = 0;
+		while(i < 2)
+		{
+			i++;
+			break;
 		}
 	}
 

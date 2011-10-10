@@ -178,24 +178,41 @@ Currently supported statement blocks
 
 *	class methods
 
-*	if/else blocks
+*	if/else statements
 
-*	switch statements
+*	switch case and default statements
 
-*	for loops
+*	for loop statements
 
-*	while loops
+*	while loop statements
 
-*   try/catch
-
-*	terniary ops
+*   try/catch statements
 
 *	inline functions, arrays and objects (e.g. var o = {f:function(){var a = [1,2,3]}})
 
 
 Currently supported branch scenarios
 
-*	a || b
+*	binary operations like a || b, a == b, a != b, a && b
+
+*	comparisons like a == b, a < b, a <= b, a > b, a >= b
+
+*	terniary operations like a = b ? c : d
+
+*	if/else  conditions
+
+*	switch case conditions (and default)
+
+*	while conditions
+
+For branches with multiple scenarios e.g. (a||b), MCover will log branch results for each individual expression , i.e.:
+
+	if(a || b)
+
+	a = true, b = false;
+	a = false, b = true;
+	a = true, b = true;
+	a = false, b = false; 
 
 
 ### Customising PrintClient report output

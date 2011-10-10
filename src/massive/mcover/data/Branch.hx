@@ -58,7 +58,6 @@ package massive.mcover.data;
 typedef BranchResult =
 {
 	id:Int,
-	value:Bool,//current value
 	result:String,//binary string reprentation of true and false coverage ("00")
 	trueCount:Int,
 	falseCount:Int,

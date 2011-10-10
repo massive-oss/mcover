@@ -127,6 +127,7 @@ import massive.mcover.data.Branch;
 			case ECast(e, t): tmp = [e];// case(foo, Foo);
 			case EIf(econd, eif, eelse):
 			{
+				econd = createBranchCoverageExpr(econd);
 				//e.g. if(){}else{}
 				tmp = [econd, eif];
 				if(eelse!=null) tmp.push(eelse);
@@ -134,7 +135,7 @@ import massive.mcover.data.Branch;
 		
 			case ESwitch(e, cases, edef):
 			{	
-				parseSwtich(expr, e, cases, edef);
+				parseSwitch(expr, e, cases, edef);
 			}
 			case ETry(e, catches):
 			{
@@ -146,7 +147,11 @@ import massive.mcover.data.Branch;
 				}
 			}
 			case EThrow(e): tmp = [e];//e.g. throw "foo";
-			case EWhile(econd, e, normalWhile): tmp = [econd, e];//e.g. while(i<2){}
+			case EWhile(econd, e, normalWhile):
+			{
+				econd = createBranchCoverageExpr(econd);
+				tmp = [econd, e];//e.g. while(i<2){}
+			}
 			case EField(e, field):tmp = [e];//e.g. Sdt.string()
 			case EParenthesis(e):tmp = [e];//e.g. {}
 			case ENew(t, params): tmp = params;
@@ -174,6 +179,7 @@ import massive.mcover.data.Branch;
 			case EUnop(op,postFix,e): tmp = [e];//e.g. i++;
 			case ETernary(econd, eif, eelse): 
 			{
+				econd = createBranchCoverageExpr(econd);
 				tmp = [econd, eif, eelse];
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
 			}
@@ -186,8 +192,12 @@ import massive.mcover.data.Branch;
 				}
 			}
 
-			case EFor(it, e): tmp = [it, e];//e.g. for(i in 0...5){}
-			case EIn(e1, e2): tmp = [e1, e2];//e.g. for(i in 0...5){}
+			case EFor(it, e):tmp = [it, e];//e.g. for(i in 0...5){}
+			case EIn(e1, e2):
+			{
+			
+				tmp = [e1, e2];//e.g. for(i in 0...5){}
+			}
 			case EArrayDecl(values):
 			{
 				//e.g. a = [1,2,3];
@@ -225,16 +235,23 @@ import massive.mcover.data.Branch;
 		return expr;
 	}
 
+
 	
-	static function parseSwtich(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>):Expr
+	static function parseSwitch(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>):Expr
 	{
 		e = parseExpression(e);
-
 		for(c in cases)
 		{
+			for(v in c.values)
+			{
+				v = createBranchCoverageExpr(v, e);
+			}
+	
 			c.expr = parseExpression(c.expr);
 		}
 
+		edef = parseExpression(edef);
+		
 		return expr;
 	}
 
@@ -264,11 +281,15 @@ import massive.mcover.data.Branch;
 		
 		switch(op)
 		{
+			case OpAssignOp(op): null;//
 			case OpBoolOr:
+				
 				e1 = createBranchCoverageExpr(e1);
 				e2 = createBranchCoverageExpr(e2);
+			
 			default: null;//debug(expr);
 		}
+
 
 		//expr.expr = EBinop(op, e1, e2);
 
@@ -344,9 +365,9 @@ import massive.mcover.data.Branch;
 	}
 
 	/**
-	* wraps a boolean value within a branch in a call to MCover.logBranch(id, value);
+	* wraps a boolean value within a branch in a call to MCover.getLogger.logBranch(id, value, compareValue);
 	**/
-	static function createBranchCoverageExpr(expr:Expr):Expr
+	static function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
 
 		var pos = expr.pos;
@@ -360,16 +381,25 @@ import massive.mcover.data.Branch;
 		pos = incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		
+		var args:Array<Expr> = [];
+
 		pos = incrementPos(pos, blockId.length);
-		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
+	
+		args.push({expr:EConst(CInt(blockId)), pos:pos});
 
 		pos = incrementPos(pos, 5);
-		var arg2 = {expr:expr.expr, pos:pos};
+		args.push({expr:expr.expr, pos:pos});
 
-		expr.expr = ECall(fieldExpr, [arg1, arg2]);
+		if(compareExpr != null)
+		{
+			pos = incrementPos(pos, 5);
+			args.push({expr:compareExpr.expr, pos:pos});
+		}
+		
+		expr.expr = ECall(fieldExpr, args);
 		return expr;
 	}
-	
+
 	static function createCodeBlockReference(pos:Position, ?isBranch:Bool = false):AbstractBlock
 	{
 		var posInfo = Context.getPosInfos(pos);

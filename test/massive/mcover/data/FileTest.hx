@@ -69,6 +69,18 @@ class FileTest extends AbstractNodeListTest
 		Assert.areEqual(1, r.c);	
 	}
 
+	@Test
+	public function shouldOnlyReturnClassesIfForSomeStupidReasonItemsAreOfAnotherNodeType()
+	{
+		var item1 = file.getItemByName("item1", Clazz);
+		var item2 = file.getItemByName("item2", Method);
+
+		var classes = file.getClasses();
+
+		Assert.areEqual(1, classes.length);
+		Assert.areEqual(item1, classes[0]);
+	}
+
 	//////////////////
 
 	override function createEmptyNode():AbstractNode

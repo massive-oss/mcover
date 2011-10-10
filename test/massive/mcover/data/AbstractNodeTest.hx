@@ -52,7 +52,7 @@ class AbstractNodeTest
 		r2 = node.getResults(false);
 		Assert.areNotEqual(r1, r2);
 	}
-	
+
 	@Test
 	public function shouldHaveZeroPercentage():Void
 	{
@@ -92,6 +92,22 @@ class AbstractNodeTest
 		r = convertResultStringToResult(r, "1,1,1,1,1,1,1");
 		p = node.getPercentage();
 		Assert.areEqual(100, p);
+	}
+
+
+	@Test
+	public function shouldReturnZeroPercentIfResultContainsNaN()
+	{
+		var r1 = node.getResults();
+
+		#if flash
+			r1.sc = untyped __global__["NaN"];
+		#else
+			r1.sc = null;
+		#end
+
+		var p = node.getPercentage();
+		Assert.areEqual(0, p);
 	}
 
 	function convertResultStringToResult(r:CoverageResult, ?values:String="0,0,0,0,0,0,0"):CoverageResult

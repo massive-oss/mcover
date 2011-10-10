@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import massive.mcover.data.AllClasses;
 import massive.mcover.CoverageReportClient;
 import massive.mcover.data.NodeMock;
+import massive.mcover.data.Package;
 import massive.mcover.data.Branch;
-
 
 class PrintClientTest extends CoverageReportClientTest
 {
@@ -234,6 +234,19 @@ class PrintClientTest extends CoverageReportClientTest
 		outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("package.class#method | location") != -1);
+	}
+
+	@Test
+	public function shouldConvertEmptyPackageNamesToDefault()
+	{
+		allClasses = new AllClasses();
+		allClasses.getItemByName("package", Package);
+		printClient.report(allClasses);
+		Assert.isTrue(printClient.output.indexOf("[Default]") == -1);
+
+		allClasses.getItemByName("", Package);
+		printClient.report(allClasses);
+		Assert.isTrue(printClient.output.indexOf("[Default]") != -1);
 	}
 
 	///////////

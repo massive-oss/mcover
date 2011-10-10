@@ -15,6 +15,8 @@ import massive.mcover.client.TraceClient;
 class CoverageReporterImplTest extends CoverageReporterTest
 {
 	var instance:CoverageReporterImpl;
+	var client2:CoverageReportClient;
+	var hasCompletedReport:Bool;
 	
 	public function new()
 	{
@@ -139,6 +141,40 @@ class CoverageReporterImplTest extends CoverageReporterTest
 
 		Assert.areEqual(1, clients.length);
 		Assert.areEqual(TraceClient, Type.getClass(clients[0]));
+	}
+
+	@AsyncTest
+	public function shouldOnlyExecuteCompletionHandlerAfterAllClientsHaveCompleted(factory:AsyncFactory)
+	{
+		initializeRunner();
+		client2 = new CoverageReportClientMock();
+
+		instance.addClient(client2);
+
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 500);
+
+		instance.completionHandler = handler;
+		instance.report();
+	}
+	
+	/**
+	* This test is a bit pointless, but it is to ensure branch coverage when completionHandler is null
+	*/
+	@AsyncTest
+	public function shouldNotCallCompletionHandlerIfNoneSet(factory:AsyncFactory)
+	{
+		initializeRunner();
+		
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandlerHasntExecuted, 500);
+
+		Timer.delay(handler, 200);
+		instance.report();
+	}
+
+
+	function reportCompletionHandlerHasntExecuted()
+	{
+		Assert.isTrue(true);
 	}
 
 	///////////////

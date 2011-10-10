@@ -11,7 +11,9 @@ class CoverageLoggerMock implements CoverageLogger
 
 	public var statementId:Int;
 	public var branchId:Int;
-	public var branchValue:Bool;
+	public var branchValue:Dynamic;
+	public var branchCompareValue:Dynamic;
+	
 		
 
 	public function new()
@@ -44,10 +46,11 @@ class CoverageLoggerMock implements CoverageLogger
 		statementId = id;
 	}
 
-	public function logBranch(id:Int, value:Bool):Bool
+	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic):Dynamic
 	{
 		branchId = id;
 		branchValue = value;
+		branchCompareValue = compareValue;
 		return value;
 	}
 

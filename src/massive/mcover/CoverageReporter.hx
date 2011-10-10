@@ -141,7 +141,9 @@ class CoverageReporterImpl implements CoverageReporter
 
 	function clientCompletionHandler(client:CoverageReportClient):Void
 	{
-		if (++clientCompleteCount == clients.length)
+		clientCompleteCount ++;
+		
+		if (clientCompleteCount == clients.length)
 		{
 			if (completionHandler != null)
 			{

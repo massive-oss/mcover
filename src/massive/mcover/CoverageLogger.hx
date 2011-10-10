@@ -23,7 +23,7 @@ interface CoverageLogger
 
 	function logStatement(id:Int):Void;
 
-	function logBranch(id:Int, value:Bool):Bool;
+	function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic;
 
 	var reporter(default, null):CoverageReporter;
 	var allClasses(default, null):AllClasses;
@@ -125,43 +125,56 @@ class CoverageLoggerImpl implements CoverageLogger
 	/**
 	* Method called from injected code each time a binary operation resolves to true or false 
 	* Developers should not class this method directly.
+	* @param id				branch id
+	* @param value 			boolean or value to compare with compareValue
+	* @param compareValue	secondary value to compare with
 	**/
 	@IgnoreCover
-	public function logBranch(id:Int, value:Bool):Bool
+	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
 	{
 		#if neko mutex.acquire(); #end
+
+
+		var bool = false;
+
+		if(compareValue != null)
+		{
+			bool = value == compareValue;
+		}
+		else
+		{
+			bool = value;
+		}
 
 		var r:BranchResult = null;
 		
 		if(branchResultsById.exists(id))
 		{
 			r = branchResultsById.get(id);
-
 		}
 		else
 		{
-			r = {id:id, value:false, result:"00", trueCount:0, falseCount:0, total:0};
+			r = {id:id, result:"00", trueCount:0, falseCount:0, total:0};
 			branchResultsById.set(id, r);
 		}
 
 		//record current value
-		if(value) r.trueCount ++;
+		if(bool) r.trueCount ++;
 		else r.falseCount ++;
 
 		r.total ++;
-		
-		var changed = false;
+	
 			
 		if(r.result == "11")
 		{
 			//both true and false have already been logged
 		}
-		else if(value && r.result.charAt(0) == "0")
+		else if(bool && r.result.charAt(0) == "0")
 		{
 			//log true
 			r.result = "1" + r.result.substr(1,1);
 		}
-		else if(!value && r.result.charAt(1) == "0")
+		else if(!bool && r.result.charAt(1) == "0")
 		{
 			//log false
 			r.result = r.result.substr(0,1) + "1";

@@ -25,10 +25,17 @@ package massive.mcover.data;
 	public function getPercentage():Float
 	{
 		var r = getResults();
-		var p = Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+		try
+		{
+			var p = Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
 
-		if(Math.isNaN(p)) p = 0;
-		return p;
+			#if (!neko && !flash9) 
+			if(Math.isNaN(p)) throw "NaN";
+			#end
+			return p;
+		}
+		catch(e:Dynamic){}
+		return 0;
 	}
 	
 	public function getClasses():Array<Clazz>
