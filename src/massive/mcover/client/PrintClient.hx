@@ -226,17 +226,21 @@ class PrintClient implements CoverageClient
 
 		var statements:Array<Statement> = [];
 
-		if(Lambda.count(allClasses.statementResultsById) == 0)
+		for(key in allClasses.statementResultsById.keys())
+		{
+			var statement = allClasses.getStatementById(key);
+			if(statement.count > 0)
+			{
+				statements.push(statement);
+			}
+		}
+
+		if(Lambda.count(statements) == 0)
 		{
 			printToTabs(["", "None"]);
 		}
 		else
 		{
-			for(key in allClasses.statementResultsById.keys())
-			{
-				statements.push(allClasses.getStatementById(key));
-			}
-
 			var statementSort = function(a:Statement, b:Statement):Int
 			{
 				return -a.count+b.count;
@@ -256,18 +260,21 @@ class PrintClient implements CoverageClient
 		print("");
 
 		var branches:Array<Branch> = [];
+		for(key in allClasses.branchResultsById.keys())
+		{
+			var branch = allClasses.getBranchById(key);
+			if(branch.totalCount > 0)
+			{
+				branches.push(branch);
+			}
+		}
 
-		if(Lambda.count(allClasses.branchResultsById) == 0)
+		if(Lambda.count(branches) == 0)
 		{
 			printToTabs(["", "None"]);
 		}
 		else
 		{
-			for(key in allClasses.branchResultsById.keys())
-			{
-				branches.push(allClasses.getBranchById(key));
-			}
-			
 			var branchSort = function(a:Branch, b:Branch):Int
 			{
 				return -a.totalCount+b.totalCount;

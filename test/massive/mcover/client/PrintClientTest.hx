@@ -46,6 +46,13 @@ class PrintClientTest extends CoverageClientTest
 		super.tearDown();
 	}
 
+
+	static var statementFrequency = "STATEMENTS BY EXECUTION FREQUENCY";
+	static var branchFrequency = "BRANCHES BY EXECUTION FREQUENCY";
+	static var statementMissing = "NON-EXECUTED STATEMENTS";
+	static var branchMissing = "NON-EXECUTED BRANCHES";
+	
+
 	@Test
 	public function shouldPrintEmptyBlockFrequencyIfIncludeBlockExecutionCountsEqualsTrue()
 	{
@@ -55,21 +62,21 @@ class PrintClientTest extends CoverageClientTest
 		printClient.includeBlockExecutionCounts = false;
 		printClient.report(allClasses);
 
-		Assert.isFalse(printClient.output.indexOf("STATEMENTS BY EXECUTION FREQUENCY") != -1);
-		Assert.isFalse(printClient.output.indexOf("BRANCHES BY EXECUTION FREQUENCY") != -1);
+		Assert.isFalse(printClient.output.indexOf(statementFrequency) != -1);
+		Assert.isFalse(printClient.output.indexOf(branchFrequency) != -1);
 
 		printClient.includeBlockExecutionCounts = true;
 		printClient.report(allClasses);
 
-		Assert.isTrue(printClient.output.indexOf("STATEMENTS BY EXECUTION FREQUENCY") != -1);
-		Assert.isTrue(printClient.output.indexOf("BRANCHES BY EXECUTION FREQUENCY") != -1);
+		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
+		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
 
-		var output = printClient.output.split("STATEMENTS BY EXECUTION FREQUENCY");
+		var output = printClient.output.split(statementFrequency);
 		var outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("None") != -1);
 
-		output = printClient.output.split("BRANCHES BY EXECUTION FREQUENCY");
+		output = printClient.output.split(branchFrequency);
 		outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("None") != -1);
@@ -84,28 +91,28 @@ class PrintClientTest extends CoverageClientTest
 		printClient.includeMissingBlocks = false;
 		printClient.report(allClasses);
 
-		Assert.isFalse(printClient.output.indexOf("NON-EXECUTED BRANCHES") != -1);
-		Assert.isFalse(printClient.output.indexOf("NON-EXECUTED STATEMENTS") != -1);
+		Assert.isFalse(printClient.output.indexOf(branchMissing) != -1);
+		Assert.isFalse(printClient.output.indexOf(statementMissing) != -1);
 
 		printClient.includeMissingBlocks = true;
 		printClient.report(allClasses);
 
-		Assert.isTrue(printClient.output.indexOf("NON-EXECUTED BRANCHES") != -1);
-		Assert.isTrue(printClient.output.indexOf("NON-EXECUTED STATEMENTS") != -1);
+		Assert.isTrue(printClient.output.indexOf(branchMissing) != -1);
+		Assert.isTrue(printClient.output.indexOf(statementMissing) != -1);
 
-		var output = printClient.output.split("NON-EXECUTED BRANCHES");
+		var output = printClient.output.split(branchMissing);
 		var outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("None") != -1);
 
-		output = printClient.output.split("NON-EXECUTED STATEMENTS");
+		output = printClient.output.split(statementMissing);
 		outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("None") != -1);
 	}
 
 	@Test
-	public function shouldPrintBlockFrequencyIfIncludeBlockExecutionCountsEqualsTrue()
+	public function shouldPrintEmptyBlockFrequencyIfBlockCountEqualsZero()
 	{
 		allClasses = new AllClasses();
 		var statement = NodeMock.createStatement();
@@ -136,19 +143,72 @@ class PrintClientTest extends CoverageClientTest
 		printClient.includeBlockExecutionCounts = true;
 		printClient.report(allClasses);
 
-		Assert.isTrue(printClient.output.indexOf("STATEMENTS BY EXECUTION FREQUENCY") != -1);
-		Assert.isTrue(printClient.output.indexOf("BRANCHES BY EXECUTION FREQUENCY") != -1);
+		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
+		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
 
-		var output = printClient.output.split("STATEMENTS BY EXECUTION FREQUENCY");
+		var output = printClient.output.split(statementFrequency);
+		var outputLines = output[1].split("\n");
+
+		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+
+		output = printClient.output.split(branchFrequency);
+		outputLines = output[1].split("\n");
+
+		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+	}
+
+
+	@Test
+	public function shouldPrintBlockFrequencyIfBlockCountGreaterThanZero()
+	{
+		allClasses = new AllClasses();
+		var statement = NodeMock.createStatement();
+
+		allClasses.addStatement(statement);
+		allClasses.statementResultsById.set(statement.id, 1);
+
+		statement = NodeMock.createStatement();
+		statement.id = 1;
+		allClasses.addStatement(statement);
+		allClasses.statementResultsById.set(statement.id, 1);
+
+
+		var branch = NodeMock.createBranch();
+		var result = NodeMock.createBranchResult(branch);
+		result.trueCount = 1;
+		result.total = 1;
+		
+		allClasses.addBranch(branch);
+		allClasses.branchResultsById.set(branch.id, result);
+
+		branch = NodeMock.createBranch();
+		branch.id = 1;
+		result = NodeMock.createBranchResult(branch);
+		result.falseCount = 1;
+		result.total = 1;
+		allClasses.addBranch(branch);
+		allClasses.branchResultsById.set(branch.id, result);
+		
+		
+		allClasses.getResults();
+
+		printClient.includeBlockExecutionCounts = true;
+		printClient.report(allClasses);
+
+		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
+		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
+
+		var output = printClient.output.split(statementFrequency);
 		var outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("Total") != -1);
 
-		output = printClient.output.split("BRANCHES BY EXECUTION FREQUENCY");
+		output = printClient.output.split(branchFrequency);
 		outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("Total") != -1);
 	}
+
 
 	@Test
 	public function shouldPrintMissingBlocksIfIncludeMissingBlocksEqualsTrue()
@@ -162,15 +222,15 @@ class PrintClientTest extends CoverageClientTest
 		printClient.includeMissingBlocks = true;
 		printClient.report(allClasses);
 
-		Assert.isTrue(printClient.output.indexOf("NON-EXECUTED BRANCHES") != -1);
-		Assert.isTrue(printClient.output.indexOf("NON-EXECUTED STATEMENTS") != -1);
+		Assert.isTrue(printClient.output.indexOf(branchMissing) != -1);
+		Assert.isTrue(printClient.output.indexOf(statementMissing) != -1);
 
-		var output = printClient.output.split("NON-EXECUTED BRANCHES");
+		var output = printClient.output.split(branchMissing);
 		var outputLines = output[1].split("\n");
 		
 		Assert.isTrue(outputLines[2].indexOf("package.class#method | location | t,f") != -1);
 
-		output = printClient.output.split("NON-EXECUTED STATEMENTS");
+		output = printClient.output.split(statementMissing);
 		outputLines = output[1].split("\n");
 
 		Assert.isTrue(outputLines[2].indexOf("package.class#method | location") != -1);
