@@ -108,8 +108,8 @@ import massive.mcover.data.Branch;
 	static function parseExpression(expr:Expr):Expr
 	{
 		var tmp:Array<Expr> = [];
-		//debug(expr.expr);
 		
+		//debug(expr.expr);
 		switch(expr.expr)
 		{
 			case EContinue: null;
@@ -235,35 +235,25 @@ import massive.mcover.data.Branch;
 		return expr;
 	}
 
-
-	
 	static function parseSwitch(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>):Expr
 	{
 		e = parseExpression(e);
+
 		for(c in cases)
 		{
 			for(v in c.values)
 			{
-				v = createBranchCoverageExpr(v, e);
+				v = parseExpression(v);
 			}
-	
-			c.expr = parseExpression(c.expr);
+			c.expr = parseExpression(c.expr);	
 		}
 
-		edef = parseExpression(edef);
-		
+		if(edef != null)
+		{
+			edef = parseExpression(edef);
+		}
 		return expr;
 	}
-
-	/*static function parseTry(expr:Expr, e:Expr, catches:Array<{ type : ComplexType, name : String, expr : Expr }>):Expr
-	{
-		e = parseExpression(e);
-		for(ctch in catches)
-		{
-			ctch.expr = parseExpression(ctch.expr);	
-		}
-		return expr;
-	}*/
 
 
 	static function parseWhile(expr:Expr, econd:Expr, e:Expr, normalWhile:Bool)
@@ -369,7 +359,6 @@ import massive.mcover.data.Branch;
 	**/
 	static function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
-
 		var pos = expr.pos;
 		var block = createCodeBlockReference(pos, true);
 		var blockId = Std.string(block.id);
@@ -397,6 +386,7 @@ import massive.mcover.data.Branch;
 		}
 		
 		expr.expr = ECall(fieldExpr, args);
+		
 		return expr;
 	}
 

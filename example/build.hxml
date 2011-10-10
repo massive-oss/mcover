@@ -19,6 +19,7 @@
 
 -main Main
 -neko build/main.n
+
 -cp ../src
 -cp src
 -D MCOVER_DEBUG

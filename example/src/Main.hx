@@ -3,6 +3,7 @@ package;
 import massive.mcover.MCover;
 import massive.mcover.CoverageReporter;
 
+
 class Main
 {
 	static var reporter:CoverageReporter;
@@ -17,11 +18,13 @@ class Main
 		reporter.completionHandler = completionHandler;
 		reporter.report();
 
+		#if neko
 		while(completed != true)
 		{
 			neko.Sys.sleep(.1);
 
 		}
+		#end
 
 
 	}
@@ -62,8 +65,11 @@ class Main
 
 		whileLoop();
 		otherTypes();
-		branchTests();	
+		branchTests();
+		
+	
 	}
+
 
 	function branchTests()
 	{
@@ -199,7 +205,10 @@ class Main
 
 		example.foo.Foo.bar();
 
-		var f = new example.foo.Foo();
+		var f:example.foo.Foo<String> = new example.foo.Foo("hello");
+
+
+		var fe = new example.foo.FooExtended<Int>(1);
 
 		var n = (1 + 1 == 2) ? 4 : 5;
 
