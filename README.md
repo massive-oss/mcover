@@ -62,46 +62,58 @@ You can set multiple custom clients if required:
 The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
 
 	----------------------------------------------------------------
-	MCover v0.2 Coverage Report, generated 2011-10-04 17:55:26
+	MCover v0.4 Coverage Report, generated 2011-10-10 11:39:59
 	----------------------------------------------------------------
 
-	MISSING BRANCH BLOCKS:
+	NON-EXECUTED BRANCHES:
 
-	              Main#branch | src/Main.hx:88: characters 10-11 | t
+	              None          
 
-	MISSING STATEMENT BLOCKS:
+	NON-EXECUTED STATEMENTS:
 
-	              Main#otherTypes | src/Main.hx:119: characters 3-9
+	              None          
 
 	COVERAGE BREAKDOWN BY CLASSES:
 
-	              result        methods       statements    branches      class         
-	              100%          2/2           2/2           0/0           example.foo.Foo
-	              100%          3/3           3/3           0/0           example.Example
-	              95%           11/11         24/25         1/2           Main          
-	              100%          1/1           1/1           0/0           InternalClass 
+	              Result        Methods       Statements    Branches      Class         
+	              100%          10/10         16/16         0/0           massive.mcover.MCoverRunnerImpl
+	              100%          5/5           10/10         0/0           massive.mcover.MCover
+	              100%          3/3           4/4           0/0           massive.mcover.MCoverException
+	              100%          2/2           2/2           0/0           massive.mcover.client.TraceClient
+	              100%          11/11         35/35         0/0           massive.mcover.client.PrintClient
+	              100%          19/19         23/23         2/2           massive.mcover.data.AllClasses
+	              100%          6/6           7/7           0/0           massive.mcover.data.Branch
+	              100%          5/5           5/5           0/0           massive.mcover.data.AbstractBlock
+	              100%          2/2           2/2           0/0           massive.mcover.data.Clazz
+	              100%          11/11         17/17         6/6           massive.mcover.data.AbstractNodeList
+	              100%          12/12         17/17         6/6           massive.mcover.data.Method
+	              100%          4/4           4/4           0/0           massive.mcover.data.Statement
+	              100%          3/3           5/5           0/0           massive.mcover.data.File
+	              100%          11/11         12/12         2/2           massive.mcover.data.AbstractNode
+	              100%          2/2           2/2           0/0           massive.mcover.data.Package
 
 	COVERAGE BREAKDOWN BY PACKAGE:
 
-	              result        files         classes       package       
-	              95.24%        1/1           2/2           [Default]     
-	              100%          1/1           1/1           example       
-	              100%          1/1           1/1           example.foo   
+	              Result        Files         Classes       Package       
+	              100%          10/10         10/10         massive.mcover.data
+	              100%          2/2           2/2           massive.mcover.client
+	              100%          3/3           3/3           massive.mcover
 
 	----------------------------------------------------------------
 
 	OVERALL STATS SUMMARY:
 
 	total packages      3 / 3               
-	total files         3 / 3               
-	total classes       4 / 4               
-	total methods       17 / 17             
-	total statements    30 / 31             
-	total branches      1 / 2               
+	total files         15 / 15             
+	total classes       15 / 15             
+	total methods       106 / 106           
+	total statements    161 / 161           
+	total branches      16 / 16             
 
 	----------------------------------------------------------------
-	RESULT              96.15%              
+	RESULT              100%                
 	----------------------------------------------------------------
+
 
 
 Coverage
@@ -112,14 +124,17 @@ Coverage
 MCover reports coverage on code statements and branches
 
 *	*Statement* coverage measures whether a block of code as been executrd
-	
+
+
 	function foo()
 	{
 		//one or more lines of code in a statement block
 
 	}
 
+
 *	*Branch* coverage measures possible code branches where multiple scenarios are possible by recording the boolean result of each operator. In the example if(a||b), branch coverage will determine if 'a' and 'b' have been evaluated to both 'true' and 'false' during execution.
+
 
 	e.g.
 	function foo(a:Bool, b:Bool)

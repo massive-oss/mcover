@@ -133,8 +133,6 @@ import massive.mcover.data.Branch;
 	{
 		if(resultCache == null || !cache)
 		{
-			super.getResults(cache);
-
 			for(key in statementResultsById.keys())
 			{
 				var statement = getStatementById(key);
@@ -149,8 +147,8 @@ import massive.mcover.data.Branch;
 				branch.trueCount = branchResult.trueCount;
 				branch.falseCount = branchResult.falseCount;		
 			}
+			super.getResults(cache);
 		}
-
 		return resultCache;
 	}
 

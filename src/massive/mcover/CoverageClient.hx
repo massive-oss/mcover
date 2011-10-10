@@ -13,20 +13,6 @@ interface CoverageClient
 	var completionHandler(default, default):CoverageClient -> Void;
 		
 	/**
-	 * Called when a statement code block is executed at runtime.
-	 *  
-	 * @param	block		a code block  
-	 */
-	function logStatement(statement:Statement):Void;
-	
-	/**
-	 * Called when a branch code block is executed at runtime.
-	 *  
-	 * @param	block		a code block  
-	 */
-	function logBranch(branch:Branch):Void;
-	
-	/**
 	 * Called when all tests are complete.
 	 *  
 	 * @param	allClasses	arrgregated coverage data containing all statements, branches orded by package/file/class/method

@@ -53,8 +53,6 @@ interface MCoverRunner
 
 class MCoverRunnerImpl implements MCoverRunner
 {
-	static var TICK_INTERVAL_MS:Int = 1;
-	static var MAX_COUNT_PER_TICK:Int = 200;
 	/**
 	 * Handler called when all clients 
 	 * have completed processing the results.
@@ -64,61 +62,41 @@ class MCoverRunnerImpl implements MCoverRunner
 	public var allClasses(default, null):AllClasses;
 	public var cover(default, null):MCover;
 
-	public var maxLogsToParsePerTick(default, default):Int;
-
-	var resourceName:String;
 	var clients:Array<CoverageClient>;
 	var clientCompleteCount:Int;
-	var timer:Timer;
-
-	var coverageResult:CoverageResult;
-	var startTime:Float;
-	var reportPending:Bool;
-
-
-	#if neko
-	static var mutex:neko.vm.Mutex;
-	#end
 
 	/**
 	 * Class constructor.
 	 */
 	public function new()
 	{
-		startTime = Date.now().getTime();
 		clients = [];
-		reportPending = false;
-		maxLogsToParsePerTick = MAX_COUNT_PER_TICK;
-
-		#if neko
-		mutex = new neko.vm.Mutex();
-		#end
 	}
 
 	public function initialize(cover:MCover, allClasses:AllClasses)
 	{
 		this.cover = cover;
 		this.allClasses = allClasses;
-		resetTimer();
-	}
-
-	/**
-	 * Initializes timer to handle incoming logs on a set interval.
-	 * This is to prevent logs being parsed before instance is initialized
-	 * (edge case usually, but always occurs when running against MCover!!)
-	 */
-	function resetTimer()
-	{
-		if(timer != null) timer.stop();
-		timer = new Timer(TICK_INTERVAL_MS);
-		timer.run = tick;
 	}
 
 	public function report()
 	{
-		reportPending = true;
-		if(timer == null) resetTimer();
+		if(cover == null) throw new MCoverException("Runner has not been initialized");
+
+		if(allClasses == null) throw new MCoverException("Runner has not been initialized");
+
+		if(clients.length == 0)
+		{
+			var client = new TraceClient();
+			client.completionHandler = clientCompletionHandler;
+			clients.push(client);
+		}
+		generateReport();
+	
 	}
+
+
+
 
 	public function addClient(client:CoverageClient)
 	{
@@ -144,11 +122,6 @@ class MCoverRunnerImpl implements MCoverRunner
 
 	public function destroy()
 	{
-		if(timer != null)
-		{
-			timer.stop();
-			timer = null;
-		}
 		for(c in clients)
 		{
 			c.completionHandler = null;
@@ -159,141 +132,11 @@ class MCoverRunnerImpl implements MCoverRunner
 
 	///////////////////////////////////
 
-	@IgnoreCover
-	function tick()
-	{
-		#if neko
-		if(mutex.tryAcquire() == false) return;
-		#end
-		update();
-		#if neko mutex.release(); #end
-	}
-
-	/**
-	* For testing purposes only
-	* forceUpdate should not need to be called directly by users.
-	*/
-	public function forceUpdate()
-	{
-		update();
-	}
-
-	@IgnoreCover
-	function update()
-	{	
-		var statements:Array<Int> = [];
-
-		if(cover == null) throw new MCoverException("Runner has not been initialized");
-
-		var count = 0;
-		var value = cover.getNextStatementFromQueue();
-	
-		while(value != null && count < maxLogsToParsePerTick)
-		{
-			count ++;
-			statements.push(value);
-			if(count < maxLogsToParsePerTick)
-			{
-				value = cover.getNextStatementFromQueue();
-			}
-			
-		}
-
-		for(s in statements)
-		{
-			logStatement(s);
-		}
-
-		if(count >= maxLogsToParsePerTick-1) return;
-
-		var branches:Array<BranchResult> = [];
-		var value = cover.getNextBranchResultFromQueue();
-		while(value != null && count < maxLogsToParsePerTick)
-		{
-			count ++;
-			branches.push(value);
-			if(count < maxLogsToParsePerTick)
-			{
-				value = cover.getNextBranchResultFromQueue();
-			}
-		}
-
-		for(b in branches)
-		{
-			logBranch(b);
-		}
-
-		if(count >= maxLogsToParsePerTick) return;
-
-
-		if(reportPending)
-		{
-			if(timer != null)
-			{
-				timer.stop();
-				timer = null;
-			}
-		
-			generateReport();
-			
-			reportPending = false;
-		}
-	}
-
-	/**
-	 * Log an individual code block being executed within the code base.
-	 * 
-	 * @param	id		a block identifier
-	 * @see mcover.data.Statement
-	 */
-	function logStatement(id:Int)
-	{		
-		var statement = allClasses.getStatementById(id);
-
-		statement.count += 1;
-
-		for (client in clients)
-		{	
-			client.logStatement(statement);
-		}
-	}
-
-	/**
-	* @param id	id of branch
-	* @param value - string representation of true/false branch executions (e.g. 1,ttfftf)
-	*/
-	function logBranch(log:BranchResult)
-	{
-		var id = log.id;
-		var branch = allClasses.getBranchById(id);
-		
-		if(log.value)
-		{
-			branch.trueCount += 1;
-		}
-		else
-		{
-			branch.falseCount += 1;
-		}
-		
-		for (client in clients)
-		{	
-			client.logBranch(branch);
-		}
-	}
-
 	function generateReport()
 	{
 		allClasses.getResults(true);
 
 		clientCompleteCount = 0;
-
-		if(clients.length == 0)
-		{
-			var client = new TraceClient();
-			client.completionHandler = clientCompletionHandler;
-			clients.push(client);
-		}
 			
 		for (client in clients)
 		{	
@@ -304,7 +147,6 @@ class MCoverRunnerImpl implements MCoverRunner
 		generateInternalStats();
 		#end
 	}
-
 
 	function clientCompletionHandler(client:CoverageClient):Void
 	{
@@ -326,7 +168,6 @@ class MCoverRunnerImpl implements MCoverRunner
 
 	/////////////// DEBUGGING METHODS  ////////////
 
-
 	@IgnoreCover
 	function debug(value:Dynamic)
 	{
@@ -334,6 +175,4 @@ class MCoverRunnerImpl implements MCoverRunner
 		trace(Std.string(value) + " time: " + Timer.stamp());
 		#end
 	}
-
-
 }

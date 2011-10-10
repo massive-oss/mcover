@@ -7,8 +7,6 @@ import massive.mcover.data.AllClasses;
 
 class CoverageClientMock implements CoverageClient
 {
-	public var statement:Statement;
-	public var branch:Branch;
 	public var allClasses:AllClasses;
 
 	/**
@@ -22,16 +20,6 @@ class CoverageClientMock implements CoverageClient
 		
 	}
 
-	public function logStatement(statement:Statement)
-	{
-		this.statement = statement;
-	}
-	
-	public function logBranch(branch:Branch)
-	{
-		this.branch = branch;
-	}
-	
 	public function report(allClasses:AllClasses):Void
 	{
 		this.allClasses = allClasses;

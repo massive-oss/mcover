@@ -49,18 +49,6 @@ class PrintClient implements CoverageClient
 		tab = " ";
 		divider = "----------------------------------------------------------------";
 	}
-
-	@IgnoreCover
-	public function logStatement(statement:Statement)
-	{
-		//null;
-	}
-
-	@IgnoreCover
-	public function logBranch(branch:Branch)
-	{
-		//null;
-	}
 	
 	var allClasses:AllClasses;
 
@@ -86,7 +74,7 @@ class PrintClient implements CoverageClient
 	function printReport()
 	{
 		print(divider);
-		print("MCover v0.4 Coverage Report, generated " + Date.now().toString());
+		print("MCover v0.5 Coverage Report, generated " + Date.now().toString());
 		print(divider);
 
 		if(includeBlockExecutionCounts)
