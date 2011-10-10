@@ -1,4 +1,4 @@
-package munit.client;
+package massive.munit.client;
 
 import massive.munit.ITestResultClient;
 import massive.munit.client.PrintClient;
@@ -14,6 +14,9 @@ import massive.mcover.MCover;
 import massive.mcover.CoverageReporter;
 import massive.mcover.client.PrintClient;
 
+/**
+* Custom MUnit print client that includes coverage in runner output.
+*/
 class MCoverPrintClient extends PrintClient
 {
 	var reporter:CoverageReporter;
@@ -45,11 +48,7 @@ class MCoverPrintClient extends PrintClient
 		print("==============================" + newline);
 			
 		reporter.report();
-		/*if (completionHandler != null)
-		{
-			completionHandler(this);
-		}*/
-
+		
 		return output;	
 	}
 
