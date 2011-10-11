@@ -272,7 +272,7 @@ MCover reports coverage on code statements and branches
 
 *	**File** coverage measures if one or more classes within a file was entered during execution.
 
-*	**Package** coverage measures if one or more files within a file was entered during execution.
+*	**Package** coverage measures if one or more files within a package was entered during execution.
 
 
 ### Coverage Percentage
