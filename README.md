@@ -1,69 +1,30 @@
 ### MassiveCover (MCover) is a cross-platform haXe code coverage framework.
 
-It injects compile-time code (using macros) to provide runtime tracking of code coverage.
-
-MCover can integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
-
-MCover is still in early development and is **subject to change**
+It injects compile-time code (using macros) to provide runtime tracking of code coverage. MCover is designed to integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
 **NOTE:** MCover requires Haxe 2.0.8
-
 
 Usage
 ---------------------
 
-### Compiler macro
+#### Step 1. Install mcover:
 
-Include the following macro in your hxml when compiling
+	haxelib install mcover
 
+#### Step 2. Add the mcover macro to your build.hxml file:
 
-	--macro massive.mcover.MCover.include('{package}', {classPaths}, {ignoredClasses})
+	-lib mcover
+	--macro massive.mcover.MCover.include('', ['src'])
 
-Where:
-
-*	*package* is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
-
-*	*classPaths* is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
-
-*	*ignoredClasses* is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
-
-
-Example:
-
-	--macro massive.mcover.MCover.include('com.example', ['src'], null)
-
-Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
-
-
-
-### Basic Usage
-
-#### Step 1. 
-At runtime, MCover cam automatically log code execution blocks.
-
-To capture coverage initialize a coverage reporter (CoverageReporter):
+#### Step 3. Print a report at runtime (once your tests/code have finished executing):
 
 	var reporter = MCover.getLogger().createReporter();
-
-#### Step 2. 
-To generate the results call MCoverRunner.report() once your unit tests (or other code) have completed:
-
 	reporter.report();
 
-By default these are sent to a generic TraceClient that outputs to the screen.
-
-You can set multiple custom clients (CoverageReportClient) if required:
-
-	reporter.addClient(new massive.mcover.client.PrintClient());
-
-
-
-### Coverage Reports
-
-The current output provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
-
+#### Step 4. View results!
+	
 	----------------------------------------------------------------
-	MCover v0.5 Coverage Report, generated 2011-10-10 11:44:16
+	MCover v1.0 Coverage Report, generated 2011-10-10 11:44:16
 	----------------------------------------------------------------
 
 	NON-EXECUTED BRANCHES:
@@ -106,47 +67,118 @@ The current output provides a basic percentage breakdown of code blocks that hav
 	----------------------------------------------------------------
 
 
+Further Usage
+---------------------
 
-Coverage
+### Compiler macro
+
+MCover includes a macro for specifying which classes to cover in your application:
+
+	--macro massive.mcover.MCover.include('{package}', {classPaths}, {ignoredClasses})
+
+Where:
+
+*	**package** is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
+
+*	**classPaths** is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+
+*	**ignoredClasses** is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
+
+
+Example:
+
+	--macro massive.mcover.MCover.include('com.example', ['src'], null)
+
+Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
+
+
+
+### Basic Usage
+
+#### Step 1. 
+At runtime, MCover cam automatically log code execution blocks.
+
+To capture coverage initialize a coverage reporter (CoverageReporter):
+
+	var reporter = MCover.getLogger().createReporter();
+
+#### Step 2. 
+To generate the results call MCoverRunner.report() once your unit tests (or other code) have completed:
+
+	reporter.report();
+
+By default these are sent to a generic TraceClient that outputs to the screen.
+
+You can set multiple custom clients (CoverageReportClient) if required:
+
+	reporter.addClient(new massive.mcover.client.PrintClient());
+
+
+
+### Coverage Reports
+
+The current output (see example above) provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
+
+
+
+Integration with MUnit
+---------------------
+
+MCover includes a custom munit print client that automatically prints out coverage results on completion of unit tests. It's pretty basic for now, but does the job!
+
+
+#### Step 1. Add MCover macro to build
+
+Include mcover macro in test.hxml file (see above)
+
+#### Step 2. Update TestMain.hx
+
+Replace the default munit PrintClient with massive.mcover.munit.client.PrintClient in TestMain
+
+
+
+
+
+Code Coverage
 ---------------------
 
 ### Overview
 
 MCover reports coverage on code statements and branches
 
-*	*Statement* coverage measures whether a block of code as been executrd
+*	*Statement* coverage measures whether a block of code as been executed
 
 
-	function foo()
-	{
-		//one or more lines of code in a statement block
-
-	}
-
-
-*	*Branch* coverage measures possible code branches where multiple scenarios are possible by recording the boolean result of each operator. In the example if(a||b), branch coverage will determine if 'a' and 'b' have been evaluated to both 'true' and 'false' during execution.
-
-
-	e.g.
-	function foo(a:Bool, b:Bool)
-	{
-		if(a||b)
+		function foo()
 		{
-			//do someting
+			//one or more lines of code in a statement block
+
 		}
-	}
-
-	foo(true, false);
-	for(false, true);
 
 
-*	*Method* coverage measures if one or more statements within a method was entered during execution.
+*	**Branch** coverage measures possible code branches where multiple scenarios are possible by recording the boolean result of each operator. In the example if(a||b), branch coverage will determine if 'a' and 'b' have been evaluated to both 'true' and 'false' during execution.
 
-*	*Class* coverage measures if one or more methods within a class (static or instance) was entered during execution.
 
-*	*File* coverage measures if one or more classes within a file was entered during execution.
+		e.g.
+		function foo(a:Bool, b:Bool)
+		{
+			if(a||b)
+			{
+				//do someting
+			}
+		}
 
-*	*Package* coverage measures if one or more files within a file was entered during execution.
+		foo(true, false);
+		for(false, true);
+
+
+*	**Method** coverage measures if one or more statements within a method was entered during execution.
+
+*	**Class** coverage measures if one or more methods within a class (static or instance) was entered during execution.
+
+*	**File** coverage measures if one or more classes within a file was entered during execution.
+
+*	**Package** coverage measures if one or more files within a file was entered during execution.
 
 
 ### Coverage Percentage
@@ -251,6 +283,7 @@ You can specify a custom reporter by passing through a class that implements Cov
 
 You can flag a class or method to be excluded from coverage using @IgnoreCover metadata
 	
+
 	@IgnoreCover class Foo
 	{
 		public function new()
@@ -258,6 +291,7 @@ You can flag a class or method to be excluded from coverage using @IgnoreCover m
 			
 		}
 	}
+
 
 Or
 
