@@ -57,7 +57,7 @@ class CoverageLoggerMock implements CoverageLogger
 	}
 	
 
-	public function loadAllClasses(?resourceName:String = null):Void
+	public function initializeAllClasses(?resourceName:String = null):Void
 	{
 		this.resourceName = resourceName;
 		allClasses = new AllClasses();

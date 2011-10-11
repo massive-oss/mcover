@@ -49,9 +49,9 @@ class CoverageLoggerTest
 	}
 
 	@Test
-	public function shouldCreateAllClassesOnLoadAllClasses()
+	public function shouldCreateAllClassesOnInitializeAllClasses()
 	{
-		logger.loadAllClasses(MCover.RESOURCE_DATA);
+		logger.initializeAllClasses(MCover.RESOURCE_DATA);
 		Assert.isNotNull(logger.allClasses);
 	}
 

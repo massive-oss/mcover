@@ -154,7 +154,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	public function shouldNotReInitializeAllClassesWhenRunnerAdded()
 	{
 		instance.addClient(client);
-		instance.loadAllClasses();
+		instance.initializeAllClasses();
 		var allClasses = instance.allClasses;
 
 		instance.report();
@@ -167,7 +167,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	public function shouldLoadAllClasses()
 	{
 		Assert.isNull(instance.allClasses);
-		instance.loadAllClasses();
+		instance.initializeAllClasses();
 		Assert.isNotNull(instance.allClasses);
 	}
 
@@ -176,7 +176,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		try
 		{
-			instance.loadAllClasses("InvalidMCoverResourceName");
+			instance.initializeAllClasses("InvalidMCoverResourceName");
 			Assert.fail("Exception expected");
 		}
 		catch(e:Exception)
@@ -191,7 +191,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		try
 		{
-			instance.loadAllClasses("MockMCoverResource");
+			instance.initializeAllClasses("MockMCoverResource");
 			Assert.fail("Exception expected");
 		}
 		catch(e:Exception)

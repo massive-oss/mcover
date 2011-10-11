@@ -69,8 +69,7 @@ interface CoverageLogger
 	function getClients():Array<CoverageReportClient>;
 
 
-
-	function loadAllClasses(?resourceName:String = null):Void;
+	function initializeAllClasses(?resourceName:String = null):Void;
 
 	function logStatement(id:Int):Void;
 
@@ -123,7 +122,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		if(allClasses == null)
 		{
-			loadAllClasses();	
+			initializeAllClasses();	
 		}
 
 		if(clients.length == 0)
@@ -158,7 +157,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 
-	public function loadAllClasses(?resourceName:String = null)
+	public function initializeAllClasses(?resourceName:String = null)
 	{
 		if(resourceName == null) resourceName = MCover.RESOURCE_DATA;
 		var serializedData:String = haxe.Resource.getString(resourceName);
