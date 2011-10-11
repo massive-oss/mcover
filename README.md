@@ -12,7 +12,7 @@ Features
 ---------------------
 
 
-#### Cross Platform
+### Cross Platform
 
 MCover has been designed to work with any HaXe target. Officially we support the following:
 
@@ -24,14 +24,14 @@ MCover has been designed to work with any HaXe target. Officially we support the
 **NOTE:** MCover requires Haxe 2.0.8
 
 
-#### Compiler Macro
+### Compiler Macro
 
 MCover uses a simple macro to inject coverage code into your application at compile time
 
 	--macro massive.mcover.MCover.include('package.name', ['src'])
 
 
-#### Statement coverage
+### Statement coverage
 
 MCover tracks all statement code blocks {...} within your code.
 
@@ -50,7 +50,7 @@ MCover tracks all statement code blocks {...} within your code.
 	}
 
 
-#### Branch coverage
+### Branch coverage
 
 For code branches with multiple scenarios e.g. (a||b), MCover will log branch results for each individual expression , i.e.:
 
@@ -63,7 +63,7 @@ For code branches with multiple scenarios e.g. (a||b), MCover will log branch re
 
 
 
-#### Granular Reporting
+### Granular Reporting
 
 MCover stores the contextual information around every statement and branch in order to provide detailed reporting and metrics, including:
 
@@ -97,27 +97,27 @@ MCover stores the contextual information around every statement and branch in or
 Getting Started
 ---------------------
 
-#### Step 1.
+### Step 1.
 
 Install mcover:
 
 	haxelib install mcover
 
-#### Step 2.
+### Step 2.
 
 Add the mcover macro to your build.hxml file:
 
 	-lib mcover
 	--macro massive.mcover.MCover.include('', ['src'])
 
-#### Step 3.
+### Step 3.
 
 Print a report at runtime (once your tests/code have finished executing):
 
 	var reporter = MCover.getLogger().createReporter();
 	reporter.report();
 
-#### Step 4.
+### Step 4.
 
 View results!
 	
@@ -166,16 +166,16 @@ View results!
 
 
 
-### Integrating with MUnit
+## Integrating with MUnit
 
 MCover includes a custom munit print client that automatically prints out coverage results on completion of unit tests. It's pretty basic for now, but does the job!
 
 
-#### Step 1. Add MCover macro to build
+### Step 1. Add MCover macro to build
 
 Include mcover macro in test.hxml file (see above)
 
-#### Step 2. Update TestMain.hx
+### Step 2. Update TestMain.hx
 
 Replace the default munit PrintClient with massive.mcover.munit.client.PrintClient in TestMain
 
