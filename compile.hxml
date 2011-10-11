@@ -1,0 +1,39 @@
+# Flash 9+
+-main massive.mcover.AllClasses
+-cp src
+-lib mlib
+-lib munit
+-swf9 build/bin/mcover_all_as3.swf
+
+--next
+
+#Flash 8
+-main massive.mcover.AllClasses
+-cp src
+-lib mlib
+-lib munit
+-swf build/bin/mcover_all_as2.swf
+
+--next
+
+# JavaScript
+-main massive.mcover.AllClasses
+-cp src
+-lib mlib
+-lib munit
+-js build/bin/mcover_all.js
+
+--next
+
+# Neko
+-main massive.mcover.AllClasses
+-cp src
+-lib mlib
+-lib munit
+-neko build/bin/mcover_all.n
+
+--next
+
+#xml docs
+-cmd haxe -xml build/haxedoc.xml -cp src -lib mlib -lib munit massive.mcover.AllClasses
+

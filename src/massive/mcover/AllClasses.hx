@@ -26,21 +26,33 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover.data;
+package massive.mcover;
+
+import massive.mcover.client.PrintClient;
+import massive.mcover.client.TraceClient;
+import massive.mcover.CoverageLogger;
+import massive.mcover.CoverageReportClient;
+import massive.mcover.CoverageReporter;
+import massive.mcover.data.AbstractBlock;
+import massive.mcover.data.AbstractNode;
+import massive.mcover.data.AbstractNodeList;
+import massive.mcover.data.AllClasses;
+import massive.mcover.data.Branch;
+import massive.mcover.data.Clazz;
 import massive.mcover.data.CoverageResult;
-@:keep class Clazz extends AbstractNodeList
+import massive.mcover.data.File;
+import massive.mcover.data.Method;
+import massive.mcover.data.Package;
+import massive.mcover.data.Statement;
+import massive.mcover.Exception;
+import massive.mcover.macro.CoverClassMacro;
+import massive.mcover.MCover;
+import massive.mcover.munit.client.MCoverPrintClient;
+import massive.mcover.util.Timer;
+
+class AllClasses
 {
-	public function new()
-	{
-		super();
-	}
-
-	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
-	{
-		to = super.appendResults(to, from);
-		to.mc += (from.sc > 0) ? 1 : 0; 
-		to.m += 1;	
-		return to;
-	}
-
+	public static function main():AllClasses {return new AllClasses();}
+	public function new(){trace('This is a generated main class');}
 }
+
