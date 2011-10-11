@@ -1,4 +1,4 @@
-/example/build/*
+example/build/*
 build/test/runner/**
 build/test/report/**
 build/bin/*
