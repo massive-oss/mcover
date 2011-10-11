@@ -1,7 +1,2 @@
 example/build/*.*
-build/test/runner/*.*
-build/test/report/*.*
-build/bin/*.*
-build/mcover/*.*
-
 /build/mcover.zip
