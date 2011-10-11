@@ -86,16 +86,16 @@
 	<e path="Bool"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 </f></getResults>
-		<appendResults set="method" line="128"><f a="to:from">
+		<appendResults set="method" line="127"><f a="to:from">
 	<t path="massive.mcover.data.CoverageResult"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 </f></appendResults>
-		<hxSerialize set="method" line="147" override="1"><f a="s">
+		<hxSerialize set="method" line="146" override="1"><f a="s">
 	<c path="haxe.Serializer"/>
 	<e path="Void"/>
 </f></hxSerialize>
-		<hxUnserialize set="method" line="155" override="1"><f a="s">
+		<hxUnserialize set="method" line="154" override="1"><f a="s">
 	<c path="haxe.Unserializer"/>
 	<e path="Void"/>
 </f></hxUnserialize>
@@ -856,28 +856,66 @@
 	</class>
 	<class path="massive.mcover.munit.client.MCoverPrintClient" params="" file="src/massive/mcover/munit/client/MCoverPrintClient.hx">
 		<extends path="massive.munit.client.PrintClient"/>
-		<reporter><c path="massive.mcover.CoverageReporter"/></reporter>
+		<DEFAULT_ID public="1" get="inline" set="null" line="54" static="1">
+			<c path="String"/>
+			<haxe_doc>
+	 * Default id of this client.
+	 </haxe_doc>
+		</DEFAULT_ID>
+		<coverage><c path="massive.mcover.CoverageLogger"/></coverage>
 		<coverClient><c path="massive.mcover.client.PrintClient"/></coverClient>
-		<reportFinalStatistics public="1" set="method" line="71" override="1"><f a="testCount:passCount:failCount:errorCount:ignoreCount:time">
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Int"/>
-	<c path="Float"/>
-	<d/>
-</f></reportFinalStatistics>
-		<codeCoverageComplete set="method" line="91"><f a="percent">
-	<c path="Float"/>
-	<e path="Void"/>
-</f></codeCoverageComplete>
-		<new public="1" set="method" line="53"><f a="?includeIgnoredReport">
+		<includeMissingBlocks public="1" set="set_includeMissingBlocks"><e path="Bool"/></includeMissingBlocks>
+		<set_includeMissingBlocks set="method" line="61"><f a="value">
 	<e path="Bool"/>
+	<e path="Bool"/>
+</f></set_includeMissingBlocks>
+		<includeBlockExecutionCounts public="1" set="set_includeBlockExecutionCounts"><e path="Bool"/></includeBlockExecutionCounts>
+		<set_includeBlockExecutionCounts set="method" line="69"><f a="value">
+	<e path="Bool"/>
+	<e path="Bool"/>
+</f></set_includeBlockExecutionCounts>
+		<reportFinalStatistics public="1" set="method" line="110" override="1">
+			<f a="testCount:passCount:failCount:errorCount:ignoreCount:time">
+				<c path="Int"/>
+				<c path="Int"/>
+				<c path="Int"/>
+				<c path="Int"/>
+				<c path="Int"/>
+				<c path="Float"/>
+				<d/>
+			</f>
+			<haxe_doc>
+	 * Called when all tests are complete.
+	 *  
+	 * @param	testCount		total number of tests run
+	 * @param	passCount		total number of tests which passed
+	 * @param	failCount		total number of tests which failed
+	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
+	 * @param	time			number of milliseconds taken for all tests to be executed
+	 * @return	collated test result data if any
+	 </haxe_doc>
+		</reportFinalStatistics>
+		<checkForNewTestClass set="method" line="124" override="1"><f a="result">
+	<c path="massive.munit.TestResult"/>
 	<e path="Void"/>
-</f></new>
+</f></checkForNewTestClass>
+		<printCoverage set="method" line="136"><f a=""><e path="Void"/></f></printCoverage>
+		<new public="1" set="method" line="80">
+			<f a="?includeIgnoredReport">
+				<e path="Bool"/>
+				<e path="Void"/>
+			</f>
+			<haxe_doc>
+	 * 
+	 * @param	client				the test result client to decorate
+	 </haxe_doc>
+		</new>
 		<haxe_doc>
-* Custom MUnit print client that includes coverage in runner output.
-</haxe_doc>
+ * Decorates other ITestResultClient's, adding behavior to include code coverage results
+ * 
+ * @author Dominic De Lorenzo
+ </haxe_doc>
 	</class>
 	<class path="massive.mcover.data.Clazz" params="" file="src/massive/mcover/data/Clazz.hx">
 		<extends path="massive.mcover.data.AbstractNodeList"/>
@@ -1255,7 +1293,6 @@
 	<typedef path="massive.mcover.data.BranchResult" params="" file="src/massive/mcover/data/Branch.hx" module="massive.mcover.data.Branch"><a>
 	<trueCount><c path="Int"/></trueCount>
 	<total><c path="Int"/></total>
-	<result><c path="String"/></result>
 	<id><c path="Int"/></id>
 	<falseCount><c path="Int"/></falseCount>
 </a></typedef>
@@ -1637,36 +1674,40 @@
 		<getMissingBranches public="1" set="method" line="127" override="1"><f a=""><c path="Array"><c path="massive.mcover.data.Branch"/></c></f></getMissingBranches>
 		<getMissingStatements public="1" set="method" line="134" override="1"><f a=""><c path="Array"><c path="massive.mcover.data.Statement"/></c></f></getMissingStatements>
 		<getClasses public="1" set="method" line="141" override="1"><f a=""><c path="Array"><c path="massive.mcover.data.Clazz"/></c></f></getClasses>
-		<getPackages public="1" set="method" line="148"><f a=""><c path="Array"><c path="massive.mcover.data.Package"/></c></f></getPackages>
-		<getResults public="1" set="method" line="160" override="1"><f a="?cache">
+		<getClassByName public="1" set="method" line="148"><f a="name">
+	<c path="String"/>
+	<c path="massive.mcover.data.Clazz"/>
+</f></getClassByName>
+		<getPackages public="1" set="method" line="173"><f a=""><c path="Array"><c path="massive.mcover.data.Package"/></c></f></getPackages>
+		<getResults public="1" set="method" line="185" override="1"><f a="?cache">
 	<e path="Bool"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 </f></getResults>
-		<appendResults set="method" line="183" override="1"><f a="to:from">
+		<appendResults set="method" line="224" override="1"><f a="to:from">
 	<t path="massive.mcover.data.CoverageResult"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 	<t path="massive.mcover.data.CoverageResult"/>
 </f></appendResults>
-		<sortOnNodeId set="method" line="193"><f a="a:b">
+		<sortOnNodeId set="method" line="234"><f a="a:b">
 	<c path="massive.mcover.data.AbstractNode"/>
 	<c path="massive.mcover.data.AbstractNode"/>
 	<c path="Int"/>
 </f></sortOnNodeId>
-		<sortOnClazzId set="method" line="198"><f a="a:b">
+		<sortOnClazzId set="method" line="239"><f a="a:b">
 	<c path="massive.mcover.data.Clazz"/>
 	<c path="massive.mcover.data.Clazz"/>
 	<c path="Int"/>
 </f></sortOnClazzId>
-		<sortOnPackageId set="method" line="203"><f a="a:b">
+		<sortOnPackageId set="method" line="244"><f a="a:b">
 	<c path="massive.mcover.data.Package"/>
 	<c path="massive.mcover.data.Package"/>
 	<c path="Int"/>
 </f></sortOnPackageId>
-		<hxSerialize set="method" line="208" override="1"><f a="s">
+		<hxSerialize set="method" line="249" override="1"><f a="s">
 	<c path="haxe.Serializer"/>
 	<e path="Void"/>
 </f></hxSerialize>
-		<hxUnserialize set="method" line="218" override="1"><f a="s">
+		<hxUnserialize set="method" line="259" override="1"><f a="s">
 	<c path="haxe.Unserializer"/>
 	<e path="Void"/>
 </f></hxUnserialize>
@@ -2557,121 +2598,6 @@
 * or implied, of Massive Interactive.
 **</haxe_doc>
 	</class>
-	<class path="massive.mcover.CoverageReporter" params="" file="src/massive/mcover/CoverageReporter.hx" interface="1">
-		<completionHandler public="1"><f a="">
-	<c path="Float"/>
-	<e path="Void"/>
-</f></completionHandler>
-		<allClasses public="1" set="null"><c path="massive.mcover.data.AllClasses"/></allClasses>
-		<logger public="1" set="null"><c path="massive.mcover.CoverageLogger"/></logger>
-		<initialize public="1" set="method"><f a="logger:allClasses">
-	<c path="massive.mcover.CoverageLogger"/>
-	<c path="massive.mcover.data.AllClasses"/>
-	<e path="Void"/>
-</f></initialize>
-		<report public="1" set="method"><f a=""><e path="Void"/></f></report>
-		<addClient public="1" set="method">
-			<f a="client">
-				<c path="massive.mcover.CoverageReportClient"/>
-				<e path="Void"/>
-			</f>
-			<haxe_doc>
-	 * Add a coverage clients to interpret coverage results.
-	 * 
-	 * @param client  client to interpret coverage results 
-	 * @see massive.mcover.CoverageReportClient
-	 * @see massive.mcover.client.PrintClient
-	 </haxe_doc>
-		</addClient>
-		<removeClient public="1" set="method"><f a="client">
-	<c path="massive.mcover.CoverageReportClient"/>
-	<e path="Void"/>
-</f></removeClient>
-		<getClients public="1" set="method"><f a=""><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></f></getClients>
-		<destroy public="1" set="method">
-			<f a=""><e path="Void"/></f>
-			<haxe_doc>
-	* Removes timers and contents
-	</haxe_doc>
-		</destroy>
-		<haxe_doc>**
-* Copyright 2011 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-**</haxe_doc>
-	</class>
-	<class path="massive.mcover.CoverageReporterImpl" params="" file="src/massive/mcover/CoverageReporter.hx" module="massive.mcover.CoverageReporter">
-		<implements path="massive.mcover.CoverageReporter"/>
-		<__meta__ public="1" line="81" static="1"><d/></__meta__>
-		<completionHandler public="1">
-			<f a="">
-				<c path="Float"/>
-				<e path="Void"/>
-			</f>
-			<haxe_doc>
-	 * Handler called when all clients 
-	 * have completed processing the results.
-	 </haxe_doc>
-		</completionHandler>
-		<allClasses public="1" set="null"><c path="massive.mcover.data.AllClasses"/></allClasses>
-		<logger public="1" set="null"><c path="massive.mcover.CoverageLogger"/></logger>
-		<clients><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></clients>
-		<clientCompleteCount><c path="Int"/></clientCompleteCount>
-		<initialize public="1" set="method" line="103"><f a="logger:allClasses">
-	<c path="massive.mcover.CoverageLogger"/>
-	<c path="massive.mcover.data.AllClasses"/>
-	<e path="Void"/>
-</f></initialize>
-		<report public="1" set="method" line="109"><f a=""><e path="Void"/></f></report>
-		<addClient public="1" set="method" line="124"><f a="client">
-	<c path="massive.mcover.CoverageReportClient"/>
-	<e path="Void"/>
-</f></addClient>
-		<removeClient public="1" set="method" line="135"><f a="client">
-	<c path="massive.mcover.CoverageReportClient"/>
-	<e path="Void"/>
-</f></removeClient>
-		<getClients public="1" set="method" line="141"><f a=""><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></f></getClients>
-		<destroy public="1" set="method" line="146"><f a=""><e path="Void"/></f></destroy>
-		<generateReport set="method" line="158"><f a=""><e path="Void"/></f></generateReport>
-		<clientCompletionHandler set="method" line="170"><f a="client">
-	<c path="massive.mcover.CoverageReportClient"/>
-	<e path="Void"/>
-</f></clientCompletionHandler>
-		<executeCompletionHandler set="method" line="184"><f a=""><e path="Void"/></f></executeCompletionHandler>
-		<debug set="method" line="193"><f a="value">
-	<d/>
-	<e path="Void"/>
-</f></debug>
-		<new public="1" set="method" line="98">
-			<f a=""><e path="Void"/></f>
-			<haxe_doc>
-	 * Class constructor.
-	 </haxe_doc>
-		</new>
-	</class>
 	<enum path="ValueType" params="" file="/usr/lib/haxe/std/Type.hx" module="Type">
 		<TUnknown/>
 		<TObject/>
@@ -2769,8 +2695,8 @@
 **</haxe_doc>
 	</class>
 	<class path="massive.mcover.AllClasses" params="" file="src/massive/mcover/AllClasses.hx">
-		<main public="1" set="method" line="27" static="1"><f a=""><c path="massive.mcover.AllClasses"/></f></main>
-		<new public="1" set="method" line="28"><f a=""><e path="Void"/></f></new>
+		<main public="1" set="method" line="26" static="1"><f a=""><c path="massive.mcover.AllClasses"/></f></main>
+		<new public="1" set="method" line="27"><f a=""><e path="Void"/></f></new>
 	</class>
 	<class path="haxe.Resource" params="" file="/usr/lib/haxe/std/haxe/Resource.hx">
 		<content static="1"><c path="Array"><a>
@@ -2789,15 +2715,42 @@
 </f></getBytes>
 	</class>
 	<class path="massive.mcover.CoverageLogger" params="" file="src/massive/mcover/CoverageLogger.hx" interface="1">
-		<createReporter public="1" set="method"><f a="?reporterClass:?overwrite">
-	<c path="Class"><c path="massive.mcover.CoverageReporter"/></c>
+		<completionHandler public="1"><f a="">
+	<c path="Float"/>
+	<e path="Void"/>
+</f></completionHandler>
+		<allClasses public="1" set="null"><c path="massive.mcover.data.AllClasses"/></allClasses>
+		<currentTest public="1" set="set_currentTest"><c path="String"/></currentTest>
+		<report public="1" set="method"><f a="?skipClients">
 	<e path="Bool"/>
-	<c path="massive.mcover.CoverageReporter"/>
-</f></createReporter>
-		<loadAllClasses public="1" set="method"><f a="?resourceName">
+	<e path="Void"/>
+</f></report>
+		<reportCurrentTest public="1" set="method"><f a="?skipClients">
+	<e path="Bool"/>
+	<e path="Void"/>
+</f></reportCurrentTest>
+		<addClient public="1" set="method">
+			<f a="client">
+				<c path="massive.mcover.CoverageReportClient"/>
+				<e path="Void"/>
+			</f>
+			<haxe_doc>
+	 * Add a coverage clients to interpret coverage results.
+	 * 
+	 * @param client  client to interpret coverage results 
+	 * @see massive.mcover.CoverageReportClient
+	 * @see massive.mcover.client.PrintClient
+	 </haxe_doc>
+		</addClient>
+		<removeClient public="1" set="method"><f a="client">
+	<c path="massive.mcover.CoverageReportClient"/>
+	<e path="Void"/>
+</f></removeClient>
+		<getClients public="1" set="method"><f a=""><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></f></getClients>
+		<initializeAllClasses public="1" set="method"><f a="?resourceName">
 	<c path="String"/>
 	<e path="Void"/>
-</f></loadAllClasses>
+</f></initializeAllClasses>
 		<logStatement public="1" set="method"><f a="id">
 	<c path="Int"/>
 	<e path="Void"/>
@@ -2808,8 +2761,6 @@
 	<d/>
 	<d/>
 </f></logBranch>
-		<reporter public="1" set="null"><c path="massive.mcover.CoverageReporter"/></reporter>
-		<allClasses public="1" set="null"><c path="massive.mcover.data.AllClasses"/></allClasses>
 		<haxe_doc>**
 * Copyright 2011 Massive Interactive. All rights reserved.
 * 
@@ -2840,21 +2791,51 @@
 	</class>
 	<class path="massive.mcover.CoverageLoggerImpl" params="" file="src/massive/mcover/CoverageLogger.hx" module="massive.mcover.CoverageLogger">
 		<implements path="massive.mcover.CoverageLogger"/>
-		<__meta__ public="1" line="61" static="1"><d/></__meta__>
-		<reporter public="1" set="null"><c path="massive.mcover.CoverageReporter"/></reporter>
+		<__meta__ public="1" line="85" static="1"><d/></__meta__>
+		<completionHandler public="1">
+			<f a="">
+				<c path="Float"/>
+				<e path="Void"/>
+			</f>
+			<haxe_doc>
+	 * Handler called when all clients 
+	 * have completed processing the results.
+	 </haxe_doc>
+		</completionHandler>
 		<allClasses public="1" set="null"><c path="massive.mcover.data.AllClasses"/></allClasses>
-		<statementResultsById><c path="IntHash"><c path="Int"/></c></statementResultsById>
-		<branchResultsById><c path="IntHash"><t path="massive.mcover.data.BranchResult"/></c></branchResultsById>
-		<createReporter public="1" set="method" line="87"><f a="?reporterClass:?overwrite">
-	<c path="Class"><c path="massive.mcover.CoverageReporter"/></c>
+		<currentTest public="1" set="set_currentTest"><c path="String"/></currentTest>
+		<allStatementResultsById><c path="IntHash"><c path="Int"/></c></allStatementResultsById>
+		<allBranchResultsById><c path="IntHash"><t path="massive.mcover.data.BranchResult"/></c></allBranchResultsById>
+		<testStatementResultsById><c path="IntHash"><c path="Int"/></c></testStatementResultsById>
+		<testBranchResultsById><c path="IntHash"><t path="massive.mcover.data.BranchResult"/></c></testBranchResultsById>
+		<clients><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></clients>
+		<clientCompleteCount><c path="Int"/></clientCompleteCount>
+		<report public="1" set="method" line="134"><f a="?skipClients">
 	<e path="Bool"/>
-	<c path="massive.mcover.CoverageReporter"/>
-</f></createReporter>
-		<loadAllClasses public="1" set="method" line="116"><f a="?resourceName">
+	<e path="Void"/>
+</f></report>
+		<reportCurrentTest public="1" set="method" line="144"><f a="?skipClients">
+	<e path="Bool"/>
+	<e path="Void"/>
+</f></reportCurrentTest>
+		<generateReportResults set="method" line="155"><f a="?currentTestOnly">
+	<e path="Bool"/>
+	<e path="Void"/>
+</f></generateReportResults>
+		<addClient public="1" set="method" line="177"><f a="client">
+	<c path="massive.mcover.CoverageReportClient"/>
+	<e path="Void"/>
+</f></addClient>
+		<removeClient public="1" set="method" line="188"><f a="client">
+	<c path="massive.mcover.CoverageReportClient"/>
+	<e path="Void"/>
+</f></removeClient>
+		<getClients public="1" set="method" line="194"><f a=""><c path="Array"><c path="massive.mcover.CoverageReportClient"/></c></f></getClients>
+		<initializeAllClasses public="1" set="method" line="200"><f a="?resourceName">
 	<c path="String"/>
 	<e path="Void"/>
-</f></loadAllClasses>
-		<logStatement public="1" set="method" line="138">
+</f></initializeAllClasses>
+		<logStatement public="1" set="method" line="220">
 			<f a="id">
 				<c path="Int"/>
 				<e path="Void"/>
@@ -2864,7 +2845,12 @@
 	* Developers should not class this method directly.
 	</haxe_doc>
 		</logStatement>
-		<logBranch public="1" set="method" line="161">
+		<updateStatementHash set="method" line="234"><f a="hash:id">
+	<c path="IntHash"><c path="Int"/></c>
+	<c path="Int"/>
+	<e path="Void"/>
+</f></updateStatementHash>
+		<logBranch public="1" set="method" line="253">
 			<f a="id:value:?compareValue">
 				<c path="Int"/>
 				<d/>
@@ -2879,12 +2865,24 @@
 	* @param compareValue	secondary value to compare with
 	</haxe_doc>
 		</logBranch>
-		<new public="1" set="method" line="81"><f a=""><e path="Void"/></f></new>
+		<updateBranchHash set="method" line="280"><f a="hash:id:value">
+	<c path="IntHash"><t path="massive.mcover.data.BranchResult"/></c>
+	<c path="Int"/>
+	<e path="Bool"/>
+	<e path="Void"/>
+</f></updateBranchHash>
+		<set_currentTest set="method" line="303"><f a="value">
+	<c path="String"/>
+	<c path="String"/>
+</f></set_currentTest>
+		<reportToClients set="method" line="312"><f a=""><e path="Void"/></f></reportToClients>
+		<clientCompletionHandler set="method" line="327"><f a="client">
+	<c path="massive.mcover.CoverageReportClient"/>
+	<e path="Void"/>
+</f></clientCompletionHandler>
+		<executeCompletionHandler set="method" line="341"><f a=""><e path="Void"/></f></executeCompletionHandler>
+		<new public="1" set="method" line="127"><f a=""><e path="Void"/></f></new>
 	</class>
-	<class path="Class" params="T" file="/usr/lib/haxe/std/Class.hx" extern="1"><haxe_doc>
-	An abstract type that represents a Class.
-	See [Type] for the haXe Reflection API.
-</haxe_doc></class>
 	<class path="massive.mcover.MCover" params="" file="src/massive/mcover/MCover.hx">
 		<__meta__ public="1" line="60" static="1"><d/></__meta__>
 		<VERSION public="1" line="62" static="1"><c path="String"/></VERSION>
@@ -2908,6 +2906,10 @@
 *    createReporter();
 </haxe_doc>
 	</class>
+	<class path="Class" params="T" file="/usr/lib/haxe/std/Class.hx" extern="1"><haxe_doc>
+	An abstract type that represents a Class.
+	See [Type] for the haXe Reflection API.
+</haxe_doc></class>
 	<class path="IntHash" params="T" file="/usr/lib/haxe/std/IntHash.hx" extern="1">
 		<set public="1" set="method">
 			<f a="key:value">
