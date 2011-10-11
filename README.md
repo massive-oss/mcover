@@ -179,12 +179,17 @@ MCover includes a custom munit print client that integrates coverage data into u
 
 *	standard PrintClient report output in unit test summary (see above)
 
-** Note: ** Inline coverage is only appended to test classes that have a matching class in the covered src path (e.g. com.ExampleTest will look for results for com.Example)
+
+**Note:** Inline coverage is only appended to test classes that have a matching class in the covered src path (e.g. com.ExampleTest will look for results for com.Example)
 
 
 ### Step 1. Add MCover macro to build
 
 Include mcover macro in test.hxml file (see above)
+
+	-lib mcover
+	--macro massive.mcover.MCover.include('', ['src'])
+	
 
 ### Step 2. Update TestMain.hx
 
