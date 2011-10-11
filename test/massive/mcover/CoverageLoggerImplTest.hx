@@ -85,6 +85,17 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	}
 
 	@Test
+	public function shouldNotUpdateClientIfSkipClientsIsTrue()
+	{
+		instance.addClient(client);
+		instance.report(true);
+
+		var mockClient = cast(client, CoverageReportClientMock);
+		Assert.isNull(mockClient.allClasses);
+	}
+
+
+	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
 	
@@ -164,7 +175,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	
 
 	@Test
-	public function shouldLoadAllClasses()
+	public function shouldInitializeAllClasses()
 	{
 		Assert.isNull(instance.allClasses);
 		instance.initializeAllClasses();
@@ -200,6 +211,65 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 		}
 	}
+
+	@Test
+	public function shouldThrowExceptionIfCurrentTestIsNull()
+	{
+		try
+		{
+			instance.reportCurrentTest();
+			Assert.fail("exception expected");
+		}
+		catch(e:Exception)
+		{
+			Assert.isTrue(true);
+		}	
+	}
+
+	@Test
+	public function shouldOnlyReportLogsSinceCurrentTestWasSet()
+	{
+		var mockClient = cast(client, CoverageReportClientMock);
+		
+		instance.addClient(client);
+		
+		instance.logStatement(0);
+		instance.logBranch(0, true);
+		instance.currentTest = "foo";
+
+		instance.reportCurrentTest();
+
+		Assert.areEqual(0, mockClient.allClasses.getPercentage());
+
+		instance.logStatement(1);
+		instance.logBranch(0, false);
+
+		instance.reportCurrentTest();
+
+		Assert.isTrue(mockClient.allClasses.getPercentage() > 0);
+
+		instance.currentTest = "bar";
+		
+		instance.reportCurrentTest();
+
+		Assert.areEqual(0, mockClient.allClasses.getPercentage());
+
+
+	}
+
+
+	@Test
+	public function shouldNotUpdateClientIfReportCurrentTestSkipClientsIsTrue()
+	{
+		instance.addClient(client);
+		instance.currentTest = "foo";
+		instance.logStatement(0);
+		instance.reportCurrentTest(true);
+
+		var mockClient = cast(client, CoverageReportClientMock);
+		Assert.isNull(mockClient.allClasses);
+	}
+
 
 	//////////////////////////
 

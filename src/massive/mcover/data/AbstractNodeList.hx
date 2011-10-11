@@ -114,8 +114,7 @@ import massive.mcover.data.CoverageResult;
 			resultCache = emptyResult();
 			for(node in itemsById)
 			{
-			
-				var tmp = node.getResults();
+				var tmp = node.getResults(cache);
 				resultCache = appendResults(resultCache, tmp);
 			}
 		}

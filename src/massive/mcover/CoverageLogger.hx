@@ -55,7 +55,11 @@ interface CoverageLogger
 
 	var allClasses(default, null):AllClasses;
 
-	function report():Void;
+
+	var currentTest(default, set_currentTest):String;
+
+	function report(?skipClients:Bool=false):Void;
+	function reportCurrentTest(?skipClients:Bool=false):Void;
 
 	/**
 	 * Add a coverage clients to interpret coverage results.
@@ -92,16 +96,28 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public var allClasses(default, null):AllClasses;
 
+	public var currentTest(default, set_currentTest):String;
+
 
 	/*
 	 * total execution count for statements by id
 	*/
-	var statementResultsById:IntHash<Int>;
+	var allStatementResultsById:IntHash<Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	var branchResultsById:IntHash<BranchResult>;
+	var allBranchResultsById:IntHash<BranchResult>;
+
+	/*
+	 * statement execution counts for current test
+	*/
+	var testStatementResultsById:IntHash<Int>;
+	
+	/*
+	 * branch execution counts for current test
+	*/
+	var testBranchResultsById:IntHash<BranchResult>;
 
 
 	var clients:Array<CoverageReportClient>;
@@ -110,31 +126,55 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function new()
 	{
-		statementResultsById = new IntHash();
-		branchResultsById = new IntHash();
+		allStatementResultsById = new IntHash();
+		allBranchResultsById = new IntHash();
 		clients = [];
-
 	}
 
-	public function report()
+	public function report(?skipClients:Bool=false)
 	{
-		#if neko mutex.acquire(); #end
+		generateReportResults(false);
 
+		if(!skipClients)
+		{
+			reportToClients();
+		}
+	}
+
+	public function reportCurrentTest(?skipClients:Bool=false)
+	{
+		if(currentTest == null) throw new Exception("No test specified to report on.");
+		generateReportResults(true);	
+		
+		if(!skipClients)
+		{
+			reportToClients();
+		}
+	}
+
+	function generateReportResults(?currentTestOnly:Bool=false)
+	{
 		if(allClasses == null)
 		{
 			initializeAllClasses();	
 		}
-
-		if(clients.length == 0)
+		
+		if(currentTestOnly)
 		{
-			addClient(new TraceClient());
+			allClasses.setStatementResultsHash(testStatementResultsById);
+			allClasses.setBranchResultsHash(testBranchResultsById);	
 		}
-		generateReport();
+		else
+		{
+			allClasses.setStatementResultsHash(allStatementResultsById);
+			allClasses.setBranchResultsHash(allBranchResultsById);
+		}
 
-		#if neko mutex.release(); #end
+		allClasses.getResults(false);
 	}
 
-		public function addClient(client:CoverageReportClient)
+	
+	public function addClient(client:CoverageReportClient)
 	{
 		for(c in clients)
 		{
@@ -165,8 +205,6 @@ class CoverageLoggerImpl implements CoverageLogger
 		try
 		{
 			allClasses = haxe.Unserializer.run(serializedData);
-			allClasses.setStatementResultsHash(statementResultsById);
-			allClasses.setBranchResultsHash(branchResultsById);
 		}
 		catch(e:Dynamic)
 		{
@@ -182,16 +220,26 @@ class CoverageLoggerImpl implements CoverageLogger
 	public function logStatement(id:Int)
 	{	
 		#if neko mutex.acquire(); #end
+
+		updateStatementHash(allStatementResultsById, id);
+
+		if(currentTest != null)
+		{				
+			updateStatementHash(testStatementResultsById, id);
+		}
+		#if neko mutex.release(); #end
+	}
+
+	@IgnoreCover
+	function updateStatementHash(hash:IntHash<Int>, id:Int)
+	{
 		var count = 1;
 
-		if(statementResultsById.exists(id))
+		if(hash.exists(id))
 		{
-			count = statementResultsById.get(id) + 1;
+			count = hash.get(id) + 1;
 		}
-
-		statementResultsById.set(id, count);
-
-		#if neko mutex.release(); #end
+		hash.set(id, count);
 	}
 	
 	/**
@@ -206,7 +254,6 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		#if neko mutex.acquire(); #end
 
-
 		var bool = false;
 
 		if(compareValue != null)
@@ -218,39 +265,57 @@ class CoverageLoggerImpl implements CoverageLogger
 			bool = value;
 		}
 
-		var r:BranchResult = null;
-		
-		if(branchResultsById.exists(id))
-		{
-			r = branchResultsById.get(id);
-		}
-		else
-		{
-			r = {id:id, trueCount:0, falseCount:0, total:0};
-			branchResultsById.set(id, r);
-		}
+		updateBranchHash(allBranchResultsById, id, bool);
 
-		//record current value
-		if(bool) r.trueCount ++;
-		else r.falseCount ++;
-
-		r.total ++;
-	
+		if(currentTest != null)
+		{
+			updateBranchHash(testBranchResultsById, id, bool);
+		}
 
 		#if neko mutex.release(); #end
 		return value;
 	}
 
+	@IgnoreCover
+	function updateBranchHash(hash:IntHash<BranchResult>, id:Int, value:Bool)
+	{
+		var r:BranchResult = null;
+		
+		if(hash.exists(id))
+		{
+			r = hash.get(id);
+		}
+		else
+		{
+			r = {id:id, trueCount:0, falseCount:0, total:0};
+			hash.set(id, r);
+		}
 
+		//record current value
+		if(value) r.trueCount ++;
+		else r.falseCount ++;
 
-	
+		r.total ++;
+	}
 
 	///////////////////////////////////
 
-	function generateReport()
+	function set_currentTest(value:String):String
 	{
-		allClasses.getResults(true);
+		currentTest = value;
+		testStatementResultsById = new IntHash();
+		testBranchResultsById = new IntHash();
+		return value;
+	}
 
+
+	function reportToClients()
+	{
+		if(clients.length == 0)
+		{
+			addClient(new TraceClient());
+		}
+		
 		clientCompleteCount = 0;
 			
 		for (client in clients)

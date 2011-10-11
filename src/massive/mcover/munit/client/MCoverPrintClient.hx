@@ -48,13 +48,30 @@ import massive.mcover.client.PrintClient;
  */
 class MCoverPrintClient extends massive.munit.client.PrintClient
 {
-		/**
+	/**
 	 * Default id of this client.
 	 */
 	public inline static var DEFAULT_ID:String = "MCoverClient";
 
 	var coverage:CoverageLogger;
 	var coverClient:massive.mcover.client.PrintClient;
+
+
+	public var includeMissingBlocks(default, set_includeMissingBlocks):Bool;
+	function set_includeMissingBlocks(value:Bool):Bool
+	{
+		includeMissingBlocks = value;
+		coverClient.includeMissingBlocks = value;
+		return value;
+	}
+
+	public var includeBlockExecutionCounts(default, set_includeBlockExecutionCounts):Bool;
+	function set_includeBlockExecutionCounts(value:Bool):Bool
+	{
+		includeBlockExecutionCounts = value;
+		coverClient.includeBlockExecutionCounts = value;
+		return value;
+	}
 	
 	/**
 	 * 
@@ -93,9 +110,10 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
 
+		printCoverage();
 		coverage.report();
 
-		print(coverClient.output + newline);
+		print(newline + coverClient.output + newline);
 
 		return super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 	}
@@ -107,9 +125,32 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	{
 		if (result.className != currentTestClass)
 		{
+			printCoverage();
 			printExceptions();
 			currentTestClass = result.className;
+			coverage.currentTest = currentTestClass;
 			print(newline + "Class: " + currentTestClass + " ");
+		}
+	}
+
+	function printCoverage()
+	{
+		if(coverage.currentTest == null) return;
+
+		coverage.reportCurrentTest(true);
+		
+		var s:String = currentTestClass;
+
+		if(s.substr(-4) == "Test")
+		{
+			s = s.substr(0, s.length-4);
+
+			var cls = coverage.allClasses.getClassByName(s);
+
+			if(cls != null)
+			{
+				print(" " + cls.getPercentage() + "%");
+			}
 		}
 	}
 }

@@ -165,10 +165,21 @@ View results!
 	----------------------------------------------------------------
 
 
+Integrating with MUnit
+---------------------
 
-## Integrating with MUnit
 
-MCover includes a custom munit print client that automatically prints out coverage results on completion of unit tests. It's pretty basic for now, but does the job!
+MCover includes a custom munit print client that integrates coverage data into unit test output.
+
+*	inline class coverage percentage at completion of individual test class (see note below)
+
+		Class: massive.mcover.client.PrintClientTest ....... 97.22%
+		Class: massive.mcover.data.AbstractBlockTest ............ 40%
+		Class: massive.mcover.data.AbstractNodeListTest .................. 100%
+
+*	standard PrintClient report output in unit test summary (see above)
+
+** Note: ** Inline coverage is only appended to test classes that have a matching class in the covered src path (e.g. com.ExampleTest will look for results for com.Example)
 
 
 ### Step 1. Add MCover macro to build
@@ -179,9 +190,8 @@ Include mcover macro in test.hxml file (see above)
 
 Replace the default munit PrintClient with massive.mcover.munit.client.PrintClient in TestMain
 
-
-
-
+		var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
+		var runner:TestRunner = new TestRunner(printClient);
 
 Usage
 ---------------------
@@ -211,7 +221,6 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 ### Runtime reporting
 
-#### Step 1. 
 At runtime, MCover cam automatically log code execution blocks.
 
 To generate a report call once your unit tests (or other code) have completed:
@@ -360,12 +369,34 @@ You can also run the unit tests (requires munit haxelib) to see coverage of the 
 Advanced Usage
 ---------------------
 
-#### Ignoring individual classes or methods
+### Reporting during execution of a single test class
+
+	logger.currentTest = "com.ExampleTest";
+
+	logger.reportCurrentTest();
+
+
+### Silent reporting
+
+This can be useful for forcing the logger to update results without triggering clients to print out verbose reports
+ 
+	logger.report(true);
+	logger.reportCurrentTest(true);
+
+
+Results can then be accessed directly from the logger
+
+	logger.allClasses.getResults();
+	logger.allClasses.getPercentages();
+
+
+### Ignoring individual classes or methods
 
 You can flag a class or method to be excluded from coverage using @IgnoreCover metadata
 	
 
-	@IgnoreCover class Foo
+	@IgnoreCover
+	class Foo
 	{
 		public function new()
 		{

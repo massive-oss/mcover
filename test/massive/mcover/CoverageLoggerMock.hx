@@ -9,6 +9,14 @@ class CoverageLoggerMock implements CoverageLogger
 
 	public var allClasses(default, null):AllClasses;
 
+	public var currentTest(default, set_currentTest):String;
+	function set_currentTest(value:String):String
+	{
+		currentTest = value;
+		return value;
+	}
+
+
 	public var clients:Array<CoverageReportClient>;
 
 	public var resourceName:String;
@@ -28,10 +36,16 @@ class CoverageLoggerMock implements CoverageLogger
 		clients = [];
 	}
 
-	public function report()
+	public function report(?skipClients:Bool=false)
 	{
 		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);
 	}
+
+	public function reportCurrentTest(?skipClients:Bool=false)
+	{
+		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);
+	}
+
 
 	function executeCompletionHandler()
 	{

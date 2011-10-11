@@ -145,6 +145,31 @@ import massive.mcover.data.Branch;
 		return a;
 	}
 
+	public function getClassByName(name:String):Clazz
+	{
+		var index = name.lastIndexOf(".");
+
+		var packageName = index > 1 ? name.substr(0, index) : "";
+
+		if(!items.exists(packageName)) return null;
+
+		var pckgId = items.get(packageName);
+		
+		var pckg = cast(itemsById.get(pckgId), Package);
+		
+		var classes = pckg.getClasses();
+
+		for(cls in classes)
+		{
+			if(cls.name == name)
+			{
+				return cls;
+			}
+		}
+
+		return null;	
+	}
+
 	public function getPackages():Array<Package>
 	{
 		var a:Array<Package> = [];
@@ -161,20 +186,36 @@ import massive.mcover.data.Branch;
 	{
 		if(resultCache == null || !cache)
 		{
-			for(key in statementResultsById.keys())
+			for(lookup in statements)
 			{
-				var statement = getStatementById(key);
-				statement.count = statementResultsById.get(key);
+				var statement = lookupStatement(lookup.concat([]));
+				if(statementResultsById.exists(statement.id))
+				{
+					statement.count = statementResultsById.get(statement.id);
+				}
+				else
+				{
+					statement.count = 0;
+				}
 			}
 
-			for(key in branchResultsById.keys())
-			{
-				var branch = getBranchById(key);
-				var branchResult = branchResultsById.get(key);
 
-				branch.trueCount = branchResult.trueCount;
-				branch.falseCount = branchResult.falseCount;		
+			for(lookup in branches)
+			{
+				var branch = lookupBranch(lookup.concat([]));
+				if(branchResultsById.exists(branch.id))
+				{
+					var result = branchResultsById.get(branch.id);
+					branch.trueCount = result.trueCount;
+					branch.falseCount = result.falseCount;
+				}
+				else
+				{
+					branch.trueCount = 0;
+					branch.falseCount = 0;
+				}
 			}
+
 			super.getResults(cache);
 		}
 		return resultCache;
