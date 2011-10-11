@@ -5,7 +5,7 @@
 -lib munit
 -lib mlib
 -swf-version 9
--swf build/test/runner/as3_test.swf
+-swf build/test/as3_test.swf
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
 --macro massive.mcover.MCover.include('massive.mcover',['src'])
 
@@ -18,7 +18,7 @@
 -lib munit
 -lib mlib
 -swf-version 8
--swf build/test/runner/as2_test.swf
+-swf build/test/as2_test.swf
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
 --macro massive.mcover.MCover.include('massive.mcover',['src'])
 
@@ -30,7 +30,7 @@
 -cp test
 -lib munit
 -lib mlib
--js build/test/runner/js_test.js
+-js build/test/js_test.js
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
 --macro massive.mcover.MCover.include('massive.mcover', ['src'])
 
@@ -42,7 +42,7 @@
 -lib mlib
 -cp src
 -cp test
--neko build/test/runner/neko_test.n
+-neko build/test/neko_test.n
 -D MCOVER_TEST
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
 --macro massive.mcover.MCover.include('massive.mcover',['src'])

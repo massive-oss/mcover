@@ -1,5 +1,5 @@
 version=0.9.1.7
 src=test
-bin=build/test/runner
-report=build/test/report
+bin=build/test
+report=build/test
 hxml=test.hxml
