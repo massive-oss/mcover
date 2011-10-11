@@ -4,8 +4,12 @@ import massive.mcover.data.AllClasses;
 
 class CoverageLoggerMock implements CoverageLogger
 {
-	public var reporter(default, null):CoverageReporter;
+	public var completionHandler(default, default):Float -> Void;
+
+
 	public var allClasses(default, null):AllClasses;
+
+	public var clients:Array<CoverageReportClient>;
 
 	public var resourceName:String;
 
@@ -19,21 +23,39 @@ class CoverageLoggerMock implements CoverageLogger
 	public function new()
 	{
 		resourceName = null;
-		reporter = null;
+		
 		allClasses = null;
+		clients = [];
 	}
 
-	public function createReporter(?reporterClass:Class<CoverageReporter> =null, overwrite:Bool=false):CoverageReporter
+	public function report()
 	{
-		if(reporterClass == null)
-		{
-			reporterClass = CoverageReporterMock;
-		}
-
-		reporter = Type.createInstance(reporterClass, []);
-
-		return reporter;
+		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);
 	}
+
+	function executeCompletionHandler()
+	{
+		if(completionHandler != null)
+		{
+			completionHandler(0);
+		}
+	}
+
+	public function addClient(client:CoverageReportClient)
+	{
+		clients.push(client);
+	}
+
+	public function removeClient(client:CoverageReportClient)
+	{
+		clients.remove(client);
+	}
+
+	public function getClients():Array<CoverageReportClient>
+	{
+		return clients;
+	}
+	
 
 	public function loadAllClasses(?resourceName:String = null):Void
 	{

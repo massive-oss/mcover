@@ -5,16 +5,17 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 import massive.mcover.CoverageLogger;
-import massive.mcover.CoverageReporter;
 import massive.mcover.MCover;
 import massive.mcover.data.AllClasses;
 import massive.mcover.data.Branch;
 
+import massive.mcover.client.TraceClient;
+
 class CoverageLoggerImplTest extends CoverageLoggerTest
 {
 	var instance:CoverageLoggerImpl;
-	var reporter:CoverageReporter;
-	var reporter2:CoverageReporter;
+	var client2:CoverageReportClient;
+	var hasCompletedReport:Bool;
 
 	public function new()
 	{
@@ -46,86 +47,121 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		super.tearDown();
 
-		if(reporter != null)
-		{
-			reporter.destroy();
-		}
+	}
 
-		if(reporter2 != null)
-		{
-			reporter2.destroy();
-		}
+	@Test
+	public function shouldAddClientCompletionHandlerWhenAddedToRunner()
+	{
+		instance.addClient(client);
+		Assert.isNotNull(client.completionHandler);
+	}
+
+	@Test
+	public function shouldNotAddSameClientTwice()
+	{
+		instance.addClient(client);
+		instance.addClient(client);
+		Assert.areEqual(1, instance.getClients().length);
+	}
+
+	@Test
+	public function shouldRemoveClientCompletionHandlerWhenRemovedFromRunner()
+	{
+		instance.addClient(client);
+		instance.removeClient(client);
+		Assert.isNull(client.completionHandler);
+	}
+
+
+
+	@Test
+	public function shouldAddAllClassesToClientOnReport()
+	{
+		instance.addClient(client);
+		instance.report();
+
+		var mockClient = cast(client, CoverageReportClientMock);
+		Assert.isNotNull(mockClient.allClasses);
+	}
+
+	@Test
+	public function shouldCreateDefaultClientIfNonAvailable()
+	{
+	
+		originalTrace = haxe.Log.trace;
+		haxe.Log.trace = function(value:Dynamic,?infos : haxe.PosInfos){};
+
+		Assert.areEqual(0, instance.getClients().length);
+
+		instance.report();
+
+		haxe.Log.trace = originalTrace;
+
+
+		var clients = instance.getClients().concat([]);
+
+		Assert.areEqual(1, clients.length);
+		Assert.areEqual(TraceClient, Type.getClass(clients[0]));
+	}
+
+	@AsyncTest
+	public function shouldOnlyExecuteCompletionHandlerAfterAllClientsHaveCompleted(factory:AsyncFactory)
+	{
+		instance.addClient(client);
+		client2 = new CoverageReportClientMock();
+
+		instance.addClient(client2);
+
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 500);
+
+		instance.completionHandler = handler;
+		instance.report();
+	}
+	
+	/**
+	* This test is a bit pointless, but it is to ensure branch coverage when completionHandler is null
+	*/
+	@AsyncTest
+	public function shouldNotCallCompletionHandlerIfNoneSet(factory:AsyncFactory)
+	{
+		instance.addClient(client);
+
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandlerHasntExecuted, 500);
+
+		Timer.delay(handler, 200);
+
+		instance.report();
+	}
+
+
+	function reportCompletionHandlerHasntExecuted()
+	{
+		Assert.isTrue(true);
 	}
 
 
 	@Test
-	public function shouldCreateDefaultRunnerIfNonExisting()
+	public function shouldInitializeAllClassesOnReport()
 	{
-		reporter = instance.createReporter();
-		Assert.isNotNull(reporter);
-		Assert.areEqual(CoverageReporterImpl, Type.getClass(reporter));
-		
-	}
-
-	@Test
-	public function shouldThrowExceptionIfOverwritingRunnerWithoutFlag()
-	{
-		try
-		{
-			reporter = instance.createReporter(CoverageReporterMock);
-			reporter = instance.createReporter(CoverageReporterMock);
-			Assert.fail("Expected Exception for overwriting existing reporter instance");
-		}
-		catch(e:Exception)
-		{
-			Assert.isTrue(true);
-		}
-	}
-
-	@Test
-	public function shouldCreateNewDefaultRunner()
-	{
-		reporter = instance.createReporter(CoverageReporterMock);
-		reporter2 = instance.createReporter(null, true);
-
-		Assert.isNotNull(reporter2);
-		Assert.areEqual(CoverageReporterImpl, Type.getClass(reporter2));
-		Assert.areNotEqual(reporter, reporter2);
-		Assert.isTrue(cast(reporter, CoverageReporterMock).isDestroyed);
-	}
-
-	@Test
-	public function shouldCreateCustomerRunner()
-	{
-		reporter = instance.createReporter(CoverageReporterMock);
-		Assert.areEqual(CoverageReporterMock,  Type.getClass(reporter));
-	}
-
-	@Test
-	public function shouldInitializeAllClassesWhenRunnerAdded()
-	{
+		instance.addClient(client);
 		Assert.isNull(instance.allClasses);
-		reporter = instance.createReporter(CoverageReporterMock);
-		Assert.isNotNull(instance.allClasses);
+		
+		instance.report();
+		Assert.isNotNull(instance.allClasses);		
 	}
 
 	@Test
 	public function shouldNotReInitializeAllClassesWhenRunnerAdded()
 	{
+		instance.addClient(client);
 		instance.loadAllClasses();
 		var allClasses = instance.allClasses;
 
-		reporter = instance.createReporter(CoverageReporterMock);
+		instance.report();
 		Assert.areEqual(allClasses, instance.allClasses);
 	}
 
-	@Test
-	public function shouldInitializeRunnerWithCoverAndAllClassesOnRunner()
-	{
-		reporter = instance.createReporter(CoverageReporterMock);
-		Assert.areEqual(instance, reporter.logger);
-		Assert.areEqual(instance.allClasses, cast(reporter, CoverageReporterMock).allClasses);
-	}
+	
 
 	@Test
 	public function shouldLoadAllClasses()
@@ -171,13 +207,12 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		if(r == null) return null;
 
-		return {id:r.id,result:r.result.toString(), trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
+		return {id:r.id, trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
 	}
 
 	function assertBranchResultsAreEqual(r1:BranchResult, r2:BranchResult)
 	{
 		Assert.areEqual(r1.id, r2.id);
-		Assert.areEqual(r1.result, r2.result);
 		Assert.areEqual(r1.trueCount, r2.trueCount);
 		Assert.areEqual(r1.falseCount, r2.falseCount);
 		Assert.areEqual(r1.total, r2.total);

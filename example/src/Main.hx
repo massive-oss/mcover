@@ -1,22 +1,22 @@
 package;
 
 import massive.mcover.MCover;
-import massive.mcover.CoverageReporter;
+import massive.mcover.CoverageLogger;
 
 
 class Main
 {
-	static var reporter:CoverageReporter;
+	static var logger:CoverageLogger;
 
 	static var completed:Bool = false;
 
 	@IgnoreCover
 	static public function main()
 	{
-		reporter = MCover.getLogger().createReporter();
+		logger = MCover.getLogger();
 		var app = new Main();
-		reporter.completionHandler = completionHandler;
-		reporter.report();
+		logger.completionHandler = completionHandler;
+		logger.report();
 
 		#if neko
 		while(completed != true)

@@ -28,7 +28,7 @@
 
 package massive.mcover;
 
-import massive.mcover.CoverageReporter;
+
 import massive.mcover.Exception;
 import massive.mcover.data.Package;
 import massive.mcover.data.File;
@@ -42,10 +42,33 @@ import massive.mcover.data.AbstractNodeList;
 import massive.mcover.data.AllClasses;
 import massive.mcover.data.CoverageResult;
 
+import massive.mcover.client.TraceClient;
+import massive.mcover.CoverageReportClient;
+
 
 interface CoverageLogger
 {
-	function createReporter(?reporterClass:Class<CoverageReporter>=null, overwrite:Bool=false):CoverageReporter;
+		/*
+	 * Handler which if present, should be called when the client has completed its processing of the results.
+	 */
+	var completionHandler(default, default):Float -> Void;
+
+	var allClasses(default, null):AllClasses;
+
+	function report():Void;
+
+	/**
+	 * Add a coverage clients to interpret coverage results.
+	 * 
+	 * @param client  client to interpret coverage results 
+	 * @see massive.mcover.CoverageReportClient
+	 * @see massive.mcover.client.PrintClient
+	 */
+	function addClient(client:CoverageReportClient):Void;
+	function removeClient(client:CoverageReportClient):Void;
+	function getClients():Array<CoverageReportClient>;
+
+
 
 	function loadAllClasses(?resourceName:String = null):Void;
 
@@ -53,8 +76,6 @@ interface CoverageLogger
 
 	function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic;
 
-	var reporter(default, null):CoverageReporter;
-	var allClasses(default, null):AllClasses;
 
 }
 
@@ -64,8 +85,14 @@ class CoverageLoggerImpl implements CoverageLogger
 	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
 	#end
 
-	public var reporter(default, null):CoverageReporter;
+	/**
+	 * Handler called when all clients 
+	 * have completed processing the results.
+	 */
+	public var completionHandler(default, default):Float -> Void;
+
 	public var allClasses(default, null):AllClasses;
+
 
 	/*
 	 * total execution count for statements by id
@@ -77,41 +104,59 @@ class CoverageLoggerImpl implements CoverageLogger
 	*/
 	var branchResultsById:IntHash<BranchResult>;
 
+
+	var clients:Array<CoverageReportClient>;
+	var clientCompleteCount:Int;
+
 	@IgnoreCover
 	public function new()
 	{
 		statementResultsById = new IntHash();
 		branchResultsById = new IntHash();
+		clients = [];
+
 	}
 
-	public function createReporter(?reporterClass:Class<CoverageReporter>=null, overwrite:Bool=false):CoverageReporter
+	public function report()
 	{
 		#if neko mutex.acquire(); #end
-		if(reporter != null)
-		{
-			if(!overwrite)
-			{
-				#if neko mutex.release(); #end
-				throw new Exception("Runner already exists. Set overwrite to true to replace reporter.");
-			}
-
-			reporter.destroy();
-			reporter = null;
-		}
 
 		if(allClasses == null)
 		{
 			loadAllClasses();	
 		}
 
-		if(reporterClass == null) reporterClass =CoverageReporterImpl;
-
-		reporter = Type.createInstance(reporterClass, []);
-		reporter.initialize(this, allClasses);
+		if(clients.length == 0)
+		{
+			addClient(new TraceClient());
+		}
+		generateReport();
 
 		#if neko mutex.release(); #end
-		return reporter;
 	}
+
+		public function addClient(client:CoverageReportClient)
+	{
+		for(c in clients)
+		{
+			if(c == client) return;
+		}
+
+		client.completionHandler = clientCompletionHandler;
+		clients.push(client);
+	}
+
+	public function removeClient(client:CoverageReportClient)
+	{
+		client.completionHandler = null;
+		clients.remove(client);
+	}
+
+	public function getClients():Array<CoverageReportClient>
+	{
+		return clients.concat([]);
+	}
+
 
 	public function loadAllClasses(?resourceName:String = null)
 	{
@@ -182,7 +227,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		}
 		else
 		{
-			r = {id:id, result:"00", trueCount:0, falseCount:0, total:0};
+			r = {id:id, trueCount:0, falseCount:0, total:0};
 			branchResultsById.set(id, r);
 		}
 
@@ -192,25 +237,47 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		r.total ++;
 	
-			
-		if(r.result == "11")
-		{
-			//both true and false have already been logged
-		}
-		else if(bool && r.result.charAt(0) == "0")
-		{
-			//log true
-			r.result = "1" + r.result.substr(1,1);
-		}
-		else if(!bool && r.result.charAt(1) == "0")
-		{
-			//log false
-			r.result = r.result.substr(0,1) + "1";
-		}
 
 		#if neko mutex.release(); #end
 		return value;
 	}
 
+
+
+	
+
+	///////////////////////////////////
+
+	function generateReport()
+	{
+		allClasses.getResults(true);
+
+		clientCompleteCount = 0;
+			
+		for (client in clients)
+		{	
+			client.report(allClasses);
+		}
+	}
+
+	function clientCompletionHandler(client:CoverageReportClient):Void
+	{
+		clientCompleteCount ++;
+		
+		if (clientCompleteCount == clients.length)
+		{
+			if (completionHandler != null)
+			{
+				executeCompletionHandler();
+				//Timer.delay(executeCompletionHandler, 1);
+			}
+		}
+	}
+
+	function executeCompletionHandler()
+	{
+		var percent:Float = allClasses.getPercentage();
+		completionHandler(percent);
+	}
 
 }

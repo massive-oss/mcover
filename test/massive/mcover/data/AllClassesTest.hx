@@ -163,7 +163,7 @@ class AllClassesTest extends AbstractNodeListTest
 
 		var hash:IntHash<BranchResult> = new IntHash();
 
-		var result:BranchResult = {id:branch.id, result:"11", trueCount:5, falseCount:5, total:10};
+		var result:BranchResult = {id:branch.id, trueCount:5, falseCount:5, total:10};
 
 		hash.set(branch.id, result);
 		allClasses.setBranchResultsHash(hash);

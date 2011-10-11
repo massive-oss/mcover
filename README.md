@@ -114,8 +114,8 @@ Add the mcover macro to your build.hxml file:
 
 Print a report at runtime (once your tests/code have finished executing):
 
-	var reporter = MCover.getLogger().createReporter();
-	reporter.report();
+	var logger = MCover.getLogger();
+	logger.report();
 
 ### Step 4.
 
@@ -214,20 +214,16 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 #### Step 1. 
 At runtime, MCover cam automatically log code execution blocks.
 
-To capture coverage initialize a coverage reporter (CoverageReporter):
+To generate a report call once your unit tests (or other code) have completed:
 
-	var reporter = MCover.getLogger().createReporter();
-
-#### Step 2. 
-To generate the results call MCoverRunner.report() once your unit tests (or other code) have completed:
-
-	reporter.report();
+	var logger = MCover.getLogger();
+	logger.report();
 
 By default these are sent to a generic TraceClient that outputs to the screen.
 
 You can set multiple custom clients (CoverageReportClient) if required:
 
-	reporter.addClient(new massive.mcover.client.PrintClient());
+	logger.addClient(new massive.mcover.client.PrintClient());
 
 
 
@@ -363,12 +359,6 @@ You can also run the unit tests (requires munit haxelib) to see coverage of the 
 
 Advanced Usage
 ---------------------
-
-#### Setting a custom reporter
-
-You can specify a custom reporter by passing through a class that implements CoverageReporter. By default an instance of CoverageReporterImpl is created.
-
-	MCover.getLogger().createReporter(CoverageReporterImpl);
 
 #### Ignoring individual classes or methods
 
