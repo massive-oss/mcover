@@ -89,7 +89,6 @@ class Timer
 		#end
 	}
 
-	@IgnoreCover
 	function defaultRun()
 	{}
 

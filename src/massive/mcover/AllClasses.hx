@@ -26,68 +26,32 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover.data;
+package massive.mcover;
 
-@:keep class Branch extends AbstractBlock
+import massive.mcover.client.PrintClient;
+import massive.mcover.client.TraceClient;
+import massive.mcover.CoverageLogger;
+import massive.mcover.CoverageReportClient;
+import massive.mcover.data.AbstractBlock;
+import massive.mcover.data.AbstractNode;
+import massive.mcover.data.AbstractNodeList;
+import massive.mcover.data.AllClasses;
+import massive.mcover.data.Branch;
+import massive.mcover.data.Clazz;
+import massive.mcover.data.CoverageResult;
+import massive.mcover.data.File;
+import massive.mcover.data.Method;
+import massive.mcover.data.Package;
+import massive.mcover.data.Statement;
+import massive.mcover.Exception;
+import massive.mcover.macro.CoverClassMacro;
+import massive.mcover.MCover;
+import massive.mcover.munit.client.MCoverPrintClient;
+import massive.mcover.util.Timer;
+
+class AllClasses
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
-
-	public var totalCount(get_totalCount, null):Int;
-
-	public function new()
-	{
-		super();
-		trueCount = 0;
-		falseCount = 0;
-	}
-
-	function get_totalCount():Int
-	{
-		return trueCount + falseCount;
-	}
-
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
-		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
-		}
-		return s;
-		
-	}
-
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
-	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
-    }
+	public static function main():AllClasses {return new AllClasses();}
+	public function new(){trace('This is a generated main class');}
 }
 
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
-}

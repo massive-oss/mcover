@@ -51,6 +51,19 @@ class AbstractBlockTest extends AbstractNodeTest
 		Assert.areEqual(target, block.toString());
 	}
 
+	@Test
+	public function shouldSerialize()
+	{
+		block = createBlock();
+
+		var data = haxe.Serializer.run(block);
+		var block2 = haxe.Unserializer.run(data);
+
+		Assert.areEqual(block.toString(), block2.toString());
+	}
+
+
+
 	////////////////////////////////
 
 	override function createEmptyNode():AbstractNode
@@ -60,7 +73,7 @@ class AbstractBlockTest extends AbstractNodeTest
 
 	function createEmptyBlock():AbstractBlock
 	{
-		return Type.createEmptyInstance(AbstractBlock);
+		return Type.createInstance(AbstractBlock, []);
 	}
 
 	function createBlock():AbstractBlock

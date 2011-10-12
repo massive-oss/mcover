@@ -26,68 +26,26 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover.data;
+package massive.mcover;
 
-@:keep class Branch extends AbstractBlock
+import massive.mcover.data.Statement;
+import massive.mcover.data.Branch;
+import massive.mcover.data.AllClasses;
+
+
+interface CoverageReportClient
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
-
-	public var totalCount(get_totalCount, null):Int;
-
-	public function new()
-	{
-		super();
-		trueCount = 0;
-		falseCount = 0;
-	}
-
-	function get_totalCount():Int
-	{
-		return trueCount + falseCount;
-	}
-
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
-		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
+	/**
+	 * Handler which if present, should be called when the client has completed its processing of the results.
+	 */
+	var completionHandler(default, default):CoverageReportClient -> Void;
 		
-		}
-		return s;
-		
-	}
+	/**
+	 * Called when all tests are complete.
+	 *  
+	 * @param	allClasses	arrgregated coverage data containing all statements, branches orded by package/file/class/method
+	 * @see massive.mcover.data.AllClasses;
+	 */
+	function report(allClasses:AllClasses):Void;
 
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
-	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
-    }
-}
-
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
 }

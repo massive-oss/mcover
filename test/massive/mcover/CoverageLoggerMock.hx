@@ -1,13 +1,13 @@
 package massive.mcover;
 
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 
 class CoverageLoggerMock implements CoverageLogger
 {
 	public var completionHandler(default, default):Float -> Void;
 
 
-	public var allClasses(default, null):AllClasses;
+	public var coverage(default, null):Coverage;
 
 	public var currentTest(default, set_currentTest):String;
 	function set_currentTest(value:String):String
@@ -32,7 +32,7 @@ class CoverageLoggerMock implements CoverageLogger
 	{
 		resourceName = null;
 		
-		allClasses = null;
+		coverage = null;
 		clients = [];
 	}
 
@@ -71,10 +71,10 @@ class CoverageLoggerMock implements CoverageLogger
 	}
 	
 
-	public function initializeAllClasses(?resourceName:String = null):Void
+	public function initializeCoverage(?resourceName:String = null):Void
 	{
 		this.resourceName = resourceName;
-		allClasses = new AllClasses();
+		coverage = new Coverage();
 	}
 
 	public function logStatement(id:Int):Void

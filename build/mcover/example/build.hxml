@@ -1,0 +1,27 @@
+-main Main
+-swf build/main.swf
+-swf-version 10
+-swf-header 1024:769:60:FFFFFF
+-cp ../src
+-cp src
+--macro massive.mcover.MCover.include('', ['src'], null)
+
+--next
+
+-main Main
+-js build/main.js
+-cp ../src
+-cp src
+# -D MCOVER_DEBUG
+--macro massive.mcover.MCover.include('', ['src'])
+
+--next
+
+-main Main
+-neko build/main.n
+
+-cp ../src
+-cp src
+-D MCOVER_DEBUG
+--macro massive.mcover.MCover.include('', ['src'])
+-cmd neko build/main.n

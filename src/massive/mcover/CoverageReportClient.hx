@@ -30,7 +30,7 @@ package massive.mcover;
 
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 
 
 interface CoverageReportClient
@@ -43,9 +43,9 @@ interface CoverageReportClient
 	/**
 	 * Called when all tests are complete.
 	 *  
-	 * @param	allClasses	arrgregated coverage data containing all statements, branches orded by package/file/class/method
-	 * @see massive.mcover.data.AllClasses;
+	 * @param	coverage	arrgregated coverage data containing all statements, branches orded by package/file/class/method
+	 * @see massive.mcover.data.Coverage;
 	 */
-	function report(allClasses:AllClasses):Void;
+	function report(coverage:Coverage):Void;
 
 }

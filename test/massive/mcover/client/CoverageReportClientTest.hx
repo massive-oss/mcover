@@ -3,7 +3,7 @@ package massive.mcover.client;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 import massive.mcover.CoverageReportClientMock;
 import massive.mcover.CoverageReportClient;
 
@@ -11,7 +11,7 @@ import massive.mcover.CoverageReportClient;
 class CoverageReportClientTest
 {
 	var client:CoverageReportClient;
-	var allClasses:AllClasses;
+	var coverage:Coverage;
 	public function new()
 	{
 		
@@ -31,7 +31,7 @@ class CoverageReportClientTest
 	public function setup():Void
 	{
 		client = createClient();
-		allClasses = new AllClasses();
+		coverage = new Coverage();
 	}
 	
 	@After
@@ -45,7 +45,7 @@ class CoverageReportClientTest
 	{	
 		var handler:Dynamic = factory.createHandler(this, clientCompleteHandler, 500);
 		client.completionHandler = handler;
-		client.report(allClasses);
+		client.report(coverage);
 	}
 	
 	function clientCompleteHandler(c:CoverageReportClient)

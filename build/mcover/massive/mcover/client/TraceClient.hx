@@ -26,68 +26,46 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover.data;
+package massive.mcover.client;
 
-@:keep class Branch extends AbstractBlock
+class TraceClient extends PrintClient
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
-
-	public var totalCount(get_totalCount, null):Int;
-
 	public function new()
 	{
 		super();
-		trueCount = 0;
-		falseCount = 0;
+		newline = #if js "<br/>" #else "\n" #end;
+		tab = #if js "&nbsp;" #else " " #end;
 	}
 
-	function get_totalCount():Int
+	override function printReport()
 	{
-		return trueCount + falseCount;
-	}
+		super.printReport();
+		output += newline;
 
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
+		trace(newline + output);
+		/*
 
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
-		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
+		#if js
+		var textArea = js.Lib.document.getElementById("haxe:trace");
+		if (textArea == null) 
+		{	
+			var error:String = "MissingElementException: 'haxe:trace' element not found in html file";
+			js.Lib.alert(error);
+			return;
 		}
-		return s;
-		
+	
+		textArea.innerHTML += output;
+		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
+
+		#elseif neko
+			neko.Lib.print(output);
+		#elseif cpp
+			cpp.Lib.print(output);
+		#elseif php
+			php.Lib.print(output);
+		#else
+			trace(newline + output);
+		#end
+		*/
 	}
-
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
-	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
-    }
-}
-
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
 }

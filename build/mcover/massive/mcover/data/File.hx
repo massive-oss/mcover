@@ -27,67 +27,32 @@
 ****/
 
 package massive.mcover.data;
-
-@:keep class Branch extends AbstractBlock
+import massive.mcover.data.CoverageResult;
+@:keep class File extends AbstractNodeList
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
-
-	public var totalCount(get_totalCount, null):Int;
-
 	public function new()
 	{
 		super();
-		trueCount = 0;
-		falseCount = 0;
 	}
 
-	function get_totalCount():Int
+	override public function getClasses():Array<Clazz>
 	{
-		return trueCount + falseCount;
-	}
-
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
+		var a:Array<Clazz> = [];
+		for(item in itemsById)
 		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
+			if(Type.getClass(item) == Clazz)
+			{
+				a.push(cast(item, Clazz));	
+			}
 		}
-		return s;
-		
+		return a;
 	}
 
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
+	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
-    }
-}
-
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
+		to = super.appendResults(to, from);
+		to.cc += (from.sc > 0) ? 1 : 0; 
+		to.c += 1;	
+		return to;
+	}
 }

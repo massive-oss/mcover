@@ -39,7 +39,7 @@ import massive.mcover.data.Statement;
 import massive.mcover.data.AbstractNode;
 import massive.mcover.data.AbstractBlock;
 import massive.mcover.data.AbstractNodeList;
-import massive.mcover.data.Coverage;
+import massive.mcover.data.AllClasses;
 import massive.mcover.data.CoverageResult;
 
 import massive.mcover.client.TraceClient;
@@ -53,7 +53,7 @@ interface CoverageLogger
 	 */
 	var completionHandler(default, default):Float -> Void;
 
-	var coverage(default, null):Coverage;
+	var allClasses(default, null):AllClasses;
 
 
 	var currentTest(default, set_currentTest):String;
@@ -73,7 +73,7 @@ interface CoverageLogger
 	function getClients():Array<CoverageReportClient>;
 
 
-	function initializeCoverage(?resourceName:String = null):Void;
+	function initializeAllClasses(?resourceName:String = null):Void;
 
 	function logStatement(id:Int):Void;
 
@@ -94,7 +94,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	 */
 	public var completionHandler(default, default):Float -> Void;
 
-	public var coverage(default, null):Coverage;
+	public var allClasses(default, null):AllClasses;
 
 	public var currentTest(default, set_currentTest):String;
 
@@ -154,23 +154,23 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	function generateReportResults(?currentTestOnly:Bool=false)
 	{
-		if(coverage == null)
+		if(allClasses == null)
 		{
-			initializeCoverage();	
+			initializeAllClasses();	
 		}
 		
 		if(currentTestOnly)
 		{
-			coverage.setStatementResultsHash(testStatementResultsById);
-			coverage.setBranchResultsHash(testBranchResultsById);	
+			allClasses.setStatementResultsHash(testStatementResultsById);
+			allClasses.setBranchResultsHash(testBranchResultsById);	
 		}
 		else
 		{
-			coverage.setStatementResultsHash(allStatementResultsById);
-			coverage.setBranchResultsHash(allBranchResultsById);
+			allClasses.setStatementResultsHash(allStatementResultsById);
+			allClasses.setBranchResultsHash(allBranchResultsById);
 		}
 
-		coverage.getResults(false);
+		allClasses.getResults(false);
 	}
 
 	
@@ -197,14 +197,14 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 
-	public function initializeCoverage(?resourceName:String = null)
+	public function initializeAllClasses(?resourceName:String = null)
 	{
 		if(resourceName == null) resourceName = MCover.RESOURCE_DATA;
 		var serializedData:String = haxe.Resource.getString(resourceName);
 		if(serializedData == null) throw new Exception("No generated coverage data found in haxe Resource '" + resourceName  + "'");
 		try
 		{
-			coverage = haxe.Unserializer.run(serializedData);
+			allClasses = haxe.Unserializer.run(serializedData);
 		}
 		catch(e:Dynamic)
 		{
@@ -320,7 +320,7 @@ class CoverageLoggerImpl implements CoverageLogger
 			
 		for (client in clients)
 		{	
-			client.report(coverage);
+			client.report(allClasses);
 		}
 	}
 
@@ -340,7 +340,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	function executeCompletionHandler()
 	{
-		var percent:Float = coverage.getPercentage();
+		var percent:Float = allClasses.getPercentage();
 		completionHandler(percent);
 	}
 

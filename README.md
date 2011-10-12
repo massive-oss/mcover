@@ -390,8 +390,8 @@ This can be useful for forcing the logger to update results without triggering c
 
 Results can then be accessed directly from the logger
 
-	logger.allClasses.getResults();
-	logger.allClasses.getPercentages();
+	logger.coverage.getResults();
+	logger.coverage.getPercentages();
 
 
 ### Ignoring individual classes or methods

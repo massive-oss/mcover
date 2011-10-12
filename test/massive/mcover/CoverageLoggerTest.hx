@@ -3,14 +3,14 @@ package massive.mcover;
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 
 
 class CoverageLoggerTest
 {
 	var logger:CoverageLogger;
 	var client:CoverageReportClient;
-	var allClasses:AllClasses;
+	var coverage:Coverage;
 
 	var originalTrace:Dynamic;
 
@@ -35,7 +35,7 @@ class CoverageLoggerTest
 	{
 		logger = createLogger();
 		client = new CoverageReportClientMock();
- 		allClasses = new AllClasses();
+ 		coverage = new Coverage();
 
 	}
 	
@@ -49,10 +49,10 @@ class CoverageLoggerTest
 	}
 
 	@Test
-	public function shouldCreateAllClassesOnInitializeAllClasses()
+	public function shouldCreateCoverageOnInitializeCoverage()
 	{
-		logger.initializeAllClasses(MCover.RESOURCE_DATA);
-		Assert.isNotNull(logger.allClasses);
+		logger.initializeCoverage(MCover.RESOURCE_DATA);
+		Assert.isNotNull(logger.coverage);
 	}
 
 

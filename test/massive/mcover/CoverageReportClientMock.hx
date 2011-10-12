@@ -2,12 +2,12 @@ package massive.mcover;
 
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 
 
 class CoverageReportClientMock implements CoverageReportClient
 {
-	public var allClasses:AllClasses;
+	public var coverage:Coverage;
 
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
@@ -20,9 +20,9 @@ class CoverageReportClientMock implements CoverageReportClient
 		
 	}
 
-	public function report(allClasses:AllClasses):Void
+	public function report(coverage:Coverage):Void
 	{
-		this.allClasses = allClasses;
+		this.coverage = coverage;
 
 		var timer = massive.munit.util.Timer.delay(reportComplete, 50);
 

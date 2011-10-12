@@ -6,7 +6,7 @@ import massive.munit.async.AsyncFactory;
 
 import massive.mcover.CoverageLogger;
 import massive.mcover.MCover;
-import massive.mcover.data.AllClasses;
+import massive.mcover.data.Coverage;
 import massive.mcover.data.Branch;
 
 import massive.mcover.client.TraceClient;
@@ -75,13 +75,13 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 
 	@Test
-	public function shouldAddAllClassesToClientOnReport()
+	public function shouldAddCoverageToClientOnReport()
 	{
 		instance.addClient(client);
 		instance.report();
 
 		var mockClient = cast(client, CoverageReportClientMock);
-		Assert.isNotNull(mockClient.allClasses);
+		Assert.isNotNull(mockClient.coverage);
 	}
 
 	@Test
@@ -91,7 +91,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		instance.report(true);
 
 		var mockClient = cast(client, CoverageReportClientMock);
-		Assert.isNull(mockClient.allClasses);
+		Assert.isNull(mockClient.coverage);
 	}
 
 
@@ -152,34 +152,34 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 
 	@Test
-	public function shouldInitializeAllClassesOnReport()
+	public function shouldInitializeCoverageOnReport()
 	{
 		instance.addClient(client);
-		Assert.isNull(instance.allClasses);
+		Assert.isNull(instance.coverage);
 		
 		instance.report();
-		Assert.isNotNull(instance.allClasses);		
+		Assert.isNotNull(instance.coverage);		
 	}
 
 	@Test
-	public function shouldNotReInitializeAllClassesWhenRunnerAdded()
+	public function shouldNotReInitializeCoverageWhenRunnerAdded()
 	{
 		instance.addClient(client);
-		instance.initializeAllClasses();
-		var allClasses = instance.allClasses;
+		instance.initializeCoverage();
+		var coverage = instance.coverage;
 
 		instance.report();
-		Assert.areEqual(allClasses, instance.allClasses);
+		Assert.areEqual(coverage, instance.coverage);
 	}
 
 	
 
 	@Test
-	public function shouldInitializeAllClasses()
+	public function shouldInitializeCoverage()
 	{
-		Assert.isNull(instance.allClasses);
-		instance.initializeAllClasses();
-		Assert.isNotNull(instance.allClasses);
+		Assert.isNull(instance.coverage);
+		instance.initializeCoverage();
+		Assert.isNotNull(instance.coverage);
 	}
 
 	@Test
@@ -187,7 +187,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		try
 		{
-			instance.initializeAllClasses("InvalidMCoverResourceName");
+			instance.initializeCoverage("InvalidMCoverResourceName");
 			Assert.fail("Exception expected");
 		}
 		catch(e:Exception)
@@ -202,7 +202,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		try
 		{
-			instance.initializeAllClasses("MockMCoverResource");
+			instance.initializeCoverage("MockMCoverResource");
 			Assert.fail("Exception expected");
 		}
 		catch(e:Exception)
@@ -239,20 +239,20 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 		instance.reportCurrentTest();
 
-		Assert.areEqual(0, mockClient.allClasses.getPercentage());
+		Assert.areEqual(0, mockClient.coverage.getPercentage());
 
 		instance.logStatement(1);
 		instance.logBranch(0, false);
 
 		instance.reportCurrentTest();
 
-		Assert.isTrue(mockClient.allClasses.getPercentage() > 0);
+		Assert.isTrue(mockClient.coverage.getPercentage() > 0);
 
 		instance.currentTest = "bar";
 		
 		instance.reportCurrentTest();
 
-		Assert.areEqual(0, mockClient.allClasses.getPercentage());
+		Assert.areEqual(0, mockClient.coverage.getPercentage());
 
 
 	}
@@ -267,7 +267,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		instance.reportCurrentTest(true);
 
 		var mockClient = cast(client, CoverageReportClientMock);
-		Assert.isNull(mockClient.allClasses);
+		Assert.isNull(mockClient.coverage);
 	}
 
 

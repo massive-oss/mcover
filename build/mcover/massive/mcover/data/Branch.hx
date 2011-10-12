@@ -54,7 +54,7 @@ package massive.mcover.data;
 
 	override public function toString():String
 	{
-		var s = super.toString();
+		var s:String = super.toString();
 		if(!isCovered())
 		{
 			s += " | ";
@@ -64,10 +64,9 @@ package massive.mcover.data;
 		
 		}
 		return s;
-		
 	}
 
-	///////////
+		///////////
 
 	override function hxSerialize( s : haxe.Serializer )
 	{

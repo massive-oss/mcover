@@ -28,66 +28,87 @@
 
 package massive.mcover.data;
 
-@:keep class Branch extends AbstractBlock
+@:keep class AbstractNode
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
+	public var id:Null<Int>;
+	public var name:String;
 
-	public var totalCount(get_totalCount, null):Int;
+	var resultCache:CoverageResult;
 
-	public function new()
+	function new()
 	{
-		super();
-		trueCount = 0;
-		falseCount = 0;
+
 	}
 
-	function get_totalCount():Int
+	public function getResults(?cache:Bool=true):CoverageResult
 	{
-		return trueCount + falseCount;
-	}
-
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
+		if(resultCache == null || !cache)
 		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
+			resultCache = emptyResult();
 		}
-		return s;
-		
+
+		return resultCache;
 	}
 
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
+	public function getPercentage():Float
 	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
+		var r = getResults();
+		try
+		{
+			var p = Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+
+			#if (!neko && !flash9) 
+			if(Math.isNaN(p)) throw "NaN";
+			#end
+			return p;
+		}
+		catch(e:Dynamic){}
+		return 0;
+	}
+	
+	public function getClasses():Array<Clazz>
+	{
+		return [];
+	}
+
+	public function lookupBranch(path:Array<Int>):Branch
+	{
+		return null;
+	}
+
+	public function lookupStatement(path:Array<Int>):Statement
+	{
+		return null;
+	}
+
+	
+	public function getMissingBranches():Array<Branch>
+	{
+		return [];
+	}
+
+	public function getMissingStatements():Array<Statement>
+	{
+		return [];
+	}
+
+	//////////////
+	
+
+	function emptyResult():CoverageResult
+	{
+		return {sc:0, s:0, bt:0, bf:0,bc:0,b:0, mc:0, m:0, cc:0, c:0, fc:0, f:0, pc:0, p:0};
+	}
+
+	function hxSerialize( s : haxe.Serializer )
+	{
+		s.serialize(id);
+        s.serialize(name);
     }
     
-    override function hxUnserialize( s : haxe.Unserializer )
+    function hxUnserialize( s : haxe.Unserializer )
     {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
+    	id = s.unserialize();
+        name = s.unserialize();
     }
-}
-
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
 }

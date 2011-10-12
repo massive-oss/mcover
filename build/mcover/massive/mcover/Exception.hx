@@ -26,68 +26,76 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover.data;
+package massive.mcover;
 
-@:keep class Branch extends AbstractBlock
+import haxe.PosInfos;
+import haxe.Stack;
+
+class Exception
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
 
-	public var totalCount(get_totalCount, null):Int;
 
-	public function new()
+	/**
+	 * The exception type. 
+	 * 
+	 * Should be the fully qualified name of the Exception class. e.g. 'massive.io.IOException'
+	 */
+	public var type(default, null):String;
+	
+	/**
+	 * A description of the exception
+	 */
+	public var message(default, null):String;
+	
+	/**
+	 * The pos infos from where the exception was created.
+	 */
+	public var info(default, null):PosInfos;
+
+	/**
+	* An optional reference to a lower level exception that
+	* triggered the current exception to be thrown
+	*/
+	public var cause(default, null):Dynamic;
+	public var causeExceptionStack(default, null):Array<StackItem>;
+	public var causeCallStack(default, null):Array<StackItem>;
+	
+	/**
+	 * @param	message			a description of the exception
+	 */
+	public function new(message:String, ?cause:Dynamic, ?info:PosInfos) 
 	{
-		super();
-		trueCount = 0;
-		falseCount = 0;
-	}
+		type = here().className;
+		this.message = message;
+		this.cause = cause;
+		this.info = info;
 
-	function get_totalCount():Int
-	{
-		return trueCount + falseCount;
-	}
-
-	override public function isCovered():Bool
-	{
-		return trueCount > 0 && falseCount > 0;
-	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
+		if(cause != null)
 		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
+			causeExceptionStack = haxe.Stack.exceptionStack();
+			causeCallStack = haxe.Stack.callStack();
 		}
-		return s;
-		
 	}
 
-	///////////
-
-	override function hxSerialize( s : haxe.Serializer )
+	/**
+	 * Returns a string representation of this exception.
+	 * 
+	 * Format: <type>: <message> at <className>#<methodName> (<lineNumber>)
+	 */
+	public function toString():String
 	{
-		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
-    override function hxUnserialize( s : haxe.Unserializer )
-    {
-    	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
-    }
-}
+		var str:String = type + ": " + message;
+		if (info != null)
+			str += " at " + info.className + "#" + info.methodName + " (" + info.lineNumber + ")";
+		if (cause != null)
+        	str += "\n\t Caused by: " + cause; 
+		return str;
+	}
 
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
+	//////////////////
+
+	function here(?info:PosInfos):PosInfos
+	{
+		return info;
+	}
 }

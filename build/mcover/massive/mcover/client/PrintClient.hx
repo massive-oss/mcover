@@ -31,7 +31,7 @@ package massive.mcover.client;
 import massive.mcover.CoverageReportClient;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
-import massive.mcover.data.Coverage;
+import massive.mcover.data.AllClasses;
 import massive.mcover.util.Timer;
 
 class PrintClient implements CoverageReportClient
@@ -41,11 +41,9 @@ class PrintClient implements CoverageReportClient
 	 */
 	public var completionHandler(default, default):CoverageReportClient -> Void;
 
-	public var includeHeader(default, default):Bool;
+
 	public var includeMissingBlocks(default, default):Bool;
 	public var includeBlockExecutionCounts(default, default):Bool;
-	public var includeClassSummary(default, default):Bool;
-	public var includePackageSummary(default, default):Bool;
 	
 		
 	/**
@@ -72,25 +70,21 @@ class PrintClient implements CoverageReportClient
 
 	public function new()
 	{
-		includeHeader = true;
 		includeMissingBlocks = true;
 		includeBlockExecutionCounts = false;
-		includeClassSummary = true;
-		includePackageSummary = true;
-
 		output = "";
 		newline = "\n";
 		tab = " ";
 		divider = "----------------------------------------------------------------";
 	}
 	
-	var coverage:Coverage;
+	var allClasses:AllClasses;
 
-	public function report(coverage:Coverage):Void
+	public function report(allClasses:AllClasses):Void
 	{
 		output = "";
 	
-		this.coverage = coverage;
+		this.allClasses = allClasses;
 				
 		printReport();
 
@@ -106,13 +100,10 @@ class PrintClient implements CoverageReportClient
 	}
 
 	function printReport()
-	{	
-		if(includeHeader)
-		{
-			print(divider);
-			print("MCover v" + MCover.VERSION + " Coverage Report, generated " + Date.now().toString());
-			print(divider);
-		}
+	{
+		print(divider);
+		print("MCover v" + MCover.VERSION + " Coverage Report, generated " + Date.now().toString());
+		print(divider);
 
 		if(includeBlockExecutionCounts)
 		{
@@ -123,24 +114,20 @@ class PrintClient implements CoverageReportClient
 		{
 			printMissingBlocks();
 		}
-	
-		if(includeClassSummary)
-		{
-			printClassResults();
-		}
 
-		if(includePackageSummary)
-		{
-			printPackageResults();
-		}
-			
+	
+
+		printClassResults();
+		printPackageResults();
+
+
 		printSummary();
 
 	}
 
 	function printSummary()
 	{
-		var r = coverage.getResults();
+		var r = allClasses.getResults();
 
 		var columnWidth:Int = 20;
 		
@@ -159,7 +146,7 @@ class PrintClient implements CoverageReportClient
 		print("");
 
 		print(divider);
-		printToTabs(["RESULT", coverage.getPercentage() + "%"], columnWidth);
+		printToTabs(["RESULT", allClasses.getPercentage() + "%"], columnWidth);
 		print(divider);
 		print("");
 	}
@@ -171,7 +158,7 @@ class PrintClient implements CoverageReportClient
 		print("COVERAGE BREAKDOWN BY PACKAGE:");
 		print("");
 
-		var packages = coverage.getPackages();
+		var packages = allClasses.getPackages();
 
 		if(Lambda.count(packages) == 0)
 		{
@@ -197,7 +184,7 @@ class PrintClient implements CoverageReportClient
 		print("");
 		
 
-		var classes = coverage.getClasses();
+		var classes = allClasses.getClasses();
 
 		if(Lambda.count(classes) == 0)
 		{
@@ -220,28 +207,10 @@ class PrintClient implements CoverageReportClient
 	function printMissingBlocks()
 	{
 		print("");
-		print("MISSING STATEMENT COVERAGE:");
+		print("NON-EXECUTED BRANCHES:");
 		print("");
 
-		var statements = coverage.getMissingStatements();
-
-		if(Lambda.count(statements) == 0)
-		{
-			printToTabs(["", "None"]);
-		}
-		else
-		{
-			for(block in statements)
-			{
-				printToTabs(["",  block.toString()]);
-			}
-		}
-
-		print("");
-		print("MISSING BRANCH COVERAGE:");
-		print("");
-
-		var branches = coverage.getMissingBranches();
+		var branches = allClasses.getMissingBranches();
 
 		if(Lambda.count(branches) == 0)
 		{
@@ -250,6 +219,24 @@ class PrintClient implements CoverageReportClient
 		else
 		{
 			for(block in branches)
+			{
+				printToTabs(["",  block.toString()]);
+			}
+		}
+
+		print("");
+		print("NON-EXECUTED STATEMENTS:");
+		print("");
+
+		var statements = allClasses.getMissingStatements();
+
+		if(Lambda.count(statements) == 0)
+		{
+			printToTabs(["", "None"]);
+		}
+		else
+		{
+			for(block in statements)
 			{
 				printToTabs(["",  block.toString()]);
 			}
@@ -271,9 +258,9 @@ class PrintClient implements CoverageReportClient
 
 		var statements:Array<Statement> = [];
 
-		for(key in coverage.statementResultsById.keys())
+		for(key in allClasses.statementResultsById.keys())
 		{
-			var statement = coverage.getStatementById(key);
+			var statement = allClasses.getStatementById(key);
 			if(statement.count > 0)
 			{
 				statements.push(statement);
@@ -305,9 +292,9 @@ class PrintClient implements CoverageReportClient
 		print("");
 
 		var branches:Array<Branch> = [];
-		for(key in coverage.branchResultsById.keys())
+		for(key in allClasses.branchResultsById.keys())
 		{
-			var branch = coverage.getBranchById(key);
+			var branch = allClasses.getBranchById(key);
 			if(branch.totalCount > 0)
 			{
 				branches.push(branch);

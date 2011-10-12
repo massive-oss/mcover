@@ -40,15 +40,12 @@ import massive.munit.util.Timer;
 import massive.mcover.MCover;
 import massive.mcover.CoverageLogger;
 import massive.mcover.client.PrintClient;
-import massive.mcover.data.Clazz;
 
 /**
  * Decorates other ITestResultClient's, adding behavior to include code coverage results
  * 
  * @author Dominic De Lorenzo
  */
-
-
 class MCoverPrintClient extends massive.munit.client.PrintClient
 {
 	/**
@@ -56,27 +53,40 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	 */
 	public inline static var DEFAULT_ID:String = "MCoverClient";
 
-	var logger:CoverageLogger;
+	var coverage:CoverageLogger;
 	var coverClient:massive.mcover.client.PrintClient;
-	var coveredClasses:Hash<Clazz>;
+
+
+	public var includeMissingBlocks(default, set_includeMissingBlocks):Bool;
+	function set_includeMissingBlocks(value:Bool):Bool
+	{
+		includeMissingBlocks = value;
+		coverClient.includeMissingBlocks = value;
+		return value;
+	}
+
+	public var includeBlockExecutionCounts(default, set_includeBlockExecutionCounts):Bool;
+	function set_includeBlockExecutionCounts(value:Bool):Bool
+	{
+		includeBlockExecutionCounts = value;
+		coverClient.includeBlockExecutionCounts = value;
+		return value;
+	}
 	
 	/**
 	 * 
-	 * @param	includeIgnoredReport				flag to pass through to PrintClient
+	 * @param	client				the test result client to decorate
 	 */
 	public function new(?includeIgnoredReport:Bool = false)
 	{
 		super(includeIgnoredReport);
 		id = DEFAULT_ID;
 		
-		coveredClasses = new Hash();
 		try
 		{
-			logger = MCover.getLogger();
+			coverage = MCover.getLogger();
 			coverClient = new massive.mcover.client.PrintClient();
-			
-			coverClient.includeMissingBlocks = false;
-			logger.addClient(coverClient);
+			coverage.addClient(coverClient);
 		}
 		catch(e:Dynamic)
 		{
@@ -101,16 +111,7 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	{
 
 		printCoverage();
-		logger.report();
-
-		var classes = logger.coverage.getClasses();
-
-		for(cls in classes)
-		{
-			if(coveredClasses.exists(cls.name)) continue;
-			printMissingClassBlocks(cls, true);
-
-		}
+		coverage.report();
 
 		print(newline + coverClient.output + newline);
 
@@ -127,16 +128,16 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			printCoverage();
 			printExceptions();
 			currentTestClass = result.className;
-			logger.currentTest = currentTestClass;
+			coverage.currentTest = currentTestClass;
 			print(newline + "Class: " + currentTestClass + " ");
 		}
 	}
 
 	function printCoverage()
 	{
-		if(logger.currentTest == null) return;
+		if(coverage.currentTest == null) return;
 
-		logger.reportCurrentTest(true);
+		coverage.reportCurrentTest(true);
 		
 		var s:String = currentTestClass;
 
@@ -144,64 +145,12 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 		{
 			s = s.substr(0, s.length-4);
 
-			var cls = logger.coverage.getClassByName(s);
+			var cls = coverage.allClasses.getClassByName(s);
 
 			if(cls != null)
 			{
-				printClassCoverage(cls);
-				
+				print(" " + cls.getPercentage() + "%");
 			}
 		}
-	}
-
-	function printClassCoverage(cls:Clazz)
-	{
-		coveredClasses.set(cls.name, cls);
-		print(" " +cls.getPercentage() + "%");
-		printMissingClassBlocks(cls);
-
-	}
-
-	function printMissingClassBlocks(cls:Clazz, ?includeHeader:Bool=false)
-	{
-
-		if(cls.getPercentage() == 100) return;
-
-		print(newline);
-		
-		
-		var statements = cls.getMissingStatements();
-
-		if(statements.length > 0)
-		{
-			if(includeHeader)
-			{
-				print("Coverage: Other missing statements:" + newline);
-			}
-
-			for(block in statements)
-			{
-				print(newline + "     ! " + block.toString());
-			}
-		}
-
-		var branches = cls.getMissingBranches();
-
-		if(branches.length > 0)
-		{
-			if(includeHeader)
-			{
-				print(newline + newline);
-				print("Coverage: Other missing branches:" + newline);
-			}
-
-
-			for(block in branches)
-			{
-				print(newline + "     ! " + block.toString());
-			}
-		}
-		print(newline);
-
 	}
 }

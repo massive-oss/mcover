@@ -5,9 +5,9 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import massive.mcover.data.Branch;
 
-class AllClassesTest extends AbstractNodeListTest
+class CoverageTest extends AbstractNodeListTest
 {	
-	var allClasses:AllClasses;
+	var coverage:Coverage;
 
 	public function new() {super();}
 	
@@ -27,7 +27,7 @@ class AllClassesTest extends AbstractNodeListTest
 	override public function setup():Void
 	{
 		super.setup();
-		allClasses = createEmptyAllClasses();
+		coverage = createEmptyCoverage();
 	}
 	
 	@After
@@ -39,16 +39,16 @@ class AllClassesTest extends AbstractNodeListTest
 	@Test
 	public function shouldSortMissingBranchesById()
 	{
-		var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
-		var item2 = cast(allClasses.getItemByName("item2", NodeMock), NodeMock);
-		var item3 = cast(allClasses.getItemByName("item3", NodeMock), NodeMock);
+		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
+		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
+		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(allClasses.getItemByName("item1a", NodeMock), NodeMock);
+		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
 		
 		item2.branch.id = 2;
 		item3.branch.id = 4;
 
-		var missing = allClasses.getMissingBranches();
+		var missing = coverage.getMissingBranches();
 
 		Assert.areEqual(0, missing[0].id);
 		Assert.areEqual(0, missing[1].id);
@@ -60,16 +60,16 @@ class AllClassesTest extends AbstractNodeListTest
 	@Test
 	public function shouldSortMissingStatementsById()
 	{
-		var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
-		var item2 = cast(allClasses.getItemByName("item2", NodeMock), NodeMock);
-		var item3 = cast(allClasses.getItemByName("item3", NodeMock), NodeMock);
+		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
+		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
+		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(allClasses.getItemByName("item1a", NodeMock), NodeMock);
+		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
 		
 		item2.statement.id = 2;
 		item3.statement.id = 4;
 
-		var missing = allClasses.getMissingStatements();
+		var missing = coverage.getMissingStatements();
 
 		Assert.areEqual(0, missing[0].id);
 		Assert.areEqual(0, missing[1].id);
@@ -81,16 +81,16 @@ class AllClassesTest extends AbstractNodeListTest
 	@Test
 	public function shouldSortClassesById()
 	{
-		var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
-		var item2 = cast(allClasses.getItemByName("item2", NodeMock), NodeMock);
-		var item3 = cast(allClasses.getItemByName("item3", NodeMock), NodeMock);
+		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
+		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
+		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(allClasses.getItemByName("item1a", NodeMock), NodeMock);
+		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
 		
 		item2.clazz.id = 2;
 		item3.clazz.id = 4;
 
-		var classes = allClasses.getClasses();
+		var classes = coverage.getClasses();
 
 		Assert.areEqual(0, classes[0].id);
 		Assert.areEqual(0, classes[1].id);
@@ -103,17 +103,17 @@ class AllClassesTest extends AbstractNodeListTest
 	public function shouldSortPackagesById()
 	{
 
-		var item1 = cast(allClasses.getItemByName("item1", Package), Package);
-		var item2 = cast(allClasses.getItemByName("item2", Package), Package);
-		var item3 = cast(allClasses.getItemByName("item3", Package), Package);
+		var item1 = cast(coverage.getItemByName("item1", Package), Package);
+		var item2 = cast(coverage.getItemByName("item2", Package), Package);
+		var item3 = cast(coverage.getItemByName("item3", Package), Package);
 		
-		var item1a = cast(allClasses.getItemByName("item1", Package), Package);
+		var item1a = cast(coverage.getItemByName("item1", Package), Package);
 		
 		item2.id = 2;
 		item3.id = 4;
 		
 
-		var packages = allClasses.getPackages();
+		var packages = coverage.getPackages();
 
 		Assert.areEqual(0, packages[0].id);
 		Assert.areEqual(2, packages[1].id);
@@ -123,18 +123,18 @@ class AllClassesTest extends AbstractNodeListTest
 	@Test
 	public function shouldAppendFilesCountToResults()
 	{
-		var r = allClasses.getResults();
+		var r = coverage.getResults();
 		assertEmptyResult(r);
 
-		var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
-		r = allClasses.getResults(false);
+		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
+		r = coverage.getResults(false);
 
 		Assert.areEqual(0, r.pc);
 		Assert.areEqual(1, r.p);
 
 		item1.results.sc = 1;
 
-		r = allClasses.getResults(false);
+		r = coverage.getResults(false);
 
 		Assert.areEqual(1, r.pc);
 		Assert.areEqual(1, r.p);	
@@ -144,13 +144,13 @@ class AllClassesTest extends AbstractNodeListTest
 	public function shouldAppendCountsFromStatementResults()
 	{
 		var statement = NodeMock.createStatement();
-		allClasses.addStatement(statement);
+		coverage.addStatement(statement);
 
 		var hash:IntHash<Int> = new IntHash();
 		hash.set(statement.id, 10);
-		allClasses.setStatementResultsHash(hash);
+		coverage.setStatementResultsHash(hash);
 
-		var r = allClasses.getResults();
+		var r = coverage.getResults();
 
 		Assert.areEqual(10, statement.count);
 	}
@@ -159,16 +159,16 @@ class AllClassesTest extends AbstractNodeListTest
 	public function shouldAppendCountsFromBranchResults()
 	{
 		var branch = NodeMock.createBranch();
-		allClasses.addBranch(branch);
+		coverage.addBranch(branch);
 
 		var hash:IntHash<BranchResult> = new IntHash();
 
 		var result:BranchResult = {id:branch.id, trueCount:5, falseCount:5, total:10};
 
 		hash.set(branch.id, result);
-		allClasses.setBranchResultsHash(hash);
+		coverage.setBranchResultsHash(hash);
 
-		var r = allClasses.getResults();
+		var r = coverage.getResults();
 
 		Assert.areEqual(5, branch.trueCount);
 		Assert.areEqual(5, branch.falseCount);
@@ -181,9 +181,9 @@ class AllClassesTest extends AbstractNodeListTest
 		var block = NodeMock.createStatement();
 	
 
-		allClasses.addStatement(block);
+		coverage.addStatement(block);
 
-		var packages = allClasses.getPackages();
+		var packages = coverage.getPackages();
 
 		Assert.areEqual(1, packages.length);
 		Assert.areEqual("package", packages[0].name);
@@ -194,7 +194,7 @@ class AllClassesTest extends AbstractNodeListTest
 		Assert.areEqual(1, cast(file, File).itemCount);
 
 
-		var classes = allClasses.getClasses();
+		var classes = coverage.getClasses();
 		Assert.areEqual(1, classes.length);
 		Assert.areEqual("package.class", classes[0].name);
 		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
@@ -210,9 +210,9 @@ class AllClassesTest extends AbstractNodeListTest
 		var block = NodeMock.createBranch();
 	
 
-		allClasses.addBranch(block);
+		coverage.addBranch(block);
 
-		var packages = allClasses.getPackages();
+		var packages = coverage.getPackages();
 
 		Assert.areEqual(1, packages.length);
 		Assert.areEqual("package", packages[0].name);
@@ -223,7 +223,7 @@ class AllClassesTest extends AbstractNodeListTest
 		Assert.areEqual(1, cast(file, File).itemCount);
 
 
-		var classes = allClasses.getClasses();
+		var classes = coverage.getClasses();
 		Assert.areEqual(1, classes.length);
 		Assert.areEqual("package.class", classes[0].name);
 		Assert.areEqual(1, cast(classes[0], Clazz).itemCount);
@@ -239,8 +239,8 @@ class AllClassesTest extends AbstractNodeListTest
 		try
 		{
 			var block = NodeMock.createStatement();
-			allClasses.addStatement(block);
-			allClasses.addStatement(block);
+			coverage.addStatement(block);
+			coverage.addStatement(block);
 			Assert.fail("Expected exception");
 		}
 		catch(e:Exception)
@@ -255,8 +255,8 @@ class AllClassesTest extends AbstractNodeListTest
 		try
 		{
 			var block = NodeMock.createBranch();
-			allClasses.addBranch(block);
-			allClasses.addBranch(block);
+			coverage.addBranch(block);
+			coverage.addBranch(block);
 			Assert.fail("Expected exception");
 		}
 		catch(e:Exception)
@@ -269,7 +269,7 @@ class AllClassesTest extends AbstractNodeListTest
 	public function shouldThrowExcepctionIfStatementHasMissingFields()
 	{
 		var createMethod = NodeMock.createStatement;
-		var addMethod = allClasses.addStatement;
+		var addMethod = coverage.addStatement;
 		testMissingBlockFieldsThrowError(createMethod, addMethod);
 	}
 
@@ -278,7 +278,7 @@ class AllClassesTest extends AbstractNodeListTest
 	public function shouldThrowExcepctionIfBranchHasMissingFields()
 	{
 		var createMethod = NodeMock.createBranch;
-		var addMethod = allClasses.addBranch;		
+		var addMethod = coverage.addBranch;		
 		testMissingBlockFieldsThrowError(createMethod, addMethod);
 	}
 
@@ -349,19 +349,19 @@ class AllClassesTest extends AbstractNodeListTest
 	{
 		try
 		{
-			var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
+			var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
 			
 			item1.statement.id = 1;
 
-			allClasses.addStatement(item1.statement);
+			coverage.addStatement(item1.statement);
 
-			var statement = allClasses.getStatementById(1);
+			var statement = coverage.getStatementById(1);
 
 			Assert.isNotNull(statement);
 			Assert.areEqual(item1.statement, statement);
 
 
-			statement = allClasses.getStatementById(2);
+			statement = coverage.getStatementById(2);
 			Assert.fail("invalid statement id should throw exception.");
 		}
 		catch(e:Exception)
@@ -375,18 +375,18 @@ class AllClassesTest extends AbstractNodeListTest
 	{
 		try
 		{
-			var item1 = cast(allClasses.getItemByName("item1", NodeMock), NodeMock);
+			var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
 			item1.branch.id = 1;
 
-			allClasses.addBranch(item1.branch);
+			coverage.addBranch(item1.branch);
 
-			var branch = allClasses.getBranchById(1);
+			var branch = coverage.getBranchById(1);
 
 			Assert.isNotNull(branch);
 			Assert.areEqual(item1.branch, branch);
 
 
-			branch = allClasses.getBranchById(2);
+			branch = coverage.getBranchById(2);
 			Assert.fail("invalid branch id should throw exception.");
 		}
 		catch(e:Exception)
@@ -395,6 +395,42 @@ class AllClassesTest extends AbstractNodeListTest
 		}
 	}
 
+	@Test
+	public function shouldGetClassByQualifiedClassName()
+	{
+		var statement = NodeMock.createStatement();
+		statement.qualifiedClassName = "package.class";
+		coverage.addStatement(statement);
+
+		var cls = coverage.getClassByName("package.class");
+		Assert.isNotNull(cls);
+	}
+
+	@Test
+	public function shouldReturnNullIfUnknownPackageOrClass()
+	{
+		var statement = NodeMock.createStatement();
+		statement.qualifiedClassName = "package.class";
+		coverage.addStatement(statement);
+
+		var cls = coverage.getClassByName("other.class");
+		Assert.isNull(cls);
+
+		cls = coverage.getClassByName("package.class2");
+		Assert.isNull(cls);
+	}
+
+	@Test
+	public function shouldGetTopLevelClassByQualifiedClassName()
+	{
+		var statement = NodeMock.createStatement();
+		statement.packageName = "";
+		statement.qualifiedClassName = "class";
+		coverage.addStatement(statement);
+
+		var cls = coverage.getClassByName("class");
+		Assert.isNotNull(cls);
+	}
 
 
 	//////////////////
@@ -406,12 +442,12 @@ class AllClassesTest extends AbstractNodeListTest
 
 	override function createEmptyNodeList():AbstractNodeList
 	{
-		return createEmptyAllClasses();
+		return createEmptyCoverage();
 	}
 
-	function createEmptyAllClasses():AllClasses
+	function createEmptyCoverage():Coverage
 	{
-		return new AllClasses();
+		return new Coverage();
 	}
 
 

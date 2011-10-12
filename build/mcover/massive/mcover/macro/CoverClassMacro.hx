@@ -32,7 +32,7 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 #end
-import massive.mcover.data.Coverage;
+import massive.mcover.data.AllClasses;
 import massive.mcover.data.Package;
 import massive.mcover.data.File;
 import massive.mcover.data.Clazz;
@@ -48,7 +48,7 @@ import massive.mcover.data.Branch;
 
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
-	static var coverage = new Coverage();
+	static var allClasses = new AllClasses();
 	
 	/**
 	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
@@ -56,7 +56,7 @@ import massive.mcover.data.Branch;
 	*/
 	static public function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
-       	var serializedData = haxe.Serializer.run(coverage);
+       	var serializedData = haxe.Serializer.run(allClasses);
         Context.addResource(MCover.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
 	}
 
@@ -477,11 +477,11 @@ import massive.mcover.data.Branch;
 
 		if(isBranch)
 		{
-			coverage.addBranch(cast(block, Branch));
+			allClasses.addBranch(cast(block, Branch));
 		}
 		else
 		{
-			coverage.addStatement(cast(block, Statement));
+			allClasses.addStatement(cast(block, Statement));
 		}
 		return block;
 	}

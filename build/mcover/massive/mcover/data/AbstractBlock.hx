@@ -28,66 +28,67 @@
 
 package massive.mcover.data;
 
-@:keep class Branch extends AbstractBlock
+/**
+* Reprents a unique code block {} within an application
+* Contains a number of properties relating to it's location and context.
+*/
+@:keep class AbstractBlock extends AbstractNode
 {
-	public var trueCount:Int;
-	public var falseCount:Int;
+	public var file:String;
+	
+	public var packageName:String;
+	public var className:String;
+	public var qualifiedClassName:String;
+	public var methodName:String;
 
-	public var totalCount(get_totalCount, null):Int;
+	public var min:Int;
+	public var max:Int;
 
-	public function new()
+	public var location:String;
+
+	public var lookup:Array<Int>;
+
+	function new()
 	{
 		super();
-		trueCount = 0;
-		falseCount = 0;
 	}
 
-	function get_totalCount():Int
+	public function isCovered():Bool
 	{
-		return trueCount + falseCount;
+		return false;
 	}
 
-	override public function isCovered():Bool
+	public function toString():String
 	{
-		return trueCount > 0 && falseCount > 0;
+		return qualifiedClassName + "#" + methodName + " | " + location;
 	}
-
-	override public function toString():String
-	{
-		var s = super.toString();
-		if(!isCovered())
-		{
-			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
-		
-		}
-		return s;
-		
-	}
-
-	///////////
 
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
-        s.serialize(trueCount);
-        s.serialize(falseCount);
-    }
-    
+        s.serialize(file);
+        s.serialize(packageName);
+        s.serialize(className);
+        s.serialize(qualifiedClassName);
+        s.serialize(methodName);
+        s.serialize(min);
+        s.serialize(max);
+        s.serialize(location);
+        s.serialize(lookup);
+     } 
+
     override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
-        trueCount = s.unserialize();
-        falseCount = s.unserialize();
+        file = s.unserialize();
+        packageName = s.unserialize();
+        className = s.unserialize();
+        qualifiedClassName = s.unserialize();
+        methodName = s.unserialize();
+        min = s.unserialize();
+        max = s.unserialize();
+        location = s.unserialize();
+        lookup = s.unserialize();
     }
-}
 
-typedef BranchResult =
-{
-	id:Int,
-	trueCount:Int,
-	falseCount:Int,
-	total:Int, //total true and false counts;
 }
