@@ -82,6 +82,11 @@ import haxe.macro.Compiler;
 		return logger;
 	}
 
+	function new()
+	{
+		
+	}
+	
 	#else
 	//--------------- MACROS --------------..
 

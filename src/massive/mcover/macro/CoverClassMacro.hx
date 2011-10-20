@@ -67,22 +67,29 @@ import massive.mcover.data.Branch;
 	**/
 	@:macro public static function build():Array<Field>
 	{
-
-		var classType = Context.getLocalClass().get();
 		var fields = Context.getBuildFields();
-
-
-		currentClassName = classType.name;
+		var type = Context.getLocalType();
 		
-		var meta = classType.meta;
-
-		if(!meta.has(META_TAG_IGNORE))
+		switch(type)
 		{
-			fields = parseFields(fields);
+			case TInst(t, params):
+			{
+				currentClassName = Std.string(t);
+			}
+			default: null;
 		}
-        return fields;
-	}
 
+		#if MCOVER_IGNORE_CLASS
+			//Disable by default as getting classType can occassionally cause compilation failure
+			//with generic type references (e.g. class Foo<T:Bar>)
+			var classType = Context.getLocalClass().get();
+			var meta = classType.meta;
+			if(meta.has(META_TAG_IGNORE)) return null;
+		#end
+
+		fields = parseFields(fields);
+		return fields;
+	}
 
 	static inline var META_TAG_IGNORE:String = "IgnoreCover";
 	static var currentClassName:String;

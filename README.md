@@ -396,21 +396,8 @@ Results can then be accessed directly from the logger
 
 ### Ignoring individual classes or methods
 
-You can flag a class or method to be excluded from coverage using @IgnoreCover metadata
+You can flag a method to be excluded from coverage using @IgnoreCover metadata
 	
-
-	@IgnoreCover
-	class Foo
-	{
-		public function new()
-		{
-			
-		}
-	}
-
-
-Or
-
 	class Foo
 	{
 		public function new()
@@ -425,5 +412,5 @@ Or
 		}
 	}
 	
-
+By default @IgnoreCover is not available for an entire class (due to a quirky bug with haxe.Context.getLocalClass). However you can try your luck if you add -D MCOVER_IGNORE_CLASS to your compilation instructions
 
