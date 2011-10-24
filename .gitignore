@@ -2,3 +2,4 @@ example/build/*.*
 /build/mcover.zip
 
 build/haxedoc.xml
+temp.hxml

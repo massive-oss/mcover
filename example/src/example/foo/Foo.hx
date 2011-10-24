@@ -1,6 +1,6 @@
 package example.foo;
 
-class Foo<T>
+class Foo<T> extends Base,implements IFoo<T>
 {
 	public var target:T;
 
@@ -11,6 +11,7 @@ class Foo<T>
 
 	public function new(target:T)
 	{
+		super();
 		this.target = target;
 		Main.here();
 	}

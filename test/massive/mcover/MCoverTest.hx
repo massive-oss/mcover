@@ -41,5 +41,4 @@ class MCoverTest
 		var logger:CoverageLogger = MCover.getLogger();
 		Assert.areEqual(MCover.logger, logger);
 	}
-
 }

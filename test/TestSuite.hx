@@ -1,5 +1,6 @@
 import massive.munit.TestSuite;
 
+import ExampleTest;
 import massive.mcover.client.CoverageReportClientTest;
 import massive.mcover.client.PrintClientTest;
 import massive.mcover.CoverageLoggerImplTest;
@@ -30,6 +31,7 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
+		add(ExampleTest);
 		add(massive.mcover.client.CoverageReportClientTest);
 		add(massive.mcover.client.PrintClientTest);
 		add(massive.mcover.CoverageLoggerImplTest);

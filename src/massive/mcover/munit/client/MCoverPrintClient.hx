@@ -42,6 +42,7 @@ import massive.mcover.CoverageLogger;
 import massive.mcover.client.PrintClient;
 import massive.mcover.data.Clazz;
 
+import massive.mcover.munit.client.PrintClientHelper;
 /**
  * Decorates other ITestResultClient's, adding behavior to include code coverage results
  * 
@@ -49,16 +50,30 @@ import massive.mcover.data.Clazz;
  */
 
 
-class MCoverPrintClient extends massive.munit.client.PrintClient
+
+@IgnoreCover
+class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 {
 	/**
 	 * Default id of this client.
 	 */
-	public inline static var DEFAULT_ID:String = "MCoverClient";
+	public inline static var DEFAULT_ID:String = "MCoverPrintClient";
 
 	var logger:CoverageLogger;
 	var coverClient:massive.mcover.client.PrintClient;
 	var coveredClasses:Hash<Clazz>;
+	
+	var currentCoveredClass:String;
+
+	var classPercentage:Float;
+
+
+	
+
+	/**
+	* includes detailed missing class blocks (statements/branches) in output
+	*/
+	public var includeAllMissingCodeBlocks:Bool;
 	
 	/**
 	 * 
@@ -68,7 +83,15 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	{
 		super(includeIgnoredReport);
 		id = DEFAULT_ID;
-		
+
+	
+		includeAllMissingCodeBlocks = isHTML;
+	}
+
+	override function init()
+	{
+		super.init();
+		classPercentage = 0;
 		coveredClasses = new Hash();
 		try
 		{
@@ -76,132 +99,225 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			coverClient = new massive.mcover.client.PrintClient();
 			
 			coverClient.includeMissingBlocks = false;
+			coverClient.includeFinalPercentage = false;
 			logger.addClient(coverClient);
 		}
 		catch(e:Dynamic)
 		{
-			trace(e);
-			throw new massive.mcover.Exception("Unable to initialize MCover Reporter", e);
+			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
+			
+			if(isHTML)
+			{
+				helper.printLine(msg);
+			}
+			else
+			{
+				printLine(msg);
+			}
 		}
 	}
 
-
-	/**
-	 * Called when all tests are complete.
-	 *  
-	 * @param	testCount		total number of tests run
-	 * @param	passCount		total number of tests which passed
-	 * @param	failCount		total number of tests which failed
-	 * @param	errorCount		total number of tests which were erroneous
-	 * @param	ignoreCount		total number of ignored tests
-	 * @param	time			number of milliseconds taken for all tests to be executed
-	 * @return	collated test result data if any
-	 */
-	override public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
+	override function createNewTestClass(result:TestResult)
 	{
-
-		printCoverage();
-		logger.report();
-
-		var classes = logger.coverage.getClasses();
-
-		for(cls in classes)
-		{
-			if(coveredClasses.exists(cls.name)) continue;
-			printMissingClassBlocks(cls, true);
-
-		}
-
-		print(newline + coverClient.output + newline);
-
-		return super.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
+		super.createNewTestClass(result);
+		currentCoveredClass = result.className.substr(0, result.className.length-4);
+		logger.currentTest = currentCoveredClass;
 	}
 
-
-	//////////
-
-	override private function checkForNewTestClass(result:TestResult):Void
+	override function updateLastTestResult()
 	{
-		if (result.className != currentTestClass)
+		printTestCoverage();
+		super.updateLastTestResult();
+	} 
+
+	override function getLastTestResult():TestResultState
+	{
+		var result = super.getLastTestResult();
+
+		if(result == TestResultState.PASSED && classPercentage != 100)
 		{
-			printCoverage();
-			printExceptions();
-			currentTestClass = result.className;
-			logger.currentTest = currentTestClass;
-			print(newline + "Class: " + currentTestClass + " ");
+			result = TestResultState.WARNING;
 		}
+		return result;
 	}
 
-	function printCoverage()
+
+	function printTestCoverage()
 	{
 		if(logger.currentTest == null) return;
 
 		logger.reportCurrentTest(true);
-		
-		var s:String = currentTestClass;
 
-		if(s.substr(-4) == "Test")
+		var cls = logger.coverage.getClassByName(currentCoveredClass);
+		
+		if(cls != null)
 		{
-			s = s.substr(0, s.length-4);
+			classPercentage = cls.getPercentage();
 
-			var cls = logger.coverage.getClassByName(s);
+			coveredClasses.set(cls.name, cls);
+			
 
-			if(cls != null)
+			var summaryStr = " [" + classPercentage + "%]";
+			
+			if(isHTML)
 			{
-				printClassCoverage(cls);
-				
+				helper.updateTestSummary(summaryStr);
 			}
-		}
+			else
+			{
+				print(summaryStr);
+			}
+			
+
+			if(classPercentage == 100 || !includeAllMissingCodeBlocks)  return;
+
+			if(isHTML)
+			{
+				helper.addTestCoverageClass(cls.name, classPercentage);
+				printMissingClassBlocks(cls);
+			}
+	
+			
+		}	
 	}
-
-	function printClassCoverage(cls:Clazz)
-	{
-		coveredClasses.set(cls.name, cls);
-		print(" " +cls.getPercentage() + "%");
-		printMissingClassBlocks(cls);
-
-	}
-
-	function printMissingClassBlocks(cls:Clazz, ?includeHeader:Bool=false)
+	
+	function printMissingClassBlocks(cls:Clazz)
 	{
 
-		if(cls.getPercentage() == 100) return;
+		if(cls.getPercentage() == 100 ) return;
 
-		print(newline);
-		
-		
 		var statements = cls.getMissingStatements();
+
+
+		var str:String = "";
 
 		if(statements.length > 0)
 		{
-			if(includeHeader)
-			{
-				print("Coverage: Other missing statements:" + newline);
-			}
-
 			for(block in statements)
 			{
-				print(newline + "     ! " + block.toString());
+		
+				var blockString =block.methodName + " | " + block.location;
+				if(str != "") str += "\n";
+				str += blockString;
+
 			}
+
+			if(isHTML)
+			{
+				helper.addTestCoverageItem(str);
+			}
+			else
+			{
+				var lines = str.split("\n");
+				for(line in lines)
+				{
+					printLine(line, 1);
+				}
+			}
+			
 		}
+
+
 
 		var branches = cls.getMissingBranches();
 
 		if(branches.length > 0)
 		{
-			if(includeHeader)
-			{
-				print(newline + newline);
-				print("Coverage: Other missing branches:" + newline);
-			}
-
+			str = "";
 
 			for(block in branches)
 			{
-				print(newline + "     ! " + block.toString());
+			
+				var blockString =block.methodName + " | " + block.location;
+				if(!block.isCovered())
+				{
+					blockString += " | ";
+					if(block.trueCount == 0) blockString += "t";
+					if(block.trueCount == 0 && block.falseCount == 0) blockString +=",";
+					if(block.falseCount == 0) blockString += "f";
+				
+				}
+				if(str != "") str += "\n";
+				str += blockString;
+
+			}
+
+			if(isHTML)
+			{
+				helper.addTestCoverageItem(str);
+			}
+			else
+			{
+				var lines = str.split("\n");
+				for(line in lines)
+				{
+					printLine(line, 1);
+				}
 			}
 		}
-		print(newline);
 
+	}
+
+
+	//////////
+	override function printFinalReports()
+	{
+		super.printFinalReports();
+		logger.report();
+
+		var percentage = logger.coverage.getPercentage();
+
+
+		if(isHTML)
+		{
+			helper.createCoverageReport(percentage);
+		}
+
+		if(includeAllMissingCodeBlocks)
+		{
+			if(!isHTML)
+			{
+				printLine("");
+				printLine("Code Coverage Results: " + percentage + "%");
+				printLine(divider);
+			}
+
+			printOutstandingMissingClasses();
+		}
+			
+
+		if(isHTML)
+		{
+			helper.addCoverageSummary(coverClient.output);
+		}
+		else
+		{
+			printLine(coverClient.output);
+
+		}
+	}
+
+	function printOutstandingMissingClasses()
+	{
+		var classes = logger.coverage.getClasses();
+		
+		for(cls in classes)
+		{
+		
+
+			if(cls.getPercentage() == 100) continue;
+
+			if(isHTML)
+			{
+				helper.addMissingCoverageClass(cls.name, cls.getPercentage() );
+			}
+			else
+			{
+				printLine("Coverage: " + cls.name + " [" + cls.getPercentage() + "%]");
+			}
+
+			printMissingClassBlocks(cls);
+
+		}
 	}
 }

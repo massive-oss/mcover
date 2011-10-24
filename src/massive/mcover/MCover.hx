@@ -82,6 +82,7 @@ import haxe.macro.Compiler;
 		return logger;
 	}
 
+	@IgnoreCover
 	function new()
 	{
 		

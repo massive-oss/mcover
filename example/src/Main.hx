@@ -208,7 +208,7 @@ class Main
 		var f:example.foo.Foo<String> = new example.foo.Foo("hello");
 
 
-		var fe = new example.foo.FooExtended<Int>(1);
+		var fe = new example.foo.FooExtended<example.foo.Base>(new example.foo.Base());
 
 		var n = (1 + 1 == 2) ? 4 : 5;
 

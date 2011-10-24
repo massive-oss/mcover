@@ -2,7 +2,7 @@ package example.foo;
 import example.foo.Foo;
 
 
-class FooExtended<T:Int> extends Foo<T>
+class FooExtended<T:Base> extends Foo<T>
 {
 
 	public function new(target:T)

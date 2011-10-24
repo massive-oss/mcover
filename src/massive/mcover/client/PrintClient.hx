@@ -46,6 +46,7 @@ class PrintClient implements CoverageReportClient
 	public var includeBlockExecutionCounts(default, default):Bool;
 	public var includeClassSummary(default, default):Bool;
 	public var includePackageSummary(default, default):Bool;
+	public var includeFinalPercentage(default, default):Bool;
 	
 		
 	/**
@@ -77,6 +78,7 @@ class PrintClient implements CoverageReportClient
 		includeBlockExecutionCounts = false;
 		includeClassSummary = true;
 		includePackageSummary = true;
+		includeFinalPercentage = true;
 
 		output = "";
 		newline = "\n";
@@ -136,6 +138,13 @@ class PrintClient implements CoverageReportClient
 			
 		printSummary();
 
+		if(includeFinalPercentage)
+		{
+			print(divider);
+			printToTabs(["RESULT", coverage.getPercentage() + "%"], 20);
+			print(divider);
+			print("");
+		}
 	}
 
 	function printSummary()
@@ -158,10 +167,7 @@ class PrintClient implements CoverageReportClient
 		printToTabs(["total branches", r.bc + " / " + r.b], columnWidth);
 		print("");
 
-		print(divider);
-		printToTabs(["RESULT", coverage.getPercentage() + "%"], columnWidth);
-		print(divider);
-		print("");
+		
 	}
 
 
