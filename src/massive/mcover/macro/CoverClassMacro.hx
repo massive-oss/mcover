@@ -481,6 +481,7 @@ import massive.mcover.data.Branch;
 		var posString = Std.string(pos);
 
 		block.location = posString.substr(5, posString.length-6);
+		block.location = block.location.split(" characters ").join(" chars ");
 
 		if(isBranch)
 		{
