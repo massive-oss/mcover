@@ -42,17 +42,10 @@ import massive.mcover.CoverageLogger;
 import massive.mcover.client.PrintClient;
 import massive.mcover.data.Clazz;
 
-import massive.mcover.munit.client.PrintClientHelper;
-/**
- * Decorates other ITestResultClient's, adding behavior to include code coverage results
- * 
- * @author Dominic De Lorenzo
- */
-
-
+import massive.munit.client.PrintClientHelper;
 
 @IgnoreCover
-class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
+class MCoverPrintClient extends massive.munit.client.PrintClient
 {
 	/**
 	 * Default id of this client.
@@ -85,7 +78,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 		id = DEFAULT_ID;
 
 	
-		includeAllMissingCodeBlocks = isHTML;
+		includeAllMissingCodeBlocks = useHTML;
 	}
 
 	override function init()
@@ -106,7 +99,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 		{
 			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
 			
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.printLine(msg);
 			}
@@ -159,7 +152,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 
 			var summaryStr = " [" + classPercentage + "%]";
 			
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.updateTestSummary(summaryStr);
 			}
@@ -171,7 +164,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 
 			if(classPercentage == 100 || !includeAllMissingCodeBlocks)  return;
 
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.addTestCoverageClass(cls.name, classPercentage);
 				printMissingClassBlocks(cls);
@@ -202,7 +195,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 
 			}
 
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.addTestCoverageItem(str);
 			}
@@ -242,7 +235,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 
 			}
 
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.addTestCoverageItem(str);
 			}
@@ -268,14 +261,14 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 		var percentage = logger.coverage.getPercentage();
 
 
-		if(isHTML)
+		if(useHTML)
 		{
 			helper.createCoverageReport(percentage);
 		}
 
 		if(includeAllMissingCodeBlocks)
 		{
-			if(!isHTML)
+			if(!useHTML)
 			{
 				printLine("");
 				printLine("Code Coverage Results: " + percentage + "%");
@@ -286,7 +279,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 		}
 			
 
-		if(isHTML)
+		if(useHTML)
 		{
 			helper.addCoverageSummary(coverClient.output);
 		}
@@ -307,7 +300,7 @@ class MCoverPrintClient extends massive.mcover.munit.client.PrintClient
 
 			if(cls.getPercentage() == 100) continue;
 
-			if(isHTML)
+			if(useHTML)
 			{
 				helper.addMissingCoverageClass(cls.name, cls.getPercentage() );
 			}
