@@ -66,7 +66,12 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	/**
 	* includes detailed missing class blocks (statements/branches) in output
 	*/
-	public var includeAllMissingCodeBlocks:Bool;
+	public var includeMissingBlocks:Bool;
+
+	/**
+	* includes detailed missing class blocks (statements/branches) in output
+	*/
+	public var includeExecutionFrequency:Bool;
 	
 	/**
 	 * 
@@ -77,8 +82,8 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 		super(includeIgnoredReport);
 		id = DEFAULT_ID;
 
-	
-		includeAllMissingCodeBlocks = useHTML;
+		includeMissingBlocks = useHTML;
+		includeExecutionFrequency = useHTML;
 	}
 
 	override function init()
@@ -91,8 +96,8 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			logger = MCover.getLogger();
 			coverClient = new massive.mcover.client.PrintClient();
 			
-			coverClient.includeMissingBlocks = false;
-			coverClient.includeFinalPercentage = false;
+			//coverClient.includeMissingBlocks = includeMissingBlocks;
+			//coverClient.includeExecutionFrequency = includeExecutionFrequency;
 			logger.addClient(coverClient);
 		}
 		catch(e:Dynamic)
@@ -162,7 +167,7 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			}
 			
 
-			if(classPercentage == 100 || !includeAllMissingCodeBlocks)  return;
+			if(classPercentage == 100 || !includeMissingBlocks)  return;
 
 			if(useHTML)
 			{
@@ -266,7 +271,7 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			helper.createCoverageReport(percentage);
 		}
 
-		if(includeAllMissingCodeBlocks)
+		if(includeMissingBlocks)
 		{
 			if(!useHTML)
 			{

@@ -12,6 +12,9 @@ class CoverageReportClientTest
 {
 	var client:CoverageReportClient;
 	var coverage:Coverage;
+	var completionCount:Int;
+
+
 	public function new()
 	{
 		
@@ -32,6 +35,7 @@ class CoverageReportClientTest
 	{
 		client = createClient();
 		coverage = new Coverage();
+		completionCount = 0;
 	}
 	
 	@After
@@ -40,18 +44,51 @@ class CoverageReportClientTest
 		
 	}
 
+	
 	@AsyncTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
 	{	
-		var handler:Dynamic = factory.createHandler(this, clientCompleteHandler, 500);
-		client.completionHandler = handler;
+
+		var handler:Dynamic = factory.createHandler(this, assertCompletionCountIsOne, 500);
+		
+		completionCount = 0;
+		client.completionHandler = clientCompleteHandler;
 		client.report(coverage);
+
+		Timer.delay(handler, 400);
 	}
 	
+	@AsyncTest
+	public function shouldNotCallCompletionHandlerAfterReport(factory:AsyncFactory)
+	{	
+
+		var handler:Dynamic = factory.createHandler(this, assertCompletionCountIsZero, 500);
+
+		completionCount = 0;
+		client.completionHandler = null;
+		client.report(coverage);
+
+		Timer.delay(handler, 400);
+	}
+
 	function clientCompleteHandler(c:CoverageReportClient)
 	{
-		Assert.areEqual(client, c);
+		completionCount ++;	
 	}
+
+
+	function assertCompletionCountIsOne()
+	{
+		Assert.areEqual(1, completionCount);
+	}
+
+
+	function assertCompletionCountIsZero()
+	{
+		Assert.areEqual(0, completionCount);
+	}
+
+
 	////////////
 
 	function createClient():CoverageReportClient

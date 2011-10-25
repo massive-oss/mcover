@@ -43,10 +43,14 @@ class PrintClient implements CoverageReportClient
 
 	public var includeHeader(default, default):Bool;
 	public var includeMissingBlocks(default, default):Bool;
-	public var includeBlockExecutionCounts(default, default):Bool;
-	public var includeClassSummary(default, default):Bool;
-	public var includePackageSummary(default, default):Bool;
-	public var includeFinalPercentage(default, default):Bool;
+	public var includeExecutionFrequency(default, default):Bool;
+	public var includeClassBreakdown(default, default):Bool;
+	public var includePackageBreakdown(default, default):Bool;
+	public var includeOverallPercentage(default, default):Bool;
+	public var includeSummary(default, default):Bool;
+
+
+	public var maxBlockExecutionListSize(default, default):Int;
 	
 		
 	/**
@@ -58,8 +62,16 @@ class PrintClient implements CoverageReportClient
 	 */
 	public var newline:String;
 
-
 	public var output(default, null):String;
+
+	public var header(default, null):String;
+	public var executionFrequency(default, null):String;
+	public var missingBlocks(default, null):String;
+	public var classBreakdown(default, null):String;
+	public var packageBreakdown(default, null):String;
+	public var summary(default, null):String;
+	public var overallPercentage(default, null):String;
+
 	var divider:String;
 	var tab:String;
 
@@ -75,15 +87,17 @@ class PrintClient implements CoverageReportClient
 	{
 		includeHeader = true;
 		includeMissingBlocks = true;
-		includeBlockExecutionCounts = false;
-		includeClassSummary = true;
-		includePackageSummary = true;
-		includeFinalPercentage = true;
+		includeExecutionFrequency = true;
+		includeClassBreakdown = true;
+		includePackageBreakdown = true;
+		includeSummary = true;
+		includeOverallPercentage = true;
+		
 
-		output = "";
+		maxBlockExecutionListSize = 25;
 		newline = "\n";
 		tab = " ";
-		divider = "----------------------------------------------------------------";
+		divider = newline + "----------------------------------------------------------------";
 	}
 	
 	var coverage:Coverage;
@@ -91,6 +105,13 @@ class PrintClient implements CoverageReportClient
 	public function report(coverage:Coverage):Void
 	{
 		output = "";
+		header = "";
+		executionFrequency = "";
+		missingBlocks = "";
+		classBreakdown = "";
+		packageBreakdown = "";
+		summary = "";
+		overallPercentage = "";
 	
 		this.coverage = coverage;
 				
@@ -109,157 +130,196 @@ class PrintClient implements CoverageReportClient
 
 	function printReport()
 	{	
+		header = serializeHeader();
+		executionFrequency = serializeExecutionFrequency();
+		missingBlocks = serializeMissingBlocks();
+		classBreakdown = serializeClassResults();
+		packageBreakdown = serializePackageResults();
+		summary = serializeSummary();
+		overallPercentage = serializeOverallPercentage();
+
+		output = serializeFinalOutput();
+	}
+
+	function serializeFinalOutput():String
+	{
+		var output = "";
+	
 		if(includeHeader)
 		{
-			print(divider);
-			print("MCover v" + MCover.VERSION + " Coverage Report, generated " + Date.now().toString());
-			print(divider);
+			output += divider;
+			output += newline;
+			output += header;
+			output += divider;
+			output += newline;
 		}
 
-		if(includeBlockExecutionCounts)
+		if(includeExecutionFrequency)
 		{
-			printBlockFrequency();
+			output += executionFrequency;
 		}
 
 		if(includeMissingBlocks)
 		{
-			printMissingBlocks();
+			output += newline;
+			output += missingBlocks;
 		}
 	
-		if(includeClassSummary)
+		if(includeClassBreakdown)
 		{
-			printClassResults();
+			output += newline;
+			output += classBreakdown;
 		}
 
-		if(includePackageSummary)
+		if(includePackageBreakdown)
 		{
-			printPackageResults();
+			output += newline;
+			output += packageBreakdown;
+		}	
+		
+		if(includeSummary)
+		{
+			output += newline;
+			output += divider;
+			output += newline;
+			output += summary;
+			output += newline;
 		}
-			
-		printSummary();
+	
+		if(includeOverallPercentage)
+		{
+			output += divider;
+			output += overallPercentage;
+			output += divider;
+			output += newline;
+		}
 
-		if(includeFinalPercentage)
-		{
-			print(divider);
-			printToTabs(["RESULT", coverage.getPercentage() + "%"], 20);
-			print(divider);
-			print("");
-		}
+		return output;
 	}
 
-	function printSummary()
+	function serializeHeader():String
 	{
+		return "MCover v" + MCover.VERSION + " Coverage Report, generated " + Date.now().toString();
+	}
+
+	function serializeOverallPercentage():String
+	{
+		return printTabs(["COVERAGE RESULT", coverage.getPercentage() + "%"], 20);
+	}
+
+	function serializeSummary():String
+	{
+		var output = "";
 		var r = coverage.getResults();
 
 		var columnWidth:Int = 20;
-		
-		print("");
-		print(divider);
-		print("");
-	
-		print("OVERALL STATS SUMMARY:");
-		print("");
-		printToTabs(["total packages", r.pc + " / " + r.p], columnWidth);
-		printToTabs(["total files", r.fc + " / " + r.f], columnWidth);
-		printToTabs(["total classes", r.cc + " / " + r.c], columnWidth);
-		printToTabs(["total methods", r.mc + " / " + r.m], columnWidth);
-		printToTabs(["total statements", r.sc + " / " + r.s], columnWidth);
-		printToTabs(["total branches", r.bc + " / " + r.b], columnWidth);
-		print("");
 
+		output = printLine("OVERALL COVERAGE STATS:");
+		output += printLine("");
+		output += printTabs(["total packages", r.pc + " / " + r.p], columnWidth);
+		output += printTabs(["total files", r.fc + " / " + r.f], columnWidth);
+		output += printTabs(["total classes", r.cc + " / " + r.c], columnWidth);
+		output += printTabs(["total methods", r.mc + " / " + r.m], columnWidth);
+		output += printTabs(["total statements", r.sc + " / " + r.s], columnWidth);
+		output += printTabs(["total branches", r.bc + " / " + r.b], columnWidth);
 		
+		return output;
 	}
 
-
-	function printPackageResults()
+	function serializePackageResults():String
 	{
-		print("");
-		print("COVERAGE BREAKDOWN BY PACKAGE:");
-		print("");
+		var output = "";
+		output = printLine("COVERAGE BREAKDOWN BY PACKAGE:");
+		output += newline;
 
 		var packages = coverage.getPackages();
 
 		if(Lambda.count(packages) == 0)
 		{
-			printToTabs(["", "None"]);
-			return;
+			output += printTabs(["", "None"]);
+			return output;
 		}
 
-		printToTabs(["", "Result","Files","Classes", "Package"]);
+		output += printTabs(["", "Result","Files","Classes", "Package"]);
 		
 		for(pckg in packages)
 		{
 			var r = pckg.getResults();
 			var packgName = (pckg.name == "")? "[Default]" : pckg.name;
-			printToTabs(["", pckg.getPercentage() + "%",r.fc + "/" + r.f, r.cc + "/" + r.c, packgName]);
+			output += printTabs(["", pckg.getPercentage() + "%",r.fc + "/" + r.f, r.cc + "/" + r.c, packgName]);
 		}
+
+		return output;
 	}
 
-	function printClassResults()
+	function serializeClassResults():String
 	{
+		var output = "";
 	
-		print("");
-		print("COVERAGE BREAKDOWN BY CLASSES:");
-		print("");
+		output = printLine("COVERAGE BREAKDOWN BY CLASSES:");
+		output += newline;
 		
-
 		var classes = coverage.getClasses();
 
 		if(Lambda.count(classes) == 0)
 		{
-			printToTabs(["", "None"]);
-			return;
+			output += printTabs(["", "None"]);
+			return output;
 		}
 
-		printToTabs(["", "Result","Methods","Statements","Branches", "Class"]);
+		output += printTabs(["", "Result","Methods","Statements","Branches", "Class"]);
 		
 		for(cls in classes)
 		{
 			var r = cls.getResults();
-			printToTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, cls.name]);
+			output += printTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, cls.name]);
 		}
+
+		return output;
 	}
 
 	/**
 	* Prints summary of branches and statements that have not been executed
 	*/
-	function printMissingBlocks()
+	function serializeMissingBlocks():String
 	{
-		print("");
-		print("MISSING STATEMENT COVERAGE:");
-		print("");
+		var output = "";
+		
+		output = printLine("MISSING STATEMENT COVERAGE:");
+		output += newline;
 
 		var statements = coverage.getMissingStatements();
 
 		if(Lambda.count(statements) == 0)
 		{
-			printToTabs(["", "None"]);
+			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			for(block in statements)
 			{
-				printToTabs(["",  block.toString()]);
+				output += printTabs(["",  block.toString()]);
 			}
 		}
 
-		print("");
-		print("MISSING BRANCH COVERAGE:");
-		print("");
+		output += newline;
+		output += printLine("MISSING BRANCH COVERAGE:");
+		output += newline;
 
 		var branches = coverage.getMissingBranches();
 
 		if(Lambda.count(branches) == 0)
 		{
-			printToTabs(["", "None"]);
+			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			for(block in branches)
 			{
-				printToTabs(["",  block.toString()]);
+				output += printTabs(["",  block.toString()]);
 			}
 		}
+		return output;
 	}
 
 
@@ -269,11 +329,10 @@ class PrintClient implements CoverageReportClient
 	* For branches reports also totals for true/false  
 	*/
 
-	function printBlockFrequency()
+	function serializeExecutionFrequency():String
 	{
-		print("");
-		print("STATEMENTS BY EXECUTION FREQUENCY:");
-		print("");
+		var output = "";
+
 
 		var statements:Array<Statement> = [];
 
@@ -286,9 +345,12 @@ class PrintClient implements CoverageReportClient
 			}
 		}
 
+		output = printLine("TOP " + maxBlockExecutionListSize + " STATEMENTS BY EXECUTION FREQUENCY:");
+		output += newline;
+
 		if(Lambda.count(statements) == 0)
 		{
-			printToTabs(["", "None"]);
+			output += printTabs(["", "None"]);
 		}
 		else
 		{
@@ -298,17 +360,19 @@ class PrintClient implements CoverageReportClient
 			}
 			statements.sort(statementSort);
 
-			printToTabs(["", "Total", "Statement"]);
-
+			output += printTabs(["", "Count", "Statement"]);
+			
+			var count = 0;
 			for(statement in statements)
 			{
-				printToTabs(["", statement.count, statement.toString()]);
+				output += printTabs(["", statement.count, statement.toString()]);
+				count ++;
+				if(count >= maxBlockExecutionListSize)
+				{
+					break;
+				}
 			}
 		}
-
-		print("");
-		print("BRANCHES BY EXECUTION FREQUENCY:");
-		print("");
 
 		var branches:Array<Branch> = [];
 		for(key in coverage.branchResultsById.keys())
@@ -320,9 +384,14 @@ class PrintClient implements CoverageReportClient
 			}
 		}
 
+		output += newline;
+		output += printLine("TOP " + maxBlockExecutionListSize + " BRANCHES BY EXECUTION FREQUENCY:");
+		
+		output += newline;
+
 		if(Lambda.count(branches) == 0)
 		{
-			printToTabs(["", "None"]);
+			output += printTabs(["", "None"]);
 		}
 		else
 		{
@@ -333,42 +402,43 @@ class PrintClient implements CoverageReportClient
 
 			branches.sort(branchSort);
 		
-			printToTabs(["", "Total", "True", "False", "Branch"]);
+			output += printTabs(["", "Count", "True", "False", "Branch"]);
+
+			var count = 0;
 			for(branch in branches)
 			{
-				printToTabs(["",
+				output += printTabs(["",
 					branch.totalCount,
 					branch.trueCount,
 					branch.falseCount,
 					branch.toString()]);
+				count ++;
+				if(count >= maxBlockExecutionListSize)
+				{
+					break;
+				}
 			}
+
+		
 		}
+		return output;
 	}
 
 	///////
 
-	function print(value:Dynamic)
+	function printLine(value:Dynamic):String
 	{
-		output += newline + Std.string(value);
+		return newline + Std.string(value);
 	}
 
-	function printToTabs(args:Array<Dynamic>, ?columnWidth:Int=14)
+	function printTabs(args:Array<Dynamic>, ?columnWidth:Int=14):String
 	{
 		var s:String = "";
 		for(arg in args)
 		{
 			arg = Std.string(arg);
-			// #if js
-			// 	while(arg.length < columnWidth)
-			// 	{
-			// 		arg += "|";
-			// 	}
-			
-			// 	s += arg.split("|").join(tab);
-			// #else
-				s += StringTools.rpad(arg, tab, columnWidth);
-			// #end
+			s += StringTools.rpad(arg, tab, columnWidth);
 		}
-		print(s);
+		return newline + s;
 	}
 }

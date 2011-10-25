@@ -283,13 +283,13 @@ class CoverageTest extends AbstractNodeListTest
 	}
 
 
-	function testMissingBlockFieldsThrowError(createMethod:Void ->Dynamic, addMethod:Dynamic ->Void)
+	function testMissingBlockFieldsThrowError(createMethod:Int ->Dynamic, addMethod:Dynamic ->Void)
 	{
 		var block:AbstractBlock;
 
 		try
 		{
-			block = cast(createMethod(), AbstractBlock);
+			block = cast(createMethod(0), AbstractBlock);
 			block.id = null;
 			addMethod(block);
 		}
@@ -300,7 +300,7 @@ class CoverageTest extends AbstractNodeListTest
 
 		try
 		{
-			block =  cast(createMethod(), AbstractBlock);
+			block =  cast(createMethod(0), AbstractBlock);
 			block.packageName = null;
 			addMethod(block);
 		}
@@ -311,7 +311,7 @@ class CoverageTest extends AbstractNodeListTest
 
 		try
 		{
-			block = cast(createMethod(), AbstractBlock);
+			block = cast(createMethod(0), AbstractBlock);
 			block.file = null;
 			addMethod(block);
 		}
@@ -322,7 +322,7 @@ class CoverageTest extends AbstractNodeListTest
 
 		try
 		{
-			block =  cast(createMethod(), AbstractBlock);
+			block =  cast(createMethod(0), AbstractBlock);
 			block.qualifiedClassName = null;
 			addMethod(block);
 		}
@@ -333,7 +333,7 @@ class CoverageTest extends AbstractNodeListTest
 
 		try
 		{
-			block =  cast(createMethod(), AbstractBlock);
+			block =  cast(createMethod(0), AbstractBlock);
 			block.methodName = null;
 			addMethod(block);
 		}

@@ -51,8 +51,9 @@ class TimerTest
 	{	
 		timer = new Timer(20);
 		timer.run = timerTick;
-		var handler = factory.createHandler(this, assertTimerTickedMoreThanOnce, 400);
-		var delay = Timer.delay(handler, 100);
+		
+		var handler = factory.createHandler(this, assertTimerTickedMoreThanOnce, 700);
+		var delay = Timer.delay(handler, 500);
 	}
 
 	@AsyncTest
@@ -82,11 +83,7 @@ class TimerTest
 		Assert.isTrue(timerCount == 1);
 	}
 
-
-
-
 	/////
-
 
 	@AsyncTest
 	public function shouldCreateIncrementalTimeStamp(factory:AsyncFactory)

@@ -57,23 +57,23 @@ class NodeMock extends AbstractNode
 		return cls;
 	}
 	
-	static public function createBranch():Branch
+	static public function createBranch(?id:Int=0):Branch
 	{
-		var branch = createBlock(Branch);
+		var branch = createBlock(Branch, id);
 		branch.name = "branch";
 		return cast(branch, Branch);
 	}
 
-	static public function createStatement():Statement
+	static public function createStatement(?id:Int=0):Statement
 	{
-		var statement = createBlock(Statement);
+		var statement = createBlock(Statement, id);
 		statement.name = "statement";
 		return cast(statement, Statement);
 	}
-	static function createBlock(cls:Class<AbstractBlock>):AbstractBlock
+	static function createBlock(cls:Class<AbstractBlock>, ?id:Int=0):AbstractBlock
 	{
 		var block = Type.createInstance(cls, []);
-		block.id = 0;
+		block.id = id;
 		block.name = "block";
 		block.packageName = "package";
 		block.file = "file";

@@ -46,207 +46,171 @@ class PrintClientTest extends CoverageReportClientTest
 		super.tearDown();
 	}
 
-
 	static var statementFrequency = "STATEMENTS BY EXECUTION FREQUENCY";
 	static var branchFrequency = "BRANCHES BY EXECUTION FREQUENCY";
 	static var statementMissing = "MISSING STATEMENT COVERAGE";
 	static var branchMissing = "MISSING BRANCH COVERAGE";
-	
+
+
+
+
 
 	@Test
-	public function shouldPrintEmptyBlockFrequencyIfIncludeBlockExecutionCountsEqualsTrue()
+	public function shouldIncludeHeader()
 	{
-		coverage = new Coverage();
 		coverage.getResults();
-
-		printClient.includeBlockExecutionCounts = false;
-		printClient.report(coverage);
-
-		Assert.isFalse(printClient.output.indexOf(statementFrequency) != -1);
-		Assert.isFalse(printClient.output.indexOf(branchFrequency) != -1);
-
-		printClient.includeBlockExecutionCounts = true;
-		printClient.report(coverage);
-
-		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
-		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
-
-		var output = printClient.output.split(statementFrequency);
-		var outputLines = output[1].split("\n");
-
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
-
-		output = printClient.output.split(branchFrequency);
-		outputLines = output[1].split("\n");
-
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+		assertPropertyIsIncludedInOutput("includeHeader", "header");
 	}
 
 	@Test
-	public function shouldPrintEmptyMissingBlocksIfIncludeMissingBlocksEqualsTrue()
+	public function shouldIncludeExecutionFrequency()
 	{
-		coverage = new Coverage();
 		coverage.getResults();
-
-		printClient.includeMissingBlocks = false;
-		printClient.report(coverage);
-
-		Assert.isFalse(printClient.output.indexOf(branchMissing) != -1);
-		Assert.isFalse(printClient.output.indexOf(statementMissing) != -1);
-
-		printClient.includeMissingBlocks = true;
-		printClient.report(coverage);
-
-		Assert.isTrue(printClient.output.indexOf(branchMissing) != -1);
-		Assert.isTrue(printClient.output.indexOf(statementMissing) != -1);
-
-		var output = printClient.output.split(branchMissing);
-		var outputLines = output[1].split("\n");
-
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
-
-		output = printClient.output.split(statementMissing);
-		outputLines = output[1].split("\n");
-
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+		assertPropertyIsIncludedInOutput("includeExecutionFrequency", "executionFrequency");
 	}
+
+	@Test
+	public function shouldIncludeMissingBlocks()
+	{
+		coverage.getResults();
+		assertPropertyIsIncludedInOutput("includeMissingBlocks", "missingBlocks");
+	}
+
+	@Test
+	public function shouldIncludeClassBreakdown()
+	{
+		coverage.getResults();
+		assertPropertyIsIncludedInOutput("includeClassBreakdown", "classBreakdown");
+	}
+
+	@Test
+	public function shouldIncludePackageBreakdown()
+	{
+		coverage.getResults();
+		assertPropertyIsIncludedInOutput("includePackageBreakdown", "packageBreakdown");
+	}
+
+	@Test
+	public function shouldIncludeSummary()
+	{
+		coverage.getResults();
+		assertPropertyIsIncludedInOutput("includeSummary", "summary");
+	}
+
+	@Test
+	public function shouldIncludeOverallPercentage()
+	{
+		coverage.getResults();
+		assertPropertyIsIncludedInOutput("includeOverallPercentage", "overallPercentage");
+	}
+
+
 
 	@Test
 	public function shouldPrintEmptyBlockFrequencyIfBlockCountEqualsZero()
 	{
 		coverage = new Coverage();
-		var statement = NodeMock.createStatement();
 
-		coverage.addStatement(statement);
-		coverage.statementResultsById.set(statement.id, 0);
+		addStatementToCoverage(0, 0);
+		addStatementToCoverage(1, 0);
 
-		statement = NodeMock.createStatement();
-		statement.id = 1;
-		coverage.addStatement(statement);
-		coverage.statementResultsById.set(statement.id, 0);
+		addBranchToCoverage(0, 0, 0, 0);
+		addBranchToCoverage(1, 0, 0, 0);
 
-
-		var branch = NodeMock.createBranch();
-		var result = NodeMock.createBranchResult(branch);
-		coverage.addBranch(branch);
-		coverage.branchResultsById.set(branch.id, result);
-
-		branch = NodeMock.createBranch();
-		branch.id = 1;
-		result = NodeMock.createBranchResult(branch);
-		coverage.addBranch(branch);
-		coverage.branchResultsById.set(branch.id, result);
-		
-		
 		coverage.getResults();
 
-		printClient.includeBlockExecutionCounts = true;
+		printClient.includeExecutionFrequency = true;
 		printClient.report(coverage);
 
-		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
-		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
+		var result = printClient.executionFrequency;
 
-		var output = printClient.output.split(statementFrequency);
-		var outputLines = output[1].split("\n");
+		assertContainsString(result, statementFrequency);
+		assertContainsString(result, branchFrequency);
 
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+		var output = result.split(statementFrequency)[1];
 
-		output = printClient.output.split(branchFrequency);
-		outputLines = output[1].split("\n");
+		assertContainsString(output, "None");
 
-		Assert.isTrue(outputLines[2].indexOf("None") != -1);
+		output = result.split(branchFrequency)[1];
+
+		assertContainsString(output, "None");
 	}
-
 
 	@Test
 	public function shouldPrintBlockFrequencyIfBlockCountGreaterThanZero()
 	{
 		coverage = new Coverage();
-		var statement = NodeMock.createStatement();
 
-		coverage.addStatement(statement);
-		coverage.statementResultsById.set(statement.id, 1);
+		addStatementToCoverage(0, 1);
+		addStatementToCoverage(1, 1);
 
-		statement = NodeMock.createStatement();
-		statement.id = 1;
-		coverage.addStatement(statement);
-		coverage.statementResultsById.set(statement.id, 1);
+		addBranchToCoverage(0, 1, 0, 1);
+		addBranchToCoverage(1, 0, 1, 1);
+	
 
-
-		var branch = NodeMock.createBranch();
-		var result = NodeMock.createBranchResult(branch);
-		result.trueCount = 1;
-		result.total = 1;
-		
-		coverage.addBranch(branch);
-		coverage.branchResultsById.set(branch.id, result);
-
-		branch = NodeMock.createBranch();
-		branch.id = 1;
-		result = NodeMock.createBranchResult(branch);
-		result.falseCount = 1;
-		result.total = 1;
-		coverage.addBranch(branch);
-		coverage.branchResultsById.set(branch.id, result);
-		
-		
 		coverage.getResults();
 
-		printClient.includeBlockExecutionCounts = true;
+		printClient.includeExecutionFrequency = true;
 		printClient.report(coverage);
 
-		Assert.isTrue(printClient.output.indexOf(statementFrequency) != -1);
-		Assert.isTrue(printClient.output.indexOf(branchFrequency) != -1);
+		var result = printClient.executionFrequency;
 
-		var output = printClient.output.split(statementFrequency);
-		var outputLines = output[1].split("\n");
+		assertContainsString(result, statementFrequency);
+		assertContainsString(result, branchFrequency);
 
-		Assert.isTrue(outputLines[2].indexOf("Total") != -1);
+		var output = result.split(statementFrequency)[1];
 
-		output = printClient.output.split(branchFrequency);
-		outputLines = output[1].split("\n");
+		assertContainsString(output, "Count");
 
-		Assert.isTrue(outputLines[2].indexOf("Total") != -1);
+		output = result.split(branchFrequency)[1];
+
+		assertContainsString(output, "Count");
 	}
 
-
 	@Test
-	public function shouldPrintMissingBlocksIfIncludeMissingBlocksEqualsTrue()
+	public function shouldLimitToMaxBlockExecutionListSize()
 	{
 		coverage = new Coverage();
-		coverage.addStatement(NodeMock.createStatement());
-		coverage.addBranch(NodeMock.createBranch());
-	
+
+		addStatementToCoverage(0, 4);
+		addStatementToCoverage(1, 3);
+		addStatementToCoverage(2, 2);
+		addStatementToCoverage(3, 1);
+
+		addBranchToCoverage(0, 4, 0, 4);
+		addBranchToCoverage(1, 3, 0, 3);
+		addBranchToCoverage(2, 2, 0, 2);
+		addBranchToCoverage(3, 1, 0, 1);
+		
 		coverage.getResults();
 
-		printClient.includeMissingBlocks = true;
+		printClient.maxBlockExecutionListSize = 4;
+		printClient.report(coverage);
+		
+		var result1 = printClient.executionFrequency.split("\n");
+
+		printClient.maxBlockExecutionListSize = 2;
 		printClient.report(coverage);
 
-		Assert.isTrue(printClient.output.indexOf(branchMissing) != -1);
-		Assert.isTrue(printClient.output.indexOf(statementMissing) != -1);
-
-		var output = printClient.output.split(branchMissing);
-		var outputLines = output[1].split("\n");
-		
-		Assert.isTrue(outputLines[2].indexOf("package.class#method | location | t,f") != -1);
-
-		output = printClient.output.split(statementMissing);
-		outputLines = output[1].split("\n");
-
-		Assert.isTrue(outputLines[2].indexOf("package.class#method | location") != -1);
+		var result2 = printClient.executionFrequency.split("\n");
+	
+		Assert.areEqual(result1.length - 4, result2.length);
 	}
 
 	@Test
-	public function shouldConvertEmptyPackageNamesToDefault()
+	public function shouldConvertEmptyPackageNamesToDefaultDuringSerialization()
 	{
 		coverage = new Coverage();
 		coverage.getItemByName("package", Package);
 		printClient.report(coverage);
-		Assert.isTrue(printClient.output.indexOf("[Default]") == -1);
+
+		var result = printClient.packageBreakdown;
+		Assert.isTrue(result.indexOf("[Default]") == -1);
 
 		coverage.getItemByName("", Package);
 		printClient.report(coverage);
-		Assert.isTrue(printClient.output.indexOf("[Default]") != -1);
+		result = printClient.packageBreakdown;
+		Assert.isTrue(result.indexOf("[Default]") != -1);
 	}
 
 	///////////
@@ -254,5 +218,69 @@ class PrintClientTest extends CoverageReportClientTest
 	override function createClient():CoverageReportClient
 	{
 		return new PrintClient();
+	}
+
+	function addStatementToCoverage(id:Int, ?count:Int=1)
+	{
+		var statement = NodeMock.createStatement(id);
+		coverage.addStatement(statement);
+		coverage.statementResultsById.set(statement.id, count);
+			 
+	}
+
+	function addBranchToCoverage(id:Int, ?trueCount:Int=0, ?falseCount:Int=0, ?total:Int=0)
+	{
+		var branch = NodeMock.createBranch(id);
+		var result = NodeMock.createBranchResult(branch);
+		result.trueCount = trueCount;
+		result.falseCount = falseCount;
+		result.total = total;
+
+		coverage.addBranch(branch);
+		coverage.branchResultsById.set(branch.id, result);
+			 
+	}
+
+	
+	function assertContainsString(source:String, value:String)
+	{
+		var lines = source.split("\n");
+
+		var hasMatch = false;
+
+		for(line in lines)
+		{
+			if(line.indexOf(value) != -1)
+			{
+				hasMatch = true;
+				break;
+			}
+		}
+
+		Assert.isTrue(hasMatch);
+	}
+
+	function assertPropertyIsIncludedInOutput(flagProperty:String, outputProperty:String)
+	{
+
+
+		Reflect.setField(printClient, flagProperty, false);
+	
+		printClient.report(coverage);
+
+		var result = Reflect.field(printClient, outputProperty);
+
+		Assert.isNotNull(result);
+		Assert.areNotEqual("", result);
+		Assert.isTrue(printClient.output.indexOf(result) == -1);
+		
+
+
+		Reflect.setField(printClient, flagProperty, true);
+		printClient.report(coverage);
+		result = Reflect.field(printClient, outputProperty);
+
+		
+		Assert.isTrue(printClient.output.indexOf(result) > -1);
 	}
 }
