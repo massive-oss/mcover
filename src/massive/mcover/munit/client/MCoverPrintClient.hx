@@ -96,8 +96,8 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			logger = MCover.getLogger();
 			coverClient = new massive.mcover.client.PrintClient();
 			
-			//coverClient.includeMissingBlocks = includeMissingBlocks;
-			//coverClient.includeExecutionFrequency = includeExecutionFrequency;
+			coverClient.includeMissingBlocks = false;
+			coverClient.includeExecutionFrequency = false;
 			logger.addClient(coverClient);
 		}
 		catch(e:Dynamic)
@@ -115,10 +115,11 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 		}
 	}
 
-	override function createNewTestClass(result:TestResult)
+	override function setCurrentTestClass(className:String):Void
 	{
-		super.createNewTestClass(result);
-		currentCoveredClass = result.className.substr(0, result.className.length-4);
+		if(currentTestClass == className) return;
+		super.setCurrentTestClass(className);
+		currentCoveredClass = currentTestClass.substr(0, currentTestClass.length-4);
 		logger.currentTest = currentCoveredClass;
 	}
 
@@ -126,6 +127,7 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	{
 		printTestCoverage();
 		super.updateLastTestResult();
+		
 	} 
 
 	override function getLastTestResult():TestResultState
