@@ -67,6 +67,7 @@ import massive.mcover.data.Branch;
 	**/
 	@:macro public static function build():Array<Field>
 	{
+		
 		var fields = Context.getBuildFields();
 		var type = Context.getLocalType();
 		
@@ -120,9 +121,10 @@ import massive.mcover.data.Branch;
     		case FFun(f):
     		{	
     			currentMethodName = field.name == "new" ? "constructor" : field.name;
+    	
     			if(f.expr != null )
 				{
-					f.expr = parseExpression(f.expr);
+					f.expr = parseExpression(f.expr, field.name == "new");
 				}
     		}
     		default: null;
@@ -140,11 +142,11 @@ import massive.mcover.data.Branch;
 		return exprs;
 	}
 
-	static function parseExpression(expr:Expr):Expr
+	static function parseExpression(expr:Expr, ?isConstructor:Bool=false):Expr
 	{
 		var tmp:Array<Expr> = [];
 		
-		//debug(expr.expr);
+		// trace(expr.expr);
 		switch(expr.expr)
 		{
 			case EContinue: null;
@@ -247,7 +249,7 @@ import massive.mcover.data.Branch;
 			}
 			case EBlock(exprs): 
 			{
-				if(exprs.length > 0)
+				if(exprs.length > 0 || isConstructor)
 				{
 					expr = parseBlock(expr, exprs);//e.g. {...}
 				}
@@ -441,7 +443,13 @@ import massive.mcover.data.Branch;
 				return createReference(cp, file, pos, isBranch);
 			}
 		}
-		throw "Invalid coverage position " + Std.string(pos);
+
+		// for (cp in MCover.classPathHash)
+		// {
+		// 	trace(cp + ", " + file);
+		// }
+
+		throw "Invalid coverage position of file (" + file + ") " + Std.string(pos);
 		return null;
 	}
 
