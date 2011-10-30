@@ -93,6 +93,7 @@ import haxe.macro.Compiler;
 
 	static public var classPathHash:IntHash<String> = new IntHash();
 	static public var classHash:IntHash<String> = new IntHash();
+	static var classIdHash:Hash<Int> = new Hash();
 		
 	/** 
 	* Includes classes/packages for code coverage.
@@ -114,8 +115,8 @@ import haxe.macro.Compiler;
 
 		includePackage(pack, classPaths, ignore);
 
-		workaroundForBugWhereKeepMetadataBeingIgnored();
-		
+		workaroundForBugWhereKeepMetadataIsIgnored();
+
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -163,7 +164,15 @@ import haxe.macro.Compiler;
 						cl = prefix + cl;
 						if( skip(cl) )
 							continue;
-						classHash.set(Lambda.count(classHash), cl);
+
+						var id = Lambda.count(classHash);
+
+						if(classIdHash.exists(cl))
+							continue;
+						
+						classIdHash.set(cl, id);
+						classHash.set(id, cl);
+
 						Compiler.addMetadata("@:build(massive.mcover.macro.CoverClassMacro.build())", cl);
 						Compiler.keep(cl);
 					}
@@ -198,7 +207,7 @@ import haxe.macro.Compiler;
 		return classes;
 	}
 
-	static function workaroundForBugWhereKeepMetadataBeingIgnored()
+	static function workaroundForBugWhereKeepMetadataIsIgnored()
 	{
 		
 		var pos = Context.currentPos();
@@ -210,22 +219,39 @@ import haxe.macro.Compiler;
 		for(i in 0...Lambda.count(classHash))
 		{
 			var cls = classHash.get(i);
-
 			var classPackage = cls.split(".");
+
+			try
+			{
+				Context.getModule(cls);
+			}
+			catch(e:Dynamic)
+			{
+				//catch any class references that don't actually exist
+				continue;
+			}
 			var className = classPackage.pop();
 			var classInstanceName = "tmp_" + cls.split(".").join("_");
 
 			var tClassType = TPath({ pack : classPackage, name : className, params : [], sub : null });
        		
-       		fields.push({ name : classInstanceName, doc : null, meta : [], access : [APublic], kind : FVar(tClassType,null), pos : pos });
-       
+       		fields.push({ name : classInstanceName, doc : null, meta : [], access : [APublic], kind : FVar(tClassType,null), pos : pos});
+
+       		trace(className);
 		}
+	
 		var t:haxe.macro.TypeDefinition = {pos:pos, params:[], pack:pack, name:name, meta:[],kind:kind, isExtern:false, fields:fields}
 		haxe.macro.Context.defineType(t);
-
+	
 		Compiler.keep("massive.mcover.MCoverTmp");
 	}
 
-
+	static function incrementPos(pos:Position, length:Int):Position
+	{
+		var posInfos = Context.getPosInfos(pos);
+		posInfos.min = posInfos.max;
+		posInfos.max = length;
+		return Context.makePosition(posInfos);
+	}
 	#end
 }
