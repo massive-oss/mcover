@@ -106,14 +106,16 @@ import haxe.macro.Compiler;
 	* @param ignore - array of qualified classe names to exclude from coverage
 	**/
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
-	{
-		includePackage(pack, classPaths, ignore);
-	
-		for(i in 0...Lambda.count(classHash))
+	{	
+		for(cp in classPaths)
 		{
-			debug("    " + classHash.get(i));
+			haxe.macro.Compiler.include(cp);
 		}
 
+		includePackage(pack, classPaths, ignore);
+
+		workaroundForBugWhereKeepMetadataBeingIgnored();
+		
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -155,13 +157,15 @@ import haxe.macro.Compiler;
 			for( file in neko.FileSystem.readDirectory(path) ) {
 				if( StringTools.endsWith(file, ".hx") ) {
 					var classes = getClassesInFile(path + "/" + file);
+					prefix = getFilePackage(path + "/" + file);
 					for(cl in classes)
 					{
 						cl = prefix + cl;
 						if( skip(cl) )
 							continue;
 						classHash.set(Lambda.count(classHash), cl);
-						Compiler.addMetadata("@:keep @:build(massive.mcover.macro.CoverClassMacro.build())", cl);
+						Compiler.addMetadata("@:build(massive.mcover.macro.CoverClassMacro.build())", cl);
+						Compiler.keep(cl);
 					}
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, classPaths, ignore);
@@ -169,6 +173,17 @@ import haxe.macro.Compiler;
 		}
 	}
 
+	static function getFilePackage(path:String):String
+	{
+		var contents = neko.io.File.getContent(path);
+		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/;
+
+		if(reg.match(contents))
+		{
+			return reg.matched(1) + ".";
+		}
+		return "";
+	}
 	static function getClassesInFile(path:String):Array<String>
 	{
 		var classes:Array<String> = [];
@@ -183,11 +198,34 @@ import haxe.macro.Compiler;
 		return classes;
 	}
 
-	static function debug(value:Dynamic, ?posInfos:haxe.PosInfos)
+	static function workaroundForBugWhereKeepMetadataBeingIgnored()
 	{
-		#if MCOVER_DEBUG
-			neko.Lib.println(posInfos.fileName+ ":" + posInfos.lineNumber + ": " + value);
-		#end
+		
+		var pos = Context.currentPos();
+		var pack = ["massive", "mcover"];
+		var name = "MCoverTmp";
+		var kind = TDClass();
+		var fields:Array<Field> = [];
+
+		for(i in 0...Lambda.count(classHash))
+		{
+			var cls = classHash.get(i);
+
+			var classPackage = cls.split(".");
+			var className = classPackage.pop();
+			var classInstanceName = "tmp_" + cls.split(".").join("_");
+
+			var tClassType = TPath({ pack : classPackage, name : className, params : [], sub : null });
+       		
+       		fields.push({ name : classInstanceName, doc : null, meta : [], access : [APublic], kind : FVar(tClassType,null), pos : pos });
+       
+		}
+		var t:haxe.macro.TypeDefinition = {pos:pos, params:[], pack:pack, name:name, meta:[],kind:kind, isExtern:false, fields:fields}
+		haxe.macro.Context.defineType(t);
+
+		Compiler.keep("massive.mcover.MCoverTmp");
 	}
+
+
 	#end
 }
