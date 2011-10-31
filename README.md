@@ -8,6 +8,8 @@ MCover is designed to integrate with existing unit testing frameworks to provide
 
 
 
+
+
 Features
 ---------------------
 
@@ -22,6 +24,8 @@ MCover has been designed to work with any HaXe target. Officially we support the
 *	Neko
 
 **NOTE:** MCover requires Haxe 2.0.8
+
+**NOTE:** The following documentation generally refers to the latest trunk builds. Refer to tagged versions for documentation pertaining to most recent official haxelib release (https://github.com/massiveinteractive/MassiveCover/tags) 
 
 
 ### Compiler Macro
@@ -168,6 +172,7 @@ View results!
 Integrating with MUnit
 ---------------------
 
+MCover is currently being integrated into the munit toolchain. In the meantime unit test coverage can be manually configured using the following steps:
 
 MCover includes a custom munit print client that integrates coverage data into unit test output.
 
@@ -195,8 +200,8 @@ Include mcover macro in test.hxml file (see above)
 
 Replace the default munit PrintClient with massive.mcover.munit.client.PrintClient in TestMain
 
-		var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
-		var runner:TestRunner = new TestRunner(printClient);
+		var client = new massive.mcover.munit.client.MCoverPrintClient();
+		var runner:TestRunner = new TestRunner(client);
 
 Usage
 ---------------------
