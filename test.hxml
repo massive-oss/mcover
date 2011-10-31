@@ -14,16 +14,17 @@
 
 --next
 
-# ##Flash 8
+##Flash 8
 # -main TestMain
 # -cp src
 # -cp test
 # -lib munit
 # -lib mlib
+# -debug
+# -D MCOVER_DEBUG
 # -swf-version 8
 # -swf build/test/as2_test.swf
 # -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
-# --macro massive.mcover.MCover.include('massive.mcover',['src'])
 # --next
 
 ## JavaScript

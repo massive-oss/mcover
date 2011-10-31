@@ -1,7 +1,7 @@
 package massive.mcover.munit.client;
 
 import massive.munit.ITestResultClient;
-import massive.munit.client.RichPrintClientHelper;
+import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
 
 import massive.mcover.data.Clazz;
@@ -51,9 +51,11 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 
 	@IgnoreCover
-	public function new(client:IAdvancedTestResultClient)
+	public function new(?client:IAdvancedTestResultClient=null)
 	{
 		id = DEFAULT_ID;
+
+		if(client == null) client = new RichPrintClient(true);
 		this.client = client;
 
 		
