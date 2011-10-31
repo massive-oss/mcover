@@ -60,8 +60,14 @@ package massive.mcover.data;
 
 	public function toString():String
 	{
-		return qualifiedClassName + "#" + methodName + " | " + location;
+		return qualifiedClassName + "#" + toLocalString();
 	}
+
+	public function toLocalString():String
+	{
+		return methodName + " | " + location;
+	}
+
 
 	override function hxSerialize( s : haxe.Serializer )
 	{

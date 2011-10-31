@@ -52,9 +52,9 @@ package massive.mcover.data;
 		return trueCount > 0 && falseCount > 0;
 	}
 
-	override public function toString():String
+	override public function toLocalString():String
 	{
-		var s = super.toString();
+		var s = super.toLocalString();
 		if(!isCovered())
 		{
 			s += " | ";
@@ -64,7 +64,6 @@ package massive.mcover.data;
 		
 		}
 		return s;
-		
 	}
 
 	///////////

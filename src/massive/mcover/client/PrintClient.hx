@@ -83,6 +83,12 @@ class PrintClient implements CoverageReportClient
 	var classCompletedCount:Int;
 	var classPartialCount:Int;
 
+	static inline var DEFAULT_TAB_WIDTH:Int = 11;
+
+	static inline var SHORT_FIRST_TAB_WIDTH:Int = 4;
+	static inline var LONG_FIRST_TAB_WIDTH:Int = 20;
+			
+
 	public function new()
 	{
 		includeHeader = true;
@@ -204,7 +210,7 @@ class PrintClient implements CoverageReportClient
 
 	function serializeOverallPercentage():String
 	{
-		return printTabs(["COVERAGE RESULT", coverage.getPercentage() + "%"], 20);
+		return printTabs(["COVERAGE RESULT", coverage.getPercentage() + "%"], LONG_FIRST_TAB_WIDTH);
 	}
 
 	function serializeSummary():String
@@ -212,16 +218,16 @@ class PrintClient implements CoverageReportClient
 		var output = "";
 		var r = coverage.getResults();
 
-		var columnWidth:Int = 20;
+		var w:Int = LONG_FIRST_TAB_WIDTH;
 
 		output = printLine("OVERALL COVERAGE STATS:");
 		output += printLine("");
-		output += printTabs(["total packages", r.pc + " / " + r.p], columnWidth);
-		output += printTabs(["total files", r.fc + " / " + r.f], columnWidth);
-		output += printTabs(["total classes", r.cc + " / " + r.c], columnWidth);
-		output += printTabs(["total methods", r.mc + " / " + r.m], columnWidth);
-		output += printTabs(["total statements", r.sc + " / " + r.s], columnWidth);
-		output += printTabs(["total branches", r.bc + " / " + r.b], columnWidth);
+		output += printTabs(["total packages", r.pc + " / " + r.p], w);
+		output += printTabs(["total files", r.fc + " / " + r.f], w);
+		output += printTabs(["total classes", r.cc + " / " + r.c], w);
+		output += printTabs(["total methods", r.mc + " / " + r.m], w);
+		output += printTabs(["total statements", r.sc + " / " + r.s], w);
+		output += printTabs(["total branches", r.bc + " / " + r.b], w);
 		
 		return output;
 	}
@@ -296,9 +302,17 @@ class PrintClient implements CoverageReportClient
 		}
 		else
 		{
+			var currentClass = null;
 			for(block in statements)
 			{
-				output += printTabs(["",  block.toString()]);
+				if(currentClass != block.qualifiedClassName)
+				{
+					currentClass =  block.qualifiedClassName;
+					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
+				}
+
+				output += printTabs(["", block.toLocalString()], SHORT_FIRST_TAB_WIDTH*2);
+
 			}
 		}
 
@@ -314,13 +328,21 @@ class PrintClient implements CoverageReportClient
 		}
 		else
 		{
+			var currentClass = null;
 			for(block in branches)
 			{
-				output += printTabs(["",  block.toString()]);
+				if(currentClass != block.qualifiedClassName)
+				{
+					currentClass =  block.qualifiedClassName;
+					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
+				}
+
+				output += printTabs(["", block.toLocalString()], SHORT_FIRST_TAB_WIDTH*2);
 			}
 		}
 		return output;
 	}
+
 
 
 	
@@ -418,8 +440,6 @@ class PrintClient implements CoverageReportClient
 					break;
 				}
 			}
-
-		
 		}
 		return output;
 	}
@@ -431,13 +451,24 @@ class PrintClient implements CoverageReportClient
 		return newline + Std.string(value);
 	}
 
-	function printTabs(args:Array<Dynamic>, ?columnWidth:Int=14):String
+	function printTabs(args:Array<Dynamic>,?initialColumnWidth=SHORT_FIRST_TAB_WIDTH, ?columnWidth:Int=DEFAULT_TAB_WIDTH):String
 	{
 		var s:String = "";
+		var isFirst:Bool = true;
+
 		for(arg in args)
 		{
 			arg = Std.string(arg);
-			s += StringTools.rpad(arg, tab, columnWidth);
+			if(isFirst)
+			{
+				isFirst = false;
+				s += StringTools.rpad(arg, tab, initialColumnWidth);
+			}
+			else
+			{
+				s += StringTools.rpad(arg, tab, columnWidth);
+			}
+			
 		}
 		return newline + s;
 	}
