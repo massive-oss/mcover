@@ -9,8 +9,8 @@
 -debug
 -swf-version 9
 -swf build/test/as3_test.swf
+-D MCOVER_DEBUG
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
---macro massive.mcover.MCover.include('massive.mcover',['src'])
 
 --next
 
@@ -24,7 +24,6 @@
 # -swf build/test/as2_test.swf
 # -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
 # --macro massive.mcover.MCover.include('massive.mcover',['src'])
-
 # --next
 
 ## JavaScript
@@ -35,20 +34,18 @@
 -lib munit
 -lib mlib
 -js build/test/js_test.js
--D MCOVER_INGNORE_CLASS
+-D MCOVER_DEBUG
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
---macro massive.mcover.MCover.include('massive.mcover', ['src'])
-
 --next
 
 ## neko
 -main TestMain
--lib munit
--lib mlib
 -cp src
 -cp test
+-lib munit
+-lib mlib
+-debug
 -neko build/test/neko_test.n
--D MCOVER_TEST
--D MCOVER_INGNORE_CLASS
+-D MCOVER_DEBUG
 -resource test/massive/mcover/MockResouce.txt@MockMCoverResource
---macro massive.mcover.MCover.include('massive.mcover',['src'])
+# --macro massive.mcover.MCover.include('',['src'])

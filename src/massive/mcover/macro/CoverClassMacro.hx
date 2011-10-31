@@ -67,7 +67,6 @@ import massive.mcover.data.Branch;
 	**/
 	@:macro public static function build():Array<Field>
 	{
-		
 		var fields = Context.getBuildFields();
 		var type = Context.getLocalType();
 		
@@ -75,11 +74,14 @@ import massive.mcover.data.Branch;
 		{
 			case TInst(t, params):
 			{
-				currentClassName = Std.string(t).split(".").pop();
+				var parts = Std.string(t).split(".");
+				currentClassName = parts.pop();
+				currentPackageName = parts.join(".");
 			}
 			default: null;
 		}
 
+		//trace("class: " + currentPackageName + ", " + currentClassName);
 		#if MCOVER_IGNORE_CLASS
 			//Disable by default as getting classType can occassionally cause compilation failure
 			//with generic type references (e.g. class Foo<T:Bar>)
@@ -94,6 +96,7 @@ import massive.mcover.data.Branch;
 
 	static inline var META_TAG_IGNORE:String = "IgnoreCover";
 	static var currentClassName:String;
+	static var currentPackageName:String;
 	static var currentMethodName:String;
 
 	static function parseFields(fields:Array<Field>):Array<Field>
@@ -115,7 +118,6 @@ import massive.mcover.data.Branch;
 				return field;
 			}
 		}
-
 		switch(field.kind)
     	{
     		case FFun(f):
@@ -129,7 +131,6 @@ import massive.mcover.data.Branch;
     		}
     		default: null;
     	}
-
     	return field;
 	}
 
@@ -232,7 +233,6 @@ import massive.mcover.data.Branch;
 			case EFor(it, e):tmp = [it, e];//e.g. for(i in 0...5){}
 			case EIn(e1, e2):
 			{
-			
 				tmp = [e1, e2];//e.g. for(i in 0...5){}
 			}
 			case EArrayDecl(values):
@@ -254,6 +254,7 @@ import massive.mcover.data.Branch;
 					expr = parseBlock(expr, exprs);//e.g. {...}
 				}
 			}
+			case EUntyped(e1): null;//don't want to mess around with untyped code
 			default: debug(expr.expr);
 		}
 
@@ -263,7 +264,6 @@ import massive.mcover.data.Branch;
 		}
 		return expr;
 	}
-
 
 	static function parseGenericExprDef(expr:Expr, exprs:Array<Expr>):Expr
 	{
@@ -295,14 +295,12 @@ import massive.mcover.data.Branch;
 		return expr;
 	}
 
-
 	static function parseWhile(expr:Expr, econd:Expr, e:Expr, normalWhile:Bool)
 	{
 		econd = parseExpression(econd);
 		e = parseExpression(e);
 		return expr;
 	}
-
 
 	//e.g. i<2; a||b, i==b
 	static function parseBinop(expr:Expr, op:Binop, e1:Expr, e2:Expr):Expr
@@ -319,31 +317,18 @@ import massive.mcover.data.Branch;
 			
 			default: null;//debug(expr);
 		}
-
-
-		//expr.expr = EBinop(op, e1, e2);
-
-		//debug(expr);
-
-		//expr = parseGenericExprDef(expr, [e1, e2]);
 		return expr;
 	}
-
-
 
 	static function parseBlock(expr:Expr, exprs:Array<Expr>):Expr
 	{
 		parseExpressions(exprs);
-
 		var pos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
 
 		var coverageExpr = createBlockCoverageExpr(expr, pos);
-
 		exprs.unshift(coverageExpr);
-
 		return expr;
 	}
-
 
 	static function createBaseExpr(pos:Position):Expr
 	{
@@ -376,7 +361,8 @@ import massive.mcover.data.Branch;
 	**/
 	static function createBlockCoverageExpr(expr:Expr, pos:Position):Expr
 	{
-		var block = createCodeBlockReference(pos);
+		var block = createCodeBlockReference(pos, false);
+		
 		var blockId = Std.string(block.id);
 		
 		var baseExpr = createBaseExpr(pos);
@@ -395,12 +381,13 @@ import massive.mcover.data.Branch;
 	}
 
 	/**
-	* wraps a boolean value within a branch in a call to MCover.getLogger.logBranch(id, value, compareValue);
+	* wraps a boolean value within a branch in a call to MCover.getLogger().logBranch(id, value, compareValue);
 	**/
 	static function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
 		var pos = expr.pos;
 		var block = createCodeBlockReference(pos, true);
+	
 		var blockId = Std.string(block.id);
 
 		var baseExpr = createBaseExpr(pos);
@@ -437,19 +424,14 @@ import massive.mcover.data.Branch;
 
 		for (cp in MCover.classPathHash)
 		{
-			//trace(cp + ", " + file);
 			if(file.indexOf(cp) == 0)
 			{	
-				return createReference(cp, file, pos, isBranch);
+				return  createReference(cp, file, pos, isBranch);
 			}
 		}
-
-		// for (cp in MCover.classPathHash)
-		// {
-		// 	trace(cp + ", " + file);
-		// }
-
-		throw "Invalid coverage position of file (" + file + ") " + Std.string(pos);
+		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(pos);
+		error += "\nMay be caused by duplicate classpath where same cp is referenced locally and absolutely.";
+		throw new massive.mcover.Exception(error);
 		return null;
 	}
 
@@ -473,13 +455,13 @@ import massive.mcover.data.Branch;
 
 		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
 		var parts = filePath.split("/");
+
 		parts.pop();
 
 		block.packageName = (parts.length > 0) ? parts.join(".") : "";
 		block.className = currentClassName;
 		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
 		block.methodName = currentMethodName;
-
 
 		var posInfo = Context.getPosInfos(pos);
 

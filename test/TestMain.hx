@@ -26,7 +26,11 @@ class TestMain
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
 
-		var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
+		#if MCOVER
+			var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
+		#else
+			var printClient = new PrintClient(true);
+		#end
 
 		var runner:TestRunner = new TestRunner(printClient);
 		runner.completionHandler = completionHandler;

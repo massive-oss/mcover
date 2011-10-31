@@ -108,15 +108,8 @@ import haxe.macro.Compiler;
 	**/
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
 	{	
-		for(cp in classPaths)
-		{
-			haxe.macro.Compiler.include(cp);
-		}
-
 		includePackage(pack, classPaths, ignore);
-
 		workaroundForBugWhereKeepMetadataIsIgnored();
-
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -182,6 +175,9 @@ import haxe.macro.Compiler;
 		}
 	}
 
+	/**
+	* looks for a package definition in a class
+	*/
 	static function getFilePackage(path:String):String
 	{
 		var contents = neko.io.File.getContent(path);
@@ -193,6 +189,9 @@ import haxe.macro.Compiler;
 		}
 		return "";
 	}
+	/**
+	* returns all class definitions in a file.
+	*/
 	static function getClassesInFile(path:String):Array<String>
 	{
 		var classes:Array<String> = [];
@@ -207,14 +206,26 @@ import haxe.macro.Compiler;
 		return classes;
 	}
 
+	/**
+	* generates a tmp class containing references to all covered classes.
+	* This is required to ensure that ClassCoverMacro is run against all classes
+	* even if not referenced directly in code.
+	*/
 	static function workaroundForBugWhereKeepMetadataIsIgnored()
 	{
-		
 		var pos = Context.currentPos();
 		var pack = ["massive", "mcover"];
 		var name = "MCoverTmp";
 		var kind = TDClass();
 		var fields:Array<Field> = [];
+
+		// try
+		// {
+		// 		var existing = Context.getType("MCoverTmp");
+		// trace(existing);
+		// }
+		// catch(e:Dynamic)
+	
 
 		for(i in 0...Lambda.count(classHash))
 		{
@@ -236,22 +247,14 @@ import haxe.macro.Compiler;
 			var tClassType = TPath({ pack : classPackage, name : className, params : [], sub : null });
        		
        		fields.push({ name : classInstanceName, doc : null, meta : [], access : [APublic], kind : FVar(tClassType,null), pos : pos});
-
-       		trace(className);
 		}
 	
 		var t:haxe.macro.TypeDefinition = {pos:pos, params:[], pack:pack, name:name, meta:[],kind:kind, isExtern:false, fields:fields}
+
+
 		haxe.macro.Context.defineType(t);
 	
 		Compiler.keep("massive.mcover.MCoverTmp");
-	}
-
-	static function incrementPos(pos:Position, length:Int):Position
-	{
-		var posInfos = Context.getPosInfos(pos);
-		posInfos.min = posInfos.max;
-		posInfos.max = length;
-		return Context.makePosition(posInfos);
 	}
 	#end
 }
