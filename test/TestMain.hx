@@ -8,7 +8,6 @@ import js.Lib;
 import js.Dom;
 #end
 
-
 /**
  * Auto generated Test Application.	
  * Refer to munit command line tool for more information (haxelib run munit)
@@ -25,14 +24,15 @@ class TestMain
 	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
-
+		
 		#if MCOVER
-			var printClient = new massive.mcover.munit.client.MCoverPrintClient(true);
+			var printClient = new massive.munit.client.RichPrintClient(true);
+			var client = new massive.mcover.munit.client.MCoverPrintClient(printClient);
 		#else
-			var printClient = new PrintClient(true);
+			var client = new massive.munit.client.RichPrintClient(true);
 		#end
 
-		var runner:TestRunner = new TestRunner(printClient);
+		var runner:TestRunner = new TestRunner(client);
 		runner.completionHandler = completionHandler;
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
 		runner.run(suites);

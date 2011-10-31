@@ -56,101 +56,100 @@ package massive.mcover.util;
 class Timer 
 {
 	public var run:Void -> Void;
+	
 	#if (php)
+
 	#else
-
-	var id:Null<Int>;
-
-	#if js
-	static var arr:Array<Timer> = [];
-	var timerId:Int;
-	#elseif neko
-	static var mutex = new neko.vm.Mutex();
-	var runThread:neko.vm.Thread;
-	#end
-
-	public function new(time_ms:Int)
-	{
-		run = defaultRun;
-
-		#if flash9
-			var me = this;
-			id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
-		#elseif flash
-			var me = this;
-			id = untyped _global["setInterval"](function() { me.run(); },time_ms);
-		#elseif js
-			id = arr.length;
-			arr[id] = this;
-			timerId = untyped window.setInterval("massive.mcover.util.Timer.arr["+id+"].run();",time_ms);
+		var id:Null<Int>;
+		#if js
+			static var arr:Array<Timer> = [];
+			var timerId:Int;
 		#elseif neko
-			var me = this;
-			runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );
+			static var mutex = new neko.vm.Mutex();
+			var runThread:neko.vm.Thread;
 		#end
-	}
 
-	@IgnoreCover
-	function defaultRun()
-	{}
-
-	public function stop()
-	{
-		#if( php || flash9 || flash || js )
-			if (id == null) return;
-		#end
-		#if flash9
-			untyped __global__["flash.utils.clearInterval"](id);
-		#elseif flash
-			untyped _global["clearInterval"](id);
-		#elseif js
-			untyped window.clearInterval(timerId);
-			arr[id] = null;
-			if (id > 100 && id == arr.length - 1) 
-			{
-				// compact array
-				var p = id - 1;
-				while ( p >= 0 && arr[p] == null) p--;
-				arr = arr.slice(0, p + 1);
-			}
-		#elseif neko
+		public function new(time_ms:Int)
+		{
 			run = defaultRun;
-			runThread.sendMessage("stop");
-		#end
-		id = null;
-	}
-
-	#if neko
-	function runLoop(time_ms)
-	{
-		var shouldStop = false;
-		while( !shouldStop )
-		{
-			neko.Sys.sleep(time_ms/1000);
-			try
-			{
-				run();
-			}
-			catch( ex:Dynamic )
-			{
-				trace(ex);
-				trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
-			}
-			var msg = neko.vm.Thread.readMessage(false);
-			if (msg == "stop") shouldStop = true;
+			#if flash9
+				var me = this;
+				id = untyped __global__["flash.utils.setInterval"](function() { me.run(); },time_ms);
+			#elseif flash
+				var me = this;
+				id = untyped _global["setInterval"](function() { me.run(); },time_ms);
+			#elseif js
+				id = arr.length;
+				arr[id] = this;
+				timerId = untyped window.setInterval("massive.mcover.util.Timer.arr["+id+"].run();",time_ms);
+			#elseif neko
+				var me = this;
+				runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );
+			#end
 		}
-	}
-	#end
 
-	public static function delay(f:Void -> Void, time_ms:Int):Timer
-	{
-		var t = new Timer(time_ms);
-		t.run = function()
+		@IgnoreCover
+		function defaultRun()
+		{}
+
+		public function stop()
 		{
-			t.stop();
-			f();
-		};
-		return t;
-	}
+			#if( php || flash9 || flash || js )
+				if (id == null) return;
+			#end
+			#if flash9
+				untyped __global__["flash.utils.clearInterval"](id);
+			#elseif flash
+				untyped _global["clearInterval"](id);
+			#elseif js
+				untyped window.clearInterval(timerId);
+				arr[id] = null;
+				if (id > 100 && id == arr.length - 1) 
+				{
+					// compact array
+					var p = id - 1;
+					while ( p >= 0 && arr[p] == null) p--;
+					arr = arr.slice(0, p + 1);
+				}
+			#elseif neko
+				run = defaultRun;
+				runThread.sendMessage("stop");
+			#end
+			id = null;
+		}
+
+		#if neko
+			function runLoop(time_ms)
+			{
+				var shouldStop = false;
+				while( !shouldStop )
+				{
+					neko.Sys.sleep(time_ms/1000);
+					try
+					{
+						run();
+					}
+					catch( ex:Dynamic )
+					{
+						trace(ex);
+						trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+					}
+					var msg = neko.vm.Thread.readMessage(false);
+					if (msg == "stop") shouldStop = true;
+				}
+			}
+		#end
+
+		public static function delay(f:Void -> Void, time_ms:Int):Timer
+		{
+			var t = new Timer(time_ms);
+			t.run = function()
+			{
+				t.stop();
+				f();
+			};
+			return t;
+		}
 	#end
 
 	/**

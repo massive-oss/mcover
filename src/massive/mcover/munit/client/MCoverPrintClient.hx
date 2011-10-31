@@ -1,66 +1,30 @@
-/****
-* Copyright 2011 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
-
 package massive.mcover.munit.client;
 
 import massive.munit.ITestResultClient;
-
-import massive.munit.AssertionException;
-import massive.munit.ITestResultClient;
+import massive.munit.client.RichPrintClientHelper;
 import massive.munit.TestResult;
-import massive.munit.util.MathUtil;
-import massive.haxe.util.ReflectUtil;
-import massive.munit.util.Timer;
 
-import massive.mcover.MCover;
-import massive.mcover.CoverageLogger;
-import massive.mcover.client.PrintClient;
 import massive.mcover.data.Clazz;
 
-import massive.munit.client.PrintClientHelper;
-
 @IgnoreCover
-class MCoverPrintClient extends massive.munit.client.PrintClient
+class MCoverPrintClient implements IAdvancedTestResultClient
 {
 	/**
 	 * Default id of this client.
 	 */
-	public inline static var DEFAULT_ID:String = "MCoverPrintClient";
+	public static inline var DEFAULT_ID:String = "MCoverPrintClient";
 
-	var logger:CoverageLogger;
-	var coverClient:massive.mcover.client.PrintClient;
-	var coveredClasses:Hash<Clazz>;
+	/**
+	 * The unique identifier for the client.
+	 */
+	public var id(default, null):String;
 	
-	var currentCoveredClass:String;
-
-	var classPercentage:Float;
-
-
+	/**
+	 * Handler which if present, is called when the client has completed generating its results.
+	 */
+	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
+	function get_completeHandler():ITestResultClient -> Void {return completionHandler;}
+	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
 	
 
 	/**
@@ -72,94 +36,173 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 	* includes detailed missing class blocks (statements/branches) in output
 	*/
 	public var includeExecutionFrequency:Bool;
-	
-	/**
-	 * 
-	 * @param	includeIgnoredReport				flag to pass through to PrintClient
-	 */
-	public function new(?includeIgnoredReport:Bool = false)
-	{
-		super(includeIgnoredReport);
-		id = DEFAULT_ID;
 
-		includeMissingBlocks = useHTML;
-		includeExecutionFrequency = useHTML;
+	var client:IAdvancedTestResultClient;
+
+	var logger:CoverageLogger;
+	var coverClient:massive.mcover.client.PrintClient;
+	var coveredClasses:Hash<Clazz>;
+	var currentCoveredClass:String;
+	var classPercentage:Float;
+
+	var helper:RichPrintClientHelper;
+	var isRichClient:Bool;
+	var divider:String;
+
+
+	@IgnoreCover
+	public function new(client:IAdvancedTestResultClient)
+	{
+		id = DEFAULT_ID;
+		this.client = client;
+
+		
+		helper = new RichPrintClientHelper();
+
+		init();
 	}
 
-	override function init()
+
+	function init()
 	{
-		super.init();
+		divider = "------------------------------";
+		if(Std.is(client, massive.munit.client.RichPrintClient))
+		{
+			#if (js || flash)
+				isRichClient = true;
+			#else
+				isRichClient = false;
+			#end
+		}
+		else
+		{
+			isRichClient = false;
+		}
+
+
+		includeMissingBlocks = isRichClient;
+		includeExecutionFrequency = isRichClient;
+		
 		classPercentage = 0;
 		coveredClasses = new Hash();
+		
 		try
 		{
 			logger = MCover.getLogger();
 			coverClient = new massive.mcover.client.PrintClient();
 			
-			coverClient.includeMissingBlocks = false;
-			coverClient.includeExecutionFrequency = false;
+			coverClient.includeMissingBlocks = true;
+			coverClient.includeExecutionFrequency = true;
 			logger.addClient(coverClient);
 		}
 		catch(e:Dynamic)
 		{
 			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
 			
-			if(useHTML)
-			{
-				helper.printLine(msg);
-			}
-			else
-			{
-				printLine(msg);
-			}
+			printLine(msg);
 		}
 	}
 
-	override function setCurrentTestClass(className:String):Void
+	public function setCurrentTestClass(className:String):Void
 	{
-		if(currentTestClass == className) return;
-		super.setCurrentTestClass(className);
-		currentCoveredClass = currentTestClass.substr(0, currentTestClass.length-4);
-		logger.currentTest = currentCoveredClass;
-	}
-
-	override function updateLastTestResult()
-	{
-		printTestCoverage();
-		super.updateLastTestResult();
+		var coveredClassName = className.substr(0, className.length-4);
 		
-	} 
+		var hasChanged = currentCoveredClass != coveredClassName;
 
-	override function getLastTestResult():TestResultState
-	{
-		var result = super.getLastTestResult();
-
-		if(result == TestResultState.PASSED && classPercentage != 100)
+		if(hasChanged && currentCoveredClass != null)
 		{
-			result = TestResultState.WARNING;
+			printTestCoverage();
 		}
+
+		client.setCurrentTestClass(className);
+
+		if(hasChanged)
+		{
+			currentCoveredClass = coveredClassName;
+			logger.currentTest = currentCoveredClass;
+		}
+	}
+
+	/**
+	 * Called when a test passes.
+	 *  
+	 * @param	result			a passed test result
+	 */
+	public function addPass(result:TestResult):Void
+	{
+		client.addPass(result);
+	}
+
+	/**
+	 * Called when a test fails.
+	 *  
+	 * @param	result			a failed test result
+	 */
+	public function addFail(result:TestResult):Void
+	{
+		client.addFail(result);
+	}
+
+	/**
+	 * Called when a test triggers an unexpected exception.
+	 *  
+	 * @param	result			an erroneous test result
+	 */
+	public function addError(result:TestResult):Void
+	{
+		client.addError(result);
+	}
+	
+	/**
+	 * Called when a test has been ignored.
+	 *
+	 * @param	result			an ignored test
+	 */
+	public function addIgnore(result:TestResult):Void
+	{
+		client.addIgnore(result);	
+	}
+
+	/**
+	 * Called when all tests are complete.
+	 *  
+	 * @param	testCount		total number of tests run
+	 * @param	passCount		total number of tests which passed
+	 * @param	failCount		total number of tests which failed
+	 * @param	errorCount		total number of tests which were erroneous
+	 * @param	ignoreCount		total number of ignored tests
+	 * @param	time			number of milliseconds taken for all tests to be executed
+	 * @return	collated test result data if any
+	 */
+	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
+	{
+		printFinalCoverageReports();
+
+		var result = client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
+		
+		if (completionHandler != null) completionHandler(this); 
+
 		return result;
 	}
-
 
 	function printTestCoverage()
 	{
 		if(logger.currentTest == null) return;
 
+	
 		logger.reportCurrentTest(true);
 
 		var cls = logger.coverage.getClassByName(currentCoveredClass);
-		
+	
 		if(cls != null)
 		{
 			classPercentage = cls.getPercentage();
 
 			coveredClasses.set(cls.name, cls);
 			
-
 			var summaryStr = " [" + classPercentage + "%]";
 			
-			if(useHTML)
+			if(isRichClient)
 			{
 				helper.updateTestSummary(summaryStr);
 			}
@@ -171,23 +214,19 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 
 			if(classPercentage == 100 || !includeMissingBlocks)  return;
 
-			if(useHTML)
+			if(isRichClient)
 			{
 				helper.addTestCoverageClass(cls.name, classPercentage);
 				printMissingClassBlocks(cls);
-			}
-	
-			
+			}	
 		}	
 	}
-	
+
 	function printMissingClassBlocks(cls:Clazz)
 	{
-
 		if(cls.getPercentage() == 100 ) return;
 
 		var statements = cls.getMissingStatements();
-
 
 		var str:String = "";
 
@@ -195,14 +234,12 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 		{
 			for(block in statements)
 			{
-		
 				var blockString =block.methodName + " | " + block.location;
 				if(str != "") str += "\n";
 				str += blockString;
-
 			}
 
-			if(useHTML)
+			if(isRichClient)
 			{
 				helper.addTestCoverageItem(str);
 			}
@@ -214,10 +251,7 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 					printLine(line, 1);
 				}
 			}
-			
 		}
-
-
 
 		var branches = cls.getMissingBranches();
 
@@ -227,7 +261,6 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 
 			for(block in branches)
 			{
-			
 				var blockString =block.methodName + " | " + block.location;
 				if(!block.isCovered())
 				{
@@ -239,10 +272,9 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 				}
 				if(str != "") str += "\n";
 				str += blockString;
-
 			}
 
-			if(useHTML)
+			if(isRichClient)
 			{
 				helper.addTestCoverageItem(str);
 			}
@@ -255,27 +287,23 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 				}
 			}
 		}
-
 	}
 
-
 	//////////
-	override function printFinalReports()
+	function printFinalCoverageReports()
 	{
-		super.printFinalReports();
 		logger.report();
 
 		var percentage = logger.coverage.getPercentage();
 
-
-		if(useHTML)
+		if(isRichClient)
 		{
 			helper.createCoverageReport(percentage);
 		}
 
 		if(includeMissingBlocks)
 		{
-			if(!useHTML)
+			if(!isRichClient)
 			{
 				printLine("");
 				printLine("Code Coverage Results: " + percentage + "%");
@@ -285,15 +313,13 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			printOutstandingMissingClasses();
 		}
 			
-
-		if(useHTML)
+		if(isRichClient)
 		{
 			helper.addCoverageSummary(coverClient.output);
 		}
 		else
 		{
 			printLine(coverClient.output);
-
 		}
 	}
 
@@ -303,11 +329,10 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 		
 		for(cls in classes)
 		{
-		
-
 			if(cls.getPercentage() == 100) continue;
+			if(coveredClasses.exists(cls.name)) continue;
 
-			if(useHTML)
+			if(isRichClient)
 			{
 				helper.addMissingCoverageClass(cls.name, cls.getPercentage() );
 			}
@@ -317,7 +342,25 @@ class MCoverPrintClient extends massive.munit.client.PrintClient
 			}
 
 			printMissingClassBlocks(cls);
-
 		}
+	}
+
+
+
+	////////
+
+
+	function print(value)
+	{
+		helper.print(value);
+	}
+
+	function printLine(value, ?indent:Int = 0)
+	{
+		if(indent > 0)
+		{
+			value = StringTools.lpad("", " ", indent*4) + value;
+		}
+		helper.printLine(value);
 	}
 }
