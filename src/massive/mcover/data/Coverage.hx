@@ -127,21 +127,21 @@ import massive.mcover.data.Branch;
     override public function getMissingBranches():Array<Branch>
 	{
 		var a = super.getMissingBranches();
-		a.sort(sortOnNodeId);
+		a.sort(DataUtil.sortOnBlockName);
 		return a;
 	}
 
 	override public function getMissingStatements():Array<Statement>
 	{
 		var a = super.getMissingStatements();
-		a.sort(sortOnNodeId);
+		a.sort(DataUtil.sortOnBlockName);
 		return a;
 	}
 
 	override public function getClasses():Array<Clazz>
 	{
 		var a = super.getClasses();
-		a.sort(sortOnClazzId);
+		a.sort(DataUtil.sortOnNodeName);
 		return a;
 	}
 
@@ -177,7 +177,7 @@ import massive.mcover.data.Branch;
 		{
 			a.push(cast(item, Package));
 		}
-		a.sort(sortOnPackageId);
+		a.sort(DataUtil.sortOnNodeName);
 
 		return a;
 	}
@@ -231,20 +231,8 @@ import massive.mcover.data.Branch;
 
 	///////////////
 
-	function sortOnNodeId(a:AbstractNode, b:AbstractNode)
-	{
-		return a.id-b.id;
-	}
 
-	function sortOnClazzId(a:Clazz, b:Clazz)
-	{
-		return a.id-b.id;
-	}
 
-	function sortOnPackageId(a:Package, b:Package)
-	{
-		return a.id-b.id;
-	}
 
 	override function hxSerialize( s : haxe.Serializer )
 	{

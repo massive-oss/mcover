@@ -35,6 +35,7 @@ package massive.mcover.data;
 
 	var resultCache:CoverageResult;
 
+	@IgnoreCover
 	function new()
 	{
 

@@ -37,87 +37,78 @@ class CoverageTest extends AbstractNodeListTest
 	}
 
 	@Test
-	public function shouldSortMissingBranchesById()
+	public function shouldSortMissingBranchesByName()
 	{
 		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
 		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
 		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
-		
-		item2.branch.id = 2;
-		item3.branch.id = 4;
+		item1.branch.qualifiedClassName = "a";
+		item2.branch.qualifiedClassName = "c";
+		item3.branch.qualifiedClassName = "a.b";
 
 		var missing = coverage.getMissingBranches();
 
-		Assert.areEqual(0, missing[0].id);
-		Assert.areEqual(0, missing[1].id);
-		
-		Assert.areEqual(2, missing[2].id);
-		Assert.areEqual(4, missing[3].id);
+		Assert.areEqual("a" , missing[0].qualifiedClassName);
+		Assert.areEqual("a.b", missing[1].qualifiedClassName);
+		Assert.areEqual("c", missing[2].qualifiedClassName);
 	}
 
+
+
 	@Test
-	public function shouldSortMissingStatementsById()
+	public function shouldSortMissingStatementsByName()
 	{
 		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
 		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
 		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
-		
-		item2.statement.id = 2;
-		item3.statement.id = 4;
+		item1.statement.qualifiedClassName = "a";
+		item2.statement.qualifiedClassName = "c";
+		item3.statement.qualifiedClassName = "a.b";
 
 		var missing = coverage.getMissingStatements();
 
-		Assert.areEqual(0, missing[0].id);
-		Assert.areEqual(0, missing[1].id);
-		
-		Assert.areEqual(2, missing[2].id);
-		Assert.areEqual(4, missing[3].id);
+		Assert.areEqual("a" , missing[0].qualifiedClassName);
+		Assert.areEqual("a.b", missing[1].qualifiedClassName);
+		Assert.areEqual("c", missing[2].qualifiedClassName);
 	}
+
+
 	
 	@Test
-	public function shouldSortClassesById()
+	public function shouldSortClassesByName()
 	{
 		var item1 = cast(coverage.getItemByName("item1", NodeMock), NodeMock);
 		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
 		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 		
-		var item1a = cast(coverage.getItemByName("item1a", NodeMock), NodeMock);
-		
-		item2.clazz.id = 2;
-		item3.clazz.id = 4;
+		item1.clazz.name = "a";
+		item2.clazz.name = "c";
+		item3.clazz.name = "a.b";
 
 		var classes = coverage.getClasses();
 
-		Assert.areEqual(0, classes[0].id);
-		Assert.areEqual(0, classes[1].id);
-		
-		Assert.areEqual(2, classes[2].id);
-		Assert.areEqual(4, classes[3].id);
+		Assert.areEqual("a" , classes[0].name);
+		Assert.areEqual("a.b", classes[1].name);
+		Assert.areEqual("c", classes[2].name);
 	}
 
 	@Test
-	public function shouldSortPackagesById()
+	public function shouldSortPackagesByName()
 	{
 
 		var item1 = cast(coverage.getItemByName("item1", Package), Package);
 		var item2 = cast(coverage.getItemByName("item2", Package), Package);
-		var item3 = cast(coverage.getItemByName("item3", Package), Package);
 		
-		var item1a = cast(coverage.getItemByName("item1", Package), Package);
+		var item3 = cast(coverage.getItemByName("item1a", Package), Package);
 		
-		item2.id = 2;
-		item3.id = 4;
 		
-
 		var packages = coverage.getPackages();
 
-		Assert.areEqual(0, packages[0].id);
-		Assert.areEqual(2, packages[1].id);
-		Assert.areEqual(4, packages[2].id);
+		Assert.areEqual(item1, packages[0]);
+		Assert.areEqual(item3, packages[1]);
+		Assert.areEqual(item2, packages[2]);
 	}
 
 	@Test

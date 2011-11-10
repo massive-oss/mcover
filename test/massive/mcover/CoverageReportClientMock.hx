@@ -3,9 +3,10 @@ package massive.mcover;
 import massive.mcover.data.Statement;
 import massive.mcover.data.Branch;
 import massive.mcover.data.Coverage;
+import massive.mcover.CoverageReportClient;
 
 
-class CoverageReportClientMock implements CoverageReportClient
+class CoverageReportClientMock implements AdvancedCoverageReportClient
 {
 	public var coverage:Coverage;
 
@@ -13,6 +14,16 @@ class CoverageReportClientMock implements CoverageReportClient
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
 	public var completionHandler(default, default):CoverageReportClient -> Void;
+
+	public var includeHeader(default, default):Bool;
+	public var includeMissingBlocks(default, default):Bool;
+	public var includeExecutionFrequency(default, default):Bool;
+	public var includeClassBreakdown(default, default):Bool;
+	public var includePackageBreakdown(default, default):Bool;
+	public var includeOverallPercentage(default, default):Bool;
+	public var includeSummary(default, default):Bool;
+
+	public var output(default, null):String;
 
 
 	public function new()
@@ -25,8 +36,6 @@ class CoverageReportClientMock implements CoverageReportClient
 		this.coverage = coverage;
 
 		var timer = massive.munit.util.Timer.delay(reportComplete, 50);
-
-		return null;
 	}
 
 	function reportComplete()

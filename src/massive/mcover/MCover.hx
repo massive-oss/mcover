@@ -109,7 +109,7 @@ import haxe.macro.Compiler;
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
 	{	
 		includePackage(pack, classPaths, ignore);
-		workaroundForBugWhereKeepMetadataIsIgnored();
+		Compiler.include(pack, true, ignore, classPaths);
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
@@ -167,7 +167,7 @@ import haxe.macro.Compiler;
 						classHash.set(id, cl);
 
 						Compiler.addMetadata("@:build(massive.mcover.macro.CoverClassMacro.build())", cl);
-						Compiler.keep(cl);
+						//Compiler.keep(cl, null, true);
 					}
 				} else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
 					includePackage(prefix + file, classPaths, ignore);
@@ -206,55 +206,5 @@ import haxe.macro.Compiler;
 		return classes;
 	}
 
-	/**
-	* generates a tmp class containing references to all covered classes.
-	* This is required to ensure that ClassCoverMacro is run against all classes
-	* even if not referenced directly in code.
-	*/
-	static function workaroundForBugWhereKeepMetadataIsIgnored()
-	{
-		var pos = Context.currentPos();
-		var pack = ["massive", "mcover"];
-		var name = "MCoverTmp";
-		var kind = TDClass();
-		var fields:Array<Field> = [];
-
-		// try
-		// {
-		// 		var existing = Context.getType("MCoverTmp");
-		// trace(existing);
-		// }
-		// catch(e:Dynamic)
-	
-
-		for(i in 0...Lambda.count(classHash))
-		{
-			var cls = classHash.get(i);
-			var classPackage = cls.split(".");
-
-			try
-			{
-				Context.getModule(cls);
-			}
-			catch(e:Dynamic)
-			{
-				//catch any class references that don't actually exist
-				continue;
-			}
-			var className = classPackage.pop();
-			var classInstanceName = "tmp_" + cls.split(".").join("_");
-
-			var tClassType = TPath({ pack : classPackage, name : className, params : [], sub : null });
-       		
-       		fields.push({ name : classInstanceName, doc : null, meta : [], access : [APublic], kind : FVar(tClassType,null), pos : pos});
-		}
-	
-		var t:haxe.macro.TypeDefinition = {pos:pos, params:[], pack:pack, name:name, meta:[],kind:kind, isExtern:false, fields:fields}
-
-
-		haxe.macro.Context.defineType(t);
-	
-		Compiler.keep("massive.mcover.MCoverTmp");
-	}
 	#end
 }

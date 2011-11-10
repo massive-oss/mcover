@@ -34,7 +34,7 @@ import massive.mcover.data.Branch;
 import massive.mcover.data.Coverage;
 import massive.mcover.util.Timer;
 
-class PrintClient implements CoverageReportClient
+class PrintClient implements AdvancedCoverageReportClient
 {
 		/**
 	 * Handler which if present, is called when the client has completed generating its results.

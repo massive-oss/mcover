@@ -26,36 +26,37 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover;
+package massive.mcover.data;
 
-import massive.mcover.client.PrintClient;
-import massive.mcover.client.TraceClient;
-import massive.mcover.CoverageLogger;
-import massive.mcover.CoverageReportClient;
-import massive.mcover.data.AbstractBlock;
-import massive.mcover.data.AbstractNode;
-import massive.mcover.data.AbstractNodeList;
-import massive.mcover.data.Branch;
-import massive.mcover.data.Clazz;
-import massive.mcover.data.Coverage;
-import massive.mcover.data.CoverageResult;
-import massive.mcover.data.DataUtil;
-import massive.mcover.data.File;
-import massive.mcover.data.Method;
-import massive.mcover.data.Package;
-import massive.mcover.data.Statement;
-import massive.mcover.Exception;
-import massive.mcover.macro.CoverClassMacro;
-import massive.mcover.MCover;
-import massive.mcover.munit.client.MCoverPrintClient;
-import massive.mcover.util.Timer;
-
-@IgnoreCover
-class AllClasses
+class DataUtil
 {
-@IgnoreCover
-	public static function main():AllClasses {return new AllClasses();}
-@IgnoreCover
-	public function new(){trace('This is a generated main class');}
-}
+	@IgnoreCover
+	public function new(){}
 
+	static public function sortOnNodeId(a:AbstractNode, b:AbstractNode)
+	{
+		return a.id-b.id;
+	}
+
+	static public function sortOnNodeName(a:AbstractNode, b:AbstractNode)
+	{
+		var nodeA = a.name.toLowerCase();
+        var nodeB = b.name.toLowerCase();
+        
+        if (nodeA < nodeB) return -1;
+        if (nodeA > nodeB) return 1;
+
+		return 0;
+	}
+
+
+	static public function sortOnBlockName(a:AbstractBlock, b:AbstractBlock)
+	{
+		var blockA = a.toString().toLowerCase();
+        var blockB = b.toString().toLowerCase();
+        
+        if (blockA < blockB) return -1;
+        if (blockA > blockB) return 1;
+        return 0;
+	}
+}

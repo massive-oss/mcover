@@ -81,6 +81,7 @@ import massive.mcover.data.CoverageResult;
 			var tmp = node.getMissingBranches();
 			a = a.concat(tmp);
 		}
+		a.sort(DataUtil.sortOnBlockName);
 		return a;
 	}
 
@@ -92,6 +93,8 @@ import massive.mcover.data.CoverageResult;
 			var tmp = node.getMissingStatements();
 			a = a.concat(tmp);
 		}
+
+		a.sort(DataUtil.sortOnBlockName);
 		return a;
 	}
 
@@ -159,5 +162,5 @@ import massive.mcover.data.CoverageResult;
         itemCount = s.unserialize();
     }
 
-	
+
 }

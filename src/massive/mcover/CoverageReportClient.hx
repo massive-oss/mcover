@@ -48,4 +48,18 @@ interface CoverageReportClient
 	 */
 	function report(coverage:Coverage):Void;
 
+	public var output(default, null):String;
+
+}
+
+interface AdvancedCoverageReportClient implements CoverageReportClient
+{
+	var includeMissingBlocks(default, default):Bool;
+	var includeExecutionFrequency(default, default):Bool;
+	var includeClassBreakdown(default, default):Bool;
+	var includePackageBreakdown(default, default):Bool;
+	var includeOverallPercentage(default, default):Bool;
+	var includeSummary(default, default):Bool;
+
+
 }

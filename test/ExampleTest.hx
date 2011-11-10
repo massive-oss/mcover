@@ -67,4 +67,10 @@ class ExampleTest
 		Assert.isTrue(false);
 	}
 
+	@Test
+	public function testThatThrowsException()
+	{
+		throw "exception";
+	}
+
 }

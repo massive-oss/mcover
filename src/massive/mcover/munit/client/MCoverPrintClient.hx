@@ -1,12 +1,40 @@
+/****
+* Copyright 2011 Massive Interactive. All rights reserved.
+* 
+* Redistribution and use in source and binary forms, with or without modification, are
+* permitted provided that the following conditions are met:
+* 
+*    1. Redistributions of source code must retain the above copyright notice, this list of
+*       conditions and the following disclaimer.
+* 
+*    2. Redistributions in binary form must reproduce the above copyright notice, this list
+*       of conditions and the following disclaimer in the documentation and/or other materials
+*       provided with the distribution.
+* 
+* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* 
+* The views and conclusions contained in the software and documentation are those of the
+* authors and should not be interpreted as representing official policies, either expressed
+* or implied, of Massive Interactive.
+****/
+
 package massive.mcover.munit.client;
 
 import massive.munit.ITestResultClient;
 import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
-
+import massive.mcover.CoverageReportClient;
 import massive.mcover.data.Clazz;
 
-@IgnoreCover
+
 class MCoverPrintClient implements IAdvancedTestResultClient
 {
 	/**
@@ -38,9 +66,9 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	public var includeExecutionFrequency:Bool;
 
 	var client:IAdvancedTestResultClient;
-
 	var logger:CoverageLogger;
-	var coverClient:massive.mcover.client.PrintClient;
+
+	var coverClient:massive.mcover.AdvancedCoverageReportClient;
 	var coveredClasses:Hash<Clazz>;
 	var currentCoveredClass:String;
 	var classPercentage:Float;
@@ -49,19 +77,46 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	var isRichClient:Bool;
 	var divider:String;
 
-
-	@IgnoreCover
-	public function new(?client:IAdvancedTestResultClient=null)
+	public function new(
+		?munitClient:IAdvancedTestResultClient=null,
+		?helper:RichPrintClientHelper=null,
+		?mcoverClient:AdvancedCoverageReportClient=null,
+		?logger:massive.mcover.CoverageLogger=null)
 	{
 		id = DEFAULT_ID;
 
-		if(client == null) client = new RichPrintClient(true);
-		this.client = client;
+		if(munitClient == null) munitClient = new RichPrintClient(true);
+		this.client = munitClient;
 
+		if(helper == null) helper = new RichPrintClientHelper();
+		this.helper = helper;
+
+
+		if(mcoverClient == null) mcoverClient = new massive.mcover.client.PrintClient();
+		this.coverClient = mcoverClient;
+
+		if(logger == null) logger = createDefaultLogger();
+
+		this.logger = logger;
 		
-		helper = new RichPrintClientHelper();
-
 		init();
+	}
+
+	@IgnoreCover
+	function createDefaultLogger()
+	{
+		try
+		{
+			return MCover.getLogger();	
+		}
+		catch(e:Dynamic)
+		{
+			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
+			
+			printLine(msg);
+		}
+
+		return null;
 	}
 
 
@@ -85,30 +140,30 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		includeMissingBlocks = isRichClient;
 		includeExecutionFrequency = isRichClient;
 		
+		currentCoveredClass = null;
 		classPercentage = 0;
 		coveredClasses = new Hash();
+
+		coverClient.includeMissingBlocks = true;
+		coverClient.includeExecutionFrequency = true;
+		logger.addClient(coverClient);
 		
-		try
-		{
-			logger = MCover.getLogger();
-			coverClient = new massive.mcover.client.PrintClient();
-			
-			coverClient.includeMissingBlocks = true;
-			coverClient.includeExecutionFrequency = true;
-			logger.addClient(coverClient);
-		}
-		catch(e:Dynamic)
-		{
-			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
-			
-			printLine(msg);
-		}
+		
 	}
+
 
 	public function setCurrentTestClass(className:String):Void
 	{
-		var coveredClassName = className.substr(0, className.length-4);
-		
+
+		var endsWithTest = className != null && className.lastIndexOf("Test") == className.length-4;
+
+		var coveredClassName :String = null;
+
+		if(endsWithTest)
+		{
+			coveredClassName = className.substr(0, className.length-4);
+		}
+	
 		var hasChanged = currentCoveredClass != coveredClassName;
 
 		if(hasChanged && currentCoveredClass != null)
@@ -311,7 +366,6 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 				printLine("Code Coverage Results: " + percentage + "%");
 				printLine(divider);
 			}
-
 			printOutstandingMissingClasses();
 		}
 			
@@ -351,8 +405,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	////////
 
-
-	function print(value)
+	function print(value:Dynamic)
 	{
 		helper.print(value);
 	}

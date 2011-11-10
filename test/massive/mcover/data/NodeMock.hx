@@ -49,7 +49,7 @@ class NodeMock extends AbstractNode
 
 	///////////////////
 
-	static public function createClass():Clazz
+	static public function createClass(?id:Int=0):Clazz
 	{
 		var cls = new Clazz();
 		cls.id = 0;

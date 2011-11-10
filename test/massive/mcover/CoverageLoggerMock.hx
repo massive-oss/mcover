@@ -36,6 +36,11 @@ class CoverageLoggerMock implements CoverageLogger
 		clients = [];
 	}
 
+	public function setCoverage(coverage:Coverage)
+	{
+		this.coverage = coverage;
+	}
+
 	public function report(?skipClients:Bool=false)
 	{
 		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);

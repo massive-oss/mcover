@@ -11,12 +11,14 @@ import massive.mcover.data.AbstractNodeTest;
 import massive.mcover.data.BranchTest;
 import massive.mcover.data.ClazzTest;
 import massive.mcover.data.CoverageTest;
+import massive.mcover.data.DataUtilTest;
 import massive.mcover.data.FileTest;
 import massive.mcover.data.MethodTest;
 import massive.mcover.data.PackageTest;
 import massive.mcover.data.StatementTest;
 import massive.mcover.ExceptionTest;
 import massive.mcover.MCoverTest;
+import massive.mcover.munit.client.MCoverPrintClientTest;
 import massive.mcover.util.TimerTest;
 
 /**
@@ -42,12 +44,14 @@ class TestSuite extends massive.munit.TestSuite
 		add(massive.mcover.data.BranchTest);
 		add(massive.mcover.data.ClazzTest);
 		add(massive.mcover.data.CoverageTest);
+		add(massive.mcover.data.DataUtilTest);
 		add(massive.mcover.data.FileTest);
 		add(massive.mcover.data.MethodTest);
 		add(massive.mcover.data.PackageTest);
 		add(massive.mcover.data.StatementTest);
 		add(massive.mcover.ExceptionTest);
 		add(massive.mcover.MCoverTest);
+		add(massive.mcover.munit.client.MCoverPrintClientTest);
 		add(massive.mcover.util.TimerTest);
 	}
 }

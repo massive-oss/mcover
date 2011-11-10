@@ -160,6 +160,21 @@ class AbstractNodeTest
 		Assert.areEqual(0, a.length);
 	}
 
+	@Test
+	public function shouldSerializeNameAndId():Void
+	{
+		node.id = 1;
+		node.name = "node";
+
+       	var serializedData = haxe.Serializer.run(node);
+        var unserializedData = haxe.Unserializer.run(serializedData);
+
+        var copy = cast(unserializedData, AbstractNode);
+
+        Assert.areEqual(1, copy.id);
+     	Assert.areEqual("node", copy.name);
+	}
+
 	///////////////////////////
 
 	function createEmptyNode():AbstractNode
