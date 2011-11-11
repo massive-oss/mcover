@@ -67,13 +67,16 @@ import haxe.macro.Compiler;
 	static public var logger(default, null):CoverageLogger;
 
 	#if neko
-	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
+	static public var mutex:neko.vm.Mutex;
 	#end
 
 	@IgnoreCover
 	public static function getLogger():CoverageLogger
 	{
-		#if neko mutex.acquire(); #end
+		#if neko
+			if(mutex == null) mutex = new neko.vm.Mutex();
+		 	mutex.acquire();
+		#end
 		if(logger == null)
 		{
 			logger = new CoverageLoggerImpl();
