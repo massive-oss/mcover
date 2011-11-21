@@ -2,5 +2,5 @@
 	<user name="massive"/>
 	<tag v="cross" />
 	<description>MassiveCover is a cross-platform haXe code coverage framework from Massive Interactive.</description>
-	<version name="1.0.1">Added support for filtered reports, improved integration with MUnit  </version>
+	<version name="1.1.0">Added support for MUnit RichPrintClient html output, minor bug fixes</version>
 </project>

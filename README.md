@@ -172,36 +172,32 @@ View results!
 Integrating with MUnit
 ---------------------
 
-MCover is currently being integrated into the munit toolchain. In the meantime unit test coverage can be manually configured using the following steps:
-
-MCover includes a custom munit print client that integrates coverage data into unit test output.
-
-*	inline class coverage percentage at completion of individual test class (see note below)
-
-		Class: massive.mcover.client.PrintClientTest ....... 97.22%
-		Class: massive.mcover.data.AbstractBlockTest ............ 40%
-		Class: massive.mcover.data.AbstractNodeListTest .................. 100%
-
-*	standard PrintClient report output in unit test summary (see above)
-
+MCover is now fully integrated with MUnit's rich HTML print client (MUnit 0.9.2.0 or higher)
 
 **Note:** Inline coverage is only appended to test classes that have a matching class in the covered src path (e.g. com.ExampleTest will look for results for com.Example)
 
+**Note:** You may need to update your munit project settings if updating from older version of munit
 
 ### Step 1. Add MCover macro to build
 
-Include mcover macro in test.hxml file (see above)
+Specify the MCoverPrintClient when MUnit is including coverage (if upgrading from earlier version of munit):
 
-	-lib mcover
-	--macro massive.mcover.MCover.include('', ['src'])
+In TestMain.new():
 
-
-### Step 2. Update TestMain.hx
-
-Replace the default munit PrintClient with massive.mcover.munit.client.PrintClient in TestMain
-
+	#if MCOVER
 		var client = new massive.mcover.munit.client.MCoverPrintClient();
-		var runner:TestRunner = new TestRunner(client);
+	#else
+		var client = new massive.munit.client.RichPrintClient();
+	#end
+
+	var runner:TestRunner = new TestRunner(client);	
+
+### Step 2. Run munit
+
+To test and run with MCover just add the '-coverage' flag
+
+	munit test -coverage
+
 
 Usage
 ---------------------
