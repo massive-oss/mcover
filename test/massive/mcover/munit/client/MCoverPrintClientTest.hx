@@ -17,7 +17,6 @@ class MCoverPrintClientTest
 {
 	var instance:MCoverPrintClient; 
 	var munitClient:AdvancedTestResultClientMock;
-	var munitPrintClientHelper:RichPrintClientHelperMock;
 	var result:TestResult;
 
 	var coverageClient:CoverageReportClientMock;
@@ -44,14 +43,13 @@ class MCoverPrintClientTest
 	public function setup():Void
 	{
 		munitClient = new AdvancedTestResultClientMock();
-		munitPrintClientHelper = new RichPrintClientHelperMock();
+		
 		coverageClient = new CoverageReportClientMock();
 		coverageLogger = new CoverageLoggerMock();
 		coverageLogger.setCoverage(new Coverage());
 		result = new TestResult();	
 		
-
-		instance = new MCoverPrintClient(munitClient, munitPrintClientHelper, coverageClient,coverageLogger);
+		instance = new MCoverPrintClient(munitClient,coverageClient,coverageLogger);
 	}
 	
 	@After
@@ -62,7 +60,7 @@ class MCoverPrintClientTest
 	@Test
 	public function shouldSetIdInConstructor():Void
 	{
-		instance = new MCoverPrintClient();
+		instance = new MCoverPrintClient(munitClient,coverageClient,coverageLogger);
 		Assert.areEqual(MCoverPrintClient.DEFAULT_ID, instance.id);
 	}
 
@@ -144,6 +142,30 @@ class MCoverPrintClientTest
 	}
 
 	@Test
+	public function shouldCreateCoverageForCurrentTestClass()
+	{
+		var coverage = coverageLogger.coverage;
+		var branch = NodeMock.createBranch();
+		var statement = NodeMock.createStatement();
+
+		coverage.addBranch(branch);
+		coverage.addStatement(statement);
+		instance.setCurrentTestClass("package.classTest");
+		
+		branch.trueCount = 1;
+		branch.falseCount = 0;
+		statement.count = 0;
+		instance.setCurrentTestClass("item2Test");
+		
+		var coverageResult = munitClient.testCoverage;
+
+		Assert.isNotNull(coverageResult);
+		Assert.areEqual("package.class", coverageResult.className);
+		Assert.areEqual(25, coverageResult.percent);
+		Assert.areEqual(2, coverageResult.blocks.length);
+	}
+
+	@Test
 	public function shouldCallClientReportFinalStatistics()
 	{
 		instance.reportFinalStatistics(3,1,1,1,1,0);
@@ -161,22 +183,6 @@ class MCoverPrintClientTest
 		Assert.areEqual(1, completionCount);
 	}
 
-	@Test
-	public function shouldUseDefaultPrintHelperMethodsIfNotRichClient()
-	{
-		var client = new TestResultClientStub();
-		instance = new MCoverPrintClient(client, munitPrintClientHelper, coverageClient,coverageLogger);
-
-
-		
-		instance.setCurrentTestClass("aTest");
-		populateCoverage();
-		result.passed = false;
-		instance.addFail(result);
-		instance.reportFinalStatistics(3,1,1,1,1,0);
-
-		Assert.isTrue(munitPrintClientHelper.printLines.length > 0);
-	}
 
 	//////
 	function completionHandler(client:ITestResultClient)

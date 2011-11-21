@@ -3,7 +3,7 @@ package massive.mcover.munit.client;
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
 
-class AdvancedTestResultClientMock implements IAdvancedTestResultClient
+class AdvancedTestResultClientMock implements ICoverageTestResultClient
 {
 	
 	public static inline var DEFAULT_ID:String = "stub";
@@ -25,6 +25,16 @@ class AdvancedTestResultClientMock implements IAdvancedTestResultClient
 
 	public var currentTestClass:String;
 	public var testClasses:Array<String>;
+
+	public var testCoverage:CoverageResult;
+
+	public var finalCoveragePercent:Float;
+	public var finalMissingCoverageResults:Array<CoverageResult>;
+	public var finalCoverageSummary:String;
+	public var finalCoverageClassBreakdown:String;
+	public var finalCoveragePackageBreakdown:String;
+	public var finalCoverageExecutionFrequency:String;
+	
 
 	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
 	private function get_completeHandler():ITestResultClient -> Void 
@@ -91,6 +101,27 @@ class AdvancedTestResultClientMock implements IAdvancedTestResultClient
 		this.time = time;
 		if (completionHandler != null) 
 			completionHandler(this);
+	}
+
+	public function setCurrentTestClassCoverage(result:CoverageResult):Void
+	{	
+		testCoverage = result;
+	}
+
+
+	public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+		?classBreakdown:String=null,
+		?packageBreakdown:String=null,
+		?executionFrequency:String=null
+		):Void
+	{
+		finalCoveragePercent = percent;
+		finalMissingCoverageResults = missingCoverageResults;
+		finalCoverageSummary = summary;
+		finalCoverageClassBreakdown = classBreakdown;
+		finalCoveragePackageBreakdown = packageBreakdown;
+		finalCoverageExecutionFrequency = executionFrequency;
+
 	}
 	
 	public function toString():String

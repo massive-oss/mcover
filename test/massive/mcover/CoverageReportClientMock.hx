@@ -25,6 +25,14 @@ class CoverageReportClientMock implements AdvancedCoverageReportClient
 
 	public var output(default, null):String;
 
+	public var header(default, null):String;
+	public var executionFrequency(default, null):String;
+	public var missingBlocks(default, null):String;
+	public var classBreakdown(default, null):String;
+	public var packageBreakdown(default, null):String;
+	public var summary(default, null):String;
+	public var overallPercentage(default, null):String;
+
 
 	public function new()
 	{

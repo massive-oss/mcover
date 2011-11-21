@@ -54,7 +54,6 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	function get_completeHandler():ITestResultClient -> Void {return completionHandler;}
 	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
 	
-
 	/**
 	* includes detailed missing class blocks (statements/branches) in output
 	*/
@@ -65,119 +64,39 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	*/
 	public var includeExecutionFrequency:Bool;
 
-	var client:IAdvancedTestResultClient;
-	var logger:CoverageLogger;
 
-	var coverClient:massive.mcover.AdvancedCoverageReportClient;
+	/**
+	* includes detailed coverage data for classes and packages
+	*/
+	public var includeClassAndPackageBreakdowns:Bool;
+
+	var client:ICoverageTestResultClient;
+
+	var mcoverLogger:CoverageLogger;
+	var mcoverClient:massive.mcover.AdvancedCoverageReportClient;
+
 	var coveredClasses:Hash<Clazz>;
 	var currentCoveredClass:String;
 	var classPercentage:Float;
 
-	var helper:RichPrintClientHelper;
-	var isRichClient:Bool;
-	var divider:String;
-
 	public function new(
-		?munitClient:IAdvancedTestResultClient=null,
-		?helper:RichPrintClientHelper=null,
+		?munitClient:ICoverageTestResultClient=null,
 		?mcoverClient:AdvancedCoverageReportClient=null,
-		?logger:massive.mcover.CoverageLogger=null)
+		?mcoverLogger:massive.mcover.CoverageLogger=null)
 	{
 		id = DEFAULT_ID;
 
-		if(munitClient == null) munitClient = new RichPrintClient(true);
+		if(munitClient == null) munitClient = new RichPrintClient();
 		this.client = munitClient;
 
-		if(helper == null) helper = new RichPrintClientHelper();
-		this.helper = helper;
-
-
 		if(mcoverClient == null) mcoverClient = new massive.mcover.client.PrintClient();
-		this.coverClient = mcoverClient;
+		this.mcoverClient = mcoverClient;
 
-		if(logger == null) logger = createDefaultLogger();
+		if(mcoverLogger == null) mcoverLogger = initializeMCoverLogger();
 
-		this.logger = logger;
+		this.mcoverLogger = mcoverLogger;
 		
 		init();
-	}
-
-	@IgnoreCover
-	function createDefaultLogger()
-	{
-		try
-		{
-			return MCover.getLogger();	
-		}
-		catch(e:Dynamic)
-		{
-			var msg = "ERROR: Unable to initialize MCover Reporter\n" + e;
-			
-			printLine(msg);
-		}
-
-		return null;
-	}
-
-
-	function init()
-	{
-		divider = "------------------------------";
-		if(Std.is(client, massive.munit.client.RichPrintClient))
-		{
-			#if (js || flash)
-				isRichClient = true;
-			#else
-				isRichClient = false;
-			#end
-		}
-		else
-		{
-			isRichClient = false;
-		}
-
-
-		includeMissingBlocks = isRichClient;
-		includeExecutionFrequency = isRichClient;
-		
-		currentCoveredClass = null;
-		classPercentage = 0;
-		coveredClasses = new Hash();
-
-		coverClient.includeMissingBlocks = true;
-		coverClient.includeExecutionFrequency = true;
-		logger.addClient(coverClient);
-		
-		
-	}
-
-
-	public function setCurrentTestClass(className:String):Void
-	{
-
-		var endsWithTest = className != null && className.lastIndexOf("Test") == className.length-4;
-
-		var coveredClassName :String = null;
-
-		if(endsWithTest)
-		{
-			coveredClassName = className.substr(0, className.length-4);
-		}
-	
-		var hasChanged = currentCoveredClass != coveredClassName;
-
-		if(hasChanged && currentCoveredClass != null)
-		{
-			printTestCoverage();
-		}
-
-		client.setCurrentTestClass(className);
-
-		if(hasChanged)
-		{
-			currentCoveredClass = coveredClassName;
-			logger.currentTest = currentCoveredClass;
-		}
 	}
 
 	/**
@@ -220,6 +139,65 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		client.addIgnore(result);	
 	}
 
+
+
+	@IgnoreCover
+	function initializeMCoverLogger()
+	{
+		try
+		{
+			return MCover.getLogger();	
+		}
+		catch(e:Dynamic)
+		{
+			var msg = "ERROR: Unable to initialize MCover Logger\n" + e;
+
+			trace(msg);
+		}
+
+		return null;
+	}
+
+	function init()
+	{
+		includeMissingBlocks = true;
+		includeExecutionFrequency = true;
+		includeClassAndPackageBreakdowns = true;
+		
+		currentCoveredClass = null;
+		classPercentage = 0;
+		coveredClasses = new Hash();
+
+		mcoverClient.includeMissingBlocks = true;
+		mcoverClient.includeExecutionFrequency = true;
+		mcoverLogger.addClient(mcoverClient);	
+	}
+
+	public function setCurrentTestClass(className:String):Void
+	{
+		var hasMatch = className != null && className.lastIndexOf("Test") == className.length-4;
+
+		var coveredClassName :String = hasMatch ? className.substr(0, className.length-4) : null;
+	
+		var hasChanged = currentCoveredClass != coveredClassName;
+
+		if(hasChanged && currentCoveredClass != null)
+		{
+			if(mcoverLogger.currentTest != null)
+			{
+				updateTestClassCoverage();
+			}	
+		}
+
+		client.setCurrentTestClass(className);
+
+		if(hasChanged)
+		{
+			currentCoveredClass = coveredClassName;
+			mcoverLogger.currentTest = currentCoveredClass;
+		}
+	}
+
 	/**
 	 * Called when all tests are complete.
 	 *  
@@ -233,7 +211,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	 */
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
-		printFinalCoverageReports();
+		updateFinalCoverageReport();
 
 		var result = client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
 		
@@ -242,180 +220,123 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		return result;
 	}
 
-	function printTestCoverage()
+	function updateTestClassCoverage()
 	{
-		if(logger.currentTest == null) return;
+		mcoverLogger.reportCurrentTest(true);
 
-	
-		logger.reportCurrentTest(true);
+		var cls = mcoverLogger.coverage.getClassByName(currentCoveredClass);
 
-		var cls = logger.coverage.getClassByName(currentCoveredClass);
-	
-		if(cls != null)
-		{
-			classPercentage = cls.getPercentage();
+		if(cls == null) return;
 
-			coveredClasses.set(cls.name, cls);
-			
-			var summaryStr = " [" + classPercentage + "%]";
-			
-			if(isRichClient)
-			{
-				helper.updateTestSummary(summaryStr);
-			}
-			else
-			{
-				print(summaryStr);
-			}
-			
+		coveredClasses.set(cls.name, cls);
+		
+		classPercentage = cls.getPercentage();
 
-			if(classPercentage == 100 || !includeMissingBlocks)  return;
+		var coverageResult = createCoverageResultForClass(cls);
 
-			if(isRichClient)
-			{
-				helper.addTestCoverageClass(cls.name, classPercentage);
-				printMissingClassBlocks(cls);
-			}	
-		}	
-	}
-
-	function printMissingClassBlocks(cls:Clazz)
-	{
-		if(cls.getPercentage() == 100 ) return;
-
-		var statements = cls.getMissingStatements();
-
-		var str:String = "";
-
-		if(statements.length > 0)
-		{
-			for(block in statements)
-			{
-				var blockString =block.methodName + " | " + block.location;
-				if(str != "") str += "\n";
-				str += blockString;
-			}
-
-			if(isRichClient)
-			{
-				helper.addTestCoverageItem(str);
-			}
-			else
-			{
-				var lines = str.split("\n");
-				for(line in lines)
-				{
-					printLine(line, 1);
-				}
-			}
-		}
-
-		var branches = cls.getMissingBranches();
-
-		if(branches.length > 0)
-		{
-			str = "";
-
-			for(block in branches)
-			{
-				var blockString =block.methodName + " | " + block.location;
-				if(!block.isCovered())
-				{
-					blockString += " | ";
-					if(block.trueCount == 0) blockString += "t";
-					if(block.trueCount == 0 && block.falseCount == 0) blockString +=",";
-					if(block.falseCount == 0) blockString += "f";
-				
-				}
-				if(str != "") str += "\n";
-				str += blockString;
-			}
-
-			if(isRichClient)
-			{
-				helper.addTestCoverageItem(str);
-			}
-			else
-			{
-				var lines = str.split("\n");
-				for(line in lines)
-				{
-					printLine(line, 1);
-				}
-			}
-		}
+		client.setCurrentTestClassCoverage(coverageResult);	
 	}
 
 	//////////
-	function printFinalCoverageReports()
+	function updateFinalCoverageReport()
 	{
-		logger.report();
+		mcoverLogger.report(false);
 
-		var percentage = logger.coverage.getPercentage();
+		var percent = mcoverLogger.coverage.getPercentage();
 
-		if(isRichClient)
-		{
-			helper.createCoverageReport(percentage);
-		}
+		var coverageResults:Array<CoverageResult> = null;
+		var executionFrequencies:String = null;
+		var classBreakdown:String = null;
+		var packageBreakdown:String = null;
 
 		if(includeMissingBlocks)
 		{
-			if(!isRichClient)
-			{
-				printLine("");
-				printLine("Code Coverage Results: " + percentage + "%");
-				printLine(divider);
-			}
-			printOutstandingMissingClasses();
+			coverageResults = createOutstandingCoverageResults();
 		}
-			
-		if(isRichClient)
+		
+		if(includeClassAndPackageBreakdowns)
 		{
-			helper.addCoverageSummary(coverClient.output);
+			classBreakdown = mcoverClient.classBreakdown;
+			packageBreakdown = mcoverClient.packageBreakdown;	
 		}
-		else
+
+		if(includeExecutionFrequency)
 		{
-			printLine(coverClient.output);
+			executionFrequencies = mcoverClient.executionFrequency;
 		}
+
+		var summary = mcoverClient.summary + "\n" + mcoverClient.overallPercentage;
+		
+		client.reportFinalCoverage(
+				percent,
+				coverageResults,
+				summary,
+				classBreakdown,
+				packageBreakdown,
+				executionFrequencies
+			);
 	}
 
-	function printOutstandingMissingClasses()
+	function createOutstandingCoverageResults():Array<CoverageResult>
 	{
-		var classes = logger.coverage.getClasses();
-		
+		var classes = mcoverLogger.coverage.getClasses();
+		var results:Array<CoverageResult> = [];
 		for(cls in classes)
 		{
 			if(cls.getPercentage() == 100) continue;
 			if(coveredClasses.exists(cls.name)) continue;
 
-			if(isRichClient)
-			{
-				helper.addMissingCoverageClass(cls.name, cls.getPercentage() );
-			}
-			else
-			{
-				printLine("Coverage: " + cls.name + " [" + cls.getPercentage() + "%]");
-			}
-
-			printMissingClassBlocks(cls);
+			var result = createCoverageResultForClass(cls);
+			results.push(result);
 		}
+		return results;
 	}
-
-
-
-	////////
-
-	function print(value:Dynamic)
+	////
+	function createCoverageResultForClass(cls:Clazz):CoverageResult
 	{
-		helper.print(value);
-	}
+		var percent = cls.getPercentage();
+		var blocks:Array<String> = [];
 
-	function printLine(value, ?indent:Int = 0)
-	{
-		if(indent > 0)
+		if(percent != 100 && includeMissingBlocks)
 		{
-			value = StringTools.lpad("", " ", indent*4) + value;
+			var str:String = "";
+			var statements = cls.getMissingStatements();
+
+			if(statements.length > 0)
+			{
+				for(block in statements)
+				{
+					var blockString = block.methodName + " (" + block.location + ")";
+					if(str != "") str += "\n";
+
+					str += blockString;
+				}
+				blocks.push(str);
+			}
+
+			var branches = cls.getMissingBranches();
+			if(branches.length > 0)
+			{
+				str = "";
+				for(block in branches)
+				{
+					var blockString =block.methodName + " (" + block.location + ")";
+					if(!block.isCovered())
+					{
+						blockString += " ";
+						if(block.trueCount == 0) blockString += "t";
+						if(block.trueCount == 0 && block.falseCount == 0) blockString +=",";
+						if(block.falseCount == 0) blockString += "f";
+					
+					}
+					if(str != "") str += "\n";
+					str += blockString;
+				}
+				blocks.push(str);
+			}
 		}
-		helper.printLine(value);
+
+		
+		return {className:cls.name, percent:percent, blocks:blocks};
 	}
 }

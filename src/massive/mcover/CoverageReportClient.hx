@@ -49,7 +49,6 @@ interface CoverageReportClient
 	function report(coverage:Coverage):Void;
 
 	public var output(default, null):String;
-
 }
 
 interface AdvancedCoverageReportClient implements CoverageReportClient
@@ -61,5 +60,11 @@ interface AdvancedCoverageReportClient implements CoverageReportClient
 	var includeOverallPercentage(default, default):Bool;
 	var includeSummary(default, default):Bool;
 
-
+	var header(default, null):String;
+	var executionFrequency(default, null):String;
+	var missingBlocks(default, null):String;
+	var classBreakdown(default, null):String;
+	var packageBreakdown(default, null):String;
+	var summary(default, null):String;
+	var overallPercentage(default, null):String;
 }

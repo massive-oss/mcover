@@ -48,10 +48,8 @@ class PrintClient implements AdvancedCoverageReportClient
 	public var includePackageBreakdown(default, default):Bool;
 	public var includeOverallPercentage(default, default):Bool;
 	public var includeSummary(default, default):Bool;
-
-
-	public var maxBlockExecutionListSize(default, default):Int;
 	
+	public var maxBlockExecutionListSize(default, default):Int;
 		
 	/**
 	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
@@ -84,11 +82,9 @@ class PrintClient implements AdvancedCoverageReportClient
 	var classPartialCount:Int;
 
 	static inline var DEFAULT_TAB_WIDTH:Int = 11;
-
 	static inline var SHORT_FIRST_TAB_WIDTH:Int = 4;
 	static inline var LONG_FIRST_TAB_WIDTH:Int = 20;
 			
-
 	public function new()
 	{
 		includeHeader = true;
@@ -99,7 +95,6 @@ class PrintClient implements AdvancedCoverageReportClient
 		includeSummary = true;
 		includeOverallPercentage = true;
 		
-
 		maxBlockExecutionListSize = 25;
 		newline = "\n";
 		tab = " ";
