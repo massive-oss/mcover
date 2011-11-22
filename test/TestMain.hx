@@ -28,7 +28,7 @@ class TestMain
 		#if MCOVER
 			var client = new massive.mcover.munit.client.MCoverPrintClient();
 		#else
-			var client = new massive.munit.client.RichPrintClient(true);
+			var client = new massive.munit.client.RichPrintClient();
 		#end
 
 		var runner:TestRunner = new TestRunner(client);
