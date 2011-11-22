@@ -199,6 +199,39 @@ To test and run with MCover just add the '-coverage' flag
 	munit test -coverage
 
 
+### Step 3. Configure MCoverPrintClient
+
+By default, the MCoverPrintClient includes all the coverage reports
+
+*	missing blocks
+*	class and package breakdowns
+*	highest execution frequencies for statements/branches (defaults to top 25)
+*	overall summaries and result
+
+For JavaScript and Flash targets this is fine for munit's rich html output (as the contents of these reports are collapsable)
+
+For Neko targets (or if using the basic MUnit PrintClient) this amount of information can be overwhelming.
+
+To configure these settings use the follow properties when creating the client in TestMain:
+
+	var client = new massive.mcover.munit.client.MCoverPrintClient();
+	client.includeMissingBlocks = false;
+	client.includeExecutionFrequency = false;
+	client.includeClassAndPackageBreakdowns = false;
+	...
+
+By default MCoverPrintClient creates a default munit TestResultClient (RichPrintClient) and a default MCover CoverageReportClient (PrintClient) to work with:
+
+You can also specify alternatives through the constructor:
+
+	var munitClient = new massive.munit.client.PrintClient(false);
+	
+	var mcoverClient = new massive.mcover.client.PrintClient();
+	mcoverClient.maxBlockExecutionListSize = 50;
+	
+	var client = new MCoverPrintClient(munitClient, mcoverClient);
+	...
+
 Usage
 ---------------------
 
