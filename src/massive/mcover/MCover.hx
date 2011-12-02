@@ -47,7 +47,7 @@ import haxe.macro.Compiler;
 * 
 * MACRO USAGE:
 *
-* Use --macro massive.mcover.MCover.include('package.name',['sourcePath'])
+* Use --macro massive.mcover.MCover.include('package.name',['sourcePath'], ['ignored patterns'])
 * to specifiy which packages/src directories to cover
 * 
 * 
@@ -107,7 +107,7 @@ import haxe.macro.Compiler;
 	* 
 	* @param pack - package name to filter on (e.g. "com.example"). Use empty string to match all classes ('')
 	* @param classPaths - zero or more classpaths to include in coverage (defaults to local scope only (''))
-	* @param ignore - array of qualified classe names to exclude from coverage
+	* @param ignore - array of qualified classe names to exclude from coverage (supports '*' wildcard patterns)
 	**/
 	public static function include( pack : String, ?classPaths : Array<String>, ?ignore : Array<String> )
 	{	
@@ -116,18 +116,19 @@ import haxe.macro.Compiler;
 		haxe.macro.Context.onGenerate(massive.mcover.macro.CoverClassMacro.onGenerate);
 	}
 
+
 	/**
 	* Recursively loops through classpaths and appends @:build metadata into each matching class
 	* @param pack - package name to filter on (e.g. "com.example"). Use empty string to match all classes ('')
 	* @param classPaths - zero or more classpaths to include in coverage (defaults to local scope only (''))
-	* @param ignore - array of classes to exclude from coverage
+	* @param ignore - array of classes to exclude from coverage (supports '*' wildcard patterns)
 	*/
 	static function includePackage(pack : String, ?classPaths : Array<String>, ?ignore : Array<String>)
 	{
 		var skip = if(null == ignore) {
 			function(c) return false;
 		} else {
-			function(c) return Lambda.has(ignore, c);
+			function(c) return isIgnoredClass(ignore, c);
 		}
 
 		if(null == classPaths)
@@ -177,6 +178,37 @@ import haxe.macro.Compiler;
 			}
 		}
 	}
+
+	/**
+	* Looks for match in ignored class patterns.
+	* Supports optional '*' wildcards
+	* e.g. foo.Foo
+	* e.g. foo.*
+	* e.g. *.Foo
+	*
+	* @return true if ingored
+	*/
+	static function isIgnoredClass(ignore:Array<String>, clazz:String):Bool
+	{
+		for(pattern in ignore)
+		{
+			if(pattern.indexOf("*") == -1)
+			{
+				 if(clazz == pattern) return true;
+				 continue;
+			}
+
+			var expr = pattern.split(".").join("\\.");
+			expr = expr.split("*").join("(.*)");
+
+			var reg = new EReg(expr, "");
+
+			if(reg.match(clazz)) return true;
+		}
+
+		return false;
+	}
+
 
 	/**
 	* looks for a package definition in a class
