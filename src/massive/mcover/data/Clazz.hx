@@ -34,6 +34,18 @@ import massive.mcover.data.CoverageResult;
 	{
 		super();
 	}
+	public function getMethods():Array<Method>
+	{
+		var a:Array<Method> = [];
+		for(item in itemsById)
+		{
+			if(Type.getClass(item) == Method)
+			{
+				a.push(cast(item, Method));	
+			}
+		}
+		return a;
+	}
 
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
