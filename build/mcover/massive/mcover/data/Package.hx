@@ -1,5 +1,5 @@
 /****
-* Copyright 2011 Massive Interactive. All rights reserved.
+* Copyright 2012 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -37,6 +37,19 @@ import massive.mcover.data.CoverageResult;
 		super();
 	}
 
+	public function getFiles():Array<File>
+	{
+		var a:Array<File> = [];
+		for(item in itemsById)
+		{
+			if(Type.getClass(item) == File)
+			{
+				a.push(cast(item, File));	
+			}
+		}
+		return a;
+	}
+
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
 	{
 		to = super.appendResults(to, from);
@@ -44,4 +57,6 @@ import massive.mcover.data.CoverageResult;
 		to.f += 1;	
 		return to;
 	}
+
+
 }

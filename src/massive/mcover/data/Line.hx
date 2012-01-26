@@ -26,76 +26,56 @@
 * or implied, of Massive Interactive.
 ****/
 
-package massive.mcover;
+package massive.mcover.data;
 
-import haxe.PosInfos;
-import haxe.Stack;
-
-class Exception
+class Line extends AbstractBlock
 {
-
-
-	/**
-	 * The exception type. 
-	 * 
-	 * Should be the fully qualified name of the Exception class. e.g. 'massive.io.IOException'
-	 */
-	public var type(default, null):String;
+	public var start(default, null):Int;
+	public var end(default, null):Int;
 	
-	/**
-	 * A description of the exception
-	 */
-	public var message(default, null):String;
-	
-	/**
-	 * The pos infos from where the exception was created.
-	 */
-	public var info(default, null):PosInfos;
+	public var count:Int;
 
-	/**
-	* An optional reference to a lower level exception that
-	* triggered the current exception to be thrown
-	*/
-	public var cause(default, null):Dynamic;
-	public var causeExceptionStack(default, null):Array<StackItem>;
-	public var causeCallStack(default, null):Array<StackItem>;
-	
-	/**
-	 * @param	message			a description of the exception
-	 */
-	public function new(message:String, ?cause:Dynamic, ?info:PosInfos) 
+	public var length(default, null):Int;
+
+	public function new()
 	{
-		type = here().className;
-		this.message = message;
-		this.cause = cause;
-		this.info = info;
-
-		if(cause != null)
-		{
-			causeExceptionStack = haxe.Stack.exceptionStack();
-			causeCallStack = haxe.Stack.callStack();
-		}
+		super();
+		count = 0;
+		start = 0;
+		end = 0;
+		length = 0;
 	}
 
-	/**
-	 * Returns a string representation of this exception.
-	 * 
-	 * Format: <type>: <message> at <className>#<methodName> (<lineNumber>)
-	 */
-	public function toString():String
+	override public function isCovered():Bool
 	{
-		var str:String = type + ": " + message;
-		if (info != null)
-			str += " at " + info.className + "#" + info.methodName + " (" + info.lineNumber + ")";
-		if (cause != null)
-        	str += "\n\t Caused by: " + cause; 
-		return str;
+		return count > 0;
 	}
 
-	//////////////////
-
-	function here(?info:PosInfos):PosInfos
+	public function populate(start:Int, end:Int)
 	{
-		return info;
+		this.start = start;
+		this.end = end;
+		length = end-start;
 	}
+
+
+	///////////
+
+	override function hxSerialize( s : haxe.Serializer )
+	{
+		super.hxSerialize(s);
+        s.serialize(count);
+        s.serialize(start);
+        s.serialize(end);
+    }
+    
+    override function hxUnserialize( s : haxe.Unserializer )
+    {
+    	super.hxUnserialize(s);
+        count = s.unserialize();
+        start = s.unserialize();
+        end = s.unserialize();
+
+        length = end-start;
+    }
 }

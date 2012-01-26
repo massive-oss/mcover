@@ -1,5 +1,5 @@
 /****
-* Copyright 2011 Massive Interactive. All rights reserved.
+* Copyright 2012 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -33,6 +33,18 @@ import massive.mcover.data.CoverageResult;
 	public function new()
 	{
 		super();
+	}
+	public function getMethods():Array<Method>
+	{
+		var a:Array<Method> = [];
+		for(item in itemsById)
+		{
+			if(Type.getClass(item) == Method)
+			{
+				a.push(cast(item, Method));	
+			}
+		}
+		return a;
 	}
 
 	override function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult

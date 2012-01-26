@@ -4,7 +4,7 @@
 -swf-header 1024:769:60:FFFFFF
 -cp ../src
 -cp src
---macro massive.mcover.MCover.include('', ['src'], null)
+--macro massive.mcover.MCover.include('', ['src'], ['*IgnoredWithFilter'])
 
 --next
 
@@ -13,7 +13,7 @@
 -cp ../src
 -cp src
 # -D MCOVER_DEBUG
---macro massive.mcover.MCover.include('', ['src'])
+--macro massive.mcover.MCover.include('', ['src'], ['*IgnoredWithFilter'])
 
 --next
 
@@ -23,5 +23,5 @@
 -cp ../src
 -cp src
 -D MCOVER_DEBUG
---macro massive.mcover.MCover.include('', ['src'])
+--macro massive.mcover.MCover.include('', ['src'], ['*IgnoredWithFilter'])
 -cmd neko build/main.n
