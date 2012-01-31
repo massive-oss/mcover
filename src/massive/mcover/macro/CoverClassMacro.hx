@@ -81,14 +81,17 @@ import massive.mcover.data.Branch;
 			default: null;
 		}
 
-		//trace("class: " + currentPackageName + ", " + currentClassName);
-		#if MCOVER_IGNORE_CLASS
-			//Disable by default as getting classType can occassionally cause compilation failure
-			//with generic type references (e.g. class Foo<T:Bar>)
-			var classType = Context.getLocalClass().get();
-			var meta = classType.meta;
-			if(meta.has(META_TAG_IGNORE)) return null;
-		#end
+		//disabled due to bug in getLocalClass().get() with generic params
+		//e.g. Foo<T:Bar> extends FooBase<T:BarBase>
+		
+		// var classType = Context.getLocalClass().get();
+		// var meta = classType.meta;
+		
+		// if(meta.has(META_TAG_IGNORE))
+		// {
+		// 	debug("ingoring:" + currentPackageName + "." + currentClassName);
+		// 	return null;
+		// }
 
 		fields = parseFields(fields);
 		return fields;

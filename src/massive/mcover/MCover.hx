@@ -230,16 +230,35 @@ import haxe.macro.Compiler;
 	static function getClassesInFile(path:String):Array<String>
 	{
 		var classes:Array<String> = [];
-		var contents = neko.io.File.getContent(path);
-		var reg:EReg = ~/^(.*)class ([A-Z]([A-Za-z0-9])+)/;
+		var contents:String;
+		
+		//hack to detect ignored classes without using Context.getLocalClass().get()
+		//which can fail compilation in some edge cases for classes with generics (e.g. class Foo<T:Bar>)
+		var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
+		var ignoredClasses:Hash<Bool> = new Hash(); 
 
+		contents = neko.io.File.getContent(path);
+
+		while(regIgnore.match(contents))
+		{
+			ignoredClasses.set(regIgnore.matched(2), true);
+			contents = regIgnore.matchedRight();
+		}
+
+		var reg:EReg = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
+		contents = neko.io.File.getContent(path);
+		
 		while(reg.match(contents))
 		{
-			classes.push(reg.matched(2));
+			var cls = reg.matched(2);
+			if(!ignoredClasses.exists(cls))
+			{
+				classes.push(cls);
+			}
+			
 			contents = reg.matchedRight();
 		}
 		return classes;
 	}
-
 	#end
 }
