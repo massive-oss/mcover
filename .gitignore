@@ -3,3 +3,4 @@ example/build/*.*
 
 build/haxedoc.xml
 temp.hxml
+.mcover-logging
