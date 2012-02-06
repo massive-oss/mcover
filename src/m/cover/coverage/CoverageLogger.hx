@@ -75,7 +75,7 @@ interface CoverageLogger
 class CoverageLoggerImpl implements CoverageLogger
 {
 	#if neko
-	static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
+	static public var mutex:neko.vm.Mutex;
 	#end
 
 	/**
@@ -189,7 +189,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public function initializeCoverage(?resourceName:String = null)
 	{
-		if(resourceName == null) resourceName = MCover.RESOURCE_DATA;
+		if(resourceName == null) resourceName = MCoverage.RESOURCE_DATA;
 		var serializedData:String = haxe.Resource.getString(resourceName);
 		if(serializedData == null) throw new CoverageException("No generated coverage data found in haxe Resource '" + resourceName  + "'");
 		try
@@ -209,7 +209,10 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function logStatement(id:Int)
 	{	
-		#if neko mutex.acquire(); #end
+		#if neko
+			if(mutex == null) mutex = new neko.vm.Mutex();
+		 	mutex.acquire();
+		#end
 
 		updateStatementHash(allStatementResultsById, id);
 
@@ -242,7 +245,10 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
 	{
-		#if neko mutex.acquire(); #end
+		#if neko
+			if(mutex == null) mutex = new neko.vm.Mutex();
+		 	mutex.acquire();
+		#end
 
 		var bool = false;
 

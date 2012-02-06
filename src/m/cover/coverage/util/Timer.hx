@@ -65,7 +65,6 @@ class Timer
 			static var arr:Array<Timer> = [];
 			var timerId:Int;
 		#elseif neko
-			static var mutex = new neko.vm.Mutex();
 			var runThread:neko.vm.Thread;
 		#end
 

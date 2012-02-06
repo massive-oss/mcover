@@ -6,22 +6,16 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
 
+import m.cover.macro.MacroUtil;
 import m.cover.macro.BuildMacro;
+import m.cover.macro.BuildMacroParser;
 
-
-class LoggerBuildMacro extends BuildMacro
+class LoggerBuildMacro implements BuildMacroParser
 {
-	/**
-	Inserts code into the specified class.
-	
-	@return updated array of fields for the class
-	*/
-	@:macro public static function build():Array<Field>
-	{
-		var instance = new LoggerBuildMacro(); 
-		var fields = instance.parseFields();
-		return fields;
-	}
+	public var ignoreFieldMeta(default, default):String;
+	public var includeFieldMeta(default, default):String;
+
+	public var target(default, default):IBuildMacro;
 
 	var counter:Int;
 
@@ -29,37 +23,35 @@ class LoggerBuildMacro extends BuildMacro
 	{
 		counter = 0;
 		ignoreFieldMeta = "IgnoreLogging";
-		super();
+		includeFieldMeta = null;
 	}
 
 	/**
 	Overrides defauld BuildMacro.parse() to wrap method entry and exit points
 	
-	@param expr - the current expression
+	@param expr 		the current expression
+	@param target 		the current BuildMacro instance
 	@return the updated expression
-	@see BuildMacro.parse
+	@see BuildMacro.parseExpr
 	*/
-	override function parse(expr:Expr):Expr
+	public function parseExpr(expr:Expr):Expr
 	{
 		switch(expr.expr)
 		{
 			case EReturn(e):
 			{
-				super.parse(expr);
 				parseEReturn(expr, e);
 			}
 			case EBlock(exprs): 
 			{
 				//e.g. {...}
-				super.parse(expr);
 				parseEBlock(expr, exprs);
 			}
 			case EThrow(e):
 			{
-				super.parse(expr);
 				parseEThrow(expr, e);
 			}
-			default: expr = super.parse(expr);
+			default: null;
 		}
 		return expr;
 	}
@@ -75,11 +67,11 @@ class LoggerBuildMacro extends BuildMacro
 	{
 		if(exprs.length == 0) return;
 
-		if(expr != functionStack[functionStack.length-1].expr) return;//only care about the main block in a function
+		if(expr != target.functionStack[target.functionStack.length-1].expr) return;//only care about the main block in a function
 		
 		var pos:Position = exprs[0].pos;
 
-		var entryLogExpr = logEntry(pos, functionStack.length > 1);
+		var entryLogExpr = logEntry(pos, target.functionStack.length > 1);
 		exprs.unshift(entryLogExpr);
 
 		var lastExpr = exprs[exprs.length-1];
@@ -203,7 +195,7 @@ class LoggerBuildMacro extends BuildMacro
 	function wrapExitExpr(expr:Expr, e:Expr)
 	{
 		var exitExprs = createExitExprs(expr, e);	
-		var parentExpr = exprStack[exprStack.length-2];
+		var parentExpr = target.exprStack[target.exprStack.length-2];
 
 		switch(parentExpr.expr)
 		{
@@ -267,7 +259,6 @@ class LoggerBuildMacro extends BuildMacro
 
 		if(e != null)
 		{
-			macrotools.Print.make(e);
 			var tempVarName = "____m" + counter++;
 			var eVar = {
 				type:null,
@@ -328,7 +319,7 @@ class LoggerBuildMacro extends BuildMacro
 		var loggerExpr = getReferenceToLogger(pos);
 		
 		var eField = EField(loggerExpr, method);
-		pos = incrementPos(pos, method.length + 1);
+		pos = MacroUtil.incrementPos(pos, method.length + 1);
 		
 		var fieldExpr = {
 			expr:eField,
@@ -353,24 +344,30 @@ class LoggerBuildMacro extends BuildMacro
 	function getReferenceToLogger(pos:Position):Expr
 	{
 		var cIdent = EConst(CIdent("m"));
-		pos = incrementPos(pos, 7);
+		pos = MacroUtil.incrementPos(pos, 7);
 		var identExpr = {expr:cIdent, pos:pos};
 
 		var eIdentField = EField(identExpr, "cover");
-		pos = incrementPos(pos, 7);
+		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr = {expr:eIdentField, pos:pos};
 
-		var eType = EType(identFieldExpr, "MLogger");
-		pos = incrementPos(pos, 5);
+		var eIdentField2 = EField(identFieldExpr, "logger");
+		pos = MacroUtil.incrementPos(pos, 7);
+		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
+
+
+		var eType = EType(identFieldExpr2, "MLogger");
+		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
 		var eField = EField(typeExpr, "getLogger");
-		pos = incrementPos(pos, 9);
+		pos = MacroUtil.incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 
-		pos = incrementPos(pos, 2);
+		pos = MacroUtil.incrementPos(pos, 2);
 		return {expr:ECall(fieldExpr, []), pos:pos};
 	}	
+
 }
 
 typedef ExitExprs = 

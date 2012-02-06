@@ -6,6 +6,7 @@ import m.cover.logger.data.LogRecording;
 import m.cover.logger.client.LogClient;
 import m.cover.logger.client.LogClientImpl;
 
+@IgnoreLogging
 class LoggerImpl implements Logger
 {
 	static public var MAX_STACK_DEPTH_LIMIT:Int = 26;

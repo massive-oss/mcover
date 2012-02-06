@@ -9,87 +9,67 @@ import m.cover.macro.BuildMacro;
 
 import m.cover.coverage.DataTypes;
 
-@:keep class CoverageBuildMacro extends BuildMacro
-{
+import m.cover.macro.MacroUtil;
+import m.cover.macro.BuildMacro;
+import m.cover.macro.BuildMacroParser;
 
+@:keep class CoverageBuildMacro implements BuildMacroParser
+{
+	public var ignoreFieldMeta(default, default):String;
+	public var includeFieldMeta(default, default):String;
+	
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
-	static var coverage = new Coverage();
 
-	/**
-	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
-	* This resource is used by MCoverRunner to determine code coverage results
-	*/
-	static public function onGenerate(types:Array<haxe.macro.Type>):Void
-	{
-       	var serializedData = haxe.Serializer.run(coverage);
-        Context.addResource(MCover.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
-	}
 
-	/**
-	Inserts coverage code into the specified class.
+	public var target(default, default):IBuildMacro;
 	
-	@return updated array of fields for the class
-	*/
-	@:macro public static function build():Array<Field>
-	{
-		var instance = new CoverageBuildMacro(); 
-		var fields = instance.parseFields();
-		return fields;
-	}
-
-	var counter:Int;
-
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover";
-		counter = 0;
-		super();
+		includeFieldMeta = null;
+
 	}
 
 	/**
-	Overrides defauld BuildMacro.parse() to wrap branches and statement blocks
+	Wraps code branches and statement blocks with coverage logs
 	
-	@param expr - the current expression
+	@param expr 		the current expression
+	@param target 		the current BuildMacro instance
 	@return the updated expression
-	@see BuildMacro.parse
+	@see BuildMacro.parseExpr
 	*/
-	override function parse(expr:Expr):Expr
+	public function parseExpr(expr:Expr):Expr
 	{
 		switch(expr.expr)
 		{
 			case EIf(econd, eif, eelse):
 			{
-				expr = super.parse(expr);
 				econd = createBranchCoverageExpr(econd);
 				expr.expr = EIf(econd, eif, eelse);
 			}
 			case EWhile(econd, e, normalWhile):
 			{
-				expr = super.parse(expr);
 				econd = createBranchCoverageExpr(econd);
 				expr.expr = EWhile(econd, e, normalWhile);
 			}
 			case ETernary(econd, eif, eelse): 
 			{
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
-				expr = super.parse(expr);
 				econd = createBranchCoverageExpr(econd);
 				expr.expr = ETernary(econd, eif, eelse);
 			}
 			case EBlock(exprs): 
 			{
 				//e.g. {...}
-				super.parse(expr);
 				parseEBlock(expr, exprs);
 			}
 			case EBinop(op, e1, e2):
 			{
 				//e.g. i<2; a||b, i==b
-				super.parse(expr);
 				parseEBinop(expr, op, e1, e2);
 			}
-			default: expr = super.parse(expr);
+			default: null;
 		}
 		return expr;
 	}
@@ -103,7 +83,7 @@ import m.cover.coverage.DataTypes;
 		if(exprs.length == 0)
 		{
 			//ensure empty methods are still covered (e.g. empty constructor) 
-			if(expr != functionStack[functionStack.length-1].expr) return;
+			if(expr != target.functionStack[target.functionStack.length-1].expr) return;
 		}
 		
 		var pos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
@@ -148,19 +128,19 @@ import m.cover.coverage.DataTypes;
 		pos = baseExpr.pos;
 
 		var eField = EField(baseExpr, "logStatement");
-		pos = incrementPos(pos, 13);
+		pos = MacroUtil.incrementPos(pos, 13);
 		var fieldExpr = {expr:eField, pos:pos};
 		
-		pos = incrementPos(pos, blockId.length);
+		pos = MacroUtil.incrementPos(pos, blockId.length);
 		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
 
-		pos = incrementPos(pos, 2);
+		pos = MacroUtil.incrementPos(pos, 2);
 		
 		return {expr:ECall(fieldExpr, [arg1]), pos:pos};
 	}
 
 	/**
-	* wraps a boolean value within a branch in a call to MCover.getLogger().logBranch(id, value, compareValue);
+	* wraps a boolean value within a branch in a call to MCoverage.getLogger().logBranch(id, value, compareValue);
 	**/
 	function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
@@ -173,21 +153,21 @@ import m.cover.coverage.DataTypes;
 		pos = baseExpr.pos;
 
 		var eField = EField(baseExpr, "logBranch");
-		pos = incrementPos(pos, 4);
+		pos = MacroUtil.incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		
 		var args:Array<Expr> = [];
 
-		pos = incrementPos(pos, blockId.length);
+		pos = MacroUtil.incrementPos(pos, blockId.length);
 	
 		args.push({expr:EConst(CInt(blockId)), pos:pos});
 
-		pos = incrementPos(pos, 5);
+		pos = MacroUtil.incrementPos(pos, 5);
 		args.push({expr:expr.expr, pos:pos});
 
 		if(compareExpr != null)
 		{
-			pos = incrementPos(pos, 5);
+			pos = MacroUtil.incrementPos(pos, 5);
 			args.push({expr:compareExpr.expr, pos:pos});
 		}
 		
@@ -201,7 +181,7 @@ import m.cover.coverage.DataTypes;
 		var posInfo = Context.getPosInfos(pos);
 		var file:String = posInfo.file;
 
-		for (cp in MCover.classPathHash)
+		for (cp in CoverageMacro.classPathHash)
 		{
 			if(file.indexOf(cp) == 0)
 			{	
@@ -238,9 +218,9 @@ import m.cover.coverage.DataTypes;
 		parts.pop();
 
 		block.packageName = (parts.length > 0) ? parts.join(".") : "";
-		block.className = currentClassName;
+		block.className = target.currentClassName;
 		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
-		block.methodName = currentMethodName;
+		block.methodName = target.currentMethodName;
 
 		var posInfo = Context.getPosInfos(pos);
 
@@ -254,40 +234,45 @@ import m.cover.coverage.DataTypes;
 
 		if(isBranch)
 		{
-			coverage.addBranch(cast(block, Branch));
+			CoverageMacro.coverage.addBranch(cast(block, Branch));
 		}
 		else
 		{
-			coverage.addStatement(cast(block, Statement));
+			CoverageMacro.coverage.addStatement(cast(block, Statement));
 		}
 		return block;
 	}
 
 	/**
-	Creates a call to MCover.getLogger();
+	Creates a call to MCoverage.getLogger();
 
 	@param pos - the position to add to
-	@return expr matching "m.cover.MCover.getLogger()"
+	@return expr matching "m.cover.coverage.MCoverage.getLogger()"
 	*/
 	function getReferenceToLogger(pos:Position):Expr
 	{
 		var cIdent = EConst(CIdent("m"));
-		pos = incrementPos(pos, 7);
+		pos = MacroUtil.incrementPos(pos, 7);
 		var identExpr = {expr:cIdent, pos:pos};
 
 		var eIdentField = EField(identExpr, "cover");
-		pos = incrementPos(pos, 7);
+		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr = {expr:eIdentField, pos:pos};
 
-		var eType = EType(identFieldExpr, "MCover");
-		pos = incrementPos(pos, 5);
+		var eIdentField2 = EField(identFieldExpr, "coverage");
+		pos = MacroUtil.incrementPos(pos, 7);
+		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
+
+
+		var eType = EType(identFieldExpr2, "MCoverage");
+		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
 		var eField = EField(typeExpr, "getLogger");
-		pos = incrementPos(pos, 9);
+		pos = MacroUtil.incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 
-		pos = incrementPos(pos, 2);
+		pos = MacroUtil.incrementPos(pos, 2);
 		return {expr:ECall(fieldExpr, []), pos:pos};
 	}
 

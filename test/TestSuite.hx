@@ -18,7 +18,7 @@ import m.cover.coverage.data.FileTest;
 import m.cover.coverage.data.MethodTest;
 import m.cover.coverage.data.PackageTest;
 import m.cover.coverage.data.StatementTest;
-import m.cover.coverage.MCoverTest;
+import m.cover.coverage.MCoverageTest;
 import m.cover.coverage.munit.client.MCoverPrintClientTest;
 import m.cover.coverage.util.TimerTest;
 import m.cover.ExceptionTest;
@@ -53,7 +53,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(m.cover.coverage.data.MethodTest);
 		add(m.cover.coverage.data.PackageTest);
 		add(m.cover.coverage.data.StatementTest);
-		add(m.cover.coverage.MCoverTest);
+		add(m.cover.coverage.MCoverageTest);
 		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
 		add(m.cover.coverage.util.TimerTest);
 		add(m.cover.ExceptionTest);

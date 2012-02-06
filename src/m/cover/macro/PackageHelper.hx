@@ -182,7 +182,7 @@ class PackageHelper
 		if(ignoreClassMeta != null)
 		{
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg(ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
 
 			contents = neko.io.File.getContent(path);
 
@@ -197,7 +197,7 @@ class PackageHelper
 
 		if(includeClassMeta != null)
 		{
-			regInclude = new EReg(includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
 		}
 		else
 		{

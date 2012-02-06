@@ -33,7 +33,7 @@ import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
 import m.cover.coverage.CoverageReportClient;
 import m.cover.coverage.DataTypes;
-import m.cover.MCover;
+import m.cover.coverage.MCoverage;
 
 class MCoverPrintClient implements IAdvancedTestResultClient
 {
@@ -146,7 +146,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	{
 		try
 		{
-			return MCover.getLogger();	
+			return MCoverage.getLogger();	
 		}
 		catch(e:Dynamic)
 		{

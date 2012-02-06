@@ -51,7 +51,7 @@ class CoverageLoggerTest
 	@Test
 	public function shouldCreateCoverageOnInitializeCoverage()
 	{
-		logger.initializeCoverage(MCover.RESOURCE_DATA);
+		logger.initializeCoverage(MCoverage.RESOURCE_DATA);
 		Assert.isNotNull(logger.coverage);
 	}
 

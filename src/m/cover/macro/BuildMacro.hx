@@ -5,10 +5,19 @@ package m.cover.macro;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
-import haxe.macro.Type;
 import haxe.PosInfos;
 
-class BuildMacro
+
+interface IBuildMacro
+{
+	var exprStack(default, null):Array<Expr>;
+	var functionStack(default, null):Array<Function>;
+	var currentClassName(default, null):String;
+	var currentPackageName(default, null):String;
+	var currentMethodName(default, null):String;
+}
+
+class BuildMacro implements IBuildMacro
 {
 
 	/**
@@ -24,33 +33,62 @@ class BuildMacro
 		return fields;
 	}
 
+	static var parserClasses:Array<Class<BuildMacroParser>> = [];
+
+
+	public static function addParserClass(parser:Class<BuildMacroParser>)
+	{
+		parserClasses.remove(parser);
+		parserClasses.push(parser);
+	}
+
+	public static function removeParserClass(parser:Class<BuildMacroParser>)
+	{
+		parserClasses.remove(parser);
+	}
+
+	public static function removeAllParserClasses(parser:Class<BuildMacroParser>)
+	{
+		parserClasses = [];
+	}
+
+
 
 	/////////////////
 
-	/**
-	optional metadata values to filter fields on
-	*/
-	var ignoreFieldMeta:String;
-	var includeFieldMeta:String;
+	public var currentClassName(default, null):String;
+	public var currentPackageName(default, null):String;
+	public var currentMethodName(default, null):String;
+
+	public var functionStack(default, null):Array<Function>;
+	public var exprStack(default, null):Array<Expr>;
+
 
 	var fields:Array<Field>;
-	var type:Null<Type>;
+	var type:Null<haxe.macro.Type>;
 
-	var currentClassName:String;
-	var currentPackageName:String;
-	var currentMethodName:String;
-
-	var functionStack:Array<Function>;
+	
 
 	var generatedFields:Array<Field>;
 
-	var exprStack:Array<Expr>;
+	
+
+	var parsers:Array<BuildMacroParser>;
+	var fieldParsers:Array<BuildMacroParser>;
 
 	public function new()
 	{
 
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
+		
+		parsers = [];
+		for(parserClass in parserClasses)
+		{
+			var parserInst = Type.createInstance(parserClass, []);
+			parserInst.target = this;
+			parsers.push(parserInst);
+		}
 
 		switch(type)
 		{
@@ -73,9 +111,11 @@ class BuildMacro
 	 */
 	public function parseFields():Array<Field>
 	{
+		if(parsers.length == 0) return null;
+
 		functionStack = [];
-		generatedFields = [];
 		exprStack = [];
+		generatedFields = [];
 
 		for(field in fields)
         {
@@ -91,20 +131,16 @@ class BuildMacro
 
 	function parseField(field:Field):Field
 	{
-		if(ignoreFieldMeta != null)
+		fieldParsers = [];
+		for(parser in parsers)
 		{
-			for(item in field.meta)
+			if(isFieldParser(parser, field))
 			{
-				if(item.name == ignoreFieldMeta) return field;
+				fieldParsers.push(parser);
 			}
 		}
-		else if(includeFieldMeta != null)
-		{
-			for(item in field.meta)
-			{
-				if(item.name != includeFieldMeta) return field;
-			}
-		}
+
+		if(fieldParsers.length == 0) return field;
 		
 		switch(field.kind)
     	{
@@ -113,6 +149,29 @@ class BuildMacro
     	}
     	return field;
 	}
+
+
+	function isFieldParser(parser:BuildMacroParser, field:Field):Bool
+	{
+		if(parser.ignoreFieldMeta != null)
+		{
+			for(item in field.meta)
+			{
+				if(item.name == parser.ignoreFieldMeta) return false;
+			}
+		}
+		else if(parser.includeFieldMeta != null)
+		{
+			for(item in field.meta)
+			{
+				if(item.name != parser.includeFieldMeta) return false;
+			}
+		}
+
+		return true;
+	}
+
+
 
 	function parseMethod(field:Field, f:Function)
 	{
@@ -134,10 +193,17 @@ class BuildMacro
 
 		expr = parse(expr);
 
+		for(parser in fieldParsers)
+		{
+			expr = parser.parseExpr(expr);
+		}
+
 		exprStack.pop();
 
 		return expr;
 	}
+
+
 
 	function parse(expr:Expr):Expr
 	{
@@ -312,23 +378,6 @@ class BuildMacro
 	}
 
 
-	/**
-	parses an array of expressions
-
-	@return updated array of expressions
-	*/
-	function parseExprs(exprs:Array<Expr>):Array<Expr>
-	{
-		var temp:Array<Expr> = exprs.concat([]);
-
-		for(expr in temp)
-		{
-			expr = parseExpr(expr);
-		}
-		return exprs;
-	}
-
-
 	function parseEIf(expr:Expr, econd:Expr, eif:Expr, eelse:Expr)
 	{
 		econd = parseExpr(econd);
@@ -362,15 +411,30 @@ class BuildMacro
 
 
 	/////////
-	function incrementPos(pos:Position, length:Int):Position
+
+
+	/**
+	parses an array of expressions
+
+	@return updated array of expressions
+	*/
+	public function parseExprs(exprs:Array<Expr>):Array<Expr>
 	{
-		var posInfos = Context.getPosInfos(pos);
-		posInfos.max = posInfos.min + length;
-		return Context.makePosition(posInfos);
+		var temp:Array<Expr> = exprs.concat([]);
+
+		for(expr in temp)
+		{
+			expr = parseExpr(expr);
+		}
+		return exprs;
 	}
 
 
-	function debug(value:Dynamic, ?pos:PosInfos)
+
+
+
+
+	public function debug(value:Dynamic, ?pos:PosInfos)
 	{
 		#if MACRO_LOGGER_DEBUG
 			var msg = pos.className + "(" + pos.lineNumber + "):\n   " + Std.string(value);

@@ -5,7 +5,7 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 
-class MCoverTest
+class MCoverageTest
 {
 
 	public function new()
@@ -38,7 +38,7 @@ class MCoverTest
 	@Test
 	public function shouldGetDefaultLogger()
 	{
-		var logger:CoverageLogger = MCover.getLogger();
-		Assert.areEqual(MCover.logger, logger);
+		var logger:CoverageLogger = MCoverage.getLogger();
+		Assert.areEqual(MCoverage.logger, logger);
 	}
 }
