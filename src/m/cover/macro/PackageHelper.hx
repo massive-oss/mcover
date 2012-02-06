@@ -1,5 +1,6 @@
 package m.cover.macro;
 
+#if neko
 class PackageHelper
 {
 	/**
@@ -241,3 +242,4 @@ class PackageHelper
 
 	
 }
+#end

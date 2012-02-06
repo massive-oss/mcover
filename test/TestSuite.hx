@@ -4,6 +4,7 @@ import ExampleTest;
 import m.cover.coverage.client.CoverageReportClientTest;
 import m.cover.coverage.client.EMMAPrintClientTest;
 import m.cover.coverage.client.PrintClientTest;
+import m.cover.coverage.CoverageExceptionTest;
 import m.cover.coverage.CoverageLoggerImplTest;
 import m.cover.coverage.CoverageLoggerTest;
 import m.cover.coverage.data.AbstractBlockTest;
@@ -17,10 +18,10 @@ import m.cover.coverage.data.FileTest;
 import m.cover.coverage.data.MethodTest;
 import m.cover.coverage.data.PackageTest;
 import m.cover.coverage.data.StatementTest;
-import m.cover.coverage.ExceptionTest;
 import m.cover.coverage.MCoverTest;
 import m.cover.coverage.munit.client.MCoverPrintClientTest;
 import m.cover.coverage.util.TimerTest;
+import m.cover.ExceptionTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -38,6 +39,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(m.cover.coverage.client.CoverageReportClientTest);
 		add(m.cover.coverage.client.EMMAPrintClientTest);
 		add(m.cover.coverage.client.PrintClientTest);
+		add(m.cover.coverage.CoverageExceptionTest);
 		add(m.cover.coverage.CoverageLoggerImplTest);
 		add(m.cover.coverage.CoverageLoggerTest);
 		add(m.cover.coverage.data.AbstractBlockTest);
@@ -51,9 +53,9 @@ class TestSuite extends massive.munit.TestSuite
 		add(m.cover.coverage.data.MethodTest);
 		add(m.cover.coverage.data.PackageTest);
 		add(m.cover.coverage.data.StatementTest);
-		add(m.cover.coverage.ExceptionTest);
 		add(m.cover.coverage.MCoverTest);
 		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
 		add(m.cover.coverage.util.TimerTest);
+		add(m.cover.ExceptionTest);
 	}
 }

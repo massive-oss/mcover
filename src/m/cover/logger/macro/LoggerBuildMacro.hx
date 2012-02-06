@@ -28,6 +28,7 @@ class LoggerBuildMacro extends BuildMacro
 	public function new()
 	{
 		counter = 0;
+		ignoreFieldMeta = "IgnoreLogging";
 		super();
 	}
 
@@ -44,15 +45,18 @@ class LoggerBuildMacro extends BuildMacro
 		{
 			case EReturn(e):
 			{
+				super.parse(expr);
 				parseEReturn(expr, e);
 			}
 			case EBlock(exprs): 
 			{
 				//e.g. {...}
+				super.parse(expr);
 				parseEBlock(expr, exprs);
 			}
 			case EThrow(e):
 			{
+				super.parse(expr);
 				parseEThrow(expr, e);
 			}
 			default: expr = super.parse(expr);
@@ -70,8 +74,6 @@ class LoggerBuildMacro extends BuildMacro
 	function parseEBlock(expr:Expr, exprs:Array<Expr>)
 	{
 		if(exprs.length == 0) return;
-
-		exprs = parseExprs(exprs);
 
 		if(expr != functionStack[functionStack.length-1].expr) return;//only care about the main block in a function
 		
@@ -161,7 +163,6 @@ class LoggerBuildMacro extends BuildMacro
 	*/
 	function parseEReturn(expr:Expr, e:Expr)
 	{
-		e = parseExpr(e);
 		wrapExitExpr(expr, e);
 	}
 
@@ -185,7 +186,6 @@ class LoggerBuildMacro extends BuildMacro
 	*/
 	function parseEThrow(expr:Expr, e:Expr)
 	{
-		e = parseExpr(e);
 		wrapExitExpr(expr, e);
 	}
 
@@ -345,25 +345,32 @@ class LoggerBuildMacro extends BuildMacro
 	}
 
 	/**
-	Creates a call to MLog.getLogger();
+	Creates a call to m.cover.MLogger.getLogger();
 
 	@param pos - the position to add to
-	@return expr matching "MLog.getLogger()"
+	@return expr matching "m.cover.MLogger.getLogger()"
 	*/
 	function getReferenceToLogger(pos:Position):Expr
 	{
-		var cIdent = EConst(CType("MLogger"));
+		var cIdent = EConst(CIdent("m"));
 		pos = incrementPos(pos, 7);
 		var identExpr = {expr:cIdent, pos:pos};
 
-		var eField = EField(identExpr, "getLogger");
+		var eIdentField = EField(identExpr, "cover");
+		pos = incrementPos(pos, 7);
+		var identFieldExpr = {expr:eIdentField, pos:pos};
+
+		var eType = EType(identFieldExpr, "MLogger");
+		pos = incrementPos(pos, 5);
+		var typeExpr = {expr:eType, pos:pos};
+
+		var eField = EField(typeExpr, "getLogger");
 		pos = incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 
 		pos = incrementPos(pos, 2);
-
 		return {expr:ECall(fieldExpr, []), pos:pos};
-	}		
+	}	
 }
 
 typedef ExitExprs = 

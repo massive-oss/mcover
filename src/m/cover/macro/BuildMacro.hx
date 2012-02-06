@@ -10,7 +10,6 @@ import haxe.PosInfos;
 
 class BuildMacro
 {
-	static var META_TAG_IGNORE = "IgnoreLogging";
 
 	/**
 	Stub build macro that should be redefined in concrete instance.
@@ -28,6 +27,12 @@ class BuildMacro
 
 	/////////////////
 
+	/**
+	optional metadata values to filter fields on
+	*/
+	var ignoreFieldMeta:String;
+	var includeFieldMeta:String;
+
 	var fields:Array<Field>;
 	var type:Null<Type>;
 
@@ -43,6 +48,7 @@ class BuildMacro
 
 	public function new()
 	{
+
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
 
@@ -58,6 +64,10 @@ class BuildMacro
 		}
 	}
 
+	function getIgnoreMacro():String
+	{
+		return null;
+	}
 	/**
 	 * loops through all class fields and interogates contents recursively
 	 */
@@ -81,10 +91,21 @@ class BuildMacro
 
 	function parseField(field:Field):Field
 	{
-		for(item in field.meta)
+		if(ignoreFieldMeta != null)
 		{
-			if(item.name == META_TAG_IGNORE) return field;
+			for(item in field.meta)
+			{
+				if(item.name == ignoreFieldMeta) return field;
+			}
 		}
+		else if(includeFieldMeta != null)
+		{
+			for(item in field.meta)
+			{
+				if(item.name != includeFieldMeta) return field;
+			}
+		}
+		
 		switch(field.kind)
     	{
     		case FFun(f): parseMethod(field, f);
@@ -229,7 +250,9 @@ class BuildMacro
 			case EBinop(op, e1, e2):
 			{
 				//e.g. i<2; a||b, i==b
-				parseEBinop(expr, op, e1, e2);
+				e1 = parseExpr(e1);
+				e2 = parseExpr(e2);
+				expr.expr = EBinop(op, e1, e2);
 			}
 			case EUnop(op,postFix,e): parseExpr(e);//e.g. i++;
 			case ETernary(econd, eif, eelse): 
@@ -327,13 +350,6 @@ class BuildMacro
 
 		edef = parseExpr(edef);
 		expr.expr = ESwitch(e, cases, edef);
-	}
-
-	function parseEBinop(expr:Expr, op:Binop, e1:Expr, e2:Expr)
-	{
-		e1 = parseExpr(e1);
-		e2 = parseExpr(e2);
-		expr.expr = EBinop(op, e1, e2);
 	}
 
 	function parseETernary(expr:Expr, econd:Expr, eif:Expr, eelse:Expr)

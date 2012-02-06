@@ -29,14 +29,7 @@
 package m.cover.coverage.client;
 
 import m.cover.coverage.CoverageReportClient;
-import m.cover.coverage.data.Statement;
-import m.cover.coverage.data.Branch;
-import m.cover.coverage.data.Coverage;
-import m.cover.coverage.data.CoverageResult;
-import m.cover.coverage.data.Package;
-import m.cover.coverage.data.Clazz;
-import m.cover.coverage.data.Method;
-import m.cover.coverage.data.File;
+import m.cover.coverage.DataTypes;
 
 import m.cover.coverage.util.Timer;
 

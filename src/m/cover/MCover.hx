@@ -5,7 +5,7 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 
-import m.cover.coverage.macro.CoverClassMacro;
+import m.cover.coverage.macro.CoverageBuildMacro;
 import m.cover.macro.PackageHelper;
 
 /**
@@ -55,7 +55,8 @@ import m.cover.macro.PackageHelper;
 
 		for(cl in classes)
 		{
-			Compiler.addMetadata("@:build(m.cover.coverage.macro.CoverClassMacro.build())", cl);
+			//trace(cl);
+			Compiler.addMetadata("@:build(m.cover.coverage.macro.CoverageBuildMacro.build())", cl);
 			//Compiler.keep(cl, null, true);
 		}
 
@@ -64,7 +65,7 @@ import m.cover.macro.PackageHelper;
 			Compiler.include(pack, true, exclusions, classPaths);
 		}
 	
-		haxe.macro.Context.onGenerate(CoverClassMacro.onGenerate);
+		haxe.macro.Context.onGenerate(CoverageBuildMacro.onGenerate);
 	}
 
 	public static function onGenerate(types:Array<haxe.macro.Type>):Void

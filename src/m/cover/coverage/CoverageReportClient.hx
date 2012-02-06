@@ -28,9 +28,7 @@
 
 package m.cover.coverage;
 
-import m.cover.coverage.data.Statement;
-import m.cover.coverage.data.Branch;
-import m.cover.coverage.data.Coverage;
+import m.cover.coverage.DataTypes;
 
 
 interface CoverageReportClient

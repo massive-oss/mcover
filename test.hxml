@@ -49,4 +49,4 @@
 -neko build/test/neko_test.n
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
-# --macro mcover.coverage.MCover.include('',['src'])
+# --macro m.cover.MCover.include('',['src'])

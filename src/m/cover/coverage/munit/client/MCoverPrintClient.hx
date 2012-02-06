@@ -32,7 +32,7 @@ import massive.munit.ITestResultClient;
 import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
 import m.cover.coverage.CoverageReportClient;
-import m.cover.coverage.data.Clazz;
+import m.cover.coverage.DataTypes;
 import m.cover.MCover;
 
 class MCoverPrintClient implements IAdvancedTestResultClient

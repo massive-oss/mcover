@@ -157,6 +157,15 @@ class Timer
 	 */
 	public static function stamp():Float
 	{
+		return inlineStamp();
+	}
+
+	/**
+	 *	Returns a timestamp, in seconds
+	 */
+	@IgnoreCover
+	inline public static function inlineStamp():Float
+	{
 		#if flash
 			return flash.Lib.getTimer() / 1000;
 		#elseif neko

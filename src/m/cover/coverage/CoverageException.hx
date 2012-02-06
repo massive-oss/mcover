@@ -5,8 +5,9 @@ import m.cover.Exception;
 
 class CoverageException extends Exception
 {
-	public function new(msg:String, ?pos:PosInfos)
+	public function new(message:String, ?cause:Dynamic, ?info:PosInfos)
 	{
-		super(msg, pos);
+		super(message, cause, info);
+		type = here().className;
 	}
 }

@@ -1,8 +1,9 @@
-package m.cover.coverage;
+package m.cover;
 
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
+import haxe.PosInfos;
 
 class ExceptionTest
 {
@@ -35,13 +36,15 @@ class ExceptionTest
 		
 	}
 
+
+
 	@Test
 	public function shouldDefineInfoAndTypeInConstructor()
 	{
-		exception = new Exception("message");
-		Assert.areEqual("message", exception.message);
-		Assert.areEqual("m.cover.coverage.Exception", exception.type);
-		Assert.areEqual("m.cover.coverage.ExceptionTest", exception.info.className);
+		exception = createInstance("message");
+		Assert.areEqual("message", exception.message);	
+		Assert.areEqual(getTypeString(), exception.type);
+		Assert.areEqual(getTestName(), exception.info.className);
 		
 		Assert.isNull(exception.cause);
 		Assert.isNull(exception.causeExceptionStack);
@@ -49,10 +52,12 @@ class ExceptionTest
 		
 	}
 
+	
+
 	@Test
 	public function shouldSetCauseStacksInConstructor()
 	{
-		exception = new Exception("message", "cause");
+		exception = createInstance("message", "cause");
 		Assert.areEqual("cause", exception.cause);
 		Assert.isNotNull(exception.causeExceptionStack);
 		Assert.isNotNull(exception.causeCallStack);
@@ -61,37 +66,59 @@ class ExceptionTest
 	@Test
 	public function shouldNotSetInfoInConstructor()
 	{
-		exception = new Exception("message", null, null);
+		exception = createInstance("message", null, null);
 		Assert.isNull(exception.info);
 	}
+
+	
 
 	@Test
 	public function shouldOutputToStringWithMessageAndInfo()
 	{
-		exception = new Exception("message");
+		exception = createInstance("message");
 		var str = exception.toString();
-		Assert.isTrue(str.indexOf("m.cover.coverage.Exception: message") == 0);
-		Assert.isTrue(str.indexOf("at m.cover.coverage.ExceptionTest") != -1);
+		Assert.isTrue(str.indexOf(getTypeString() + ": message") == 0);
+		Assert.isTrue(str.indexOf("at " + getTestName()) != -1);
 		Assert.isTrue(str.indexOf("Caused by: cause") == -1);
 	}
 
 	@Test
 	public function shouldOutputToStringWithMessageOnly()
 	{
-		exception = new Exception("message", null, null);
+		exception = createInstance("message", null, null);
 		var str = exception.toString();
-		Assert.areEqual("m.cover.coverage.Exception: message", str);
-		Assert.isTrue(str.indexOf("at m.cover.coverage.ExceptionTest") == -1);
+		Assert.areEqual(getTypeString() + ": message", str);
+		Assert.isTrue(str.indexOf("at " + getTestName()) == -1);
 		Assert.isTrue(str.indexOf("Caused by: cause") == -1);
 	}
 
 	@Test
 	public function shouldOutputToStringMessageAndCause()
 	{
-		exception = new Exception("message", "cause", null);
+		exception = createInstance("message", "cause", null);
 		var str = exception.toString();
-		Assert.isTrue(str.indexOf("m.cover.coverage.Exception: message") == 0);
-		Assert.isTrue(str.indexOf("at m.cover.coverage.ExceptionTest") == -1);
+		Assert.isTrue(str.indexOf(getTypeString() + ": message") == 0);
+		Assert.isTrue(str.indexOf("at " + getTestName()) == -1);
 		Assert.isTrue(str.indexOf("Caused by: cause") != -1);
+	}
+
+	function createInstance(msg:String="message", ?cause:Dynamic=null, ?info:PosInfos):Exception
+	{
+		return new Exception(msg, cause, info);
+	}
+
+	function getTypeString():String
+	{
+		return "m.cover.Exception";
+	}
+
+	function getTestName():String
+	{
+		return here().className;
+	}
+
+	function here(?pos:PosInfos):PosInfos
+	{
+		return pos;
 	}
 }

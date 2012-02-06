@@ -130,7 +130,7 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 	{
 		Assert.isNotNull(node);
 		Assert.isNotNull(node.get(att));
-		Assert.areEqual(value, node.get(att));
+		Assert.areEqual(Std.string(value), Std.string(node.get(att)));
 	}
 
 	override function createClient():CoverageReportClient
