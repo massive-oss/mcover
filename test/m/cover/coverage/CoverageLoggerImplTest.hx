@@ -53,7 +53,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldAddClientCompletionHandlerWhenAddedToRunner()
 	{
-		debug();
 		instance.addClient(client);
 		Assert.isNotNull(client.completionHandler);
 	}
@@ -61,7 +60,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldNotAddSameClientTwice()
 	{
-		debug();
 		instance.addClient(client);
 		instance.addClient(client);
 		Assert.areEqual(1, instance.getClients().length);
@@ -70,7 +68,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldRemoveClientCompletionHandlerWhenRemovedFromRunner()
 	{
-		debug();
 		instance.addClient(client);
 		instance.removeClient(client);
 		Assert.isNull(client.completionHandler);
@@ -81,7 +78,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldAddCoverageToClientOnReport()
 	{
-		debug();
 		instance.addClient(client);
 		instance.report();
 
@@ -92,7 +88,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldNotUpdateClientIfSkipClientsIsTrue()
 	{
-		debug();
 		instance.addClient(client);
 		instance.report(true);
 
@@ -104,8 +99,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
-		debug();
-
 		originalTrace = haxe.Log.trace;
 		haxe.Log.trace = function(value:Dynamic,?infos : haxe.PosInfos){};
 
@@ -126,7 +119,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@AsyncTest
 	public function shouldOnlyExecuteCompletionHandlerAfterAllClientsHaveCompleted(factory:AsyncFactory)
 	{
-		debug();
 		instance.addClient(client);
 		client2 = new CoverageReportClientMock();
 
@@ -144,7 +136,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@AsyncTest
 	public function shouldNotCallCompletionHandlerIfNoneSet(factory:AsyncFactory)
 	{
-		debug();
 		instance.addClient(client);
 
 		var handler:Dynamic = factory.createHandler(this, reportCompletionHandlerHasntExecuted, 500);
@@ -164,7 +155,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldInitializeCoverageOnReport()
 	{
-		debug();
 		instance.addClient(client);
 		Assert.isNull(instance.coverage);
 		
@@ -175,7 +165,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldNotReInitializeCoverageWhenRunnerAdded()
 	{
-		debug();
 		instance.addClient(client);
 		instance.initializeCoverage();
 		var coverage = instance.coverage;
@@ -189,7 +178,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldInitializeCoverage()
 	{
-		debug();
 		Assert.isNull(instance.coverage);
 		instance.initializeCoverage();
 		Assert.isNotNull(instance.coverage);
@@ -198,7 +186,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldThrowExceptionIfNoMatchingResource()
 	{
-		debug();
 		try
 		{
 			instance.initializeCoverage("InvalidMCoverResourceName");
@@ -214,7 +201,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldThrowExceptionForInvalidResource()
 	{
-		debug();
 		try
 		{
 			instance.initializeCoverage("MockMCoverResource");
@@ -230,7 +216,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldThrowExceptionIfCurrentTestIsNull()
 	{
-		debug();
 		try
 		{
 			instance.reportCurrentTest();
@@ -245,7 +230,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldOnlyReportLogsSinceCurrentTestWasSet()
 	{
-		debug();
 		var mockClient = cast(client, CoverageReportClientMock);
 		
 		instance.addClient(client);
@@ -278,7 +262,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldNotUpdateClientIfReportCurrentTestSkipClientsIsTrue()
 	{
-		debug();
 		instance.addClient(client);
 		instance.currentTest = "foo";
 		instance.logStatement(0);

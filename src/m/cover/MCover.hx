@@ -13,53 +13,61 @@ import m.cover.macro.IncludeMacro;
 
 
 /**
-* MCover provides a collection of macro based tools for measuring code quality and behavior.
-* 
-* MACRO USAGE:
-*
-* To configure which tools to include, use:
-*	--macro m.cover.MCover.configure(...);
-*
-* To specify which class paths/packages to include, use:
-* 	--macro m.cover.MCover.include(['package.name'],['sourcePath'], ['ignored patterns'])
-* 
+MCover provides a collection of macro based tools for measuring code quality and behavior.
+
+To enable code coverage
+
+	--macro m.cover.MCover.coverage(['package.name'],['sourcePath'], ['ignored patterns'])
+
+To enable function entry/exit logging
+	
+	--macro m.cover.MCover.logger(['package.name'],['sourcePath'], ['ignored patterns'])
+
 */
 @:keep class MCover
 {
+	/** 
+	Configures MCover for code coverage
+	
+	From the command line/hxml add a macro reference:
+		--macro m.cover.MCover.coverage(['package.name'], ['src'], null)
+	
+	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
+	@param classPaths 	array of classpaths to search in (defaults to local scope only [''])
+	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
+	*/
+	public static function coverage(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)	
+	{	includes.push(CoverageMacro);
+		include(packages, classPaths, exclusions);
+	}
+
+	/** 
+	Configures MCover for function logging
+	
+	From the command line/hxml add a macro reference:
+		--macro m.cover.MCover.logger(['package.name'], ['src'], null)
+	
+	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
+	@param classPaths 	array of classpaths to search in (defaults to local scope only [''])
+	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
+	*/
+	public static function logger(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
+	{	includes.push(LoggerMacro);
+		include(packages, classPaths, exclusions);
+	}
+
+
 	static var includes:Array<Class<IncludeMacro>> = [];
 	static var instances:Array<IncludeMacro> = [];
-	/** 
-	* Configures MCover features for compilation
-	* A
-	* From the command line/hxml add a macro reference:
-	*	--macro m.cover.MCover.configure();
-	* 
-	* @param coverage 		include code coverage macros
-	* @param logging 		include function logging macros
-	**/
-	public static function configure(?coverage:Bool=true, ?logging:Bool=false):Void
-	{
-		if(coverage) addInclude(CoverageMacro);
-		if(logging) addInclude(LoggerMacro);
-	}
-
-	static function addInclude(cls:Class<IncludeMacro>)
-	{
-		includes.remove(cls);
-		includes.push(cls);
-	}
 
 	/** 
-	* Includes classes/packages for MCover.
-	* Adds @:build(m.cover.macro.BuildMacro.build()) to included classes
-	* 
-	* From the command line/hxml add a macro reference:
-	*	--macro m.cover.MCover.include(['package.name'], ['src'], null)
-	* 
-	* @param packages - array of packages to include (e.g. "com.example"). Defaults to all ([""])
-	* @param classPaths - array of classpaths to search in (defaults to local scope only (''))
-	* @param exclusions - array of qualified class names to exclude (supports '*' wildcard patterns)
-	**/
+	Includes classes within multiple classpaths and/or packages.
+	Adds @:build(m.cover.macro.BuildMacro.build()) to included classes.
+	
+	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
+	@param classPaths 	array of classpaths to search in (defaults to local scope only [''])
+	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
+	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
 		var buildArgs:Hash<Array<String>> = new Hash();
@@ -97,7 +105,7 @@ import m.cover.macro.IncludeMacro;
 			//trace(cl);
 			Compiler.addMetadata("@:build(m.cover.macro.BuildMacro.build(" + argsString + "))", cls);
 
-			//Compiler.keep(cl, null, true);
+			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
 		}
 
 		for(pack in packages)
@@ -107,7 +115,13 @@ import m.cover.macro.IncludeMacro;
 	
 		haxe.macro.Context.onGenerate(onGenerate);
 	}
-		
+	
+	/**
+	Generate method for macro.Context.
+	Loops through all registered include macros and calls their generate method.
+	
+	@param types 		macro types passed through from the compiler
+	*/
 	static function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
 		for(instance in instances)

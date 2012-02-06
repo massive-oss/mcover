@@ -56,7 +56,6 @@ class CoverageLoggerTest
 	@Test
 	public function shouldCreateCoverageOnInitializeCoverage()
 	{
-		debug();
 		logger.initializeCoverage(MCoverage.RESOURCE_DATA);
 		Assert.isNotNull(logger.coverage);
 	}
@@ -86,7 +85,6 @@ class CoverageLoggerTest
 	@Test
 	public function shouldAddAndRemoveClient()
 	{
-		debug();
 		logger.addClient(client);
 
 		Assert.areEqual(1, logger.getClients().length);
