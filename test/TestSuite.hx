@@ -1,26 +1,26 @@
 import massive.munit.TestSuite;
 
 import ExampleTest;
-import massive.mcover.client.CoverageReportClientTest;
-import massive.mcover.client.EMMAPrintClientTest;
-import massive.mcover.client.PrintClientTest;
-import massive.mcover.CoverageLoggerImplTest;
-import massive.mcover.CoverageLoggerTest;
-import massive.mcover.data.AbstractBlockTest;
-import massive.mcover.data.AbstractNodeListTest;
-import massive.mcover.data.AbstractNodeTest;
-import massive.mcover.data.BranchTest;
-import massive.mcover.data.ClazzTest;
-import massive.mcover.data.CoverageTest;
-import massive.mcover.data.DataUtilTest;
-import massive.mcover.data.FileTest;
-import massive.mcover.data.MethodTest;
-import massive.mcover.data.PackageTest;
-import massive.mcover.data.StatementTest;
-import massive.mcover.ExceptionTest;
-import massive.mcover.MCoverTest;
-import massive.mcover.munit.client.MCoverPrintClientTest;
-import massive.mcover.util.TimerTest;
+import m.cover.coverage.client.CoverageReportClientTest;
+import m.cover.coverage.client.EMMAPrintClientTest;
+import m.cover.coverage.client.PrintClientTest;
+import m.cover.coverage.CoverageLoggerImplTest;
+import m.cover.coverage.CoverageLoggerTest;
+import m.cover.coverage.data.AbstractBlockTest;
+import m.cover.coverage.data.AbstractNodeListTest;
+import m.cover.coverage.data.AbstractNodeTest;
+import m.cover.coverage.data.BranchTest;
+import m.cover.coverage.data.ClazzTest;
+import m.cover.coverage.data.CoverageTest;
+import m.cover.coverage.data.DataUtilTest;
+import m.cover.coverage.data.FileTest;
+import m.cover.coverage.data.MethodTest;
+import m.cover.coverage.data.PackageTest;
+import m.cover.coverage.data.StatementTest;
+import m.cover.coverage.ExceptionTest;
+import m.cover.coverage.MCoverTest;
+import m.cover.coverage.munit.client.MCoverPrintClientTest;
+import m.cover.coverage.util.TimerTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -35,25 +35,25 @@ class TestSuite extends massive.munit.TestSuite
 		super();
 
 		add(ExampleTest);
-		add(massive.mcover.client.CoverageReportClientTest);
-		add(massive.mcover.client.EMMAPrintClientTest);
-		add(massive.mcover.client.PrintClientTest);
-		add(massive.mcover.CoverageLoggerImplTest);
-		add(massive.mcover.CoverageLoggerTest);
-		add(massive.mcover.data.AbstractBlockTest);
-		add(massive.mcover.data.AbstractNodeListTest);
-		add(massive.mcover.data.AbstractNodeTest);
-		add(massive.mcover.data.BranchTest);
-		add(massive.mcover.data.ClazzTest);
-		add(massive.mcover.data.CoverageTest);
-		add(massive.mcover.data.DataUtilTest);
-		add(massive.mcover.data.FileTest);
-		add(massive.mcover.data.MethodTest);
-		add(massive.mcover.data.PackageTest);
-		add(massive.mcover.data.StatementTest);
-		add(massive.mcover.ExceptionTest);
-		add(massive.mcover.MCoverTest);
-		add(massive.mcover.munit.client.MCoverPrintClientTest);
-		add(massive.mcover.util.TimerTest);
+		add(m.cover.coverage.client.CoverageReportClientTest);
+		add(m.cover.coverage.client.EMMAPrintClientTest);
+		add(m.cover.coverage.client.PrintClientTest);
+		add(m.cover.coverage.CoverageLoggerImplTest);
+		add(m.cover.coverage.CoverageLoggerTest);
+		add(m.cover.coverage.data.AbstractBlockTest);
+		add(m.cover.coverage.data.AbstractNodeListTest);
+		add(m.cover.coverage.data.AbstractNodeTest);
+		add(m.cover.coverage.data.BranchTest);
+		add(m.cover.coverage.data.ClazzTest);
+		add(m.cover.coverage.data.CoverageTest);
+		add(m.cover.coverage.data.DataUtilTest);
+		add(m.cover.coverage.data.FileTest);
+		add(m.cover.coverage.data.MethodTest);
+		add(m.cover.coverage.data.PackageTest);
+		add(m.cover.coverage.data.StatementTest);
+		add(m.cover.coverage.ExceptionTest);
+		add(m.cover.coverage.MCoverTest);
+		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
+		add(m.cover.coverage.util.TimerTest);
 	}
 }

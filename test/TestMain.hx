@@ -26,7 +26,7 @@ class TestMain
 		suites.push(TestSuite);
 		
 		#if MCOVER
-			var client = new massive.mcover.munit.client.MCoverPrintClient();
+			var client = new m.cover.coverage.munit.client.MCoverPrintClient();
 		#else
 			var client = new massive.munit.client.RichPrintClient();
 		#end
