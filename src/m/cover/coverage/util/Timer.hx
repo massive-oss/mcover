@@ -52,7 +52,7 @@
  */
 package m.cover.coverage.util;
 
-
+@IgnoreLogging
 class Timer 
 {
 	public var run:Void -> Void;

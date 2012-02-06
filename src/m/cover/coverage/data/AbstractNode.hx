@@ -28,6 +28,7 @@
 
 package m.cover.coverage.data;
 
+@IgnoreLogging
 @:keep class AbstractNode
 {
 	public var id:Null<Int>;
@@ -41,6 +42,7 @@ package m.cover.coverage.data;
 
 	}
 
+	@IgnoreLogging
 	public function getResults(?cache:Bool=true):CoverageResult
 	{
 		if(resultCache == null || !cache)
@@ -50,7 +52,8 @@ package m.cover.coverage.data;
 
 		return resultCache;
 	}
-
+	
+	@IgnoreLogging
 	public function getPercentage():Float
 	{
 		var r = getResults();
@@ -95,19 +98,21 @@ package m.cover.coverage.data;
 
 	//////////////
 	
-
+	@IgnoreLogging
 	function emptyResult():CoverageResult
 	{
 		return {sc:0, s:0, bt:0, bf:0,bc:0,b:0, mc:0, m:0, cc:0, c:0, fc:0, f:0, pc:0, p:0};
 	}
 
+	@IgnoreLogging
 	function hxSerialize( s : haxe.Serializer )
 	{
 		s.serialize(id);
         s.serialize(name);
     }
     
-    function hxUnserialize( s : haxe.Unserializer )
+    @IgnoreLogging
+	function hxUnserialize( s : haxe.Unserializer )
     {
     	id = s.unserialize();
         name = s.unserialize();

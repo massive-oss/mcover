@@ -14,14 +14,16 @@ class CoverageMacro implements IncludeMacro
 	static public var coverage = new Coverage();
 	static public var classPathHash:IntHash<String> = new IntHash();
 
+	public var id(default, null):String;
+
 	public function new()
 	{
-
+		id = "coverage";
 	}
 
 	public function initialize()
 	{
-		BuildMacro.addParserClass(CoverageBuildMacro);
+		BuildMacro.registerParser(id, CoverageBuildMacro);
 	}
 
 	public function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>

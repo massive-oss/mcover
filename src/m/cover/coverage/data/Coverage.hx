@@ -31,6 +31,7 @@ package m.cover.coverage.data;
 import m.cover.coverage.data.CoverageResult;
 import m.cover.coverage.data.Branch;
 
+@IgnoreLogging
 @:keep class Coverage extends AbstractNodeList
 {
 	var statements:IntHash<Array<Int>>;
@@ -182,6 +183,7 @@ import m.cover.coverage.data.Branch;
 		return a;
 	}
 
+	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
 		if(resultCache == null || !cache)
@@ -198,8 +200,6 @@ import m.cover.coverage.data.Branch;
 					statement.count = 0;
 				}
 			}
-
-
 			for(lookup in branches)
 			{
 				var branch = lookupBranch(lookup.concat([]));
@@ -215,7 +215,6 @@ import m.cover.coverage.data.Branch;
 					branch.falseCount = 0;
 				}
 			}
-
 			super.getResults(cache);
 		}
 		return resultCache;
@@ -231,20 +230,18 @@ import m.cover.coverage.data.Branch;
 
 	///////////////
 
-
-
-
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
         s.serialize(statements);
         s.serialize(branches);
         s.serialize(statementResultsById);
-     	s.serialize(branchResultsById);
-           
+     	s.serialize(branchResultsById);      
     }
     
-    override function hxUnserialize( s : haxe.Unserializer )
+    @IgnoreLogging
+	override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
         statements = s.unserialize();

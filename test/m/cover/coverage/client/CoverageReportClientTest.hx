@@ -48,11 +48,12 @@ class CoverageReportClientTest
 	@AsyncTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
 	{	
-		var handler:Dynamic = factory.createHandler(this, assertCompletionCountIsOne, 1000);
 		
 		completionCount = 0;
 		client.completionHandler = clientCompleteHandler;
 		client.report(coverage);
+
+		var handler:Dynamic = factory.createHandler(this, assertCompletionCountIsOne, 1000);
 
 		Timer.delay(handler, 400);
 	}

@@ -27,7 +27,7 @@
 ****/
 
 package m.cover.coverage.data;
-
+@IgnoreLogging
 class Line extends AbstractBlock
 {
 	public var start(default, null):Int;
@@ -60,7 +60,7 @@ class Line extends AbstractBlock
 
 
 	///////////
-
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
@@ -69,7 +69,8 @@ class Line extends AbstractBlock
         s.serialize(end);
     }
     
-    override function hxUnserialize( s : haxe.Unserializer )
+    @IgnoreLogging
+	override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
         count = s.unserialize();

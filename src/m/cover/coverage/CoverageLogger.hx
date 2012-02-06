@@ -72,6 +72,7 @@ interface CoverageLogger
 
 }
 
+@IgnoreLogging
 class CoverageLoggerImpl implements CoverageLogger
 {
 	#if neko
@@ -166,6 +167,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	
 	public function addClient(client:CoverageReportClient)
 	{
+		if(client == null) throw "Null Client";
 		for(c in clients)
 		{
 			if(c == client) return;

@@ -27,7 +27,7 @@
 ****/
 
 package m.cover.coverage.client;
-
+@IgnoreLogging
 class TraceClient extends PrintClient
 {
 	public function new()

@@ -30,7 +30,7 @@ package m.cover.coverage.data;
 
 import m.cover.coverage.data.AbstractNode;
 import m.cover.coverage.data.CoverageResult;
-
+@IgnoreLogging
 @:keep class AbstractNodeList extends AbstractNode
 {
 	var itemsById:IntHash<AbstractNode>;
@@ -109,7 +109,7 @@ import m.cover.coverage.data.CoverageResult;
 		return a;
 	}
 
-
+	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
 		if(resultCache == null || !cache)
@@ -145,16 +145,18 @@ import m.cover.coverage.data.CoverageResult;
 		to.p += from.p;	
 		return to;
 	}
-
+	
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
         s.serialize(itemsById);
         s.serialize(items);
         s.serialize(itemCount);
-     } 
-
-    override function hxUnserialize( s : haxe.Unserializer )
+    }
+    
+    @IgnoreLogging
+	override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
         itemsById = s.unserialize();

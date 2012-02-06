@@ -7,6 +7,7 @@ import m.cover.logger.Logger;
 import m.cover.logger.LoggerImpl;
 
 @IgnoreLogging
+@IgnoreCover
 class MLogger
 {
 	#if neko
@@ -15,6 +16,8 @@ class MLogger
 
 	static public var logger(default, null):Logger;
 
+	@IgnoreLogging
+	@IgnoreCover
 	public static function getLogger():Logger
 	{
 		#if neko

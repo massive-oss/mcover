@@ -33,11 +33,13 @@ class DataUtil
 	@IgnoreCover
 	public function new(){}
 
+	@IgnoreLogging
 	static public function sortOnNodeId(a:AbstractNode, b:AbstractNode)
 	{
 		return a.id-b.id;
 	}
 
+	@IgnoreLogging
 	static public function sortOnNodeName(a:AbstractNode, b:AbstractNode)
 	{
 		var nodeA = a.name.toLowerCase();
@@ -50,6 +52,7 @@ class DataUtil
 	}
 
 
+	@IgnoreLogging
 	static public function sortOnBlockName(a:AbstractBlock, b:AbstractBlock)
 	{
 		var blockA = a.toString().toLowerCase();

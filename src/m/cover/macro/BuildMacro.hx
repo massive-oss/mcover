@@ -26,33 +26,21 @@ class BuildMacro implements IBuildMacro
 	
 	@return updated array of fields for the class
 	*/
-	@:macro public static function build():Array<Field>
+	@:macro public static function build(keys:Array<String>):Array<Field>
 	{
-		var instance = new BuildMacro(); 
+
+		var instance = new BuildMacro(keys); 
 		var fields = instance.parseFields();
 		return fields;
 	}
 
-	static var parserClasses:Array<Class<BuildMacroParser>> = [];
+	static var registry:Hash<Class<BuildMacroParser>> = new Hash();
 
 
-	public static function addParserClass(parser:Class<BuildMacroParser>)
+	public static function registerParser(id:String, parser:Class<BuildMacroParser>)
 	{
-		parserClasses.remove(parser);
-		parserClasses.push(parser);
+		registry.set(id, parser);
 	}
-
-	public static function removeParserClass(parser:Class<BuildMacroParser>)
-	{
-		parserClasses.remove(parser);
-	}
-
-	public static function removeAllParserClasses(parser:Class<BuildMacroParser>)
-	{
-		parserClasses = [];
-	}
-
-
 
 	/////////////////
 
@@ -76,19 +64,11 @@ class BuildMacro implements IBuildMacro
 	var parsers:Array<BuildMacroParser>;
 	var fieldParsers:Array<BuildMacroParser>;
 
-	public function new()
+	public function new(keys:Array<String>)
 	{
-
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
 		
-		parsers = [];
-		for(parserClass in parserClasses)
-		{
-			var parserInst = Type.createInstance(parserClass, []);
-			parserInst.target = this;
-			parsers.push(parserInst);
-		}
 
 		switch(type)
 		{
@@ -100,12 +80,29 @@ class BuildMacro implements IBuildMacro
 			}
 			default: null;
 		}
+
+
+		addInstanceParsers(keys);
+		
 	}
 
-	function getIgnoreMacro():String
+	function addInstanceParsers(keys:Array<String>)
 	{
-		return null;
+		parsers = [];
+
+		for(key in registry.keys())
+		{
+			if(!registry.exists(key)) continue;
+
+			var parser = Type.createInstance(registry.get(key), []);
+			parser.target = this;
+			parsers.push(parser);
+		}
+
+		trace(currentPackageName + "." + currentClassName + ":" + keys);
+
 	}
+
 	/**
 	 * loops through all class fields and interogates contents recursively
 	 */

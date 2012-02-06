@@ -1,10 +1,14 @@
 package m.cover.logger;
 
+
+@IgnoreCover
+@IgnoreLogging
 class Utils
 {
 	/**
 	 *	Returns a timestamp, in seconds
 	 */
+
 
 	public static function stamp():Float
 	{

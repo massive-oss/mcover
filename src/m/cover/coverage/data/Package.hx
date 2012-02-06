@@ -29,7 +29,7 @@
 package m.cover.coverage.data;
 
 import m.cover.coverage.data.CoverageResult;
-
+@IgnoreLogging
 @:keep class Package extends AbstractNodeList
 {
 	public function new()

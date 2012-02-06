@@ -1,6 +1,6 @@
 package m.cover.logger.data;
 
-@IgnoreCover
+@IgnoreLogging
 class LogRecording
 {
 	public var depth:Int;

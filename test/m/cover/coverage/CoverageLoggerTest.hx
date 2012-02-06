@@ -1,5 +1,7 @@
 package m.cover.coverage;
 
+import haxe.PosInfos;
+
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
@@ -46,11 +48,15 @@ class CoverageLoggerTest
 		{
 			haxe.Log.trace = originalTrace;
 		}
+
+		client = null;
+		coverage = null;
 	}
 
 	@Test
 	public function shouldCreateCoverageOnInitializeCoverage()
 	{
+		debug();
 		logger.initializeCoverage(MCoverage.RESOURCE_DATA);
 		Assert.isNotNull(logger.coverage);
 	}
@@ -60,12 +66,19 @@ class CoverageLoggerTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
 	{	
 		logger.addClient(client);
-		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 700);
+
+		var handler:Dynamic = factory.createHandler(this, reportCompletionHandler, 1000);
+		
 		logger.completionHandler = handler;
+		Timer.delay(runReport, 1);
+	}
+
+	function runReport()
+	{
 		logger.report();
 	}
 
-	function reportCompletionHandler(percent:Float)
+	public function reportCompletionHandler(percent:Float)
 	{
 		Assert.isNotNull(percent);
 	}
@@ -73,6 +86,7 @@ class CoverageLoggerTest
 	@Test
 	public function shouldAddAndRemoveClient()
 	{
+		debug();
 		logger.addClient(client);
 
 		Assert.areEqual(1, logger.getClients().length);
@@ -90,5 +104,12 @@ class CoverageLoggerTest
 	{
 		return new CoverageLoggerMock();
 	}
+
+	function debug(?pos:PosInfos)
+	{
+		neko.Lib.println(pos.methodName);
+	}
+
+
 
 }

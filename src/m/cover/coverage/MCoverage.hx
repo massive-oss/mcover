@@ -6,6 +6,8 @@ import neko.vm.Deque;
 
 import m.cover.coverage.CoverageLogger;
 
+@IgnoreLogging
+@IgnoreCover
 class MCoverage
 {
 	static public var RESOURCE_DATA:String = "MCoverData";
@@ -16,7 +18,7 @@ class MCoverage
 
 	static public var logger(default, null):CoverageLogger;
 
-	
+	@IgnoreLogging
 	@IgnoreCover
 	public static function getLogger():CoverageLogger
 	{
@@ -32,7 +34,6 @@ class MCoverage
 		return logger;
 	}
 
-	@IgnoreCover
 	function new()
 	{
 		

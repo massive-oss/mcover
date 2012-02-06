@@ -1,6 +1,7 @@
 package m.cover.logger.data;
 import haxe.PosInfos;
 
+@IgnoreLogging
 class Log
 {
 	public var id:Int;

@@ -11,14 +11,16 @@ import m.cover.logger.macro.LoggerBuildMacro;
 
 class LoggerMacro implements IncludeMacro
 {
+	public var id(default, null):String;
+
 	public function new()
 	{
-
+		id = "logger";
 	}
 
 	public function initialize()
 	{
-		BuildMacro.addParserClass(LoggerBuildMacro);
+		BuildMacro.registerParser(id, LoggerBuildMacro);
 	}
 
 	public function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>

@@ -32,6 +32,7 @@ package m.cover.coverage.data;
 * Reprents a unique code block {} within an application
 * Contains a number of properties relating to it's location and context.
 */
+@IgnoreLogging
 @:keep class AbstractBlock extends AbstractNode
 {
 	public var file:String;
@@ -68,7 +69,7 @@ package m.cover.coverage.data;
 		return methodName + " | " + location;
 	}
 
-
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
@@ -81,9 +82,10 @@ package m.cover.coverage.data;
         s.serialize(max);
         s.serialize(location);
         s.serialize(lookup);
-     } 
-
-    override function hxUnserialize( s : haxe.Unserializer )
+    } 
+    
+    @IgnoreLogging
+	override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
         file = s.unserialize();

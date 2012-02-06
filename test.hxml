@@ -48,7 +48,7 @@
 -debug
 -neko build/test/neko_test.n
 -D MCOVER_DEBUG
---macro m.cover.MCover.configure(true)
+# --macro m.cover.MCover.configure(true, true)
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 
 # --macro m.cover.MLogger.include([''], ['src'], null)

@@ -7,6 +7,7 @@ import m.cover.logger.client.LogClient;
 import m.cover.logger.client.LogClientImpl;
 
 @IgnoreLogging
+@IgnoreCover
 class LoggerImpl implements Logger
 {
 	static public var MAX_STACK_DEPTH_LIMIT:Int = 26;
@@ -36,6 +37,7 @@ class LoggerImpl implements Logger
 
 	public var defaultClient:LogClient;
 
+
 	public function new()
 	{	
 		defaultClient = new LogClientImpl();
@@ -52,8 +54,6 @@ class LoggerImpl implements Logger
 		logsById = new IntHash();
 		depth = 0;
 		maxDepth = 0;
-
-		stackTime = 0;
 	}
 
 
@@ -68,7 +68,6 @@ class LoggerImpl implements Logger
 
 		#if neko mutex.acquire(); #end
 
-		
 		var t = Utils.stamp();
 		var log = new Log(count ++);
 
@@ -94,7 +93,6 @@ class LoggerImpl implements Logger
 		return log.id;
 	}
 
-	var stackTime:Float;
 
 	/**
 	* Logs function exit
@@ -112,23 +110,36 @@ class LoggerImpl implements Logger
 			throw "Cannot find matching entry log. " + [entryId, pos];
 		}
 
-		var entryLog = logsById.get(entryId);
-		var log:Log = stack.pop();
-		var t = Utils.stamp();
-
-		//update any logs that were skipped due to a throw
-		while(log != null && log != entryLog)
+		try
 		{
-			log.exit(null, t);
+			var t = Utils.stamp();
+
+			var entryLog = logsById.get(entryId);
+			var log:Log = stack.pop();
+
+			if(log != entryLog)
+			{
+				//update any logs that were skipped due to a throw
+				while(log != null && log != entryLog)
+				{
+					log.exit(null, t);
+					depth --;
+					//#if neko neko.Lib.println("skipping " + log.toString()); #end
+					log = stack.pop();
+				}
+			}
+
+			
 			depth --;
-			//#if neko neko.Lib.println("skipping " + log.toString()); #end
-			log = stack.pop();
+
+			entryLog.exit(pos, t);
+		}
+		catch(e:Dynamic)
+		{
+			trace(e);
+			#if neko mutex.release(); #end
 		}
 		
-		depth --;
-
-		entryLog.exit(pos, t);
-		stackTime = log.totalDuration;
 
 		#if neko mutex.release(); #end
 	}

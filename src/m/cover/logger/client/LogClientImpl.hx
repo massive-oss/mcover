@@ -6,6 +6,7 @@ import m.cover.logger.data.LogRecording;
 import m.cover.logger.client.LogClient;
 
 @IgnoreLogging
+@IgnoreCover
 class LogClientImpl implements LogClient
 {
 	/**

@@ -27,7 +27,7 @@
 ****/
 
 package m.cover.coverage.data;
-
+@IgnoreLogging
 @:keep class Branch extends AbstractBlock
 {
 	public var trueCount:Int;
@@ -67,7 +67,7 @@ package m.cover.coverage.data;
 	}
 
 	///////////
-
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
@@ -75,7 +75,8 @@ package m.cover.coverage.data;
         s.serialize(falseCount);
     }
     
-    override function hxUnserialize( s : haxe.Unserializer )
+    @IgnoreLogging
+	override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
         trueCount = s.unserialize();

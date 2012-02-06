@@ -26,8 +26,8 @@ import m.cover.macro.IncludeMacro;
 */
 @:keep class MCover
 {
-	public static var includes:Array<IncludeMacro> = [];
-	
+	static var includes:Array<Class<IncludeMacro>> = [];
+	static var instances:Array<IncludeMacro> = [];
 	/** 
 	* Configures MCover features for compilation
 	* A
@@ -39,8 +39,14 @@ import m.cover.macro.IncludeMacro;
 	**/
 	public static function configure(?coverage:Bool=true, ?logging:Bool=false):Void
 	{
-		if(coverage) includes.push(new CoverageMacro());
-		if(logging) includes.push(new LoggerMacro());
+		if(coverage) addInclude(CoverageMacro);
+		if(logging) addInclude(LoggerMacro);
+	}
+
+	static function addInclude(cls:Class<IncludeMacro>)
+	{
+		includes.remove(cls);
+		includes.push(cls);
 	}
 
 	/** 
@@ -56,7 +62,7 @@ import m.cover.macro.IncludeMacro;
 	**/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
-		var classes:Array<String> = [];
+		var buildArgs:Hash<Array<String>> = new Hash();
 
 		if(includes.length == 0)
 		{
@@ -64,17 +70,33 @@ import m.cover.macro.IncludeMacro;
 			haxe.macro.Context.error("MCover not configured. Please ensure to set --macro m.cover.MCover.configure() before calling --macro m.cover.MCover.include", pos);
 		}
 			
-		for(item in includes)
+		for(includeClass in includes)
 		{
-			item.initialize();
-			var a = item.getClasses(packages, classPaths, exclusions);
-			classes = appendClasses(a, classes);
+			var instance = Type.createInstance(includeClass, []);
+			instances.push(instance);
 		}
 
-		for(cl in classes)
+		for(instance in instances)
 		{
+			instance.initialize();
+			var classes = instance.getClasses(packages, classPaths, exclusions);
+
+			for(cls in classes)
+			{
+				var args:Array<String> = [];
+				if(buildArgs.exists(cls)) args = buildArgs.get(cls);
+				args.push(instance.id);
+				buildArgs.set(cls, args);
+			}
+		}
+
+		for(cls in buildArgs.keys())
+		{
+			var args = buildArgs.get(cls);
+			var argsString = "[\"" + args.join("\",\"") + "\"]";
 			//trace(cl);
-			Compiler.addMetadata("@:build(m.cover.macro.BuildMacro.build())", cl);
+			Compiler.addMetadata("@:build(m.cover.macro.BuildMacro.build(" + argsString + "))", cls);
+
 			//Compiler.keep(cl, null, true);
 		}
 
@@ -85,23 +107,12 @@ import m.cover.macro.IncludeMacro;
 	
 		haxe.macro.Context.onGenerate(onGenerate);
 	}
-
-	static function appendClasses(a1:Array<String>, a2:Array<String>):Array<String>
-	{
-		for(a in a1)
-		{
-			a2.remove(a);
-		}
-
-		return a2.concat(a1);
-	}
-
 		
 	static function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
-		for(item in includes)
+		for(instance in instances)
 		{
-			item.onGenerate(types);
+			instance.onGenerate(types);
 		}       
 	}
 }

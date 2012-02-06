@@ -12,6 +12,7 @@ import m.cover.macro.BuildMacroParser;
 
 class LoggerBuildMacro implements BuildMacroParser
 {
+	
 	public var ignoreFieldMeta(default, default):String;
 	public var includeFieldMeta(default, default):String;
 
@@ -21,6 +22,7 @@ class LoggerBuildMacro implements BuildMacroParser
 
 	public function new()
 	{
+		
 		counter = 0;
 		ignoreFieldMeta = "IgnoreLogging";
 		includeFieldMeta = null;

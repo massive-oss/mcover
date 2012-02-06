@@ -27,7 +27,7 @@
 ****/
 
 package m.cover.coverage.data;
-
+@IgnoreLogging
 @:keep class Statement extends AbstractBlock
 {
 	public var count:Int;
@@ -45,13 +45,13 @@ package m.cover.coverage.data;
 
 
 	///////////
-
+	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{
 		super.hxSerialize(s);
         s.serialize(count);
     }
-    
+    @IgnoreLogging
     override function hxUnserialize( s : haxe.Unserializer )
     {
     	super.hxUnserialize(s);
