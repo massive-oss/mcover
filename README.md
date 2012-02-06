@@ -1,18 +1,50 @@
-**MassiveCover (MCover) is a cross-platform haXe code coverage framework.**
+**MassiveCover (MCover) is a collection of macro based code quality tools.**
+
+
 
 ### How does it work?
 
-MCover injects coverage code at compile-time (using macros) to provide runtime tracking of code coverage. 
-
-MCover is designed to integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
+MCover injects code at compile-time (using macros) to provide runtime tracking of code coverage and/or function entry/exit times. 
 
 
+The code coverage tool is designed to integrate with existing unit testing frameworks to provide detailed metrics on test coverage.
 
 
 
 Features
 ---------------------
 
+
+### Code Coverage
+
+MCover can provide detailed coverage of executed code, including:
+
+* code blocks (statements)
+* code branches
+
+### Function logging
+
+MCover can generate timing metrics around function entry/exit times, including:
+
+* function start/exit time
+* function duration (both inclusive and exclusive of nested methods)
+* call stack depths
+
+
+### Macros
+
+MCover utilises Haxe macros to simplify enabling features on your existing code base
+
+* Specify included classes by classpaths, packages and wildcard patterns
+* Configure individual MCover features per compilation target
+
+
+To enable mcover, you need to specify which tools to run, and what class paths to include
+
+e.g.
+
+	--macro m.cover.MCover.configure(true)
+	--macro m.cover.MCover.include([''], ['src'])
 
 ### Cross Platform
 
@@ -28,12 +60,10 @@ MCover has been designed to work with any HaXe target. Officially we support the
 **NOTE:** The following documentation generally refers to the latest trunk builds. Refer to tagged versions for documentation pertaining to most recent official haxelib release (https://github.com/massiveinteractive/MassiveCover/tags) 
 
 
-### Compiler Macro
 
-MCover uses a simple macro to inject coverage code into your application at compile time
 
-	--macro massive.mcover.MCover.include('package.name', ['src'])
-
+Code Coverage Features
+---------------------
 
 ### Statement coverage
 
@@ -98,7 +128,8 @@ MCover stores the contextual information around every statement and branch in or
 
 
 
-Getting Started
+
+Getting Started - Code Coverage
 ---------------------
 
 ### Step 1.
@@ -112,7 +143,8 @@ Install mcover:
 Add the mcover macro to your build.hxml file:
 
 	-lib mcover
-	--macro massive.mcover.MCover.include('', ['src'])
+	--macro m.cover.MCover.configure()
+	--macro m.cover.MCover.include('', ['src'])
 
 ### Step 3.
 
@@ -232,27 +264,66 @@ You can also specify alternatives through the constructor:
 	var client = new MCoverPrintClient(munitClient, mcoverClient);
 	...
 
+
 Usage
 ---------------------
 
-### Compiler macro
+### Compiler macros
+
+MCover uses a couple of simple macros to enable individual features including code coverage and function logging.
+
+To enable mcover, you need to specify which tools to run, and what class paths to include
+
+e.g. Compiling for code coverage:
+
+	--macro m.cover.MCover.configure(true)
+	--macro m.cover.MCover.include([''], ['src'])
+
+
+#### --macro m.cover.MCover.configure
+
+The configure method defines which tools to compile for the current target
+
+	--macro m.cover.MCover.configure({includeCoverage}, {includeLogging})
+
+Where
+
+*	**includeCoverage** is a bool indicating to include code coverage
+*	**includeLogging** is a bool indicating to include function logging
+
+
+For example, to only enable coverage:
+
+	--macro m.cover.MCover.configure(true)
+
+Or only logging:
+
+	--macro m.cover.MCover.configure(false, true)
+
+
+
+#### -macro m.cover.MCover.include
+
+Specify the classpaths/packages to include in coverage
+
+	--macro m.cover.MCover.include(['package.name'], ['src'])
 
 MCover includes a macro for specifying which classes to cover in your application:
 
-	--macro massive.mcover.MCover.include('{package}', {classPaths}, {ignoredClasses})
+	--macro m.cover.MCover.include(['{package}'], {classPaths}, {ignoredClasses})
 
 Where:
 
-*	**package** is the package to filter on (e.g. 'com.example'). Use an empty string to include all packages ('')
+*	**package** is an array of packages to filter on (e.g. 'com.example'). Default is all packages - e.g. ['']
 
-*	**classPaths** is an array of classpaths to include in coverage (e.g. ['src']). Default is null (only checks local path (''))
+*	**classPaths** is an array of classpaths to include in coverage (e.g. ['src']). Default is local path - e.g ['']
 
-*	**ignoredClasses** is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null
+*	**ignoredClasses** is an array of specific classes to ignore (e,g, ['com.example.IgnoredClass']). Default is null.
 
 
 Example:
 
-	--macro massive.mcover.MCover.include('com.example', ['src'], null)
+	--macro m.cover.MCover.include(['com.example'], ['src'], null)
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
