@@ -284,7 +284,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		for(cls in classes)
 		{
 			if(cls.getPercentage() == 100) continue;
-			if(coveredClasses.exists(cls.name)) continue;
+			//if(coveredClasses.exists(cls.name)) continue;
 
 			var result = createCoverageResultForClass(cls);
 			results.push(result);

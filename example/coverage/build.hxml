@@ -1,0 +1,27 @@
+-main Main
+-swf build/main.swf
+-swf-version 10
+-swf-header 1024:769:60:FFFFFF
+-cp ../../src
+-cp src
+--macro m.cover.MCover.coverage([''], ['src'], ['other.*','example.IgnoredWithMacroFilter'])
+
+--next
+
+-main Main
+-js build/main.js
+-cp ../../src
+-cp src
+# -D MCOVER_DEBUG
+--macro m.cover.MCover.coverage([''], ['src'], ['other.*','example.IgnoredWithMacroFilter'])
+
+--next
+
+-main Main
+-neko build/main.n
+
+-cp ../../src
+-cp src
+# -D MCOVER_DEBUG
+--macro m.cover.MCover.coverage([''], ['src'], ['other.*','example.IgnoredWithMacroFilter'])
+-cmd neko build/main.n

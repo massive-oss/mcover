@@ -26,8 +26,9 @@
 * or implied, of Massive Interactive.
 ****/
 
-package m.cover;
+package ;
 
+import m.cover.AllClasses;
 import m.cover.coverage.client.EMMAPrintClient;
 import m.cover.coverage.client.PrintClient;
 import m.cover.coverage.client.TraceClient;
@@ -71,6 +72,7 @@ import m.cover.macro.IncludeMacro;
 import m.cover.macro.MacroUtil;
 import m.cover.macro.PackageHelper;
 import m.cover.MCover;
+import massive.mcover.munit.client.MCoverPrintClient;
 
 @IgnoreCover
 class AllClasses
