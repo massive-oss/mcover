@@ -150,12 +150,12 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += divider;
 			output += newline;
 			output += header;
-			output += divider;
-			output += newline;
+			output += divider;	
 		}
 
 		if(includeExecutionFrequency)
 		{
+			output += newline;
 			output += executionFrequency;
 		}
 
@@ -183,16 +183,17 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += divider;
 			output += newline;
 			output += summary;
-			output += newline;
 		}
 	
 		if(includeOverallPercentage)
 		{
+			output += newline;
 			output += divider;
 			output += overallPercentage;
 			output += divider;
-			output += newline;
 		}
+
+		output += newline;
 
 		return output;
 	}
@@ -212,16 +213,17 @@ class PrintClient implements AdvancedCoverageReportClient
 		var output = "";
 		var r = coverage.getResults();
 
+		var s:Int = SHORT_FIRST_TAB_WIDTH;
 		var w:Int = LONG_FIRST_TAB_WIDTH;
 
 		output = printLine("OVERALL COVERAGE STATS:");
 		output += printLine("");
-		output += printTabs(["total packages", r.pc + " / " + r.p], w);
-		output += printTabs(["total files", r.fc + " / " + r.f], w);
-		output += printTabs(["total classes", r.cc + " / " + r.c], w);
-		output += printTabs(["total methods", r.mc + " / " + r.m], w);
-		output += printTabs(["total statements", r.sc + " / " + r.s], w);
-		output += printTabs(["total branches", r.bc + " / " + r.b], w);
+		output += printTabs(["", "total packages", r.pc + " / " + r.p], s, w);
+		output += printTabs(["", "total files", r.fc + " / " + r.f], s, w);
+		output += printTabs(["", "total classes", r.cc + " / " + r.c], s, w);
+		output += printTabs(["", "total methods", r.mc + " / " + r.m], s, w);
+		output += printTabs(["", "total statements", r.sc + " / " + r.s], s, w);
+		output += printTabs(["", "total branches", r.bc + " / " + r.b], s, w);
 		
 		return output;
 	}

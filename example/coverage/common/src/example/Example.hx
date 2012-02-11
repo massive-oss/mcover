@@ -5,8 +5,8 @@ class Example
 	@IgnoreCover
 	static public function log(?cover:Null<Bool>=true, ?pos:haxe.PosInfos)
 	{
-		var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
-		trace(s);
+		//var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
+		//trace(s);
 	}
 
 	public var fieldA:String;
