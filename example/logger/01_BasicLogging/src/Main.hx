@@ -1,6 +1,6 @@
 package;
 
-import m.cover.logger.MLogger;
+import m.cover.logger.MCoverLogger;
 import m.cover.logger.Logger;
 import example.Example;
 
@@ -15,7 +15,7 @@ class Main
 	static public function main()
 	{
 
-		var logger = MLogger.getLogger();
+		var logger = MCoverLogger.getLogger();
 		logger.startRecording();
 		//execute appliction code
 		var example = new Example();

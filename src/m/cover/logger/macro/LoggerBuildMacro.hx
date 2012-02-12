@@ -127,7 +127,7 @@ class LoggerBuildMacro implements BuildMacroParser
 
 	i.e.:
 
-		var ___logEntry:Int = MLogger.getLogger().logEntry();
+		var ___logEntry:Int = MCoverLogger.getLogger().logEntry();
 
 	@param pos 					the position to generate at
 	@param isInlineFunction 	flag indicating if current code block is an inline function (EFunction)
@@ -366,10 +366,10 @@ class LoggerBuildMacro implements BuildMacroParser
 	}
 
 	/**
-	Creates a call to m.cover.MLogger.getLogger();
+	Creates a call to m.cover.MCoverLogger.getLogger();
 
 	@param pos - the position to add to
-	@return expr matching "m.cover.MLogger.getLogger()"
+	@return expr matching "m.cover.MCoverLogger.getLogger()"
 	*/
 	function getReferenceToLogger(pos:Position):Expr
 	{
@@ -386,7 +386,7 @@ class LoggerBuildMacro implements BuildMacroParser
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 
-		var eType = EType(identFieldExpr2, "MLogger");
+		var eType = EType(identFieldExpr2, "MCoverLogger");
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 

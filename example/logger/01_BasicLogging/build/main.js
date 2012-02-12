@@ -331,7 +331,7 @@ m.cover.logger.LoggerImpl.__interfaces__ = [m.cover.logger.Logger];
 if(typeof example=='undefined') example = {}
 example.Example = function(p) {
 	if( p === $_ ) return;
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 10, className : "example.Example", methodName : "new"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 10, className : "example.Example", methodName : "new"});
 	this.i = 0;
 	this.emptyFunction();
 	this.ignoredFunction();
@@ -345,78 +345,78 @@ example.Example = function(p) {
 	}
 	this.nestedCallThrowsException();
 	this.recurse();
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 30, className : "example.Example", methodName : "new"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 30, className : "example.Example", methodName : "new"});
 }
 example.Example.__name__ = ["example","Example"];
 example.Example.prototype.recurse = function(depth) {
 	if(depth == null) depth = 0;
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 112, className : "example.Example", methodName : "recurse"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 112, className : "example.Example", methodName : "recurse"});
 	depth++;
 	if(depth <= 10) {
 		this.i = 0;
 		while(this.i < 5000) this.i++;
 		this.recurse(depth);
 	}
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 113, className : "example.Example", methodName : "recurse"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 113, className : "example.Example", methodName : "recurse"});
 }
 example.Example.prototype.level3 = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 106, className : "example.Example", methodName : "level3"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 106, className : "example.Example", methodName : "level3"});
 	var ____m0 = "exception";
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 106, className : "example.Example", methodName : "level3"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 106, className : "example.Example", methodName : "level3"});
 	throw ____m0;
 }
 example.Example.prototype.level2 = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 101, className : "example.Example", methodName : "level2"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 101, className : "example.Example", methodName : "level2"});
 	this.level3();
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 101, className : "example.Example", methodName : "level2"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 101, className : "example.Example", methodName : "level2"});
 }
 example.Example.prototype.nestedCallThrowsException = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 89, className : "example.Example", methodName : "nestedCallThrowsException"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 89, className : "example.Example", methodName : "nestedCallThrowsException"});
 	try {
 		this.level2();
 	} catch( e ) {
 	}
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 89, className : "example.Example", methodName : "nestedCallThrowsException"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 89, className : "example.Example", methodName : "nestedCallThrowsException"});
 }
 example.Example.prototype.catchException = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 77, className : "example.Example", methodName : "catchException"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 77, className : "example.Example", methodName : "catchException"});
 	try {
 		var ____m1 = "exception";
-		m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 79, className : "example.Example", methodName : "catchException"});
+		m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 79, className : "example.Example", methodName : "catchException"});
 		throw ____m1;
 	} catch( e ) {
 	}
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 77, className : "example.Example", methodName : "catchException"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 77, className : "example.Example", methodName : "catchException"});
 }
 example.Example.prototype.throwException = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 72, className : "example.Example", methodName : "throwException"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 72, className : "example.Example", methodName : "throwException"});
 	var ____m2 = "exception";
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 72, className : "example.Example", methodName : "throwException"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 72, className : "example.Example", methodName : "throwException"});
 	throw ____m2;
 }
 example.Example.prototype.returnTrueOrFalse = function(value) {
 	if(value == null) value = false;
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 63, className : "example.Example", methodName : "returnTrueOrFalse"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 63, className : "example.Example", methodName : "returnTrueOrFalse"});
 	if(value) {
 		var ____m3 = true;
-		m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 65, className : "example.Example", methodName : "returnTrueOrFalse"});
+		m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 65, className : "example.Example", methodName : "returnTrueOrFalse"});
 		return ____m3;
 	}
 	var ____m4 = false;
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 67, className : "example.Example", methodName : "returnTrueOrFalse"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 67, className : "example.Example", methodName : "returnTrueOrFalse"});
 	return ____m4;
 }
 example.Example.prototype.returnValueOfOtherFunction = function(value) {
 	if(value == null) value = false;
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 58, className : "example.Example", methodName : "returnValueOfOtherFunction"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 58, className : "example.Example", methodName : "returnValueOfOtherFunction"});
 	var ____m5 = this.returnTrueOrFalse(value);
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 58, className : "example.Example", methodName : "returnValueOfOtherFunction"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 58, className : "example.Example", methodName : "returnValueOfOtherFunction"});
 	return ____m5;
 }
 example.Example.prototype.returnValue = function() {
-	var ___logEntry = m.cover.logger.MLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 52, className : "example.Example", methodName : "returnValue"});
+	var ___logEntry = m.cover.logger.MCoverLogger.getLogger().logEntry(false,{ fileName : "Example.hx", lineNumber : 52, className : "example.Example", methodName : "returnValue"});
 	var ____m6 = this.i;
-	m.cover.logger.MLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 52, className : "example.Example", methodName : "returnValue"});
+	m.cover.logger.MCoverLogger.getLogger().logExit(___logEntry,{ fileName : "Example.hx", lineNumber : 52, className : "example.Example", methodName : "returnValue"});
 	return ____m6;
 }
 example.Example.prototype.ignoredFunction = function() {
@@ -498,15 +498,6 @@ StringBuf.prototype.toString = function() {
 }
 StringBuf.prototype.b = null;
 StringBuf.prototype.__class__ = StringBuf;
-m.cover.logger.MLogger = function(p) {
-}
-m.cover.logger.MLogger.__name__ = ["m","cover","logger","MLogger"];
-m.cover.logger.MLogger.logger = null;
-m.cover.logger.MLogger.getLogger = function() {
-	if(m.cover.logger.MLogger.logger == null) m.cover.logger.MLogger.logger = new m.cover.logger.LoggerImpl();
-	return m.cover.logger.MLogger.logger;
-}
-m.cover.logger.MLogger.prototype.__class__ = m.cover.logger.MLogger;
 m.cover.logger.data.Log = function(id) {
 	if( id === $_ ) return;
 	this.id = id;
@@ -900,6 +891,15 @@ js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
 js.Lib.prototype.__class__ = js.Lib;
+m.cover.logger.MCoverLogger = function(p) {
+}
+m.cover.logger.MCoverLogger.__name__ = ["m","cover","logger","MCoverLogger"];
+m.cover.logger.MCoverLogger.logger = null;
+m.cover.logger.MCoverLogger.getLogger = function() {
+	if(m.cover.logger.MCoverLogger.logger == null) m.cover.logger.MCoverLogger.logger = new m.cover.logger.LoggerImpl();
+	return m.cover.logger.MCoverLogger.logger;
+}
+m.cover.logger.MCoverLogger.prototype.__class__ = m.cover.logger.MCoverLogger;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -1280,7 +1280,7 @@ Hash.prototype.__class__ = Hash;
 Main = function() { }
 Main.__name__ = ["Main"];
 Main.main = function() {
-	var logger = m.cover.logger.MLogger.getLogger();
+	var logger = m.cover.logger.MCoverLogger.getLogger();
 	logger.startRecording();
 	var example = new example.Example();
 	logger.completionHandler = Main.completionHandler;
@@ -1380,10 +1380,10 @@ m.cover.logger.LoggerImpl.MAX_STACK_DEPTH_LIMIT = 26;
 example.Example.__meta__ = { fields : { ignoredFunction : { IgnoreLogging : null}}};
 example.InternalClassWithIgnore.__meta__ = { obj : { IgnoreLogging : null}};
 example._Example.PrivateClassWithIgnore.__meta__ = { obj : { IgnoreLogging : null}};
-m.cover.logger.MLogger.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}, statics : { getLogger : { IgnoreLogging : null, IgnoreCover : null}}};
 m.cover.logger.data.Log.__meta__ = { obj : { IgnoreLogging : null}};
 m.cover.logger.Utils.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}};
 js.Lib.onerror = null;
+m.cover.logger.MCoverLogger.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}, statics : { getLogger : { IgnoreLogging : null, IgnoreCover : null}}};
 m.cover.logger.client.LogClientImpl.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}};
 Main.__meta__ = { obj : { IgnoreLogging : null}};
 Main.completed = false;

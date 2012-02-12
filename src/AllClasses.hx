@@ -64,7 +64,7 @@ import m.cover.logger.Logger;
 import m.cover.logger.LoggerImpl;
 import m.cover.logger.LoggerMacro;
 import m.cover.logger.macro.LoggerBuildMacro;
-import m.cover.logger.MLogger;
+import m.cover.logger.MCoverLogger;
 import m.cover.logger.Utils;
 import m.cover.macro.BuildMacro;
 import m.cover.macro.BuildMacroParser;

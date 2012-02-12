@@ -36,7 +36,7 @@ import m.cover.logger.LoggerImpl;
 
 @IgnoreLogging
 @IgnoreCover
-class MLogger
+class MCoverLogger
 {
 	#if neko
 		static public var mutex:neko.vm.Mutex;

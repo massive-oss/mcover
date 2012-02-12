@@ -45,12 +45,12 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 Add the followng code to your application to start recording
 
-	var logger = m.cover.coverage.MLogger.getLogger();
+	var logger = m.cover.coverage.MCoverLogger.getLogger();
 	logger.startRecording();
 
 Add the followng code to your application to stop recording and print report
 
-	var logger = m.cover.coverage.MLogger.getLogger();
+	var logger = m.cover.coverage.MCoverLogger.getLogger();
 	logger.stopRecording();
 	logger.report();
 
