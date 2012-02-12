@@ -161,6 +161,8 @@ class LoggerImpl implements Logger
 			depth --;
 
 			entryLog.exit(pos, t);
+
+			if(depth < 0) depth = 0;
 		}
 		catch(e:Dynamic)
 		{

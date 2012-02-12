@@ -1,4 +1,4 @@
--cmd cd 01_Basic
+-cmd cd 01_BasicCoverage
 -cmd haxe build.hxml
 -cmd cd ../
 -cmd cd 02_ConfigureReportClient
