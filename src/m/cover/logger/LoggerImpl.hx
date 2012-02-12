@@ -31,8 +31,8 @@ package m.cover.logger;
 import haxe.PosInfos;
 import m.cover.logger.data.Log;
 import m.cover.logger.data.LogRecording;
-import m.cover.logger.client.LogClient;
-import m.cover.logger.client.LogClientImpl;
+import m.cover.logger.client.LoggerClient;
+import m.cover.logger.client.LoggerClientImpl;
 
 @IgnoreLogging
 @IgnoreCover
@@ -60,15 +60,15 @@ class LoggerImpl implements Logger
 	var logsById:IntHash<Log>;
 	var recording:LogRecording;
 
-	public var clients(default, null):Array<LogClient>;
+	public var clients(default, null):Array<LoggerClient>;
 	var clientCompleteCount:Int;
 
-	public var defaultClient:LogClient;
+	public var defaultClient:LoggerClient;
 
 
 	public function new()
 	{	
-		defaultClient = new LogClientImpl();
+		defaultClient = new LoggerClientImpl();
 		clients = [];
 		clientCompleteCount = 0;
 		reset();
@@ -186,7 +186,7 @@ class LoggerImpl implements Logger
 	
 	public function stopRecording():Void
 	{
-		if(!isRecording) throw new LogException("No recording active.");
+		if(!isRecording) throw new LoggerException("No recording active.");
 
 		isRecording = false;
 		
@@ -223,7 +223,7 @@ class LoggerImpl implements Logger
 
 		if(recording ==  null) recording = getRecording();
 
-		if(recording == null) throw new LogException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()");
+		if(recording == null) throw new LoggerException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()");
 
 		clientCompleteCount = 0;
 
@@ -243,7 +243,7 @@ class LoggerImpl implements Logger
 		#if neko mutex.release(); #end
 	}
 
-	function clientCompletedHandler(client:LogClient)
+	function clientCompletedHandler(client:LoggerClient)
 	{
 		clientCompleteCount ++;
 
@@ -258,7 +258,7 @@ class LoggerImpl implements Logger
 	
 	@param client 	the log client to add
 	*/
-	public function addClient(client:LogClient):Void
+	public function addClient(client:LoggerClient):Void
 	{
 		clients.remove(client);
 		clients.push(client);
@@ -269,7 +269,7 @@ class LoggerImpl implements Logger
 	
 	@param client 	the log client to remove
 	*/
-	public function removeClient(client:LogClient):Void
+	public function removeClient(client:LoggerClient):Void
 	{
 		clients.remove(client);
 	}

@@ -26,21 +26,59 @@
 * or implied, of Massive Interactive.
 ****/
 
-package m.cover.macro;
+package m.cover.coverage.macro;
 
 #if macro
-import haxe.macro.Expr;
-import m.cover.macro.BuildMacro;
+import haxe.macro.Context;
+import m.cover.MCover;
+import m.cover.macro.ClassPathFilter;
+import m.cover.macro.MacroDelegate;
+import m.cover.coverage.data.Coverage;
+import m.cover.macro.ExpressionParser;
+import m.cover.coverage.macro.CoverageExpressionParser;
 
-interface BuildMacroParser
+class CoverageMacroDelegate implements MacroDelegate
 {
-	
-	var ignoreFieldMeta(default, default):String;
-	var includeFieldMeta(default, default):String;
+	static public var coverage = new Coverage();
+	static public var classPathHash:IntHash<String> = new IntHash();
 
-	var target(default, default):IBuildMacro;
+	public var id(default, null):String;
 
-	function parseExpr(expr:Expr):Expr;
+	public function new()
+	{
+		id = "coverage";
+	}
+
+	public function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>
+	{
+		if(packages ==  null || packages.length == 0) packages = [""];
+		var filter = new ClassPathFilter();
+		filter.ignoreClassMeta = "IgnoreCover";
+		
+		var classes = filter.filter(classPaths, packages, exclusions);
+		
+		for(cp in classPaths)
+		{
+			classPathHash.set(Lambda.count(classPathHash), cp);
+		}
+		return classes;
+
+	}
+
+	public function getExpressionParser():Class<ExpressionParser>
+	{
+		return CoverageExpressionParser;
+	}
+
+	/**
+	* Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
+	* This resource is used by MCoverRunner to determine code coverage results
+	*/
+	public function generate(types:Array<haxe.macro.Type>):Void
+	{
+		var serializedData = haxe.Serializer.run(CoverageMacroDelegate.coverage);
+       	Context.addResource(MCoverage.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
+	}
 }
 
 #end

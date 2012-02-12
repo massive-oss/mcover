@@ -26,29 +26,20 @@
 * or implied, of Massive Interactive.
 ****/
 
-package m.cover.logger.client;
+package m.cover.macro;
 
-import m.cover.logger.data.Log;
-import m.cover.logger.data.LogRecording;
+#if macro
+import haxe.macro.Expr;
+import m.cover.macro.ClassParser;
 
-interface LogClient
+interface ExpressionParser
 {
-	/**
-	Handler which if present, should be called when the client has completed its processing of the results.
-	 */
-	var completionHandler(default, default):LogClient -> Void;
+	var ignoreFieldMeta(default, default):String;
+	var includeFieldMeta(default, default):String;
 
-	/**
-	String representation of report output;
-	*/
-	var output(default, null):String;
+	var target(default, default):ClassParser;
 
-
-	/**
-	Generates report output for the current logs
-	
-	@param logs 		an array of captured logs
-	@param recording 	additional metadata such as start/end time
-	*/
-	function report(logs:Array<Log>, recording:LogRecording):Void;
+	function parseExpr(expr:Expr):Expr;
 }
+
+#end

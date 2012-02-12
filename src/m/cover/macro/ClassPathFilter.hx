@@ -29,7 +29,7 @@
 package m.cover.macro;
 
 #if neko
-class PackageHelper
+class ClassPathFilter
 {
 	/**
 	optional class @metadata to exclude from list 
@@ -59,7 +59,7 @@ class PackageHelper
 	* @param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
 	* @return array of classes
 	*/
-	public function include(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>)
+	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Array<String>
 	{
 		var classes:Array<String> = [];
 		classHash = new Hash();
@@ -83,6 +83,7 @@ class PackageHelper
 		for( i in 0...classPaths.length )
 		{
 			var cp = StringTools.replace(classPaths[i], "\\", "/");
+			
 			if(StringTools.endsWith(cp, "/")) cp = cp.substr(0, -1);
 			classPaths[i] = cp;
 		}
@@ -112,7 +113,6 @@ class PackageHelper
 			prefix += ".";
 			path += "/" + pack.split(".").join("/");
 		}
-
 		if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) ) return classes;
 				
 		for(file in neko.FileSystem.readDirectory(path))

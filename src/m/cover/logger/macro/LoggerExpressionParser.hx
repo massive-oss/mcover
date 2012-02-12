@@ -35,16 +35,16 @@ import haxe.macro.Compiler;
 import haxe.macro.Type;
 
 import m.cover.macro.MacroUtil;
-import m.cover.macro.BuildMacro;
-import m.cover.macro.BuildMacroParser;
+import m.cover.macro.ClassParser;
+import m.cover.macro.ExpressionParser;
 
-class LoggerBuildMacro implements BuildMacroParser
+class LoggerExpressionParser implements ExpressionParser
 {
 	
 	public var ignoreFieldMeta(default, default):String;
 	public var includeFieldMeta(default, default):String;
 
-	public var target(default, default):IBuildMacro;
+	public var target(default, default):ClassParser;
 
 	var counter:Int;
 
@@ -57,12 +57,12 @@ class LoggerBuildMacro implements BuildMacroParser
 	}
 
 	/**
-	Overrides defauld BuildMacro.parse() to wrap method entry and exit points
+	Overrides defauld ClassParser.parse() to wrap method entry and exit points
 	
 	@param expr 		the current expression
-	@param target 		the current BuildMacro instance
+	@param target 		the current ClassParser instance
 	@return the updated expression
-	@see BuildMacro.parseExpr
+	@see ClassParser.parseExpr
 	*/
 	public function parseExpr(expr:Expr):Expr
 	{
@@ -247,7 +247,7 @@ class LoggerBuildMacro implements BuildMacroParser
 				{
 					case EReturn(e1): expr.expr = EReturn(exitExprs.eReturnValue);
 					case EThrow(e1): expr.expr = EThrow(exitExprs.eReturnValue);
-					default: throw new LogException("Unexpected exprDef " + expr);
+					default: throw new LoggerException("Unexpected exprDef " + expr);
 				}
 
 			}
@@ -258,7 +258,7 @@ class LoggerBuildMacro implements BuildMacroParser
 				{
 					case EReturn(e1): eExit = {expr:EReturn(exitExprs.eReturnValue), pos:expr.pos};
 					case EThrow(e1): eExit = {expr:EThrow(exitExprs.eReturnValue), pos:expr.pos};
-					default: throw new LogException("Unexpected exprDef " + expr);
+					default: throw new LoggerException("Unexpected exprDef " + expr);
 				}
 				var exprs:Array<Expr> = [exitExprs.eExitLogCall, eExit];
 				if(exitExprs.eVars != null) exprs.unshift(exitExprs.eVars);

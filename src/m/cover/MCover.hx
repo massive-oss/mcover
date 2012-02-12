@@ -32,11 +32,10 @@ package m.cover;
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
-import m.cover.macro.BuildMacro;
-import m.cover.coverage.CoverageMacro;
-import m.cover.logger.LoggerMacro;
-import m.cover.macro.PackageHelper;
-import m.cover.macro.IncludeMacro;
+import m.cover.macro.ClassParser;
+import m.cover.coverage.macro.CoverageMacroDelegate;
+import m.cover.logger.macro.LoggerMacroDelegate;
+import m.cover.macro.MacroDelegate;
 
 
 
@@ -65,7 +64,7 @@ To enable function entry/exit logging
 	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
 	*/
 	public static function coverage(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)	
-	{	includes.push(CoverageMacro);
+	{	delegateClasses.push(CoverageMacroDelegate);
 		include(packages, classPaths, exclusions);
 	}
 
@@ -80,17 +79,18 @@ To enable function entry/exit logging
 	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
 	*/
 	public static function logger(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
-	{	includes.push(LoggerMacro);
+	{	delegateClasses.push(LoggerMacroDelegate);
 		include(packages, classPaths, exclusions);
 	}
 
 
-	static var includes:Array<Class<IncludeMacro>> = [];
-	static var instances:Array<IncludeMacro> = [];
+	static var delegateClasses:Array<Class<MacroDelegate>> = [];
+	static var delegates:Array<MacroDelegate> = [];
+	static var delegatesById:Hash<MacroDelegate> = new Hash();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
-	Adds @:build(m.cover.macro.BuildMacro.build()) to included classes.
+	Adds @:build(m.cover.macro.ClassParser.build()) to included classes.
 	
 	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
 	@param classPaths 	array of classpaths to search in (defaults to local scope only [''])
@@ -98,43 +98,43 @@ To enable function entry/exit logging
 	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
-		var buildArgs:Hash<Array<String>> = new Hash();
-
-		if(includes.length == 0)
-		{
-			var pos = haxe.macro.Context.makePosition({file:"m.cover.MCover", min:0, max:0});//haxe.macro.Context.currentPos()
-			haxe.macro.Context.error("MCover not configured. Please ensure to set --macro m.cover.MCover.configure() before calling --macro m.cover.MCover.include", pos);
-		}
+		var classMacroHash:Hash<Array<String>> = new Hash();
 			
-		for(includeClass in includes)
+		for(delegateClass in delegateClasses)
 		{
-			var instance = Type.createInstance(includeClass, []);
-			instances.push(instance);
+			var delegate = Type.createInstance(delegateClass, []);
+			delegates.push(delegate);
+			delegatesById.set(delegate.id, delegate);
 		}
 
-		for(instance in instances)
+		for(delegate in delegates)
 		{
-			instance.initialize();
-			var classes = instance.getClasses(packages, classPaths, exclusions);
+			var classes = delegate.getClasses(packages, classPaths, exclusions);
 
 			for(cls in classes)
 			{
 				var args:Array<String> = [];
-				if(buildArgs.exists(cls)) args = buildArgs.get(cls);
-				args.push(instance.id);
-				buildArgs.set(cls, args);
+				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
+				args.push(delegate.id);
+				classMacroHash.set(cls, args);
 			}
 		}
 
-		for(cls in buildArgs.keys())
+		if(Lambda.count(classMacroHash)==0)
 		{
-			var args = buildArgs.get(cls);
+			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
+		}
+
+		for(cls in classMacroHash.keys())
+		{
+			var args = classMacroHash.get(cls);
 			var argsString = "[\"" + args.join("\",\"") + "\"]";
 			//trace(cls);
-			Compiler.addMetadata("@:build(m.cover.macro.BuildMacro.build(" + argsString + "))", cls);
+			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
 
 			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
 		}
+
 
 		for(pack in packages)
 		{
@@ -142,6 +142,39 @@ To enable function entry/exit logging
 		}
 	
 		haxe.macro.Context.onGenerate(onGenerate);
+	}
+
+
+	/**
+	Per class build macro.
+	Loops through delegate ids and adds matching ExpressionParsers to the ClassParser
+
+	@param ids 	Array of MacroDelegagte ids for including in this class build
+	@return updated array of fields for the class
+	*/
+	@:macro public static function build(ids:Array<String>):Array<Field>
+	{
+		var classParser = new ClassParserImpl(); 
+
+		for(id in ids)
+		{
+			if(!delegatesById.exists(id))
+			{
+				Context.error("Unknown macro id: " + id, Context.currentPos());
+			}
+			var delegate = delegatesById.get(id);
+			var parserClass = delegate.getExpressionParser();
+
+
+			if(parserClass != null)
+			{
+				var parser = Type.createInstance(parserClass, []);
+				classParser.addExpressionParser(parser);
+			}
+		}
+
+		var fields = classParser.parseFields();
+		return fields;
 	}
 	
 	/**
@@ -152,11 +185,12 @@ To enable function entry/exit logging
 	*/
 	static function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
-		for(instance in instances)
+		for(instance in delegates)
 		{
-			instance.onGenerate(types);
+			instance.generate(types);
 		}       
 	}
+
 }
 
 #end

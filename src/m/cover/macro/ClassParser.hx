@@ -35,46 +35,62 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.PosInfos;
 
+/**
+Generic recursive parser of expressions inside a class's fields.
+Provides mechanism for adding one or more ExpressionParser instances to take reponsibility for modifying field contents.
 
-interface IBuildMacro
+For each ExpressionParser
+- checks if current field should be included/ignored
+- calls parseExpr for each nested expression
+
+*/
+interface ClassParser
 {
+	/**
+	current expression stack (i.e. hierachial list of ancestors for the current expression)
+	*/
 	var exprStack(default, null):Array<Expr>;
+	/**
+	Current function stack (ususally just the current method field (unless inside inline function))
+	*/
 	var functionStack(default, null):Array<Function>;
-	var currentClassName(default, null):String;
-	var currentPackageName(default, null):String;
-	var currentMethodName(default, null):String;
-}
-
-class BuildMacro implements IBuildMacro
-{
 
 	/**
-	Stub build macro that should be redefined in concrete instance.
-	This can be used to validate no bugs in recursive expr parsing of class
-	
-	@return updated array of fields for the class
+	name of the current class
 	*/
-	@:macro public static function build(keys:Array<String>):Array<Field>
-	{
+	var currentClassName(default, null):String;
 
-		var instance = new BuildMacro(keys); 
-		var fields = instance.parseFields();
-		return fields;
-	}
+	/**
+	name of the current package
+	*/
+	var currentPackageName(default, null):String;
 
-	static var registry:Hash<Class<BuildMacroParser>> = new Hash();
+	/**
+	name of the current method
+	*/
+	var currentMethodName(default, null):String;
 
+	/**
+	fully qualified path to current method
+	e.g. foo.bar.ClassName.methodName
+	*/
+	var currentLocation(default, null):String;
 
-	public static function registerParser(id:String, parser:Class<BuildMacroParser>)
-	{
-		registry.set(id, parser);
-	}
+	/**
+	registers an ExpressionParser to handler parse
+	*/
+	function addExpressionParser(parser:ExpressionParser):Void;
+}
+
+class ClassParserImpl implements ClassParser
+{
 
 	/////////////////
 
 	public var currentClassName(default, null):String;
 	public var currentPackageName(default, null):String;
 	public var currentMethodName(default, null):String;
+	public var currentLocation(default, null):String;
 
 	public var functionStack(default, null):Array<Function>;
 	public var exprStack(default, null):Array<Expr>;
@@ -83,21 +99,18 @@ class BuildMacro implements IBuildMacro
 	var fields:Array<Field>;
 	var type:Null<haxe.macro.Type>;
 
-	
-
 	var generatedFields:Array<Field>;
 
-	
+	var parsers:Array<ExpressionParser>;
+	var fieldParsers:Array<ExpressionParser>;
 
-	var parsers:Array<BuildMacroParser>;
-	var fieldParsers:Array<BuildMacroParser>;
-
-	public function new(keys:Array<String>)
+	public function new()
 	{
+		parsers = [];
+		fieldParsers = [];
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
 		
-
 		switch(type)
 		{
 			case TInst(t, params):
@@ -108,27 +121,15 @@ class BuildMacro implements IBuildMacro
 			}
 			default: null;
 		}
-
-
-		addInstanceParsers(keys);
-		
 	}
 
-	function addInstanceParsers(keys:Array<String>)
+	/**
+	Registers an instance of an expression parser for a particular feature.
+	*/
+	public function addExpressionParser(parser:ExpressionParser)
 	{
-		parsers = [];
-
-		for(key in registry.keys())
-		{
-			if(!registry.exists(key)) continue;
-
-			var parser = Type.createInstance(registry.get(key), []);
-			parser.target = this;
-			parsers.push(parser);
-		}
-
-		//trace(currentPackageName + "." + currentClassName + ":" + keys);
-
+		parser.target = this;
+		parsers.push(parser);
 	}
 
 	/**
@@ -176,7 +177,7 @@ class BuildMacro implements IBuildMacro
 	}
 
 
-	function isFieldParser(parser:BuildMacroParser, field:Field):Bool
+	function isFieldParser(parser:ExpressionParser, field:Field):Bool
 	{
 		if(parser.ignoreFieldMeta != null)
 		{
@@ -201,6 +202,8 @@ class BuildMacro implements IBuildMacro
 	function parseMethod(field:Field, f:Function)
 	{
 		currentMethodName = field.name;
+		currentLocation = currentPackageName + "." + currentClassName + "." + currentMethodName;
+
 		if(f.expr == null ) return;
 		functionStack = [f];
 		f.expr = parseExpr(f.expr);

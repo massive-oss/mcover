@@ -31,16 +31,16 @@ package m.cover.logger.client;
 import m.cover.logger.data.Log;
 import m.cover.logger.data.LogRecording;
 
-import m.cover.logger.client.LogClient;
+import m.cover.logger.client.LoggerClient;
 
 @IgnoreLogging
 @IgnoreCover
-class LogClientImpl implements LogClient
+class LoggerClientImpl implements LoggerClient
 {
 	/**
 	Handler which if present, should be called when the client has completed its processing of the results.
 	 */
-	public var completionHandler(default, default):LogClient -> Void;
+	public var completionHandler(default, default):LoggerClient -> Void;
 
 	/**
 	String representation of report output;

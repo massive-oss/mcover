@@ -33,15 +33,15 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
-import m.cover.macro.BuildMacro;
+import m.cover.macro.ClassParser;
 
 import m.cover.coverage.DataTypes;
 
 import m.cover.macro.MacroUtil;
-import m.cover.macro.BuildMacro;
-import m.cover.macro.BuildMacroParser;
+import m.cover.macro.ClassParser;
+import m.cover.macro.ExpressionParser;
 
-@:keep class CoverageBuildMacro implements BuildMacroParser
+@:keep class CoverageExpressionParser implements ExpressionParser
 {
 	public var ignoreFieldMeta(default, default):String;
 	public var includeFieldMeta(default, default):String;
@@ -50,7 +50,7 @@ import m.cover.macro.BuildMacroParser;
 	static var branchCount:Int = 0;
 
 
-	public var target(default, default):IBuildMacro;
+	public var target(default, default):ClassParser;
 	
 	public function new()
 	{
@@ -63,9 +63,9 @@ import m.cover.macro.BuildMacroParser;
 	Wraps code branches and statement blocks with coverage logs
 	
 	@param expr 		the current expression
-	@param target 		the current BuildMacro instance
+	@param target 		the current ClassParser instance
 	@return the updated expression
-	@see BuildMacro.parseExpr
+	@see ClassParser.parseExpr
 	*/
 	public function parseExpr(expr:Expr):Expr
 	{
@@ -209,7 +209,7 @@ import m.cover.macro.BuildMacroParser;
 		var posInfo = Context.getPosInfos(pos);
 		var file:String = posInfo.file;
 
-		for (cp in CoverageMacro.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathHash)
 		{
 			if(file.indexOf(cp) == 0)
 			{	
@@ -262,11 +262,11 @@ import m.cover.macro.BuildMacroParser;
 
 		if(isBranch)
 		{
-			CoverageMacro.coverage.addBranch(cast(block, Branch));
+			CoverageMacroDelegate.coverage.addBranch(cast(block, Branch));
 		}
 		else
 		{
-			CoverageMacro.coverage.addStatement(cast(block, Statement));
+			CoverageMacroDelegate.coverage.addStatement(cast(block, Statement));
 		}
 		return block;
 	}

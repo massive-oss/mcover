@@ -209,14 +209,13 @@ haxe.Log.clear = function() {
 haxe.Log.prototype.__class__ = haxe.Log;
 Main = function(p) {
 	if( p === $_ ) return;
-	var example = new example.Example();
-	example.add(1);
-	example.add(5);
-	example.add(3);
-	example.remove(5);
-	var total = example.totalValue();
-	var greatest = example.greatestValue();
-	haxe.Log.trace(example.toString(),{ fileName : "Main.hx", lineNumber : 22, className : "Main", methodName : "new"});
+	var account = new example.Account();
+	account.add(1);
+	account.add(5);
+	account.add(3);
+	account.remove(5);
+	var total = account.totalValue();
+	haxe.Log.trace(account.toString(),{ fileName : "Main.hx", lineNumber : 21, className : "Main", methodName : "new"});
 }
 Main.__name__ = ["Main"];
 Main.main = function() {
@@ -249,42 +248,6 @@ Std.random = function(x) {
 }
 Std.prototype.__class__ = Std;
 if(typeof example=='undefined') example = {}
-example.Example = function(p) {
-	if( p === $_ ) return;
-	this.values = [];
-}
-example.Example.__name__ = ["example","Example"];
-example.Example.prototype.values = null;
-example.Example.prototype.add = function(value) {
-	this.values.push(value);
-}
-example.Example.prototype.remove = function(value) {
-	this.values.remove(value);
-}
-example.Example.prototype.toString = function() {
-	return this.values.toString();
-}
-example.Example.prototype.totalValue = function() {
-	var total = 0;
-	var _g = 0, _g1 = this.values;
-	while(_g < _g1.length) {
-		var value = _g1[_g];
-		++_g;
-		total = example.Calculator.add(total,value);
-	}
-	return total;
-}
-example.Example.prototype.greatestValue = function() {
-	var greatest = 0;
-	var _g = 0, _g1 = this.values;
-	while(_g < _g1.length) {
-		var value = _g1[_g];
-		++_g;
-		greatest = example.Calculator.greatestValue(greatest,value);
-	}
-	return greatest;
-}
-example.Example.prototype.__class__ = example.Example;
 example.Calculator = function(p) {
 }
 example.Calculator.__name__ = ["example","Calculator"];
@@ -296,6 +259,32 @@ example.Calculator.greatestValue = function(a,b) {
 	return b;
 }
 example.Calculator.prototype.__class__ = example.Calculator;
+example.Account = function(p) {
+	if( p === $_ ) return;
+	this.values = [];
+}
+example.Account.__name__ = ["example","Account"];
+example.Account.prototype.values = null;
+example.Account.prototype.add = function(value) {
+	this.values.push(value);
+}
+example.Account.prototype.remove = function(value) {
+	this.values.remove(value);
+}
+example.Account.prototype.toString = function() {
+	return this.values.toString();
+}
+example.Account.prototype.totalValue = function() {
+	var total = 0;
+	var _g = 0, _g1 = this.values;
+	while(_g < _g1.length) {
+		var value = _g1[_g];
+		++_g;
+		total = example.Calculator.add(total,value);
+	}
+	return total;
+}
+example.Account.prototype.__class__ = example.Account;
 IntIter = function(min,max) {
 	if( min === $_ ) return;
 	this.min = min;

@@ -29,7 +29,7 @@
 package m.cover.logger;
 
 import haxe.PosInfos;
-import m.cover.logger.client.LogClient;
+import m.cover.logger.client.LoggerClient;
 import m.cover.logger.data.Log;
 import m.cover.logger.data.LogRecording;
 
@@ -96,14 +96,14 @@ interface Logger
 	
 	@param client 	the log client to add
 	*/
-	function addClient(client:LogClient):Void;
+	function addClient(client:LoggerClient):Void;
 
 	/**
 	Removes a client from reporting on logs
 	
 	@param client 	the log client to remove
 	*/
-	function removeClient(client:LogClient):Void;
+	function removeClient(client:LoggerClient):Void;
 
 
 	/**

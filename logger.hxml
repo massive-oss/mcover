@@ -1,0 +1,3 @@
+-cmd haxelib run mlib allClasses
+-cmd cd example/logger
+-cmd haxe build.hxml

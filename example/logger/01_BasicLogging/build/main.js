@@ -217,7 +217,7 @@ m.cover.logger.Logger.prototype.logExit = null;
 m.cover.logger.Logger.prototype.__class__ = m.cover.logger.Logger;
 m.cover.logger.LoggerImpl = function(p) {
 	if( p === $_ ) return;
-	this.defaultClient = new m.cover.logger.client.LogClientImpl();
+	this.defaultClient = new m.cover.logger.client.LoggerClientImpl();
 	this.clients = [];
 	this.clientCompleteCount = 0;
 	this.reset();
@@ -282,7 +282,7 @@ m.cover.logger.LoggerImpl.prototype.startRecording = function() {
 	this.recording = new m.cover.logger.data.LogRecording();
 }
 m.cover.logger.LoggerImpl.prototype.stopRecording = function() {
-	if(!this.isRecording) throw new m.cover.logger.LogException("No recording active.",null,{ fileName : "LoggerImpl.hx", lineNumber : 189, className : "m.cover.logger.LoggerImpl", methodName : "stopRecording"});
+	if(!this.isRecording) throw new m.cover.logger.LoggerException("No recording active.",null,{ fileName : "LoggerImpl.hx", lineNumber : 189, className : "m.cover.logger.LoggerImpl", methodName : "stopRecording"});
 	this.isRecording = false;
 	this.updateRecording();
 }
@@ -298,7 +298,7 @@ m.cover.logger.LoggerImpl.prototype.updateRecording = function() {
 }
 m.cover.logger.LoggerImpl.prototype.report = function(recording) {
 	if(recording == null) recording = this.getRecording();
-	if(recording == null) throw new m.cover.logger.LogException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()",null,{ fileName : "LoggerImpl.hx", lineNumber : 226, className : "m.cover.logger.LoggerImpl", methodName : "report"});
+	if(recording == null) throw new m.cover.logger.LoggerException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()",null,{ fileName : "LoggerImpl.hx", lineNumber : 226, className : "m.cover.logger.LoggerImpl", methodName : "report"});
 	this.clientCompleteCount = 0;
 	if(this.clients.length == 0 && this.defaultClient != null) {
 		this.defaultClient.completionHandler = $closure(this,"clientCompletedHandler");
@@ -442,43 +442,6 @@ example._Example.PrivateClassWithIgnore = function(p) {
 }
 example._Example.PrivateClassWithIgnore.__name__ = ["example","_Example","PrivateClassWithIgnore"];
 example._Example.PrivateClassWithIgnore.prototype.__class__ = example._Example.PrivateClassWithIgnore;
-m.cover.Exception = function(message,cause,info) {
-	if( message === $_ ) return;
-	this.type = this.here({ fileName : "Exception.hx", lineNumber : 68, className : "m.cover.Exception", methodName : "new"}).className;
-	this.message = message;
-	this.cause = cause;
-	this.info = info;
-	if(cause != null) {
-		this.causeExceptionStack = haxe.Stack.exceptionStack();
-		this.causeCallStack = haxe.Stack.callStack();
-	}
-}
-m.cover.Exception.__name__ = ["m","cover","Exception"];
-m.cover.Exception.prototype.type = null;
-m.cover.Exception.prototype.message = null;
-m.cover.Exception.prototype.info = null;
-m.cover.Exception.prototype.cause = null;
-m.cover.Exception.prototype.causeExceptionStack = null;
-m.cover.Exception.prototype.causeCallStack = null;
-m.cover.Exception.prototype.toString = function() {
-	var str = this.type + ": " + this.message;
-	if(this.info != null) str += " at " + this.info.className + "#" + this.info.methodName + " (" + this.info.lineNumber + ")";
-	if(this.cause != null) str += "\n\t Caused by: " + this.cause;
-	return str;
-}
-m.cover.Exception.prototype.here = function(info) {
-	return info;
-}
-m.cover.Exception.prototype.__class__ = m.cover.Exception;
-m.cover.logger.LogException = function(message,cause,info) {
-	if( message === $_ ) return;
-	m.cover.Exception.call(this,message,cause,info);
-	this.type = this.here({ fileName : "LogException.hx", lineNumber : 39, className : "m.cover.logger.LogException", methodName : "new"}).className;
-}
-m.cover.logger.LogException.__name__ = ["m","cover","logger","LogException"];
-m.cover.logger.LogException.__super__ = m.cover.Exception;
-for(var k in m.cover.Exception.prototype ) m.cover.logger.LogException.prototype[k] = m.cover.Exception.prototype[k];
-m.cover.logger.LogException.prototype.__class__ = m.cover.logger.LogException;
 StringBuf = function(p) {
 	if( p === $_ ) return;
 	this.b = new Array();
@@ -569,13 +532,43 @@ IntIter.prototype.next = function() {
 	return this.min++;
 }
 IntIter.prototype.__class__ = IntIter;
-if(!m.cover.logger.client) m.cover.logger.client = {}
-m.cover.logger.client.LogClient = function() { }
-m.cover.logger.client.LogClient.__name__ = ["m","cover","logger","client","LogClient"];
-m.cover.logger.client.LogClient.prototype.completionHandler = null;
-m.cover.logger.client.LogClient.prototype.output = null;
-m.cover.logger.client.LogClient.prototype.report = null;
-m.cover.logger.client.LogClient.prototype.__class__ = m.cover.logger.client.LogClient;
+m.cover.Exception = function(message,cause,info) {
+	if( message === $_ ) return;
+	this.type = this.here({ fileName : "Exception.hx", lineNumber : 68, className : "m.cover.Exception", methodName : "new"}).className;
+	this.message = message;
+	this.cause = cause;
+	this.info = info;
+	if(cause != null) {
+		this.causeExceptionStack = haxe.Stack.exceptionStack();
+		this.causeCallStack = haxe.Stack.callStack();
+	}
+}
+m.cover.Exception.__name__ = ["m","cover","Exception"];
+m.cover.Exception.prototype.type = null;
+m.cover.Exception.prototype.message = null;
+m.cover.Exception.prototype.info = null;
+m.cover.Exception.prototype.cause = null;
+m.cover.Exception.prototype.causeExceptionStack = null;
+m.cover.Exception.prototype.causeCallStack = null;
+m.cover.Exception.prototype.toString = function() {
+	var str = this.type + ": " + this.message;
+	if(this.info != null) str += " at " + this.info.className + "#" + this.info.methodName + " (" + this.info.lineNumber + ")";
+	if(this.cause != null) str += "\n\t Caused by: " + this.cause;
+	return str;
+}
+m.cover.Exception.prototype.here = function(info) {
+	return info;
+}
+m.cover.Exception.prototype.__class__ = m.cover.Exception;
+m.cover.logger.LoggerException = function(message,cause,info) {
+	if( message === $_ ) return;
+	m.cover.Exception.call(this,message,cause,info);
+	this.type = this.here({ fileName : "LoggerException.hx", lineNumber : 39, className : "m.cover.logger.LoggerException", methodName : "new"}).className;
+}
+m.cover.logger.LoggerException.__name__ = ["m","cover","logger","LoggerException"];
+m.cover.logger.LoggerException.__super__ = m.cover.Exception;
+for(var k in m.cover.Exception.prototype ) m.cover.logger.LoggerException.prototype[k] = m.cover.Exception.prototype[k];
+m.cover.logger.LoggerException.prototype.__class__ = m.cover.logger.LoggerException;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -900,6 +893,13 @@ m.cover.logger.MCoverLogger.getLogger = function() {
 	return m.cover.logger.MCoverLogger.logger;
 }
 m.cover.logger.MCoverLogger.prototype.__class__ = m.cover.logger.MCoverLogger;
+if(!m.cover.logger.client) m.cover.logger.client = {}
+m.cover.logger.client.LoggerClient = function() { }
+m.cover.logger.client.LoggerClient.__name__ = ["m","cover","logger","client","LoggerClient"];
+m.cover.logger.client.LoggerClient.prototype.completionHandler = null;
+m.cover.logger.client.LoggerClient.prototype.output = null;
+m.cover.logger.client.LoggerClient.prototype.report = null;
+m.cover.logger.client.LoggerClient.prototype.__class__ = m.cover.logger.client.LoggerClient;
 js.Boot = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
@@ -1133,31 +1133,31 @@ IntHash.prototype.toString = function() {
 	return s.b.join("");
 }
 IntHash.prototype.__class__ = IntHash;
-m.cover.logger.client.LogClientImpl = function(p) {
+m.cover.logger.client.LoggerClientImpl = function(p) {
 	if( p === $_ ) return;
 	this.output = "";
 }
-m.cover.logger.client.LogClientImpl.__name__ = ["m","cover","logger","client","LogClientImpl"];
-m.cover.logger.client.LogClientImpl.prototype.completionHandler = null;
-m.cover.logger.client.LogClientImpl.prototype.output = null;
-m.cover.logger.client.LogClientImpl.prototype.report = function(logs,recording) {
+m.cover.logger.client.LoggerClientImpl.__name__ = ["m","cover","logger","client","LoggerClientImpl"];
+m.cover.logger.client.LoggerClientImpl.prototype.completionHandler = null;
+m.cover.logger.client.LoggerClientImpl.prototype.output = null;
+m.cover.logger.client.LoggerClientImpl.prototype.report = function(logs,recording) {
 	var buf = new StringBuf();
 	this.reportFull(buf,logs,recording);
 	this.reportFrequency(buf,logs,recording);
 	this.reportSlowest(buf,logs,recording);
 	this.reportStats(buf,logs,recording);
 	this.output = buf.b.join("");
-	haxe.Log.trace(this.output,{ fileName : "LogClientImpl.hx", lineNumber : 75, className : "m.cover.logger.client.LogClientImpl", methodName : "report"});
+	haxe.Log.trace(this.output,{ fileName : "LoggerClientImpl.hx", lineNumber : 75, className : "m.cover.logger.client.LoggerClientImpl", methodName : "report"});
 	if(this.completionHandler != null) this.completionHandler(this);
 }
-m.cover.logger.client.LogClientImpl.prototype.reportStats = function(buf,logs,recording) {
+m.cover.logger.client.LoggerClientImpl.prototype.reportStats = function(buf,logs,recording) {
 	buf.b[buf.b.length] = "\n\n--------" == null?"null":"\n\n--------";
 	buf.b[buf.b.length] = "\nStats:" == null?"null":"\nStats:";
 	buf.add("\n    Total logs: " + logs.length);
 	buf.add("\n    Max depth: " + recording.maxDepth);
 	buf.b[buf.b.length] = "\n--------\n" == null?"null":"\n--------\n";
 }
-m.cover.logger.client.LogClientImpl.prototype.reportFrequency = function(buf,logs,recording) {
+m.cover.logger.client.LoggerClientImpl.prototype.reportFrequency = function(buf,logs,recording) {
 	buf.b[buf.b.length] = "\n\nHighest Frequency:\n" == null?"null":"\n\nHighest Frequency:\n";
 	var hash = new Hash();
 	var _g = 0;
@@ -1181,10 +1181,10 @@ m.cover.logger.client.LogClientImpl.prototype.reportFrequency = function(buf,log
 		if(count > 10) break;
 	}
 }
-m.cover.logger.client.LogClientImpl.prototype.sortOnCount = function(a,b) {
+m.cover.logger.client.LoggerClientImpl.prototype.sortOnCount = function(a,b) {
 	return Math.round(-a.count + b.count);
 }
-m.cover.logger.client.LogClientImpl.prototype.reportSlowest = function(buf,logs,recording) {
+m.cover.logger.client.LoggerClientImpl.prototype.reportSlowest = function(buf,logs,recording) {
 	buf.b[buf.b.length] = "\n\nLongest Execution Times:\n" == null?"null":"\n\nLongest Execution Times:\n";
 	var a = logs.concat([]);
 	a.sort($closure(this,"sortOnExecution"));
@@ -1198,10 +1198,10 @@ m.cover.logger.client.LogClientImpl.prototype.reportSlowest = function(buf,logs,
 		if(count > 10 || m.cover.logger.Utils.round(log.internalDuration) == 0) break;
 	}
 }
-m.cover.logger.client.LogClientImpl.prototype.sortOnExecution = function(a,b) {
+m.cover.logger.client.LoggerClientImpl.prototype.sortOnExecution = function(a,b) {
 	return Math.round(-a.internalDuration * 10000 + b.internalDuration * 10000);
 }
-m.cover.logger.client.LogClientImpl.prototype.reportFull = function(buf,logs,recording) {
+m.cover.logger.client.LoggerClientImpl.prototype.reportFull = function(buf,logs,recording) {
 	buf.b[buf.b.length] = "\n\nFull log:\n" == null?"null":"\n\nFull log:\n";
 	var count = 0;
 	var padding = "                                                                         ";
@@ -1217,8 +1217,8 @@ m.cover.logger.client.LogClientImpl.prototype.reportFull = function(buf,logs,rec
 	}
 	return buf.b.join("");
 }
-m.cover.logger.client.LogClientImpl.prototype.__class__ = m.cover.logger.client.LogClientImpl;
-m.cover.logger.client.LogClientImpl.__interfaces__ = [m.cover.logger.client.LogClient];
+m.cover.logger.client.LoggerClientImpl.prototype.__class__ = m.cover.logger.client.LoggerClientImpl;
+m.cover.logger.client.LoggerClientImpl.__interfaces__ = [m.cover.logger.client.LoggerClient];
 Hash = function(p) {
 	if( p === $_ ) return;
 	this.h = {}
@@ -1384,7 +1384,7 @@ m.cover.logger.data.Log.__meta__ = { obj : { IgnoreLogging : null}};
 m.cover.logger.Utils.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}};
 js.Lib.onerror = null;
 m.cover.logger.MCoverLogger.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}, statics : { getLogger : { IgnoreLogging : null, IgnoreCover : null}}};
-m.cover.logger.client.LogClientImpl.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}};
+m.cover.logger.client.LoggerClientImpl.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}};
 Main.__meta__ = { obj : { IgnoreLogging : null}};
 Main.completed = false;
 Main.main()

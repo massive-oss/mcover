@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"curre",
+				"currentClassName"
+			],
+			[
 				"build",
 				"buildClasses"
 			],
@@ -510,10 +514,6 @@
 			[
 				"Assert",
 				"Assert"
-			],
-			[
-				"screen",
-				"massive.event.Screen"
 			]
 		]
 	},
@@ -560,6 +560,35 @@
 	},
 	"file_history":
 	[
+		"/ws/MassiveCover/src/m/cover/logger/client/LogClient.hx",
+		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
+		"/ws/MassiveCover/src/m/cover/logger/Logger.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LogException.hx",
+		"/ws/MassiveCover/src/m/cover/macro/MacroUtil.hx",
+		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerMacroDelegate.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageMacroDelegate.hx",
+		"/ws/MassiveCover/src/m/cover/MCover.hx",
+		"/ws/MassiveCover/src/m/cover/logger/MCoverLogger.hx",
+		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/logger/impl/LoggerImpl.hx",
+		"/ws/MassiveCover/src/m/cover/macro/ClassParser.hx",
+		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerBuildMacro.hx",
+		"/ws/MassiveCover/src/AllClasses.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/macro/ExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/macro/MacroClassBuilder.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LoggerMacro.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/CoverageMacro.hx",
+		"/ws/MassiveCover/src/m/cover/macro/BuildMacro.hx",
+		"/ws/MassiveCover/src/m/cover/macro/MacroDelegate.hx",
+		"/ws/MassiveCover/logger.hxml",
+		"/ws/MassiveCover/src/m/cover/macro/ClassPathUtil.hx",
+		"/ws/MassiveCover/src/m/cover/macro/ClassPathFilter.hx",
+		"/ws/MassiveCover/src/m/cover/macro/PackageHelper.hx",
+		"/ws/MassiveCover/example/logger/01_BasicLogging/build.hxml",
+		"/ws/MassiveCover/example/coverage/04_CustomReportClient/build.hxml",
+		"/ws/MassiveCover/build.hxml",
 		"/ws/MassiveCover/README.md",
 		"/ws/MassiveCover/doc/Logger.md",
 		"/ws/MassiveCover/doc/Coverage.md",
@@ -567,12 +596,8 @@
 		"/ws/MassiveCover/src/m/cover/coverage/README.md",
 		"/ws/MassiveCover/src/massive/mcover/munit/client/MCoverPrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/munit/client/MCoverPrintClient.hx",
-		"/ws/MassiveCover/src/m/cover/macro/PackageHelper.hx",
-		"/ws/MassiveCover/src/m/cover/MCover.hx",
-		"/ws/MassiveCover/src/m/cover/macro/BuildMacro.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageBuildMacro.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageLogger.hx",
-		"/ws/MassiveCover/src/m/cover/macro/MacroUtil.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerTest.hx",
 		"/ws/MassiveUnit/tool/src/massive/munit/command/TestCommand.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerImplTest.hx",
@@ -590,7 +615,6 @@
 		"/ws/MassiveCover/src/m/cover/coverage/util/Timer.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/client/TraceClient.hx",
 		"/ws/MassiveCover/test/TestMain.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/LogRecording.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/Log.hx",
 		"/ws/MassiveCover/test.hxml",
@@ -603,11 +627,7 @@
 		"/ws/MassiveCover/src/m/cover/coverage/data/DataUtil.hx",
 		"/ws/MassiveCover/src/m/cover/logger/MLogger.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/MCoverage.hx",
-		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
 		"/ws/MassiveCover/src/m/cover/logger/Utils.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/CoverageMacro.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LoggerMacro.hx",
-		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerBuildMacro.hx",
 		"/ws/MassiveCover/src/m/cover/macro/BuildMacroParser.hx",
 		"/ws/MassiveCover/src/m/cover/macro/IncludeMacro.hx",
 		"/ws/MacroLogger/example/src/Main.hx",
@@ -620,7 +640,6 @@
 		"/ws/MassiveCover/test/m/cover/ExceptionTest.hx",
 		"/ws/MassiveCover/src/m/cover/Exception.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageException.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LogException.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverClassMacro.hx",
 		"/ws/MassiveCover/.mcover-debug",
 		"/ws/MassiveCover/.mcover-logging",
@@ -629,7 +648,6 @@
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageReportClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/AllClasses.hx",
 		"/ws/MacroLogger/src/m/cover/MLogger.hx",
-		"/ws/MassiveCover/src/m/cover/logger/client/LogClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/MCover.hx",
 		"/ws/MacroLogger/example/build.hxml",
 		"/ws/MacroLogger/src/m/cover/logger/macro/LoggerBuildMacro.hx",
@@ -669,35 +687,19 @@
 		"/ws/MassiveCover/test/massive/mcover/data/AbstractBlockTest.hx",
 		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeListTest.hx",
 		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/BranchTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/ClazzTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/CoverageTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/DataUtilTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/FileTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/MethodTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/NodeMock.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/PackageTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/StatementTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/ExceptionTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/MCoverTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/munit/client/AdvancedTestResultClientMock.hx",
-		"/ws/MassiveCover/test/massive/mcover/munit/client/MCoverPrintClientTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/munit/client/RichPrintClientHelperMock.hx",
-		"/ws/MassiveCover/test/massive/mcover/munit/client/TestResultClientStub.hx",
-		"/ws/MassiveCover/test/massive/mcover/util/TimerTest.hx",
-		"/ws/MassiveCover/src/mcover/coverage/AllClasses.hx",
-		"/ws/MassiveCover/src/mcover/coverage/client/EMMAPrintClient.hx",
-		"/ws/MassiveCover/src/mcover/coverage/client/PrintClient.hx"
+		"/ws/MassiveCover/test/massive/mcover/data/BranchTest.hx"
 	],
 	"find":
 	{
-		"height": 68.0
+		"height": 55.0
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
+			"/ws/MassiveCover/src/m/cover/logger",
+			"/ws/MassiveCover/src",
 			"/ws/MassiveCover/src/m/cover/coverage/data",
 			"/ws/MassiveCover/src/m/cover/coverage",
 			"/ws/MassiveCover/test/m",
@@ -724,6 +726,18 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"LogClient",
+			"LogException",
+			"logger.LoggerMacro",
+			"MacroClassBuilder",
+			"BuildMacro",
+			"MacroClassBuilder",
+			"BuildMacro",
+			"classParsers",
+			"parsers",
+			"instances",
+			"delegates",
+			"IBuildMacro",
 			"#if",
 			"#if neko",
 			"op",
@@ -839,19 +853,7 @@
 			"trace",
 			"mIn",
 			"mOut",
-			"globalLogDepth",
-			"allMethodLogs",
-			"logDepth",
-			"methodLogs",
-			"! ",
-			"PrintClient#ser",
-			"parseEReturn",
-			"createLogExpr",
-			"parseExpressions",
-			"cast",
-			"emptyResult",
-			"currentMethodE",
-			"/ws/MassiveCover/src/massive/mcover/macro/CoverClassMacro"
+			"globalLogDepth"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -859,6 +861,16 @@
 		"regex": false,
 		"replace_history":
 		[
+			"LoggerClient",
+			"LoggerException",
+			"logger.macro.LoggerMacroDelegate",
+			"ClassParser",
+			"MacroClassBuilder",
+			"parsers",
+			"classParsers",
+			"delegates",
+			"delegateClasses",
+			"BuildMacro",
 			"",
 			"m.cover.MCover",
 			"",
@@ -976,17 +988,7 @@
 			"ignoredCoun",
 			"ignoredCount",
 			"errorCount",
-			"failureCount",
-			"helper",
-			"PrintClientHelper",
-			"currentParentId",
-			"TestResultState",
-			"addTest",
-			"",
-			"coverage",
-			"Coverage",
-			"allBranchResultsById",
-			"allStatementResultsById"
+			"failureCount"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -996,11 +998,6 @@
 	},
 	"groups":
 	[
-		{
-			"sheets":
-			[
-			]
-		},
 		{
 			"sheets":
 			[
@@ -1024,18 +1021,11 @@
 				0,
 				1,
 				1
-			],
-			[
-				1,
-				0,
-				2,
-				1
 			]
 		],
 		"cols":
 		[
 			0.0,
-			0.918035318678,
 			1.0
 		],
 		"rows":
@@ -1047,7 +1037,7 @@
 	"menu_visible": true,
 	"replace":
 	{
-		"height": 62.0
+		"height": 64.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1070,6 +1060,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 372.0,
+	"side_bar_width": 454.0,
 	"status_bar_visible": true
 }
