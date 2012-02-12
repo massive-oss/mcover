@@ -61,7 +61,7 @@ MCover has been designed to work with any HaXe target. Officially we support the
 Code Coverage
 ---------------------
 
-For detailed information see [Code Coverage](/doc/Coverage.md)
+For detailed information see [Code Coverage](doc/coverage/README.md)
 
 #### Compiler args
 
@@ -95,7 +95,7 @@ Add the followng code to your application after code has executed:
 Function Logging
 ---------------------
 
-For detailed information see [Function Logging](/doc/Logger.md)
+For detailed information see [Function Logging](doc/logger/README.md)
 
 #### Compiler args
 
