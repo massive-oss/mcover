@@ -1,6 +1,11 @@
 #update allClasses imports
 -cmd haxelib run mlib allClasses
 -cmd haxe compile.hxml
+
+-cmd cd examples
+-cmd haxe build.hxml
+-cmd cd ../
+
 -cmd haxe test.hxml
 
 #package up and install over current version
