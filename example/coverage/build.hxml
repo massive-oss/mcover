@@ -4,6 +4,9 @@
 -cmd cd 02_ConfigureReportClient
 -cmd haxe build.hxml
 -cmd cd ../
--cmd cd 03_CustomReportClient
+-cmd cd 03_MassiveUnitCoverage
+-cmd haxe build.hxml
+-cmd cd ../
+-cmd cd 04_CustomReportClient
 -cmd haxe build.hxml
 -cmd cd ../
