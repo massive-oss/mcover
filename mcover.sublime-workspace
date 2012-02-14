@@ -560,38 +560,41 @@
 	},
 	"file_history":
 	[
-		"/ws/MassiveCover/src/m/cover/logger/client/LogClient.hx",
-		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
-		"/ws/MassiveCover/src/m/cover/logger/Logger.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LogException.hx",
-		"/ws/MassiveCover/src/m/cover/macro/MacroUtil.hx",
+		"/ws/MassiveCover/README.md",
+		"/ws/MassiveCover/doc/Coverage.md",
+		"/ws/MassiveCover/src/m/cover/coverage/client/TraceClient.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerMacroDelegate.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageMacroDelegate.hx",
-		"/ws/MassiveCover/src/m/cover/MCover.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/MCoverLogger.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
+		"/ws/MassiveCover/logger.hxml",
+		"/ws/MassiveCover/build.hxml",
+		"/ws/MassiveCover/coverage.hxml",
+		"/ws/MassiveCover/src/m/cover/logger/client/LoggerClientImpl.hx",
+		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
+		"/ws/MassiveCover/src/m/cover/logger/client/LogClient.hx",
+		"/ws/MassiveCover/src/m/cover/logger/Logger.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LogException.hx",
+		"/ws/MassiveCover/src/m/cover/macro/MacroUtil.hx",
+		"/ws/MassiveCover/src/m/cover/MCover.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/impl/LoggerImpl.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ClassParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerBuildMacro.hx",
 		"/ws/MassiveCover/src/AllClasses.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/macro/MacroClassBuilder.hx",
 		"/ws/MassiveCover/src/m/cover/logger/LoggerMacro.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageMacro.hx",
 		"/ws/MassiveCover/src/m/cover/macro/BuildMacro.hx",
 		"/ws/MassiveCover/src/m/cover/macro/MacroDelegate.hx",
-		"/ws/MassiveCover/logger.hxml",
 		"/ws/MassiveCover/src/m/cover/macro/ClassPathUtil.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ClassPathFilter.hx",
 		"/ws/MassiveCover/src/m/cover/macro/PackageHelper.hx",
 		"/ws/MassiveCover/example/logger/01_BasicLogging/build.hxml",
 		"/ws/MassiveCover/example/coverage/04_CustomReportClient/build.hxml",
-		"/ws/MassiveCover/build.hxml",
-		"/ws/MassiveCover/README.md",
 		"/ws/MassiveCover/doc/Logger.md",
-		"/ws/MassiveCover/doc/Coverage.md",
 		"/ws/MassiveCover/src/m/cover/logger/README.md",
 		"/ws/MassiveCover/src/m/cover/coverage/README.md",
 		"/ws/MassiveCover/src/massive/mcover/munit/client/MCoverPrintClient.hx",
@@ -613,7 +616,6 @@
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractNodeList.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractBlock.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/util/Timer.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/client/TraceClient.hx",
 		"/ws/MassiveCover/test/TestMain.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/LogRecording.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/Log.hx",
@@ -685,9 +687,7 @@
 		"/ws/MassiveCover/test/massive/mcover/CoverageLoggerTest.hx",
 		"/ws/MassiveCover/test/massive/mcover/CoverageReportClientMock.hx",
 		"/ws/MassiveCover/test/massive/mcover/data/AbstractBlockTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeListTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/BranchTest.hx"
+		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeListTest.hx"
 	],
 	"find":
 	{
@@ -726,6 +726,9 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"CoverageMacroDelegateDelegate",
+			"CoverageMacro",
+			"LogClientImpl",
 			"LogClient",
 			"LogException",
 			"logger.LoggerMacro",
@@ -850,10 +853,7 @@
 			"();",
 			"createLogExpr",
 			"Void",
-			"trace",
-			"mIn",
-			"mOut",
-			"globalLogDepth"
+			"trace"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -861,6 +861,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"CoverageMacroDelegate",
+			"LoggerClientImpl",
 			"LoggerClient",
 			"LoggerException",
 			"logger.macro.LoggerMacroDelegate",
@@ -986,9 +988,7 @@
 			"divider",
 			"helper",
 			"ignoredCoun",
-			"ignoredCount",
-			"errorCount",
-			"failureCount"
+			"ignoredCount"
 		],
 		"reverse": false,
 		"show_context": true,
@@ -1035,6 +1035,10 @@
 		]
 	},
 	"menu_visible": true,
+	"output.exec":
+	{
+		"height": 112.0
+	},
 	"replace":
 	{
 		"height": 64.0
