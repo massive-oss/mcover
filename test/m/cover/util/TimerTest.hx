@@ -1,4 +1,4 @@
-package m.cover.coverage.util;
+package m.cover.util;
 
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;

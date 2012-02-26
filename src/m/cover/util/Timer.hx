@@ -50,8 +50,9 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
  * DAMAGE.
  */
-package m.cover.coverage.util;
+package m.cover.util;
 
+@IgnoreCover
 @IgnoreLogging
 class Timer 
 {

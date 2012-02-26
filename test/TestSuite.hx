@@ -19,8 +19,8 @@ import m.cover.coverage.data.PackageTest;
 import m.cover.coverage.data.StatementTest;
 import m.cover.coverage.MCoverageTest;
 import m.cover.coverage.munit.client.MCoverPrintClientTest;
-import m.cover.coverage.util.TimerTest;
 import m.cover.ExceptionTest;
+import m.cover.util.TimerTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -53,7 +53,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(m.cover.coverage.data.StatementTest);
 		add(m.cover.coverage.MCoverageTest);
 		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
-		add(m.cover.coverage.util.TimerTest);
 		add(m.cover.ExceptionTest);
+		add(m.cover.util.TimerTest);
 	}
 }

@@ -30,7 +30,7 @@ package m.cover.coverage.client;
 
 import m.cover.coverage.CoverageReportClient;
 import m.cover.coverage.DataTypes;
-import m.cover.coverage.util.Timer;
+import m.cover.util.Timer;
 
 @IgnoreLogging
 class PrintClient implements AdvancedCoverageReportClient

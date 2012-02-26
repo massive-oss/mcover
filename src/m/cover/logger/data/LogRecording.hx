@@ -28,6 +28,8 @@
 
 package m.cover.logger.data;
 
+import m.cover.util.Timer;
+
 @IgnoreLogging
 class LogRecording
 {
@@ -41,7 +43,7 @@ class LogRecording
 	{
 		depth = 0;
 		maxDepth = 0;
-		startTime = Utils.inlineStamp();
+		startTime = Timer.inlineStamp();
 		endTime = 0;
 		duration = 0;
 	}

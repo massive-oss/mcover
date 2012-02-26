@@ -30,8 +30,8 @@ package m.cover.logger.client;
 
 import m.cover.logger.data.Log;
 import m.cover.logger.data.LogRecording;
-
 import m.cover.logger.client.LoggerClient;
+import m.cover.util.NumberUtil;
 
 @IgnoreLogging
 @IgnoreCover
@@ -139,10 +139,10 @@ class LoggerClientImpl implements LoggerClient
 		var count = 0;
 		for(log in a)
 		{
-			buf.add("\n   " + Utils.round(log.internalDuration) + " | "  + log.name);
+			buf.add("\n   " + NumberUtil.round(log.internalDuration) + " | "  + log.name);
 			count ++;
 
-			if(count > 10 || Utils.round(log.internalDuration) == 0 ) break;
+			if(count > 10 || NumberUtil.round(log.internalDuration) == 0 ) break;
 		}
 
 	}
@@ -162,7 +162,7 @@ class LoggerClientImpl implements LoggerClient
 		for(log in logs)
 		{
 			count ++;
-			var time = Utils.formatTime(log.entryTime - recording.startTime);
+			var time = formatTime(log.entryTime - recording.startTime);
 			var char = log.skipped ? "!" : ">";
 			buf.add("\n    " + time + "| " + padding.substr(0, log.depth) + char + " " + log.toString());
 
@@ -171,11 +171,14 @@ class LoggerClientImpl implements LoggerClient
 				break;
 			}
 		}
-
 		return buf.toString();	
-
 	}
 
+	function formatTime(value:Float, ?decimalCount:Int=4, ?length:Int = 8, ?char:String=" "):String
+	{
+		value = NumberUtil.round(value, decimalCount);
+		return StringTools.rpad(Std.string(value), char, length);
+	}
 }
 
 typedef LogCount = 

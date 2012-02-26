@@ -29,6 +29,7 @@
 package m.cover.logger;
 
 import haxe.PosInfos;
+import m.cover.util.Timer;
 import m.cover.logger.data.Log;
 import m.cover.logger.data.LogRecording;
 import m.cover.logger.client.LoggerClient;
@@ -96,7 +97,7 @@ class LoggerImpl implements Logger
 
 		#if neko mutex.acquire(); #end
 
-		var t = Utils.stamp();
+		var t = Timer.stamp();
 		var log = new Log(count ++);
 
 		log.enter(pos, t, depth++);
@@ -140,7 +141,7 @@ class LoggerImpl implements Logger
 
 		try
 		{
-			var t = Utils.stamp();
+			var t = Timer.stamp();
 
 			var entryLog = logsById.get(entryId);
 			var log:Log = stack.pop();
@@ -213,7 +214,7 @@ class LoggerImpl implements Logger
 		if(recording == null) return;
 
 		recording.maxDepth = maxDepth;
-		recording.endTime = Utils.stamp();
+		recording.endTime = Timer.stamp();
 		recording.duration = recording.endTime -recording.startTime;
 	}
 

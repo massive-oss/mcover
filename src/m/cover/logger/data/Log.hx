@@ -28,7 +28,7 @@
 
 package m.cover.logger.data;
 import haxe.PosInfos;
-
+import m.cover.util.NumberUtil;
 @IgnoreLogging
 class Log
 {
@@ -79,7 +79,7 @@ class Log
 
 	public function toString():String
 	{
-		return name + " (" + Utils.round(totalDuration) + ", " + Utils.round(internalDuration) + ")";
+		return name + " (" + NumberUtil.round(totalDuration) + ", " + NumberUtil.round(internalDuration) + ")";
 	}
 
 	public function enter(pos:PosInfos, time:Float, depth:Int)

@@ -82,13 +82,53 @@ haxe.Stack.makeStack = function(s) {
 	return m;
 }
 haxe.Stack.prototype.__class__ = haxe.Stack;
+if(typeof m=='undefined') m = {}
+if(!m.cover) m.cover = {}
+if(!m.cover.util) m.cover.util = {}
+m.cover.util.Timer = function(time_ms) {
+	if( time_ms === $_ ) return;
+	this.run = $closure(this,"defaultRun");
+	this.id = m.cover.util.Timer.arr.length;
+	m.cover.util.Timer.arr[this.id] = this;
+	this.timerId = window.setInterval("m.cover.coverage.util.Timer.arr[" + this.id + "].run();",time_ms);
+}
+m.cover.util.Timer.__name__ = ["m","cover","util","Timer"];
+m.cover.util.Timer.delay = function(f,time_ms) {
+	var t = new m.cover.util.Timer(time_ms);
+	t.run = function() {
+		t.stop();
+		f();
+	};
+	return t;
+}
+m.cover.util.Timer.stamp = function() {
+	return Date.now().getTime() / 1000;
+}
+m.cover.util.Timer.inlineStamp = function() {
+	return Date.now().getTime() / 1000;
+}
+m.cover.util.Timer.prototype.run = null;
+m.cover.util.Timer.prototype.id = null;
+m.cover.util.Timer.prototype.timerId = null;
+m.cover.util.Timer.prototype.defaultRun = function() {
+}
+m.cover.util.Timer.prototype.stop = function() {
+	if(this.id == null) return;
+	window.clearInterval(this.timerId);
+	m.cover.util.Timer.arr[this.id] = null;
+	if(this.id > 100 && this.id == m.cover.util.Timer.arr.length - 1) {
+		var p = this.id - 1;
+		while(p >= 0 && m.cover.util.Timer.arr[p] == null) p--;
+		m.cover.util.Timer.arr = m.cover.util.Timer.arr.slice(0,p + 1);
+	}
+	this.id = null;
+}
+m.cover.util.Timer.prototype.__class__ = m.cover.util.Timer;
 if(typeof other=='undefined') other = {}
 other.IgnoredWithMacroFilterWildcard = function(p) {
 }
 other.IgnoredWithMacroFilterWildcard.__name__ = ["other","IgnoredWithMacroFilterWildcard"];
 other.IgnoredWithMacroFilterWildcard.prototype.__class__ = other.IgnoredWithMacroFilterWildcard;
-if(typeof m=='undefined') m = {}
-if(!m.cover) m.cover = {}
 if(!m.cover.logger) m.cover.logger = {}
 if(!m.cover.logger.data) m.cover.logger.data = {}
 m.cover.logger.data.LogRecording = function(p) {
@@ -246,7 +286,7 @@ m.cover.logger.LoggerImpl.prototype.reset = function() {
 m.cover.logger.LoggerImpl.prototype.logEntry = function(isInlineFunction,pos) {
 	if(isInlineFunction == null) isInlineFunction = false;
 	if(!this.isRecording) return -1;
-	var t = m.cover.logger.Utils.stamp();
+	var t = m.cover.util.Timer.stamp();
 	var log = new m.cover.logger.data.Log(this.count++);
 	log.enter(pos,t,this.depth++);
 	log.inlined = isInlineFunction;
@@ -261,7 +301,7 @@ m.cover.logger.LoggerImpl.prototype.logExit = function(entryId,pos) {
 	if(!this.isRecording) return;
 	if(!this.logsById.exists(entryId)) throw "Cannot find matching entry log. " + [entryId,pos];
 	try {
-		var t = m.cover.logger.Utils.stamp();
+		var t = m.cover.util.Timer.stamp();
 		var entryLog = this.logsById.get(entryId);
 		var log = this.stack.pop();
 		if(log != entryLog) while(log != null && log != entryLog) {
@@ -273,7 +313,7 @@ m.cover.logger.LoggerImpl.prototype.logExit = function(entryId,pos) {
 		entryLog.exit(pos,t);
 		if(this.depth < 0) this.depth = 0;
 	} catch( e ) {
-		haxe.Log.trace(e,{ fileName : "LoggerImpl.hx", lineNumber : 169, className : "m.cover.logger.LoggerImpl", methodName : "logExit"});
+		haxe.Log.trace(e,{ fileName : "LoggerImpl.hx", lineNumber : 170, className : "m.cover.logger.LoggerImpl", methodName : "logExit"});
 	}
 }
 m.cover.logger.LoggerImpl.prototype.startRecording = function() {
@@ -282,7 +322,7 @@ m.cover.logger.LoggerImpl.prototype.startRecording = function() {
 	this.recording = new m.cover.logger.data.LogRecording();
 }
 m.cover.logger.LoggerImpl.prototype.stopRecording = function() {
-	if(!this.isRecording) throw new m.cover.logger.LoggerException("No recording active.",null,{ fileName : "LoggerImpl.hx", lineNumber : 189, className : "m.cover.logger.LoggerImpl", methodName : "stopRecording"});
+	if(!this.isRecording) throw new m.cover.logger.LoggerException("No recording active.",null,{ fileName : "LoggerImpl.hx", lineNumber : 190, className : "m.cover.logger.LoggerImpl", methodName : "stopRecording"});
 	this.isRecording = false;
 	this.updateRecording();
 }
@@ -293,12 +333,12 @@ m.cover.logger.LoggerImpl.prototype.getRecording = function() {
 m.cover.logger.LoggerImpl.prototype.updateRecording = function() {
 	if(this.recording == null) return;
 	this.recording.maxDepth = this.maxDepth;
-	this.recording.endTime = m.cover.logger.Utils.stamp();
+	this.recording.endTime = m.cover.util.Timer.stamp();
 	this.recording.duration = this.recording.endTime - this.recording.startTime;
 }
 m.cover.logger.LoggerImpl.prototype.report = function(recording) {
 	if(recording == null) recording = this.getRecording();
-	if(recording == null) throw new m.cover.logger.LoggerException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()",null,{ fileName : "LoggerImpl.hx", lineNumber : 226, className : "m.cover.logger.LoggerImpl", methodName : "report"});
+	if(recording == null) throw new m.cover.logger.LoggerException("Cannot report on empty log.\nYour should probably make sure to call startRecording() sometime before calling report()",null,{ fileName : "LoggerImpl.hx", lineNumber : 227, className : "m.cover.logger.LoggerImpl", methodName : "report"});
 	this.clientCompleteCount = 0;
 	if(this.clients.length == 0 && this.defaultClient != null) {
 		this.defaultClient.completionHandler = $closure(this,"clientCompletedHandler");
@@ -484,7 +524,7 @@ m.cover.logger.data.Log.prototype.internalDuration = null;
 m.cover.logger.data.Log.prototype.skipped = null;
 m.cover.logger.data.Log.prototype.inlined = null;
 m.cover.logger.data.Log.prototype.toString = function() {
-	return this.get_name() + " (" + m.cover.logger.Utils.round(this.totalDuration) + ", " + m.cover.logger.Utils.round(this.internalDuration) + ")";
+	return this.get_name() + " (" + m.cover.util.NumberUtil.round(this.totalDuration) + ", " + m.cover.util.NumberUtil.round(this.internalDuration) + ")";
 }
 m.cover.logger.data.Log.prototype.enter = function(pos,time,depth) {
 	this.entryPos = pos;
@@ -594,27 +634,14 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
-m.cover.logger.Utils = function() { }
-m.cover.logger.Utils.__name__ = ["m","cover","logger","Utils"];
-m.cover.logger.Utils.stamp = function() {
-	return Date.now().getTime() / 1000;
-}
-m.cover.logger.Utils.inlineStamp = function() {
-	return Date.now().getTime() / 1000;
-}
-m.cover.logger.Utils.formatTime = function(value,decimalCount,length,$char) {
-	if($char == null) $char = " ";
-	if(length == null) length = 8;
-	if(decimalCount == null) decimalCount = 4;
-	value = m.cover.logger.Utils.round(value,decimalCount);
-	return StringTools.rpad(Std.string(value),$char,length);
-}
-m.cover.logger.Utils.round = function(value,precision) {
+m.cover.util.NumberUtil = function() { }
+m.cover.util.NumberUtil.__name__ = ["m","cover","util","NumberUtil"];
+m.cover.util.NumberUtil.round = function(value,precision) {
 	if(precision == null) precision = 4;
 	value = value * Math.pow(10,precision);
 	return Math.round(value) / Math.pow(10,precision);
 }
-m.cover.logger.Utils.prototype.__class__ = m.cover.logger.Utils;
+m.cover.util.NumberUtil.prototype.__class__ = m.cover.util.NumberUtil;
 Lambda = function() { }
 Lambda.__name__ = ["Lambda"];
 Lambda.array = function(it) {
@@ -1193,9 +1220,9 @@ m.cover.logger.client.LoggerClientImpl.prototype.reportSlowest = function(buf,lo
 	while(_g < a.length) {
 		var log = a[_g];
 		++_g;
-		buf.add("\n   " + m.cover.logger.Utils.round(log.internalDuration) + " | " + log.get_name());
+		buf.add("\n   " + m.cover.util.NumberUtil.round(log.internalDuration) + " | " + log.get_name());
 		count++;
-		if(count > 10 || m.cover.logger.Utils.round(log.internalDuration) == 0) break;
+		if(count > 10 || m.cover.util.NumberUtil.round(log.internalDuration) == 0) break;
 	}
 }
 m.cover.logger.client.LoggerClientImpl.prototype.sortOnExecution = function(a,b) {
@@ -1210,12 +1237,19 @@ m.cover.logger.client.LoggerClientImpl.prototype.reportFull = function(buf,logs,
 		var log = logs[_g];
 		++_g;
 		count++;
-		var time = m.cover.logger.Utils.formatTime(log.entryTime - recording.startTime);
+		var time = this.formatTime(log.entryTime - recording.startTime);
 		var $char = log.skipped?"!":">";
 		buf.add("\n    " + time + "| " + padding.substr(0,log.depth) + $char + " " + log.toString());
 		if(count > 200) break;
 	}
 	return buf.b.join("");
+}
+m.cover.logger.client.LoggerClientImpl.prototype.formatTime = function(value,decimalCount,length,$char) {
+	if($char == null) $char = " ";
+	if(length == null) length = 8;
+	if(decimalCount == null) decimalCount = 4;
+	value = m.cover.util.NumberUtil.round(value,decimalCount);
+	return StringTools.rpad(Std.string(value),$char,length);
 }
 m.cover.logger.client.LoggerClientImpl.prototype.__class__ = m.cover.logger.client.LoggerClientImpl;
 m.cover.logger.client.LoggerClientImpl.__interfaces__ = [m.cover.logger.client.LoggerClient];
@@ -1374,6 +1408,8 @@ js.Boot.__init();
 		return f(msg,[url+":"+line]);
 	}
 }
+m.cover.util.Timer.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}, statics : { inlineStamp : { IgnoreCover : null}}, fields : { defaultRun : { IgnoreCover : null}}};
+m.cover.util.Timer.arr = [];
 m.cover.logger.data.LogRecording.__meta__ = { obj : { IgnoreLogging : null}};
 m.cover.logger.LoggerImpl.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}};
 m.cover.logger.LoggerImpl.MAX_STACK_DEPTH_LIMIT = 26;
@@ -1381,7 +1417,7 @@ example.Example.__meta__ = { fields : { ignoredFunction : { IgnoreLogging : null
 example.InternalClassWithIgnore.__meta__ = { obj : { IgnoreLogging : null}};
 example._Example.PrivateClassWithIgnore.__meta__ = { obj : { IgnoreLogging : null}};
 m.cover.logger.data.Log.__meta__ = { obj : { IgnoreLogging : null}};
-m.cover.logger.Utils.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}};
+m.cover.util.NumberUtil.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}};
 js.Lib.onerror = null;
 m.cover.logger.MCoverLogger.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}, statics : { getLogger : { IgnoreLogging : null, IgnoreCover : null}}};
 m.cover.logger.client.LoggerClientImpl.__meta__ = { obj : { IgnoreLogging : null, IgnoreCover : null}};
