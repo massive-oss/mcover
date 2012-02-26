@@ -9,6 +9,9 @@
 		},
 		{
 			"path": "/ws/MacroLogger"
+		},
+		{
+			"path": "/ws/MassiveLib"
 		}
 	]
 }

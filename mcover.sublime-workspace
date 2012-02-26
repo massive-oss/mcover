@@ -560,16 +560,31 @@
 	},
 	"file_history":
 	[
+		"/ws/MassiveCover/src/m/cover/macro/ClassParser.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/MCover.hx",
+		"/ws/MassiveCover/example/coverage/02_ConfigureReportClient/build.hxml",
+		"/ws/MassiveUnit/tool/src/massive/munit/command/TestCommand.hx",
+		"/ws/MassiveCover/src/massive/mcover/MCover.hx",
+		"/ws/MassiveCover/test/TestMain.hx",
+		"/ws/MassiveCover/buildAllClasses.hxml",
+		"/ws/MassiveCover/src/m/cover/macro/ExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/macro/MacroDelegate.hx",
+		"/ws/MassiveCover/build.hxml",
+		"/ws/MassiveLib/tool/src/massive/mlib/cmd/GenerateAllClassesCommand.hx",
+		"/ws/MassiveLib/tool/src/massive/mlib/MlibSettings.hx",
+		"/ws/MassiveCover/.mlib",
+		"/ws/MassiveCover/src/AllClasses.hx",
+		"/ws/MassiveLib/tool/src/massive/mlib/cmd/PackageForHaxelibCommand.hx",
+		"/ws/MassiveCover/src/massive/mcover/munit/client/MCoverPrintClient.hx",
 		"/ws/MassiveCover/README.md",
 		"/ws/MassiveCover/doc/Coverage.md",
 		"/ws/MassiveCover/src/m/cover/coverage/client/TraceClient.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerMacroDelegate.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageMacroDelegate.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/MCoverLogger.hx",
 		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
 		"/ws/MassiveCover/logger.hxml",
-		"/ws/MassiveCover/build.hxml",
 		"/ws/MassiveCover/coverage.hxml",
 		"/ws/MassiveCover/src/m/cover/logger/client/LoggerClientImpl.hx",
 		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
@@ -577,18 +592,13 @@
 		"/ws/MassiveCover/src/m/cover/logger/Logger.hx",
 		"/ws/MassiveCover/src/m/cover/logger/LogException.hx",
 		"/ws/MassiveCover/src/m/cover/macro/MacroUtil.hx",
-		"/ws/MassiveCover/src/m/cover/MCover.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/impl/LoggerImpl.hx",
-		"/ws/MassiveCover/src/m/cover/macro/ClassParser.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerBuildMacro.hx",
-		"/ws/MassiveCover/src/AllClasses.hx",
-		"/ws/MassiveCover/src/m/cover/macro/ExpressionParser.hx",
 		"/ws/MassiveCover/src/m/cover/macro/MacroClassBuilder.hx",
 		"/ws/MassiveCover/src/m/cover/logger/LoggerMacro.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageMacro.hx",
 		"/ws/MassiveCover/src/m/cover/macro/BuildMacro.hx",
-		"/ws/MassiveCover/src/m/cover/macro/MacroDelegate.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ClassPathUtil.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ClassPathFilter.hx",
 		"/ws/MassiveCover/src/m/cover/macro/PackageHelper.hx",
@@ -597,12 +607,10 @@
 		"/ws/MassiveCover/doc/Logger.md",
 		"/ws/MassiveCover/src/m/cover/logger/README.md",
 		"/ws/MassiveCover/src/m/cover/coverage/README.md",
-		"/ws/MassiveCover/src/massive/mcover/munit/client/MCoverPrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/munit/client/MCoverPrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageBuildMacro.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/CoverageLogger.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerTest.hx",
-		"/ws/MassiveUnit/tool/src/massive/munit/command/TestCommand.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerImplTest.hx",
 		"/ws/MassiveUnit/tool/template/test-stub-test.mtt",
 		"/ws/MassiveCover/src/m/cover/coverage/client/PrintClient.hx",
@@ -616,7 +624,6 @@
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractNodeList.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractBlock.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/util/Timer.hx",
-		"/ws/MassiveCover/test/TestMain.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/LogRecording.hx",
 		"/ws/MassiveCover/src/m/cover/logger/data/Log.hx",
 		"/ws/MassiveCover/test.hxml",
@@ -676,18 +683,11 @@
 		"/ws/MassiveCover/test/m/cover/coverage/munit/client/TestResultClientStub.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/util/TimerTest.hx",
 		"/ws/MassiveCover/test/TestSuite.hx",
-		"/ws/MassiveCover/src/massive/mcover/MCover.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/CoverageResult.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/Exception.hx",
 		"/ws/MassiveCover/test/massive/mcover/client/CoverageReportClientTest.hx",
 		"/ws/MassiveCover/test/massive/mcover/client/EMMAPrintClientTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/client/PrintClientTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/CoverageLoggerImplTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/CoverageLoggerMock.hx",
-		"/ws/MassiveCover/test/massive/mcover/CoverageLoggerTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/CoverageReportClientMock.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/AbstractBlockTest.hx",
-		"/ws/MassiveCover/test/massive/mcover/data/AbstractNodeListTest.hx"
+		"/ws/MassiveCover/test/massive/mcover/client/PrintClientTest.hx"
 	],
 	"find":
 	{
@@ -695,7 +695,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"/ws/MassiveCover/src/m/cover/logger",
@@ -1035,10 +1035,6 @@
 		]
 	},
 	"menu_visible": true,
-	"output.exec":
-	{
-		"height": 112.0
-	},
 	"replace":
 	{
 		"height": 64.0

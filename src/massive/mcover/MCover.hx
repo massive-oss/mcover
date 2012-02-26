@@ -28,74 +28,21 @@
 
 package massive.mcover;
 
-import haxe.PosInfos;
-import haxe.Stack;
+#if macro
+import haxe.macro.Context;
 
-class Exception
+class MCover
 {
-
-
 	/**
-	 * The exception type. 
-	 * 
-	 * Should be the fully qualified name of the Exception class. e.g. 'massive.io.IOException'
-	 */
-	public var type(default, null):String;
-	
-	/**
-	 * A description of the exception
-	 */
-	public var message(default, null):String;
-	
-	/**
-	 * The pos infos from where the exception was created.
-	 */
-	public var info(default, null):PosInfos;
-
-	/**
-	* An optional reference to a lower level exception that
-	* triggered the current exception to be thrown
+	Depricated.
+	Provides backwards compatibility with older version of munit.
 	*/
-	public var cause(default, null):Dynamic;
-	public var causeExceptionStack(default, null):Array<StackItem>;
-	public var causeCallStack(default, null):Array<StackItem>;
-	
-	/**
-	 * @param	message			a description of the exception
-	 */
-	public function new(message:String, ?cause:Dynamic, ?info:PosInfos) 
+	static public function include(packageName:String, ?classPaths:Array<String>, ?exclusions:Array<String>)
 	{
-		type = here().className;
-		this.message = message;
-		this.cause = cause;
-		this.info = info;
-
-		if(cause != null)
-		{
-			causeExceptionStack = haxe.Stack.exceptionStack();
-			causeCallStack = haxe.Stack.callStack();
-		}
-	}
-
-	/**
-	 * Returns a string representation of this exception.
-	 * 
-	 * Format: <type>: <message> at <className>#<methodName> (<lineNumber>)
-	 */
-	public function toString():String
-	{
-		var str:String = type + ": " + message;
-		if (info != null)
-			str += " at " + info.className + "#" + info.methodName + " (" + info.lineNumber + ")";
-		if (cause != null)
-        	str += "\n\t Caused by: " + cause; 
-		return str;
-	}
-
-	//////////////////
-
-	function here(?info:PosInfos):PosInfos
-	{
-		return info;
+		neko.Lib.println("Warning: massive.mcover.MCover.include is depricated. Please use m.cover.MCover.coverage.");
+		var packages:Array<String> = [];
+		if(packageName != null) packages.push(packageName);
+		m.cover.MCover.coverage(packages, classPaths, exclusions);
 	}
 }
+#end

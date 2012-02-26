@@ -1,5 +1,5 @@
 # Flash 9+
--main m.cover.AllClasses
+-main AllClasses
 -cp src
 -lib mlib
 -lib munit
@@ -8,7 +8,7 @@
 --next
 
 #Flash 8
--main m.cover.AllClasses
+-main AllClasses
 -cp src
 -lib mlib
 -lib munit
@@ -17,7 +17,7 @@
 --next
 
 # JavaScript
--main m.cover.AllClasses
+-main AllClasses
 -cp src
 -lib mlib
 -lib munit
@@ -26,7 +26,7 @@
 --next
 
 # Neko
--main m.cover.AllClasses
+-main AllClasses
 -cp src
 -lib mlib
 -lib munit
@@ -35,5 +35,4 @@
 --next
 
 #xml docs
--cmd haxe -xml build/haxedoc.xml -cp src -lib mlib -lib munit m.cover.AllClasses
-
+-cmd haxe -xml build/haxedoc.xml -cp src -lib mlib -lib munit AllClasses

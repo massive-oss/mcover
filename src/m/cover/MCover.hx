@@ -83,7 +83,6 @@ To enable function entry/exit logging
 		include(packages, classPaths, exclusions);
 	}
 
-
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
 	static var delegatesById:Hash<MacroDelegate> = new Hash();
@@ -98,8 +97,12 @@ To enable function entry/exit logging
 	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
+		initialiseTrace();
+
 		var classMacroHash:Hash<Array<String>> = new Hash();
-			
+		
+		classPaths = convertToFullPaths(classPaths);
+
 		for(delegateClass in delegateClasses)
 		{
 			var delegate = Type.createInstance(delegateClass, []);
@@ -120,6 +123,8 @@ To enable function entry/exit logging
 			}
 		}
 
+		flush();
+
 		if(Lambda.count(classMacroHash)==0)
 		{
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
@@ -129,21 +134,40 @@ To enable function entry/exit logging
 		{
 			var args = classMacroHash.get(cls);
 			var argsString = "[\"" + args.join("\",\"") + "\"]";
-			//trace(cls);
+			trace(cls);
+			flush();
 			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
-
 			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
 		}
 
+		flush();
 
 		for(pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, classPaths);
 		}
-	
+
 		haxe.macro.Context.onGenerate(onGenerate);
 	}
 
+	static function convertToFullPaths(paths:Array<String>)
+	{
+		var fullPaths:Array<String> = [];
+
+		for(path in paths)
+		{
+			var p:String;
+
+			// if(path.indexOf("../") == 0) p = path;
+			// else p = neko.FileSystem.fullPath(path);
+
+			p = neko.FileSystem.fullPath(path);
+			
+			fullPaths.push(p);	
+			trace(path + " > " + p);
+		}
+		return fullPaths;
+	}
 
 	/**
 	Per class build macro.
@@ -187,8 +211,48 @@ To enable function entry/exit logging
 	{
 		for(instance in delegates)
 		{
+			neko.Lib.print(".");
 			instance.generate(types);
-		}       
+		}
+		flush();       
+	}
+
+	///// TRACE OUTPUT ///////
+
+	static var TRACE_OUTPUT_FILE = ".mcover-debug";
+	static var traceOutput:String = "";
+
+	/**
+	maps trace function to MCover.traceToFile
+	Clears existing trace output from file
+	*/
+	static function initialiseTrace()
+	{
+		var file = neko.io.File.write(TRACE_OUTPUT_FILE, false);
+		file.writeString("");
+		file.close();
+
+		haxe.Log.trace = traceToFile;
+	}
+
+	/**
+	Custom trace function that appends trace messages to text file.
+	Used to avoid slowdown from default trace writing to stdout in recursive expression parser
+	*/
+	static function traceToFile(msg:Dynamic, ?pos:haxe.PosInfos)
+	{
+		traceOutput += "\n" + StringTools.rpad(pos.className + ":" + pos.lineNumber + " ", " ", 60) + "| " + Std.string(msg);
+	}
+
+	/**
+	Writes trace output to file
+	*/
+	static function flush()
+	{
+		var file = neko.io.File.append(TRACE_OUTPUT_FILE, false);	
+		file.writeString(traceOutput);
+		file.close();
+		traceOutput = "";
 	}
 
 }

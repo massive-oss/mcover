@@ -5,5 +5,5 @@
 		<resource type="license" path="resource/license.mtt" />
 		<resource path="example" dest="example" />
 		<resource path="build/haxedoc.xml" dest="" />
-	</resources>	
+	</resources>
 </mlib>

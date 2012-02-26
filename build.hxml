@@ -2,11 +2,11 @@
 -cmd haxelib run mlib allClasses
 -cmd haxe buildAllClasses.hxml
 
--cmd cd examples
+-cmd cd example
 -cmd haxe build.hxml
 -cmd cd ../
 
--cmd haxe test.hxml
+-cmd haxelib run munit test -neko -coverage
 
 #package up and install over current version
 -cmd haxelib run mlib install

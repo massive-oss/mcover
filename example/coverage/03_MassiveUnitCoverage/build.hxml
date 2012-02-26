@@ -19,3 +19,4 @@
 -cp ../../../src
 
 -cmd neko build/main.n
+-cmd echo "Built successfully. Now run 'munit test -coverage'"

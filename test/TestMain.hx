@@ -15,13 +15,9 @@ import js.Dom;
 
 class TestMain 
 {	
-	static var mlogger:m.cover.logger.Logger;
-
 	static function main()
 	{
-		mlogger = m.cover.logger.MLogger.getLogger();
-		//mlogger.startRecording();
-
+		
 		new TestMain();
 	}
 
@@ -48,9 +44,6 @@ class TestMain
 	*/
 	private function completionHandler(successful:Bool):Void
 	{
-		mlogger.stopRecording();
-		mlogger.report();
-
 		try
 		{
 			#if flash

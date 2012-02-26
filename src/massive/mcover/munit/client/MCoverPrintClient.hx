@@ -28,4 +28,8 @@
 
 package massive.mcover.munit.client;
 
+/**
+Depricated.
+Provides backwards compatibility with older version of munit.
+*/
 typedef MCoverPrintClient = m.cover.coverage.munit.client.MCoverPrintClient;

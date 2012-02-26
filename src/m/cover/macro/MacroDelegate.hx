@@ -27,6 +27,8 @@
 ****/
 
 package m.cover.macro;
+
+#if macro
 interface MacroDelegate
 {
 	var id(default, null):String;
@@ -35,3 +37,4 @@ interface MacroDelegate
 	function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>;
 	function generate(types:Array<haxe.macro.Type>):Void;
 } 
+#end

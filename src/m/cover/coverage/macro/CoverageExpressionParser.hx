@@ -200,7 +200,6 @@ import m.cover.macro.ExpressionParser;
 		}
 		
 		expr.expr = ECall(fieldExpr, args);
-		
 		return expr;
 	}
 
@@ -209,13 +208,16 @@ import m.cover.macro.ExpressionParser;
 		var posInfo = Context.getPosInfos(pos);
 		var file:String = posInfo.file;
 
+		file = neko.FileSystem.fullPath(file);
+
 		for (cp in CoverageMacroDelegate.classPathHash)
 		{
 			if(file.indexOf(cp) == 0)
 			{	
-				return  createReference(cp, file, pos, isBranch);
+				return createReference(cp, file, pos, isBranch);
 			}
 		}
+
 		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(pos);
 		error += "\nMay be caused by duplicate classpath where same cp is referenced locally and absolutely.";
 		throw new CoverageException(error);

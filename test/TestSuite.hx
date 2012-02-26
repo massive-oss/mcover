@@ -1,6 +1,5 @@
 import massive.munit.TestSuite;
 
-import ExampleTest;
 import m.cover.coverage.client.CoverageReportClientTest;
 import m.cover.coverage.client.EMMAPrintClientTest;
 import m.cover.coverage.client.PrintClientTest;
@@ -35,7 +34,6 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(ExampleTest);
 		add(m.cover.coverage.client.CoverageReportClientTest);
 		add(m.cover.coverage.client.EMMAPrintClientTest);
 		add(m.cover.coverage.client.PrintClientTest);
