@@ -219,7 +219,7 @@ import m.cover.macro.ExpressionParser;
 		}
 
 		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(pos);
-		error += "\nMay be caused by duplicate classpath where same cp is referenced locally and absolutely.";
+	
 		throw new CoverageException(error);
 		return null;
 	}

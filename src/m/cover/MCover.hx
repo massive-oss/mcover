@@ -156,15 +156,7 @@ To enable function entry/exit logging
 
 		for(path in paths)
 		{
-			var p:String;
-
-			// if(path.indexOf("../") == 0) p = path;
-			// else p = neko.FileSystem.fullPath(path);
-
-			p = neko.FileSystem.fullPath(path);
-			
-			fullPaths.push(p);	
-			trace(path + " > " + p);
+			fullPaths.push(neko.FileSystem.fullPath(path));	
 		}
 		return fullPaths;
 	}

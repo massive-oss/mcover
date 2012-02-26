@@ -54,6 +54,7 @@ package m.cover.util;
 
 @IgnoreCover
 @IgnoreLogging
+
 class Timer 
 {
 	public var run:Void -> Void;
@@ -81,7 +82,7 @@ class Timer
 			#elseif js
 				id = arr.length;
 				arr[id] = this;
-				timerId = untyped window.setInterval("m.cover.coverage.util.Timer.arr["+id+"].run();",time_ms);
+				timerId = untyped window.setInterval("m.cover.util.Timer.arr["+id+"].run();",time_ms);
 			#elseif neko
 				var me = this;
 				runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );

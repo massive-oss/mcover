@@ -77,12 +77,6 @@ interface ClassParser
 	var currentLocation(default, null):String;
 
 	/**
-	relative path to package (e.g. foo/bar)
-	*/
-	var currentPackagePath(default, null):String;
-
-
-	/**
 	registers an ExpressionParser to handler parse
 	*/
 	function addExpressionParser(parser:ExpressionParser):Void;
@@ -94,7 +88,6 @@ class ClassParserImpl implements ClassParser
 	public var currentPackageName(default, null):String;
 	public var currentMethodName(default, null):String;
 	public var currentLocation(default, null):String;
-	public var currentPackagePath(default, null):String;
 
 	public var functionStack(default, null):Array<Function>;
 	public var exprStack(default, null):Array<Expr>;
@@ -122,8 +115,6 @@ class ClassParserImpl implements ClassParser
 				var parts = Std.string(t).split(".");
 				currentClassName = parts.pop();
 				currentPackageName = parts.join(".");
-
-				currentPackagePath = parts.join("/");
 			}
 			default: null;
 		}
