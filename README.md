@@ -19,6 +19,10 @@ MCover can provide detailed coverage of executed code, including:
 * code blocks (statements)
 * code branches
 
+Example macro usage:
+
+	--macro m.cover.MCover.coverage([''], ['src'])
+
 ### Function logging
 
 MCover can generate timing metrics around function entry/exit times, including:
@@ -27,41 +31,26 @@ MCover can generate timing metrics around function entry/exit times, including:
 * function duration (both inclusive and exclusive of nested methods)
 * call stack depths
 
+Example macro usage:
 
-### Macros
+	--macro m.cover.MCover.logger([''], ['src'])
 
-MCover utilises Haxe macros to simplify enabling features on your existing code base
-
-* Compile in a specific tool or tools
-* Includ classes by classpaths, packages and wildcard patterns
-
-
-To enable mcover, you need to specify which tools to run, and what class paths to include
-
-e.g.
-
-	--macro m.cover.MCover.coverage([''], ['src'])
 
 ### Cross Platform
 
 MCover has been designed to work with any HaXe target. Officially we support the following:
 
-*	ActionScript 2
-*	ActionScript 3
+*	ActionScript
 *	JavaScript
 *	Neko
 
 **NOTE:** MCover requires Haxe 2.0.8
 
-**NOTE:** The following documentation generally refers to the latest trunk builds. Refer to tagged versions for documentation pertaining to most recent official haxelib release (https://github.com/massiveinteractive/MassiveCover/tags) 
-
-
-
 
 Code Coverage
 ---------------------
 
-For detailed information see [Code Coverage](doc/coverage/README.md)
+For detailed information see [Code Coverage](src/m/cover/coverage/README.md)
 
 #### Compiler args
 
@@ -94,8 +83,7 @@ Add the followng code to your application after code has executed:
 
 Function Logging
 ---------------------
-
-For detailed information see [Function Logging](doc/logger/README.md)
+For detailed information see [Function Logging](src/m/cover/logger/README.md)
 
 #### Compiler args
 
