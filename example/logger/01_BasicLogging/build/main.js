@@ -90,7 +90,7 @@ m.cover.util.Timer = function(time_ms) {
 	this.run = $closure(this,"defaultRun");
 	this.id = m.cover.util.Timer.arr.length;
 	m.cover.util.Timer.arr[this.id] = this;
-	this.timerId = window.setInterval("m.cover.coverage.util.Timer.arr[" + this.id + "].run();",time_ms);
+	this.timerId = window.setInterval("m.cover.util.Timer.arr[" + this.id + "].run();",time_ms);
 }
 m.cover.util.Timer.__name__ = ["m","cover","util","Timer"];
 m.cover.util.Timer.delay = function(f,time_ms) {

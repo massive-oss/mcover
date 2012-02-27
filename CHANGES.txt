@@ -1,7 +1,23 @@
 v1.2.0 - 28.02.12
 
-- Added function logging tool
+- Added function logging macros
 - Reinstated class level @IgnoreCoverage
 - internal refactoring to leverage common macro code between coverage and logging packages
 - Added better examples and documentation
 - Fixed bug with relative/absolute class paths 
+
+v1.1.0 - 22.11.11
+
+- Added support for MUnit RichPrintClient html output
+- minor bug fixes
+
+v1.0.1 - 11-10-2011
+
+- Added support for filtered reports
+- improved integration with MUnit
+- increased coverage support
+
+v1.0.0 - 11-10-2011
+
+- Initial release to haxelib
+- covers almost all types of code blocks and conditional branches in your code base
