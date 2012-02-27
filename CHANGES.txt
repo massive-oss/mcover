@@ -1,0 +1,7 @@
+v1.2.0 - 28.02.12
+
+- Added function logging tool
+- Reinstated class level @IgnoreCoverage
+- internal refactoring to leverage common macro code between coverage and logging packages
+- Added better examples and documentation
+- Fixed bug with relative/absolute class paths 
