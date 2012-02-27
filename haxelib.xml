@@ -3,6 +3,6 @@
 	<tag v="cross" />
 	<tag v="macro" />
 	<tag v="utility" />
-	<description>MassiveCover is a collection of macro based cross-platform code coverage and quality tools from Massive Interactive.</description>
+	<description>MCover is a collection of macro-based cross-platform code coverage and quality tools.</description>
 	<version name="1.2.0">Added function logging tool, Reinstated class level @IgnoreCoverage, internal refactoring to leverage common macro code between coverage and logging packages. Added better examples and documentation</version>
 </project>

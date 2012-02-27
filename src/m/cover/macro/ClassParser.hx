@@ -118,8 +118,7 @@ class ClassParserImpl implements ClassParser
 			}
 			default: null;
 		}
-
-		trace(currentPackageName + "." + currentClassName);
+		//trace(currentPackageName + "." + currentClassName);
 	}
 
 	/**
@@ -203,7 +202,7 @@ class ClassParserImpl implements ClassParser
 		currentMethodName = field.name;
 		currentLocation = currentPackageName + "." + currentClassName + "." + currentMethodName;
 
-		trace(" 	" + currentMethodName);
+		//trace(" 	" + currentMethodName);
 
 		if(f.expr == null ) return;
 		functionStack = [f];
