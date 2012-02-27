@@ -1,7 +1,9 @@
 MassiveCover (MCover)
 ======================
 
-MCover is a collection of cross platform code quality tools for Haxe that are injected into your code at compile-time (using macros) to provide runtime tracking of code coverage and/or function entry/exit times. 
+MassiveCover is a collection of macro based cross-platform code coverage and quality tools from Massive Interactive.
+
+Massive Cover currently includes code coverage and function entry/exit logging. 
 
 
 To install mcover:

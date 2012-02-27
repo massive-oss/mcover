@@ -560,15 +560,37 @@
 	},
 	"file_history":
 	[
+		"/ws/MassiveCover/src/m/cover/util/Timer.hx",
+		"/ws/MassiveCover/test/TestSuite.hx",
+		"/ws/MassiveCover/test/m/cover/util/TimerTest.hx",
+		"/ws/MassiveCover/test/m/cover/coverage/data/AbstractBlockTest.hx",
+		"/ws/MassiveCover/test/m/cover/coverage/CoverageReportClientMock.hx",
+		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerImplTest.hx",
+		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerMock.hx",
+		"/ws/MassiveCover/test/m/cover/coverage/client/CoverageReportClientTest.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
+		"/ws/MassiveCover/src/m/cover/MCover.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/client/PrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/macro/ClassParser.hx",
+		"/ws/MassiveCover/src/m/cover/logger/data/Log.hx",
+		"/ws/MassiveCover/src/m/cover/logger/client/LoggerClientImpl.hx",
+		"/ws/MassiveCover/src/m/cover/logger/data/LogRecording.hx",
+		"/ws/MassiveCover/src/m/cover/logger/Utils.hx",
+		"/ws/MassiveCover/src/m/cover/util/NumberUtil.hx",
+		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/CoverageLogger.hx",
+		"/ws/MassiveCover/src/m/cover/coverage/client/EMMAPrintClient.hx",
+		"/ws/MassiveCover/logger.hxml",
+		"/ws/MassiveCover/README.md",
+		"/ws/MassiveCover/src/m/cover/coverage/README.md",
+		"/ws/MassiveCover/src/m/cover/logger/README.md",
+		"/ws/MassiveCover/doc/coverage/README.md",
 		"/ws/MassiveCover/test.hxml",
 		"/ws/MassiveCover/src/m/cover/macro/ClassPathFilter.hx",
 		"/ws/MassiveCover/example/coverage/03_MassiveUnitCoverage/.munit",
 		"/ws/MassiveCover/example/coverage/03_MassiveUnitCoverage/build/js_test.js",
 		"/ws/MassiveCover/example/coverage/03_MassiveUnitCoverage/build.hxml",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageMacroDelegate.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageExpressionParser.hx",
-		"/ws/MassiveCover/src/m/cover/MCover.hx",
 		"/ws/MassiveCover/example/coverage/03_MassiveUnitCoverage/test.hxml",
 		"/ws/MassiveCover/src/massive/mcover/MCover.hx",
 		"/ws/MassiveCore/.mcover-debug",
@@ -592,15 +614,11 @@
 		"/ws/MassiveCover/src/AllClasses.hx",
 		"/ws/MassiveLib/tool/src/massive/mlib/cmd/PackageForHaxelibCommand.hx",
 		"/ws/MassiveCover/src/massive/mcover/munit/client/MCoverPrintClient.hx",
-		"/ws/MassiveCover/README.md",
 		"/ws/MassiveCover/doc/Coverage.md",
 		"/ws/MassiveCover/src/m/cover/coverage/client/TraceClient.hx",
 		"/ws/MassiveCover/src/m/cover/logger/macro/LoggerMacroDelegate.hx",
 		"/ws/MassiveCover/src/m/cover/logger/MCoverLogger.hx",
-		"/ws/MassiveCover/src/m/cover/logger/LoggerImpl.hx",
-		"/ws/MassiveCover/logger.hxml",
 		"/ws/MassiveCover/coverage.hxml",
-		"/ws/MassiveCover/src/m/cover/logger/client/LoggerClientImpl.hx",
 		"/ws/MassiveCover/src/m/cover/logger/client/LogClientImpl.hx",
 		"/ws/MassiveCover/src/m/cover/logger/client/LogClient.hx",
 		"/ws/MassiveCover/src/m/cover/logger/Logger.hx",
@@ -617,15 +635,10 @@
 		"/ws/MassiveCover/example/logger/01_BasicLogging/build.hxml",
 		"/ws/MassiveCover/example/coverage/04_CustomReportClient/build.hxml",
 		"/ws/MassiveCover/doc/Logger.md",
-		"/ws/MassiveCover/src/m/cover/logger/README.md",
-		"/ws/MassiveCover/src/m/cover/coverage/README.md",
 		"/ws/MassiveCover/src/m/cover/coverage/munit/client/MCoverPrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/macro/CoverageBuildMacro.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/CoverageLogger.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerImplTest.hx",
 		"/ws/MassiveUnit/tool/template/test-stub-test.mtt",
-		"/ws/MassiveCover/src/m/cover/coverage/client/PrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/Statement.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/Method.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/Line.hx",
@@ -636,18 +649,12 @@
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractNodeList.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractBlock.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/util/Timer.hx",
-		"/ws/MassiveCover/src/m/cover/logger/data/LogRecording.hx",
-		"/ws/MassiveCover/src/m/cover/logger/data/Log.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/Package.hx",
 		"/ws/MassiveUnit/tool/src/massive/munit/command/RunCommand.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/client/CoverageReportClientTest.hx",
-		"/ws/MassiveCover/src/m/cover/coverage/client/EMMAPrintClient.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/AbstractNode.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/CoverageReportClientMock.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/data/DataUtil.hx",
 		"/ws/MassiveCover/src/m/cover/logger/MLogger.hx",
 		"/ws/MassiveCover/src/m/cover/coverage/MCoverage.hx",
-		"/ws/MassiveCover/src/m/cover/logger/Utils.hx",
 		"/ws/MassiveCover/src/m/cover/macro/BuildMacroParser.hx",
 		"/ws/MassiveCover/src/m/cover/macro/IncludeMacro.hx",
 		"/ws/MacroLogger/example/src/Main.hx",
@@ -673,8 +680,6 @@
 		"/ws/MacroLogger/src/m/cover/logger/macro/LoggerBuildMacro.hx",
 		"/ws/MassiveUnit/tool/template/test-main.mtt",
 		"/ws/MassiveCover/test/m/cover/coverage/client/PrintClientTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/CoverageLoggerMock.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/data/AbstractBlockTest.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/data/AbstractNodeListTest.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/data/AbstractNodeTest.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/data/BranchTest.hx",
@@ -682,12 +687,7 @@
 		"/ws/MassiveCover/test/m/cover/coverage/data/CoverageTest.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/data/DataUtilTest.hx",
 		"/ws/MassiveCover/test/m/cover/coverage/data/FileTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/data/MethodTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/data/NodeMock.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/data/PackageTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/data/StatementTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/ExceptionTest.hx",
-		"/ws/MassiveCover/test/m/cover/coverage/MCoverTest.hx"
+		"/ws/MassiveCover/test/m/cover/coverage/data/MethodTest.hx"
 	],
 	"find":
 	{
@@ -698,6 +698,11 @@
 		"height": 93.0,
 		"where_history":
 		[
+			"/ws/MassiveCover/src",
+			"/ws/MassiveCover/test",
+			"/ws/MassiveCover/src",
+			"/ws/MassiveCover/src/m/cover/logger",
+			"/ws/MassiveCover/src/m/cover/coverage",
 			"/ws/MassiveCover/example/coverage/03_MassiveUnitCoverage/build",
 			"/ws/MassiveCover/src/m/cover/logger",
 			"/ws/MassiveCover/src",
@@ -724,9 +729,17 @@
 	},
 	"find_state":
 	{
-		"case_sensitive": true,
+		"case_sensitive": false,
 		"find_history":
 		[
+			"util.Timer",
+			"cover.Timer",
+			"coverage.Timer",
+			"Timer",
+			"		",
+			"formatTime",
+			"stamp",
+			"Timer",
 			"test",
 			"();",
 			"createCodeBlockReference",
@@ -846,15 +859,7 @@
 			"ignoreClass",
 			"META_TAG_IGNORE",
 			"\n// /**\n// 	* Depricated - generate a local method to log the exit and returns\n// 	* the original return value along with the original return type signature.\n// 	* \n// 	* Not currently used - but keeping incase edge cases with current implementation (return {log();foo})\n// 	*/\n// 	function logReturnValueViaFunction(expr:Expr, e:Expr):Expr\n// 	{\n// 		//a returned value (e.g. return foo;)\n// 		var pos:Position = expr.pos;\n\n// 		var ret:Null<ComplexType> = null;\n// 		switch(functionStack[functionStack.length-1].expr)\n// 		{\n// 			case EFunction(name, f): ret = f.ret;\n// 			default: ret =  currentMethodFunction.ret;\n// 		}\n\n// 		var field = generateCustomLogFunction(ret, pos);\n// 		newMethods.push(field);\n// 		//debug(macrotools.Print.makeWithField(field));\n\n// 		//replace the return with the call to the newly generated method\n// 		var eConst = {\n// 			expr:EConst(CIdent(field.name)),\n// 			pos:pos\n// 		};\n		\n// 		var eCall = {\n// 			expr:ECall(eConst, [e]),\n// 			pos:pos\n// 		}\n\n// 		expr.expr = EReturn(eCall);\n\n// 		return expr;\n\n// 	}\n\n// 	function generateCustomLogFunction(ret:Null<ComplexType>, pos:Position):Field\n// 	{\n// 		//create typed function args - e.g. (value:*, ?pos:haxe.PosInfos)\n\n// 		var fPosInfosType = {\n// 			sub:null,\n// 			params: [],\n// 			pack: [\"haxe\"],\n// 			name: \"PosInfos\"\n// 		}\n\n// 		var fArgs = [\n// 			{\n// 				value:null,\n// 				type:ret,\n// 				opt:false,\n// 				name:\"value\"\n// 			},\n// 			{\n// 				value:null,\n// 				type:TPath(fPosInfosType),\n// 				opt:true,\n// 				name:\"pos\"\n// 			}\n// 		];\n\n// 		var fParams = [];\n\n\n// 		//create function body\n// 		//i.e. {fOut();return value;}\n\n// 		var exprs:Array<Expr> = [];\n\n// 		var ePosInfos = {expr:EConst(CIdent(\"pos\")), pos:pos};\n\n// 		var eLog = createFunctionLogExpr(pos, \"logExit\", ePosInfos);\n// 		exprs.push(eLog);\n\n\n// 		var eRef = {expr:EConst(CIdent(\"value\")), pos:pos};\n\n// 		var eEReturn = {\n// 			expr:EReturn(eRef),\n// 			pos:pos\n// 		};\n// 		exprs.push(eEReturn);\n\n// 		var fExpr = {\n// 			expr:EBlock(exprs),\n// 			pos:pos\n// 		};\n\n// 		//create function definition\n\n// 		var fFun = {\n// 			ret:ret,\n// 			params:fParams,\n// 			expr:fExpr,\n// 			args:fArgs\n// 		}\n\n// 		//create new class field method\n// 		//i.e. _____mcoverX = function(value:*,?pos:haxe.PosInfos):*{fOut();return value;}\n\n// 		var field = {\n// 			pos:pos,\n// 			name:\"____mcover\" + newMethodCount++,\n// 			meta: [],\n// 			kind: FFun(fFun),\n// 			doc:null,\n// 			access:[AStatic, APrivate]\n// 		}\n		\n// 		return field;\n// 	}",
-			"func",
-			"EA",
-			"getComplexType",
-			"debug",
-			"exprStack",
-			"functionStack",
-			"neko",
-			"completionHandler",
-			"launchNeko"
+			"func"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1003,6 +1008,11 @@
 			"sheets":
 			[
 			]
+		},
+		{
+			"sheets":
+			[
+			]
 		}
 	],
 	"incremental_find":
@@ -1022,11 +1032,18 @@
 				0,
 				1,
 				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
 			]
 		],
 		"cols":
 		[
 			0.0,
+			0.827396485734,
 			1.0
 		],
 		"rows":
@@ -1061,6 +1078,6 @@
 	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 265.0,
+	"side_bar_width": 550.0,
 	"status_bar_visible": true
 }

@@ -1,6 +1,8 @@
 <project name="mcover" url="https://github.com/massiveinteractive/MassiveCover" license="BSD">
 	<user name="massive"/>
 	<tag v="cross" />
-	<description>MassiveCover is a cross-platform haXe code coverage framework from Massive Interactive.</description>
-	<version name="1.1.0">Added support for MUnit RichPrintClient html output, minor bug fixes</version>
+	<tag v="macro" />
+	<tag v="utility" />
+	<description>MassiveCover is a collection of macro based cross-platform code coverage and quality tools from Massive Interactive.</description>
+	<version name="1.2.0">Added function logging tool, Reinstated class level @IgnoreCoverage, internal refactoring to leverage common macro code between coverage and logging packages. Added better examples and documentation</version>
 </project>
