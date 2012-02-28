@@ -83,6 +83,7 @@ To enable function entry/exit logging
 		include(packages, classPaths, exclusions);
 	}
 
+	public static var TEMP_DIR:String = ".mcover";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
 	static var delegatesById:Hash<MacroDelegate> = new Hash();
@@ -97,6 +98,8 @@ To enable function entry/exit logging
 	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
+		if(!neko.FileSystem.exists(TEMP_DIR)) neko.FileSystem.createDirectory(TEMP_DIR);
+
 		initialiseTrace();
 
 		var classMacroHash:Hash<Array<String>> = new Hash();
@@ -134,7 +137,7 @@ To enable function entry/exit logging
 		{
 			var args = classMacroHash.get(cls);
 			var argsString = "[\"" + args.join("\",\"") + "\"]";
-			traceToFile(cls);
+			//traceToFile(cls);
 			flush();
 			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
 			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
@@ -210,7 +213,7 @@ To enable function entry/exit logging
 
 	///// TRACE OUTPUT ///////
 
-	static var TRACE_OUTPUT_FILE = ".mcover-debug";
+	static var TRACE_OUTPUT_FILE = TEMP_DIR + "/debug-log.txt";
 	static var traceOutput:String = "";
 
 	/**
@@ -219,13 +222,11 @@ To enable function entry/exit logging
 	*/
 	static function initialiseTrace()
 	{
-		#if MCOVER_DEBUG
 		var file = neko.io.File.write(TRACE_OUTPUT_FILE, false);
 		file.writeString("");
 		file.close();
-		
+
 		haxe.Log.trace = traceToFile;
-		#end
 	}
 
 	/**
@@ -234,9 +235,7 @@ To enable function entry/exit logging
 	*/
 	static function traceToFile(msg:Dynamic, ?pos:haxe.PosInfos)
 	{
-		#if MCOVER_DEBUG
 		traceOutput += "\n" + StringTools.rpad(pos.className + ":" + pos.lineNumber + " ", " ", 60) + "| " + Std.string(msg);
-		#end
 	}
 
 	/**
@@ -244,14 +243,13 @@ To enable function entry/exit logging
 	*/
 	static function flush()
 	{
-		#if MCOVER_DEBUG
+		if(traceOutput == "") return;
+
 		var file = neko.io.File.append(TRACE_OUTPUT_FILE, false);	
 		file.writeString(traceOutput);
 		file.close();
 		traceOutput = "";
-		#end
 	}
-
 }
 
 #end

@@ -46,10 +46,14 @@ class ClassPathFilter
 	var classHash:Hash<Bool>;
 	var skip:String -> Bool;
 
+	var cache:FilteredClassCache;
+
 	public function new()
 	{
 		ignoreClassMeta = null;
 		includeClassMeta = null;
+
+		
 	}
 	/**
 	* Recursively loops through classpaths and filter matching classes
@@ -78,6 +82,10 @@ class ClassPathFilter
 
 		if(null == packages)
 			packages = [""];
+
+
+		cache = new FilteredClassCache("cached-classes-" + includeClassMeta + "-" + ignoreClassMeta + ".txt");
+		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths
 		for( i in 0...classPaths.length )
@@ -95,6 +103,9 @@ class ClassPathFilter
 				classes = classes.concat(includePackage(cp, pack));
 			}
 		}
+
+		cache.save();
+
 		return classes;
 	}
 
@@ -114,33 +125,55 @@ class ClassPathFilter
 			path += "/" + pack.split(".").join("/");
 		}
 		if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) ) return classes;
-				
+
 		for(file in neko.FileSystem.readDirectory(path))
 		{	
+			var filePath = path + "/" + file;
+
 			if(StringTools.endsWith(file, ".hx") )
 			{
-				var tempClasses = getClassesInFile(path + "/" + file);
+				var fileClasses = includeFile(filePath, prefix);
 
-				prefix = getPackageDefinitionInFile(path + "/" + file);
-				
-				for(cl in tempClasses)
+				for(cl in fileClasses)
 				{
-					cl = prefix + cl;
-					if(skip(cl)) continue;
-					if(classHash.exists(cl)) continue;
-					
 					classHash.set(cl, true);
 					classes.push(cl);
 				}
 			}
-			else if(neko.FileSystem.isDirectory(path + "/" + file) && !skip(prefix + file) )
+			else if(neko.FileSystem.isDirectory(filePath) && !skip(prefix + file) )
 			{
 				classes = classes.concat(includePackage(cp, prefix + file));
 			}
 		}
-
 		return classes;
 	
+	}
+
+	function includeFile(path:String, prefix:String):Array<String>
+	{
+		var cachedClasses = cache.getCachedFile(path);
+		if(cachedClasses != null)
+		{
+			return cachedClasses;
+		}
+
+		var classes:Array<String> = [];
+		var tempClasses = getClassesInFile(path);
+
+		prefix = getPackageDefinitionInFile(path);
+		
+		for(cl in tempClasses)
+		{
+			cl = prefix + cl;
+			if(skip(cl)) continue;
+			if(classHash.exists(cl)) continue;
+			
+			classes.push(cl);
+		}
+
+		cache.cacheFile(path, classes);
+
+		return classes;
 	}
 
 
