@@ -134,7 +134,7 @@ To enable function entry/exit logging
 		{
 			var args = classMacroHash.get(cls);
 			var argsString = "[\"" + args.join("\",\"") + "\"]";
-			trace(cls);
+			traceToFile(cls);
 			flush();
 			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
 			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
@@ -203,7 +203,6 @@ To enable function entry/exit logging
 	{
 		for(instance in delegates)
 		{
-			neko.Lib.print(".");
 			instance.generate(types);
 		}
 		flush();       
@@ -220,11 +219,13 @@ To enable function entry/exit logging
 	*/
 	static function initialiseTrace()
 	{
+		#if MCOVER_DEBUG
 		var file = neko.io.File.write(TRACE_OUTPUT_FILE, false);
 		file.writeString("");
 		file.close();
-
+		
 		haxe.Log.trace = traceToFile;
+		#end
 	}
 
 	/**
@@ -233,7 +234,9 @@ To enable function entry/exit logging
 	*/
 	static function traceToFile(msg:Dynamic, ?pos:haxe.PosInfos)
 	{
+		#if MCOVER_DEBUG
 		traceOutput += "\n" + StringTools.rpad(pos.className + ":" + pos.lineNumber + " ", " ", 60) + "| " + Std.string(msg);
+		#end
 	}
 
 	/**
@@ -241,10 +244,12 @@ To enable function entry/exit logging
 	*/
 	static function flush()
 	{
+		#if MCOVER_DEBUG
 		var file = neko.io.File.append(TRACE_OUTPUT_FILE, false);	
 		file.writeString(traceOutput);
 		file.close();
 		traceOutput = "";
+		#end
 	}
 
 }
