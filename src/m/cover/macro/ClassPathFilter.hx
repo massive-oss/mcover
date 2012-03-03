@@ -52,8 +52,6 @@ class ClassPathFilter
 	{
 		ignoreClassMeta = null;
 		includeClassMeta = null;
-
-		
 	}
 	/**
 	* Recursively loops through classpaths and filter matching classes
@@ -63,9 +61,8 @@ class ClassPathFilter
 	* @param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
 	* @return array of classes
 	*/
-	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Array<String>
+	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Hash<Bool>
 	{
-		var classes:Array<String> = [];
 		classHash = new Hash();
 
 		if(exclusions == null || exclusions.length == 0)
@@ -100,20 +97,20 @@ class ClassPathFilter
 		{
 			for(pack in packages)
 			{
-				classes = classes.concat(includePackage(cp, pack));
+				includePackage(cp, pack);
 			}
 		}
 
 		cache.save();
 
-		return classes;
+		return classHash;
 	}
 
 
 	/**
 	Recursively searches a package within a class path for matching classes
 	*/
-	function includePackage(cp:String, pack:String):Array<String>
+	function includePackage(cp:String, pack:String)
 	{
 		var classes:Array<String> = [];
 		var prefix:String = pack;
@@ -124,7 +121,7 @@ class ClassPathFilter
 			prefix += ".";
 			path += "/" + pack.split(".").join("/");
 		}
-		if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) ) return classes;
+		if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) ) return;
 
 		for(file in neko.FileSystem.readDirectory(path))
 		{	
@@ -132,49 +129,103 @@ class ClassPathFilter
 
 			if(StringTools.endsWith(file, ".hx") )
 			{
-				var fileClasses = includeFile(filePath, prefix);
-
-				for(cl in fileClasses)
-				{
-					classHash.set(cl, true);
-					classes.push(cl);
-				}
+				includeFile(filePath);
 			}
 			else if(neko.FileSystem.isDirectory(filePath) && !skip(prefix + file) )
 			{
-				classes = classes.concat(includePackage(cp, prefix + file));
+				includePackage(cp, prefix + file);
 			}
 		}
-		return classes;
 	
 	}
 
-	function includeFile(path:String, prefix:String):Array<String>
+	/**
+	Includes the classes in a file to the classHash.
+	Adds the path to the cache if not up to date
+	*/
+	function includeFile(path:String)
 	{
-		var cachedClasses = cache.getCachedFile(path);
-		if(cachedClasses != null)
+		if(!cache.isCached(path))
 		{
-			return cachedClasses;
+			addClassesInFileToCache(path);
 		}
-
-		var classes:Array<String> = [];
-		var tempClasses = getClassesInFile(path);
-
-		prefix = getPackageDefinitionInFile(path);
 		
-		for(cl in tempClasses)
+		for(cls in cache.getIncludedClassesInFile(path))
 		{
-			cl = prefix + cl;
-			if(skip(cl)) continue;
-			if(classHash.exists(cl)) continue;
-			
-			classes.push(cl);
+			classHash.set(cls, true);
+		}
+		for(cls in cache.getExcludedClassesInFile(path))
+		{
+			classHash.set(cls, false);
+		}	
+	}
+
+	/**
+	Parses the contents of a hx file and adds the included/excluded classes to the cache
+
+	Includes hacks to detect ignored/included class metadata without using Context.getLocalClass().get()
+	which can fail compilation in some edge cases for classes with generics (e.g. class Foo<T:Bar> extends Base<T:BarBase>)
+	
+	@param path - the file path to cache
+	*/
+
+	function addClassesInFileToCache(path:String)
+	{
+		var includes:Array<String> = [];
+		var excludes:Array<String> = [];
+
+		var contents:String = neko.io.File.getContent(path);
+
+		var prefix = getPackageDefinitionInFile(contents);
+
+		var excludesHash:Hash<Bool> = new Hash(); 
+
+		var temp:String;
+
+		if(ignoreClassMeta != null)
+		{
+			temp = contents;
+			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
+			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+		
+			while(regIgnore.match(temp))
+			{
+				excludesHash.set(prefix + regIgnore.matched(2), true);
+				temp = regIgnore.matchedRight();
+			}
 		}
 
-		cache.cacheFile(path, classes);
+		var regInclude:EReg = null;
 
-		return classes;
+		if(includeClassMeta != null)
+		{
+			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+		}
+		else
+		{
+			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
+		}
+
+		temp = contents;
+
+		while(regInclude.match(temp))
+		{
+			var cls = prefix + regInclude.matched(2);
+
+			if(excludesHash.exists(cls) || skip(cls))
+			{
+				excludes.push(cls);
+			}
+			else
+			{
+				includes.push(cls);
+			}
+			temp = regInclude.matchedRight();
+		}
+
+		cache.addToCache(path, includes, excludes);
 	}
+
 
 
 	/**
@@ -201,7 +252,7 @@ class ClassPathFilter
 
 			var reg = new EReg(expr, "");
 
-			if(reg.match(clazz)) return true;
+			if(reg.match(clazz))return true;
 		}
 
 		return false;
@@ -210,9 +261,9 @@ class ClassPathFilter
 	/**
 	* looks for a valid package definition in a class
 	*/
-	function getPackageDefinitionInFile(path:String):String
+	function getPackageDefinitionInFile(contents:String):String
 	{
-		var contents = neko.io.File.getContent(path);
+		//var contents = neko.io.File.getContent(path);
 		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/;
 
 		if(reg.match(contents))
@@ -222,63 +273,7 @@ class ClassPathFilter
 		return "";
 	}
 
-
-
-	/**
-	Returns all matching classes in a file.
-
-	Includes hacks to detect ignored/included class metadata without using Context.getLocalClass().get()
-	which can fail compilation in some edge cases for classes with generics (e.g. class Foo<T:Bar> extends Base<T:BarBase>)
-	
-	@param path - the file path to inspect
-	@return array of matching class names
-	*/
-	function getClassesInFile(path:String):Array<String>
-	{
-		var classes:Array<String> = [];
-		var contents:String;
-
-		var ignoredClasses:Hash<Bool> = new Hash(); 
-
-		if(ignoreClassMeta != null)
-		{
-			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
-
-			contents = neko.io.File.getContent(path);
-
-			while(regIgnore.match(contents))
-			{
-				ignoredClasses.set(regIgnore.matched(2), true);
-				contents = regIgnore.matchedRight();
-			}
-		}
-
-		var regInclude:EReg = null;
-
-		if(includeClassMeta != null)
-		{
-			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
-		}
-		else
-		{
-			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
-		}
-
-		contents = neko.io.File.getContent(path);
-
-		while(regInclude.match(contents))
-		{
-			var cls = regInclude.matched(2);
-			if(!ignoredClasses.exists(cls))
-			{
-				classes.push(cls);
-			}
-			
-			contents = regInclude.matchedRight();
-		}
-		return classes;
-	}
+	////////////
 
 
 	/**

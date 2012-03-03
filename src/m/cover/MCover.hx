@@ -102,8 +102,8 @@ To enable function entry/exit logging
 
 		initialiseTrace();
 
-		var classMacroHash:Hash<Array<String>> = new Hash();
 		
+		if(exclusions == null) exclusions = [];
 		classPaths = convertToFullPaths(classPaths);
 
 		for(delegateClass in delegateClasses)
@@ -113,15 +113,22 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
+		var classMacroHash:Hash<Array<String>> = new Hash();
+
 		for(delegate in delegates)
 		{
-			var classes = delegate.getClasses(packages, classPaths, exclusions);
+			var classHash = delegate.filterClasses(packages, classPaths, exclusions);
 
-			for(cls in classes)
+			for(cls in classHash.keys())
 			{
-				var args:Array<String> = [];
+
+				var args:Array<String> = null;
+
 				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
-				args.push(delegate.id);
+				else args = [];
+
+				if(classHash.get(cls) == true) args.push(delegate.id);
+
 				classMacroHash.set(cls, args);
 			}
 		}
@@ -133,18 +140,27 @@ To enable function entry/exit logging
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 		}
 
+	
 		for(cls in classMacroHash.keys())
 		{
 			var args = classMacroHash.get(cls);
-			var argsString = "[\"" + args.join("\",\"") + "\"]";
-			//traceToFile(cls);
-			flush();
-			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
-			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
+
+			if(args.length > 0)
+			{
+				var argsString = "[\"" + args.join("\",\"") + "\"]";
+				//traceToFile(cls);
+				Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
+				//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
+				flush();
+			}
+			else
+			{
+				exclusions.push(cls);
+			}
 		}
 
 		flush();
-
+	
 		for(pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, classPaths);

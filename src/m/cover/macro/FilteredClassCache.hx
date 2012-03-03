@@ -1,16 +1,16 @@
 package m.cover.macro;
 
 /**
-Stores a cache of previously filtered classes
-- overall time stamp
-- time stamp per package
-- time stamp per file in package
+Loads and Saves a cache of previously filtered classes for files.
 
+- cache is cleared if filter conditions have changed
+- cached values are only returned if file has not changed (based on modified date)
 
 Format:
 
 @id
-file|stamp|class,class
+file|stamp|included class,included class|excluded class,excluded class
+
 */
 class FilteredClassCache
 {
@@ -18,7 +18,6 @@ class FilteredClassCache
 
 	var id:String;
 	var fileHash:Hash<CachedClasses>;
-
 
 	public function new(path:String)
 	{
@@ -32,6 +31,13 @@ class FilteredClassCache
 		}
 	}
 
+	/**
+	Creates a string representation of the current filters to use as an id for the cache (to determine if conditions have changed since cache was saved)
+
+	@param classPaths 	array of class path directories (defaults to [''])
+	@param packages 	array of packages (defaults to [''])
+	@param exclusions 	array of classes or wildcards to ignored (defaults to [''])
+	*/
 	public function init(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>)
 	{
 		trace("init");
@@ -53,33 +59,78 @@ class FilteredClassCache
 
 	}
 
-	function getStamp(path:String):String
-	{
-		if(neko.FileSystem.exists(path) && !neko.FileSystem.isDirectory(path))
-		{
-			var stat = neko.FileSystem.stat(path);
-			return stat.mtime.toString();
-		}
-		return null;
-	}
+	/**
+	Checks if file is in cache and has not been modified.
 
-	public function getCachedFile(path:String):Array<String>
+	@param path 	path to file
+	@return true if cached version has same modifed date as current file. 
+	*/
+	public function isCached(path:String):Bool
 	{
 		if(fileHash.exists(path))
 		{
 			var file = fileHash.get(path);
 			var stamp = getStamp(path);
 
-			if(file.stamp == stamp) return file.classes != "" ? file.classes.split(",") : [];		
+			if(file.stamp == stamp) return true;	
 		}
-		return null;
+		return false;
 	}
 
-	public function cacheFile(path:String, classes:Array<String>)
+	/**
+	Returns the cached included classes in a file
+	
+	@param path 	to file
+	@return array of qualified classes (example.Foo)
+	*/
+	public function getIncludedClassesInFile(path:String):Array<String>
+	{
+		var file = fileHash.get(path);
+
+		return file.includes != "" ? file.includes.split(",") : [];		
+	}
+
+	/**
+	Returns the cached excluded classes in a file
+	
+	@param path 	to file
+	@return array of qualified classes (example.Foo)
+	*/
+	public function getExcludedClassesInFile(path:String):Array<String>
+	{
+		var file = fileHash.get(path);
+
+		return file.excludes != "" ? file.excludes.split(",") : [];		
+	}
+
+	/**
+	Adds a files included/excluded classes to the cache
+	*/
+	public function addToCache(path:String, includes:Array<String>,excludes:Array<String>)
 	{
 		var stamp = getStamp(path);
-		var cache:CachedClasses = {stamp:stamp, classes:classes.join(",")};
+		var cache:CachedClasses = {stamp:stamp, includes:includes.join(","), excludes:excludes.join(",")};
 		fileHash.set(path, cache);
+	}
+
+	/**
+	Writes the current cache to file
+	*/
+	public function save()
+	{
+		var buf = new StringBuf();
+
+		buf.add("@" + id + "\n");
+
+		for(path in fileHash.keys())
+		{
+			var file = fileHash.get(path);
+			buf.add(path + "|" + file.stamp + "|" + file.includes + "|" + file.excludes + "\n");
+		}
+
+		var f = neko.io.File.write(file, false);
+		f.writeString(buf.toString());
+		f.close();
 	}
 
 
@@ -99,7 +150,7 @@ class FilteredClassCache
 				else
 				{
 					var a = line.split("|");
-					var cache:CachedClasses = {stamp:a[1], classes:a[2]};
+					var cache:CachedClasses = {stamp:a[1], includes:a[2],excludes:a[3]};
 						fileHash.set(a[0], cache);
 				}
 			}
@@ -108,27 +159,27 @@ class FilteredClassCache
 		f.close();
 	}
 
-	public function save()
+	/**
+	Utility for generating the modified time stamp for a file
+
+	@param path 	a file path
+	@return a timestamp in format yyyy-mm-dd hh:mm:ss
+	*/
+	function getStamp(path:String):String
 	{
-		var buf = new StringBuf();
-
-		buf.add("@" + id + "\n");
-
-		for(path in fileHash.keys())
+		if(neko.FileSystem.exists(path) && !neko.FileSystem.isDirectory(path))
 		{
-			var file = fileHash.get(path);
-			buf.add(path + "|" + file.stamp + "|" + file.classes + "\n");
+			var stat = neko.FileSystem.stat(path);
+			return stat.mtime.toString();
 		}
-
-		var f = neko.io.File.write(file, false);
-		f.writeString(buf.toString());
-		f.close();
+		return null;
 	}
 }
 
 typedef CachedClasses =
 {
 	stamp:String,
-	classes:String
+	includes:String,
+	excludes:String
 }
 

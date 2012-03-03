@@ -33,8 +33,61 @@ interface MacroDelegate
 {
 	var id(default, null):String;
 
+	/**
+	Populates includedClasses and excludedClases based on the provided classpaths and packages. This is called during the compiler macro
+
+	@param packages 	array of package names (defaults to [""])
+	@param classpaths 	array of class paths (defaults to [""])
+	@param exclusions 	array of excluded classes or wildcard patterns (defaults to [])
+	@return Hash of class keys with boolean value to indicate include or exclude
+	*/
+	function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>;
+
+	/**
+	@return the type of class to use on class @:build parsing
+	*/
 	function getExpressionParser():Class<ExpressionParser>;
-	function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>;
+	
+
+	/**
+	Called during Context.onGenerate(). Provides opportunity for any post compilation processing;
+	*/
 	function generate(types:Array<haxe.macro.Type>):Void;
-} 
+}
+
+/**
+@see m.cover.MacroDelegate
+*/
+class MacroDelegateImpl implements MacroDelegate
+{
+	public var id(default, null):String;
+
+	var filter:ClassPathFilter;
+
+	public function new()
+	{
+		filter = new ClassPathFilter();
+	}
+
+	public function getExpressionParser():Class<ExpressionParser>
+	{
+		throw new m.cover.Exception("Abstract method.");
+		return null;
+	}
+
+	public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>
+	{
+		if(packages ==  null || packages.length == 0) packages = [""];
+
+		return filter.filter(classPaths, packages, exclusions);
+		
+	}
+
+	public function generate(types:Array<haxe.macro.Type>):Void
+	{
+		//empty
+	}
+
+
+}
 #end
