@@ -43,12 +43,13 @@ import m.cover.macro.ExpressionParser;
 
 @:keep class CoverageExpressionParser implements ExpressionParser
 {
+
 	public var ignoreFieldMeta(default, default):String;
 	public var includeFieldMeta(default, default):String;
 	
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
-
+	static public var IS_WINDOWS = neko.Sys.systemName() == "Windows"; 
 
 	public var target(default, default):ClassParser;
 	
@@ -248,7 +249,16 @@ import m.cover.macro.ExpressionParser;
 		block.file = file;
 
 		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
-		var parts = filePath.split("/");
+		var parts:Array<String> = null;
+
+		if(IS_WINDOWS)
+		{
+			parts = filePath.split("\\");
+		}
+		else
+		{
+			parts = filePath.split("/");
+		}
 
 		parts.pop();
 
