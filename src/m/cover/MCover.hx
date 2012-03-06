@@ -101,7 +101,6 @@ To enable function entry/exit logging
 		if(!neko.FileSystem.exists(TEMP_DIR)) neko.FileSystem.createDirectory(TEMP_DIR);
 
 		initialiseTrace();
-
 		
 		if(exclusions == null) exclusions = [];
 		classPaths = convertToFullPaths(classPaths);
@@ -151,7 +150,6 @@ To enable function entry/exit logging
 				//traceToFile(cls);
 				Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
 				//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
-				flush();
 			}
 			else
 			{
@@ -207,9 +205,22 @@ To enable function entry/exit logging
 				classParser.addExpressionParser(parser);
 			}
 		}
+		try
+		{
+			var fields = classParser.parseFields();
+			return fields;
+		}
+		catch(e:Exception)
+		{
+			trace(e);
+			flush();
+			neko.Sys.sleep(.1);
+			Context.error("Exception parsing class: " + e, Context.currentPos());
+		}
 
-		var fields = classParser.parseFields();
-		return fields;
+		return null;
+		
+		
 	}
 	
 	/**

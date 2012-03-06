@@ -4,5 +4,5 @@
 	<tag v="macro" />
 	<tag v="utility" />
 	<description>MCover is a collection of macro-based cross-platform code coverage and quality tools.</description>
-	<version name="1.2.0">Added function logging tool, Reinstated class level @IgnoreCoverage, internal refactoring to leverage common macro code between coverage and logging packages. Added better examples and documentation</version>
+	<version name="1.2.1">Added caching of class list in macros to improve compilation times on large projects. Moved debug log file (and caches) to temp .mcover directory. Added @IgnoreCover classes to Compiler.include ignore list (to avoid compiling them). Fixed critical bug on Windows introduced in last release</version>
 </project>

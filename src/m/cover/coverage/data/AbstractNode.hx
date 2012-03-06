@@ -29,7 +29,8 @@
 package m.cover.coverage.data;
 
 @IgnoreLogging
-@:keep class AbstractNode
+@:keep
+class AbstractNode
 {
 	public var id:Null<Int>;
 	public var name:String;

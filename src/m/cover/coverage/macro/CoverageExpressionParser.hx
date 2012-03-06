@@ -219,7 +219,12 @@ import m.cover.macro.ExpressionParser;
 		}
 
 		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(pos);
-	
+		error += "\n    " + target.currentLocation;
+		for (cp in CoverageMacroDelegate.classPathHash)
+		{
+			error += "\n   " + cp;
+		}
+
 		throw new CoverageException(error);
 		return null;
 	}

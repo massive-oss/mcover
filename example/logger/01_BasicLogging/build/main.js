@@ -124,11 +124,6 @@ m.cover.util.Timer.prototype.stop = function() {
 	this.id = null;
 }
 m.cover.util.Timer.prototype.__class__ = m.cover.util.Timer;
-if(typeof other=='undefined') other = {}
-other.IgnoredWithMacroFilterWildcard = function(p) {
-}
-other.IgnoredWithMacroFilterWildcard.__name__ = ["other","IgnoredWithMacroFilterWildcard"];
-other.IgnoredWithMacroFilterWildcard.prototype.__class__ = other.IgnoredWithMacroFilterWildcard;
 if(!m.cover.logger) m.cover.logger = {}
 if(!m.cover.logger.data) m.cover.logger.data = {}
 m.cover.logger.data.LogRecording = function(p) {
@@ -574,7 +569,7 @@ IntIter.prototype.next = function() {
 IntIter.prototype.__class__ = IntIter;
 m.cover.Exception = function(message,cause,info) {
 	if( message === $_ ) return;
-	this.type = this.here({ fileName : "Exception.hx", lineNumber : 68, className : "m.cover.Exception", methodName : "new"}).className;
+	this.type = this.here({ fileName : "Exception.hx", lineNumber : 66, className : "m.cover.Exception", methodName : "new"}).className;
 	this.message = message;
 	this.cause = cause;
 	this.info = info;
@@ -609,6 +604,14 @@ m.cover.logger.LoggerException.__name__ = ["m","cover","logger","LoggerException
 m.cover.logger.LoggerException.__super__ = m.cover.Exception;
 for(var k in m.cover.Exception.prototype ) m.cover.logger.LoggerException.prototype[k] = m.cover.Exception.prototype[k];
 m.cover.logger.LoggerException.prototype.__class__ = m.cover.logger.LoggerException;
+m.cover.util.NumberUtil = function() { }
+m.cover.util.NumberUtil.__name__ = ["m","cover","util","NumberUtil"];
+m.cover.util.NumberUtil.round = function(value,precision) {
+	if(precision == null) precision = 4;
+	value = value * Math.pow(10,precision);
+	return Math.round(value) / Math.pow(10,precision);
+}
+m.cover.util.NumberUtil.prototype.__class__ = m.cover.util.NumberUtil;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -634,14 +637,6 @@ Std.random = function(x) {
 	return Math.floor(Math.random() * x);
 }
 Std.prototype.__class__ = Std;
-m.cover.util.NumberUtil = function() { }
-m.cover.util.NumberUtil.__name__ = ["m","cover","util","NumberUtil"];
-m.cover.util.NumberUtil.round = function(value,precision) {
-	if(precision == null) precision = 4;
-	value = value * Math.pow(10,precision);
-	return Math.round(value) / Math.pow(10,precision);
-}
-m.cover.util.NumberUtil.prototype.__class__ = m.cover.util.NumberUtil;
 Lambda = function() { }
 Lambda.__name__ = ["Lambda"];
 Lambda.array = function(it) {

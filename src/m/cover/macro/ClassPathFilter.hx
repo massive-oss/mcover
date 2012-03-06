@@ -28,7 +28,7 @@
 
 package m.cover.macro;
 
-#if neko
+#if macro
 class ClassPathFilter
 {
 	/**
@@ -211,6 +211,7 @@ class ClassPathFilter
 		while(regInclude.match(temp))
 		{
 			var cls = prefix + regInclude.matched(2);
+
 
 			if(excludesHash.exists(cls) || skip(cls))
 			{
