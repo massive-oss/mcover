@@ -33,8 +33,6 @@ import haxe.Stack;
 
 class Exception
 {
-
-
 	/**
 	 * The exception type. 
 	 * 

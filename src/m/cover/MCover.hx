@@ -83,6 +83,7 @@ To enable function entry/exit logging
 		include(packages, classPaths, exclusions);
 	}
 
+	public static var TEMP_DIR:String = ".mcover";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
 	static var delegatesById:Hash<MacroDelegate> = new Hash();
@@ -97,10 +98,11 @@ To enable function entry/exit logging
 	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
-		initialiseTrace();
+		if(!neko.FileSystem.exists(TEMP_DIR)) neko.FileSystem.createDirectory(TEMP_DIR);
 
-		var classMacroHash:Hash<Array<String>> = new Hash();
+		initialiseTrace();
 		
+		if(exclusions == null) exclusions = [];
 		classPaths = convertToFullPaths(classPaths);
 
 		for(delegateClass in delegateClasses)
@@ -110,15 +112,22 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
+		var classMacroHash:Hash<Array<String>> = new Hash();
+
 		for(delegate in delegates)
 		{
-			var classes = delegate.getClasses(packages, classPaths, exclusions);
+			var classHash = delegate.filterClasses(packages, classPaths, exclusions);
 
-			for(cls in classes)
+			for(cls in classHash.keys())
 			{
-				var args:Array<String> = [];
+
+				var args:Array<String> = null;
+
 				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
-				args.push(delegate.id);
+				else args = [];
+
+				if(classHash.get(cls) == true) args.push(delegate.id);
+
 				classMacroHash.set(cls, args);
 			}
 		}
@@ -130,18 +139,26 @@ To enable function entry/exit logging
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 		}
 
+	
 		for(cls in classMacroHash.keys())
 		{
 			var args = classMacroHash.get(cls);
-			var argsString = "[\"" + args.join("\",\"") + "\"]";
-			trace(cls);
-			flush();
-			Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
-			//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
+
+			if(args.length > 0)
+			{
+				var argsString = "[\"" + args.join("\",\"") + "\"]";
+				//traceToFile(cls);
+				Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
+				//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
+			}
+			else
+			{
+				exclusions.push(cls);
+			}
 		}
 
 		flush();
-
+	
 		for(pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, classPaths);
@@ -188,9 +205,22 @@ To enable function entry/exit logging
 				classParser.addExpressionParser(parser);
 			}
 		}
+		try
+		{
+			var fields = classParser.parseFields();
+			return fields;
+		}
+		catch(e:Exception)
+		{
+			trace(e);
+			flush();
+			neko.Sys.sleep(.1);
+			Context.error("Exception parsing class: " + e, Context.currentPos());
+		}
 
-		var fields = classParser.parseFields();
-		return fields;
+		return null;
+		
+		
 	}
 	
 	/**
@@ -203,7 +233,6 @@ To enable function entry/exit logging
 	{
 		for(instance in delegates)
 		{
-			neko.Lib.print(".");
 			instance.generate(types);
 		}
 		flush();       
@@ -211,7 +240,7 @@ To enable function entry/exit logging
 
 	///// TRACE OUTPUT ///////
 
-	static var TRACE_OUTPUT_FILE = ".mcover-debug";
+	static var TRACE_OUTPUT_FILE = TEMP_DIR + "/debug-log.txt";
 	static var traceOutput:String = "";
 
 	/**
@@ -241,12 +270,13 @@ To enable function entry/exit logging
 	*/
 	static function flush()
 	{
+		if(traceOutput == "") return;
+
 		var file = neko.io.File.append(TRACE_OUTPUT_FILE, false);	
 		file.writeString(traceOutput);
 		file.close();
 		traceOutput = "";
 	}
-
 }
 
 #end

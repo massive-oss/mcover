@@ -1,3 +1,12 @@
+v1.2.2
+- Fixed minor bug on windows preventing code coverage from appearing against individual classes in munit print client
+
+v1.2.1 
+- Added caching of filtered classes to improve compilation times
+- Moved debug log (and caches) to local .mcover directory in project
+- Added @IgnoreCover classes to Compiler.include ignore list
+- Fixed critical bug on Windows introduced in last release
+
 v1.2.0 - 28.02.12
 
 - Added function logging macros

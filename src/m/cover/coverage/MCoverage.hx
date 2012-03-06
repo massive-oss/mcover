@@ -33,6 +33,7 @@ import neko.vm.Deque;
 #end
 
 import m.cover.coverage.CoverageLogger;
+import m.cover.coverage.DataTypes;
 
 @IgnoreLogging
 @IgnoreCover

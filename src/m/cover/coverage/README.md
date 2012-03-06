@@ -172,7 +172,7 @@ Specify the MCoverPrintClient when MUnit is including coverage (if upgrading fro
 In TestMain.new():
 
 	#if MCOVER
-		var client = new massive.mcover.munit.client.MCoverPrintClient();
+		var client = new m.cover.coverage.munit.client.MCoverPrintClient();
 	#else
 		var client = new massive.munit.client.RichPrintClient();
 	#end
@@ -201,7 +201,7 @@ For Neko targets (or if using the basic MUnit PrintClient) this amount of inform
 
 To configure these settings use the follow properties when creating the client in TestMain:
 
-	var client = new massive.mcover.munit.client.MCoverPrintClient();
+	var client = new m.cover.coverage.munit.client.MCoverPrintClient();
 	client.includeMissingBlocks = false;
 	client.includeExecutionFrequency = false;
 	client.includeClassAndPackageBreakdowns = false;
@@ -213,7 +213,7 @@ You can also specify alternatives through the constructor:
 
 	var munitClient = new massive.munit.client.PrintClient(false);
 	
-	var mcoverClient = new massive.mcover.client.PrintClient();
+	var mcoverClient = new m.cover.coverage.client.PrintClient();
 	mcoverClient.maxBlockExecutionListSize = 50;
 	
 	var client = new MCoverPrintClient(munitClient, mcoverClient);
@@ -357,8 +357,18 @@ Example:
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
 
+### Disable caching
 
-### Custom Report Clients
+By default MCover macro caches the filtered list of classes that will be covered.
+
+To disable this, add MCOVER_NO_CACHE variable to the hxml file
+
+	-D MCOVER_NO_CACHE
+
+To manually delete a cache, delete the .mcover folder in your project
+
+
+## Custom Report Clients
 
 At runtime, MCover cam automatically log code execution blocks.
 
@@ -371,7 +381,7 @@ By default these are sent to a generic TraceClient that outputs to the screen.
 
 You can set multiple custom clients (CoverageReportClient) if required:
 
-	logger.addClient(new massive.mcover.client.PrintClient());
+	logger.addClient(new m.cover.coverage.client.PrintClient());
 
 
 The current output (see example above) provides a basic percentage breakdown of code blocks that have been executed. It also provides summaries for individual classes and packages within the class path:
@@ -412,7 +422,7 @@ Results can then be accessed directly from the logger
 	logger.coverage.getPercentages();
 
 
-### Ignoring individual classes or methods via metadata
+## Ignoring individual classes or methods via metadata
 
 You can flag an entire class, or single method to be excluded from coverage using @IgnoreCover metadata
 

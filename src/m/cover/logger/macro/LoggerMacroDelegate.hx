@@ -36,30 +36,28 @@ import m.cover.macro.MacroDelegate;
 import m.cover.macro.ExpressionParser;
 import m.cover.logger.macro.LoggerExpressionParser;
 
-class LoggerMacroDelegate implements MacroDelegate
+class LoggerMacroDelegate extends MacroDelegateImpl
 {
-	public var id(default, null):String;
 
 	public function new()
 	{
+		super();
 		id = "logger";
+		filter.ignoreClassMeta = "IgnoreLogging";
 	}
 
-	public function getExpressionParser():Class<ExpressionParser>
+	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>
+	{
+		return super.filterClasses(packages, classPaths, exclusions);
+	}
+
+	override public function getExpressionParser():Class<ExpressionParser>
 	{
 		return LoggerExpressionParser;
 	}
 
-	public function getClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Array<String>
-	{
-		if(packages ==  null || packages.length == 0) packages = [""];
-		var filter = new ClassPathFilter();
-		filter.ignoreClassMeta = "IgnoreLogging";
-		var classes = filter.filter(classPaths, packages, exclusions);
-		return classes;
-	}
 
-	public function generate(types:Array<haxe.macro.Type>):Void
+	override public function generate(types:Array<haxe.macro.Type>):Void
 	{
 
 	}
