@@ -51,7 +51,6 @@ class DataUtil
 		return 0;
 	}
 
-
 	@IgnoreLogging
 	static public function sortOnBlockName(a:AbstractBlock, b:AbstractBlock)
 	{

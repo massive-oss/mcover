@@ -52,6 +52,11 @@ package m.cover.coverage.data;
 		return trueCount > 0 && falseCount > 0;
 	}
 
+	public function isPartiallyCovered():Bool
+	{
+		return !isCovered() && (trueCount > 0 || falseCount > 0);
+	}
+
 	override public function toLocalString():String
 	{
 		var s = super.toLocalString();

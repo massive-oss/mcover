@@ -102,7 +102,7 @@ class AbstractNode
 	@IgnoreLogging
 	function emptyResult():CoverageResult
 	{
-		return {sc:0, s:0, bt:0, bf:0,bc:0,b:0, mc:0, m:0, cc:0, c:0, fc:0, f:0, pc:0, p:0};
+		return {lc:0, lp:0, l:0, sc:0, s:0, bt:0, bf:0,bc:0,b:0, mc:0, m:0, cc:0, c:0, fc:0, f:0, pc:0, p:0};
 	}
 
 	@IgnoreLogging

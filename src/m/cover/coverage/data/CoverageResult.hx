@@ -31,6 +31,21 @@ package m.cover.coverage.data;
 typedef CoverageResult =
 {
 	/**
+	*	lines covered;
+	*/
+	var lc:Int;
+
+	/**
+	*	lines partially covered
+	*/
+	var lp:Int;
+
+	/**
+	*	lines total;
+	*/
+	var l:Int;
+	
+	/**
 	*	statement count;
 	*/
 	var sc:Int;
@@ -45,11 +60,11 @@ typedef CoverageResult =
 	/**
 	*	branch false count;
 	*/
-	var bc:Int;
+	var bf:Int;
 	/**
 	*	branch count (true and false count both > 0);
 	*/
-	var bf:Int;
+	var bc:Int;
 	/**
 	*	branch total;
 	*/

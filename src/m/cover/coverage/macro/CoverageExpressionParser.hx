@@ -34,11 +34,8 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
 import m.cover.macro.ClassParser;
-
 import m.cover.coverage.DataTypes;
-
 import m.cover.macro.MacroUtil;
-import m.cover.macro.ClassParser;
 import m.cover.macro.ExpressionParser;
 
 @:keep class CoverageExpressionParser implements ExpressionParser
@@ -52,12 +49,17 @@ import m.cover.macro.ExpressionParser;
 	static public var IS_WINDOWS = neko.Sys.systemName() == "Windows"; 
 
 	public var target(default, default):ClassParser;
+
+	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
+	var coveredLines:IntHash<Bool>;
+	var exprPos:Position;
+
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover";
 		includeFieldMeta = null;
-
+		coveredLines =  new IntHash();
 	}
 
 	/**
@@ -70,6 +72,8 @@ import m.cover.macro.ExpressionParser;
 	*/
 	public function parseExpr(expr:Expr):Expr
 	{
+		exprPos = expr.pos;
+
 		switch(expr.expr)
 		{
 			case EIf(econd, eif, eelse):
@@ -114,10 +118,13 @@ import m.cover.macro.ExpressionParser;
 			//ensure empty methods are still covered (e.g. empty constructor) 
 			if(expr != target.functionStack[target.functionStack.length-1].expr) return;
 		}
-		
-		var pos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
 
-		var coverageExpr = createBlockCoverageExpr(expr, pos);
+
+		var startPos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
+
+		var endPos:Position = (exprs.length == 0) ? expr.pos : exprs[exprs.length-1].pos;
+
+		var coverageExpr = createBlockCoverageExpr(expr, startPos, endPos);
 		exprs.unshift(coverageExpr);
 		
 		expr.expr = EBlock(exprs);
@@ -147,11 +154,13 @@ import m.cover.macro.ExpressionParser;
 	*		mcover.MCoverRunner.log(id)
 	* @see createCodeBlock for key format
 	**/
-	function createBlockCoverageExpr(expr:Expr, pos:Position):Expr
+	function createBlockCoverageExpr(expr:Expr, startPos:Position, endPos:Position):Expr
 	{
-		var block = createCodeBlockReference(pos, false);
+		var block = createCodeBlockReference(startPos, endPos, false);
 		
 		var blockId = Std.string(block.id);
+
+		var pos = startPos;
 		
 		var baseExpr = getReferenceToLogger(pos);
 		pos = baseExpr.pos;
@@ -174,7 +183,7 @@ import m.cover.macro.ExpressionParser;
 	function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
 		var pos = expr.pos;
-		var block = createCodeBlockReference(pos, true);
+		var block = createCodeBlockReference(pos, pos, true);
 	
 		var blockId = Std.string(block.id);
 
@@ -204,9 +213,9 @@ import m.cover.macro.ExpressionParser;
 		return expr;
 	}
 
-	function createCodeBlockReference(pos:Position, ?isBranch:Bool = false):AbstractBlock
+	function createCodeBlockReference(startPos:Position, endPos:Position, ?isBranch:Bool = false):AbstractBlock
 	{
-		var posInfo = Context.getPosInfos(pos);
+		var posInfo = Context.getPosInfos(startPos);
 		var file:String = posInfo.file;
 
 		file = neko.FileSystem.fullPath(file);
@@ -215,11 +224,11 @@ import m.cover.macro.ExpressionParser;
 		{
 			if(file.indexOf(cp) == 0)
 			{	
-				return createReference(cp, file, pos, isBranch);
+				return createReference(cp, file, startPos, endPos, isBranch);
 			}
 		}
 
-		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(pos);
+		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(startPos);
 		error += "\n    " + target.currentLocation;
 		for (cp in CoverageMacroDelegate.classPathHash)
 		{
@@ -231,7 +240,7 @@ import m.cover.macro.ExpressionParser;
 	}
 
 
-	function createReference(cp:String, file:String, pos:Position, isBranch:Bool):AbstractBlock
+	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool):AbstractBlock
 	{
 		var block:AbstractBlock;
 		
@@ -246,9 +255,12 @@ import m.cover.macro.ExpressionParser;
 			block.id = statementCount++;
 		}
 
+		file = file.substr(cp.length+1,  file.length-cp.length-1);
+
+
 		block.file = file;
 
-		var filePath = file.substr(cp.length+1, file.length-cp.length-4);
+		var filePath = file.substr(0, file.length-3);//remove '.hx'
 		var parts:Array<String> = null;
 
 		if(IS_WINDOWS)
@@ -267,16 +279,49 @@ import m.cover.macro.ExpressionParser;
 		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
 		block.methodName = target.currentMethodName;
 
-		var posInfo = Context.getPosInfos(pos);
+		var posInfo = Context.getPosInfos(startPos);
 
 		block.min = posInfo.min;
 		block.max = posInfo.max;
 
-		var posString = Std.string(pos);
+		var posString = Std.string(startPos);
+		posString = posString.substr(5, posString.length-6);
 
-		block.location = posString.substr(5, posString.length-6);
-		block.location = block.location.split(" characters ").join(" chars ");
+		block.location = posString.split(" characters ").join(" chars ");
 
+		var lines:Array<Int> = [];
+		var startLine = -1;
+		var endLine = -1;
+
+		if(posReg.match(posString))
+		{
+			startLine = Std.parseInt(posReg.matched(2));
+		}
+
+		posString = Std.string(endPos);
+		posString = posString.substr(5, posString.length-6);
+
+		if(posReg.match(posString))
+		{
+			if(posReg.matched(3) == "lines")
+			{
+				endLine = Std.parseInt(posReg.matched(5));
+			}
+			else
+			{
+				endLine = Std.parseInt(posReg.matched(2));
+			}
+		}
+
+		for(i in startLine...endLine+1)
+		{
+			if(!coveredLines.exists(i))
+			{
+				coveredLines.set(i, true);
+				block.lines.push(i);
+			}
+		}
+	
 		if(isBranch)
 		{
 			CoverageMacroDelegate.coverage.addBranch(cast(block, Branch));
@@ -287,6 +332,7 @@ import m.cover.macro.ExpressionParser;
 		}
 		return block;
 	}
+
 
 	/**
 	Creates a call to MCoverage.getLogger();

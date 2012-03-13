@@ -76,7 +76,6 @@ class EMMAPrintClient implements CoverageReportClient
 		}
 	}
 
-
 	function createStats():Xml
 	{
 		var stats = Xml.createElement("stats");
@@ -105,7 +104,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var node = createNodeWithName("all", "all classes");
 
-		var coverageNodes = createCoverageNodes(result, CLAZZ);
+		var coverageNodes = createCoverageNodes(result, ALL);
 
 		for(coverageNode in coverageNodes)
 		{
@@ -129,7 +128,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var result = pck.getResults();
 
-		var coverageNodes = createCoverageNodes(result, CLAZZ);
+		var coverageNodes = createCoverageNodes(result, ALL);
 
 		for(coverageNode in coverageNodes)
 		{
@@ -151,7 +150,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var result = file.getResults();
 
-		var coverageNodes = createCoverageNodes(result, CLAZZ);
+		var coverageNodes = createCoverageNodes(result, ALL);
 
 		for(coverageNode in coverageNodes)
 		{
@@ -225,7 +224,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		if(level == METHOD)
 		{
-			if(bc == bt && bt > 0)
+			if(bc > 0)
 			{
 				node = createCoverageNode("method", 1, 1);
 			}
@@ -246,7 +245,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		if(level == CLAZZ)
 		{
-			if(result.mc == result.m && result.m > 0)
+			if(result.mc > 0)
 			{
 				node = createCoverageNode("class", 1, 1);
 			}
@@ -316,17 +315,18 @@ class EMMAPrintClient implements CoverageReportClient
 
 	function getLineCount(r:CoverageResult):Int
 	{
-		return 0;
+		return r.lc;
 	}
 
 	function getLineTotal(r:CoverageResult):Int
 	{
-		return 0;
+		return r.l;
 	}
 }
 
 enum CoverageLevel
 {
+	ALL;
 	PACKAGE;
 	FILE;
 	CLAZZ;

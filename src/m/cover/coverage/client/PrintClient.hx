@@ -224,7 +224,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		output += printTabs(["", "total methods", r.mc + " / " + r.m], s, w);
 		output += printTabs(["", "total statements", r.sc + " / " + r.s], s, w);
 		output += printTabs(["", "total branches", r.bc + " / " + r.b], s, w);
-		
+		output += printTabs(["", "total lines", r.lc + " / " + r.l], s, w);
 		return output;
 	}
 
@@ -269,12 +269,12 @@ class PrintClient implements AdvancedCoverageReportClient
 			return output;
 		}
 
-		output += printTabs(["", "Result","Methods","Statements","Branches", "Class"]);
+		output += printTabs(["", "Result","Methods","Statements","Branches","Lines","Class"]);
 		
 		for(cls in classes)
 		{
 			var r = cls.getResults();
-			output += printTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, cls.name]);
+			output += printTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, r.lc + "/" + r.l, cls.name]);
 		}
 
 		return output;

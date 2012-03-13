@@ -143,6 +143,11 @@ import m.cover.coverage.data.CoverageResult;
 		to.f += from.f;	
 		to.pc += from.pc;
 		to.p += from.p;	
+
+		to.lc += from.lc;
+		to.lp += from.lp;
+		to.l += from.l;
+
 		return to;
 	}
 	

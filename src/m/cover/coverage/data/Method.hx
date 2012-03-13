@@ -105,17 +105,43 @@ import m.cover.coverage.data.Branch;
 		if(resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
+
+			var covered:Bool;
+
 			for(statement in statementsById)
 			{
-				resultCache.sc += (statement.count > 0) ? 1 : 0;
+				covered = (statement.count > 0);
+				resultCache.sc += covered ? 1 : 0;
 				resultCache.s += 1;
+
+				for(line in statement.lines)
+				{
+					resultCache.lc += covered ? 1: 0;
+					resultCache.l += 1;
+				}
 			}
 			for(branch in branchesById)
 			{
+				covered = branch.isCovered();
 				resultCache.bt += (branch.trueCount > 0) ? 1 : 0;
 				resultCache.bf += (branch.falseCount > 0) ? 1 : 0;
-				resultCache.bc += branch.isCovered() ? 1 : 0;
+				resultCache.bc += covered ? 1 : 0;
 				resultCache.b += 1;
+
+				var partiallyCovered = branch.isPartiallyCovered();
+
+				for(line in branch.lines)
+				{
+					if(covered)
+					{
+						resultCache.lc += 1;
+					}
+					else if(partiallyCovered)
+					{
+						resultCache.lp += 1;
+					}
+					resultCache.l += 1;
+				}
 			}
 		}
 		return resultCache;

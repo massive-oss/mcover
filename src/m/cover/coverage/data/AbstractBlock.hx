@@ -46,12 +46,14 @@ package m.cover.coverage.data;
 	public var max:Int;
 
 	public var location:String;
+	public var lines:Array<Int>;
 
 	public var lookup:Array<Int>;
 
 	function new()
 	{
 		super();
+		lines = [];
 	}
 
 	public function isCovered():Bool
@@ -82,6 +84,7 @@ package m.cover.coverage.data;
         s.serialize(max);
         s.serialize(location);
         s.serialize(lookup);
+        s.serialize(lines);
     } 
     
     @IgnoreLogging
@@ -97,6 +100,7 @@ package m.cover.coverage.data;
         max = s.unserialize();
         location = s.unserialize();
         lookup = s.unserialize();
+        lines = s.unserialize();
     }
 
 }
