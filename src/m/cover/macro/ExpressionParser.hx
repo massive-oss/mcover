@@ -39,7 +39,17 @@ interface ExpressionParser
 
 	var target(default, default):ClassParser;
 
+	/**
+	Called once class parser has finished parsing expresions within a method
+	*/
+	function parseMethod(field:Field, f:Function):Void;
+	
+	/**
+	Called once class parser has finished parsing contents of expr
+	*/
 	function parseExpr(expr:Expr):Expr;
+
+	
 }
 
 #end

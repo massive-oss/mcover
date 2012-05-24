@@ -62,6 +62,12 @@ import m.cover.macro.ExpressionParser;
 		coveredLines =  new IntHash();
 	}
 
+
+	public function parseMethod(field:Field, f:Function):Void
+	{
+
+	}
+
 	/**
 	Wraps code branches and statement blocks with coverage logs
 	

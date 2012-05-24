@@ -136,7 +136,8 @@ class LoggerImpl implements Logger
 		if(!logsById.exists(entryId))
 		{
 			#if neko mutex.release(); #end
-			throw "Cannot find matching entry log. " + [entryId, pos];
+			trace("WARNING: Cannot find matching entry log. " + [entryId, pos]);
+			return;
 		}
 
 		try

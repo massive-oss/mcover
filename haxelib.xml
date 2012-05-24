@@ -4,5 +4,5 @@
 	<tag v="macro" />
 	<tag v="utility" />
 	<description>MCover is a collection of macro-based cross-platform code coverage and quality tools.</description>
-	<version name="1.2.2">Fixed minor bug on windows preventing code coverage from appearing against individual classes in munit print client</version>
+	<version name="1.2.3">Bug fixes, updated documentation. See CHANGES.txt for details</version>
 </project>

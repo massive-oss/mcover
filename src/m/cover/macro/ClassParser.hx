@@ -206,8 +206,17 @@ class ClassParserImpl implements ClassParser
 
 		if(f.expr == null ) return;
 		functionStack = [f];
+
 		f.expr = parseExpr(f.expr);
+
+		field.kind = FFun(f);
+
+		for(parser in fieldParsers)
+		{
+			parser.parseMethod(field, f);
+		}
 	}
+		
 
 
 	/**

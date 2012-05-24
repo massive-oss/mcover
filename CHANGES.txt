@@ -1,3 +1,19 @@
+v1.2.3 - 24.05.12
+
+- Fixed 'missing a return' compilation error when returns are located within if/else or switch statements
+
+	function isTrue():Bool
+	{
+		if(true) return true
+		else return false;
+	} 
+- Fixed same issue above for anonymous functions inside of methods
+- Added support for single line methods that dont use curly braces (yuck)
+
+	function isTrue():Bool return true; 
+
+- changed missing entryLog in Logger.logExit() from an exception to a trace warning
+
 v1.2.2
 - Fixed minor bug on windows preventing code coverage from appearing against individual classes in munit print client
 

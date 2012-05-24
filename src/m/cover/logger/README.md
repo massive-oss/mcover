@@ -45,12 +45,12 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 Add the followng code to your application to start recording
 
-	var logger = m.cover.coverage.MCoverLogger.getLogger();
+	var logger = m.cover.logger.MCoverLogger.getLogger();
 	logger.startRecording();
 
 Add the followng code to your application to stop recording and print report
 
-	var logger = m.cover.coverage.MCoverLogger.getLogger();
+	var logger = m.cover.logger.MCoverLogger.getLogger();
 	logger.stopRecording();
 	logger.report();
 
@@ -125,4 +125,5 @@ The current reportClient outputs several high level summaries of activity
 * summary of total calls, max call stack depth, etc
 
 The current reportClient also outputs the full function stack trace that was recorded
+
 

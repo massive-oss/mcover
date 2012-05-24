@@ -52,7 +52,7 @@ MCover has been designed to work with any HaXe target. Officially we support the
 Code Coverage
 ---------------------
 
-For detailed information see [Code Coverage](src/m/cover/coverage/README.md)
+For detailed information see src/m/cover/coverage/README.md
 
 #### Compiler args
 
@@ -85,7 +85,7 @@ Add the followng code to your application after code has executed:
 
 Function Logging
 ---------------------
-For detailed information see [Function Logging](src/m/cover/logger/README.md)
+For detailed information see src/m/cover/logger/README.md
 
 #### Compiler args
 
@@ -120,5 +120,7 @@ Add the followng code to your application to stop recording and print report
 	var logger = m.cover.coverage.MCoverLogger.getLogger();
 	logger.stopRecording();
 	logger.report();
+
+
 
 

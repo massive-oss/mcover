@@ -33,7 +33,6 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
-
 import m.cover.macro.MacroUtil;
 import m.cover.macro.ClassParser;
 import m.cover.macro.ExpressionParser;
@@ -48,13 +47,43 @@ class LoggerExpressionParser implements ExpressionParser
 
 	var counter:Int;
 
+	var methodReturnCount:Int;
+	var functionReturnCount:IntHash<Int>;
+	var voidType:ComplexType;
+
 	public function new()
 	{
 		
 		counter = 0;
 		ignoreFieldMeta = "IgnoreLogging";
 		includeFieldMeta = null;
+
+		
+		voidType = TPath({ name:"Void", pack:[], params:[], sub:null });
+
+		methodReturnCount = 0;
+		functionReturnCount = new IntHash();
 	}
+
+
+	public function parseMethod(field:Field, f:Function):Void
+	{
+		trace(target.currentLocation);
+
+		methodReturnCount = 0;
+		functionReturnCount = new IntHash();
+
+		if(target.currentClassName == "ContentQuery")
+		{
+			switch(f.expr.expr)
+		{
+			case EBlock(exprs): trace(exprs);
+			default: trace("!!!" + f.expr);
+		}
+		}
+		
+	}
+
 
 	/**
 	Overrides defauld ClassParser.parse() to wrap method entry and exit points
@@ -81,6 +110,10 @@ class LoggerExpressionParser implements ExpressionParser
 			{
 				parseEThrow(expr, e);
 			}
+			case EFunction(name, f): 
+			{
+				functionReturnCount.set(target.functionStack.length, 0);
+			}
 			default: null;
 		}
 		return expr;
@@ -97,7 +130,9 @@ class LoggerExpressionParser implements ExpressionParser
 	{
 		if(exprs.length == 0) return;
 
-		if(expr != target.functionStack[target.functionStack.length-1].expr) return;//only care about the main block in a function
+		var f = target.functionStack[target.functionStack.length-1];
+		if(expr != f.expr) return;//only care about the main block in a function
+		
 		
 		var pos:Position = exprs[0].pos;
 
@@ -105,16 +140,38 @@ class LoggerExpressionParser implements ExpressionParser
 		exprs.unshift(entryLogExpr);
 
 		var lastExpr = exprs[exprs.length-1];
-
+		
 		switch(lastExpr.expr)
 		{
-			case EReturn(e): null;
-			case EThrow(e): null;
+			case EReturn(e): null;//already handled
+			case EThrow(e): null;//already handled
 			default:
 			{
-				//default exit log
-				var exitLogExpr = logExit(lastExpr.pos);
-				exprs.push(exitLogExpr);
+
+				var count = 0;
+
+				if(target.functionStack.length == 1) 
+				{
+					count = methodReturnCount;
+				}
+				else
+				{
+					count = functionReturnCount.get(target.functionStack.length-1);
+				}
+
+				trace(target.currentLocation + "\n" + target.functionStack.length + "\n" + functionReturnCount + ", " + methodReturnCount);
+					
+				if(count == 0)
+				{
+					//default exit log
+					var exitLogExpr = logExit(lastExpr.pos);
+					exprs.push(exitLogExpr);
+				}
+				else
+				{
+					trace("ignoring " + target.currentLocation);
+				}
+				
 			}
 		}
 
@@ -186,6 +243,23 @@ class LoggerExpressionParser implements ExpressionParser
 	function parseEReturn(expr:Expr, e:Expr)
 	{
 		wrapExitExpr(expr, e);
+		incrementReturnCount();
+	}
+
+	function incrementReturnCount()
+	{
+		if(target.functionStack.length == 1)
+		{
+			methodReturnCount ++;
+		}
+
+		var key = target.functionStack.length-1;
+		var count = 1;
+		if(functionReturnCount.exists(key) && functionReturnCount.get(key) > 0)
+		{
+			count = functionReturnCount.get(key) + 1;
+		}
+		functionReturnCount.set(key, count);
 	}
 
 	/**
@@ -227,7 +301,23 @@ class LoggerExpressionParser implements ExpressionParser
 		var exitExprs = createExitExprs(expr, e);	
 		var parentExpr = target.exprStack[target.exprStack.length-2];
 
-		switch(parentExpr.expr)
+
+		
+		var isMethodWithoutBrackets = false;
+		var parentExprDef:ExprDef;
+
+		try
+		{
+			parentExprDef = parentExpr.expr;
+		}
+		catch(e:Dynamic)
+		{
+			//this is a method with no curly braces... yuck!
+			isMethodWithoutBrackets = true;
+			parentExprDef = EContinue;//a placeholder to allow following logic to proceed
+		}
+		
+		switch(parentExprDef)
 		{
 			case EBlock(exprs):
 			{
@@ -249,7 +339,6 @@ class LoggerExpressionParser implements ExpressionParser
 					case EThrow(e1): expr.expr = EThrow(exitExprs.eReturnValue);
 					default: throw new LoggerException("Unexpected exprDef " + expr);
 				}
-
 			}
 			default:
 			{
@@ -262,6 +351,13 @@ class LoggerExpressionParser implements ExpressionParser
 				}
 				var exprs:Array<Expr> = [exitExprs.eExitLogCall, eExit];
 				if(exitExprs.eVars != null) exprs.unshift(exitExprs.eVars);
+
+				if(isMethodWithoutBrackets)
+				{
+					var entryLogExpr = logEntry(expr.pos, target.functionStack.length > 1);
+					exprs.unshift(entryLogExpr);
+				}
+
 				expr.expr = EBlock(exprs);
 			}
 		}
@@ -287,6 +383,7 @@ class LoggerExpressionParser implements ExpressionParser
 		var eReturnValue:Expr = null;
 		var eExitLogCall = logExit(pos);
 
+
 		if(e != null)
 		{
 			var tempVarName = "____m" + counter++;
@@ -305,11 +402,13 @@ class LoggerExpressionParser implements ExpressionParser
 				expr:EConst(CIdent(tempVarName)),
 				pos:pos
 			}
+
+			
 		}
 		return {
 			eVars:eVars,
 			eExitLogCall:eExitLogCall,
-			eReturnValue:eReturnValue
+			eReturnValue:eReturnValue,
 		};
 	}
 
@@ -404,6 +503,6 @@ typedef ExitExprs =
 {
 	eVars:Expr,
 	eExitLogCall:Expr,
-	eReturnValue:Expr
+	eReturnValue:Expr,
 }
 #end
