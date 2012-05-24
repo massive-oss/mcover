@@ -43,7 +43,6 @@ import m.cover.coverage.data.Coverage;
 import m.cover.coverage.data.CoverageResult;
 import m.cover.coverage.data.DataUtil;
 import m.cover.coverage.data.File;
-import m.cover.coverage.data.Line;
 import m.cover.coverage.data.Method;
 import m.cover.coverage.data.Package;
 import m.cover.coverage.data.Statement;

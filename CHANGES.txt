@@ -13,6 +13,7 @@ v1.2.3 - 24.05.12
 	function isTrue():Bool return true; 
 
 - changed missing entryLog in Logger.logExit() from an exception to a trace warning
+- updated examples with above scenarios
 
 v1.2.2
 - Fixed minor bug on windows preventing code coverage from appearing against individual classes in munit print client

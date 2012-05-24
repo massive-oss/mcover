@@ -1,5 +1,0 @@
-@/ws/MassiveCover/example/logger/01_BasicLogging/src,/ws/MassiveCover/example/logger/common/src,,other.*,example.IgnoredWithMacroFilter
-/ws/MassiveCover/example/logger/common/src/example/Example.hx|2012-02-28 10:02:09|example.Example,example.InternalClass,example.PrivateClass|example.InternalClassWithIgnore,example.PrivateClassWithIgnore
-/ws/MassiveCover/example/logger/common/src/other/IgnoredWithMacroFilterWildcard.hx|2012-02-28 10:02:09||other.IgnoredWithMacroFilterWildcard
-/ws/MassiveCover/example/logger/common/src/example/IgnoredWithMacroFilter.hx|2012-02-28 10:02:09||example.IgnoredWithMacroFilter
-/ws/MassiveCover/example/logger/01_BasicLogging/src/Main.hx|2012-02-28 10:02:09||Main

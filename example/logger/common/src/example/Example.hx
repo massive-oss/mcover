@@ -121,6 +121,23 @@ class Example
 		}
 	}
 
+	function returnInsideIfElse():Bool
+	{
+		if(true) return true;
+		else return false;
+	}
+
+	function returnInsideSwitch():Bool
+	{
+		switch(true)
+		{
+			case true:return true;
+			default:return false;
+		}
+	}
+
+	function oneLineMethod():Bool return true
+
 }
 
 class InternalClass
