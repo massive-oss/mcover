@@ -35,6 +35,9 @@ import m.cover.coverage.CoverageReportClient;
 import m.cover.coverage.DataTypes;
 import m.cover.coverage.MCoverage;
 
+/**
+Addes coverage percentage to each test class as well as coverage summary once tests have finished
+*/
 class MCoverPrintClient implements IAdvancedTestResultClient
 {
 	/**
@@ -160,16 +163,16 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	function init()
 	{
-		includeMissingBlocks = true;
-		includeExecutionFrequency = true;
-		includeClassAndPackageBreakdowns = true;
+		includeMissingBlocks = false;
+		includeExecutionFrequency = false;
+		includeClassAndPackageBreakdowns = false;
 		
 		currentCoveredClass = null;
 		classPercentage = 0;
 		coveredClasses = new Hash();
 
-		mcoverClient.includeMissingBlocks = true;
-		mcoverClient.includeExecutionFrequency = true;
+		mcoverClient.includeMissingBlocks = false;
+		mcoverClient.includeExecutionFrequency = false;
 		mcoverLogger.addClient(mcoverClient);	
 	}
 
