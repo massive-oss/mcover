@@ -8,6 +8,7 @@
 -swf build/test/as3_test.swf
 --next
 #Flash 8
+
 -main TestMain
 -lib munit
 -lib hamcrest

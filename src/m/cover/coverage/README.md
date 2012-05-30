@@ -58,6 +58,20 @@ For code branches with multiple scenarios e.g. (a||b), MCover will log branch re
 
 MCover stores the contextual information around every statement and branch in order to provide detailed reporting and metrics, including:
 
+
+* High level summary
+
+
+		OVERALL COVERAGE STATS:
+
+		    packages    71.43%     5 / 7      
+		    files       86.36%     19 / 22    
+		    classes     86.36%     19 / 22    
+		    methods     92.21%     142 / 154  
+		    statements  93.04%     254 / 273  
+		    branches    84.67%     116 / 137  
+		    lines       92.49%     1195 / 1292
+
 *	Package, Class and Method level summaries
 
 
@@ -144,12 +158,13 @@ View results!
 
 	OVERALL STATS SUMMARY:
 
-	total packages      3 / 3               
-	total files         3 / 3               
-	total classes       4 / 4               
-	total methods       17 / 18             
-	total statements    30 / 32             
-	total branches      1 / 2               
+    packages    71.43%     5 / 7      
+    files       86.36%     19 / 22    
+    classes     86.36%     19 / 22    
+    methods     92.21%     142 / 154  
+    statements  93.04%     254 / 273  
+    branches    84.67%     116 / 137  
+    lines       92.49%     1195 / 1292
 
 	----------------------------------------------------------------
 	RESULT              92.59%              
@@ -168,16 +183,20 @@ MCover is now fully integrated with MUnit's rich HTML print client (MUnit 0.9.2.
 ### Step 1. Add MCover macro to build
 
 Specify the MCoverPrintClient when MUnit is including coverage (if upgrading from earlier version of munit):
+This includes the primary print client, as well as the http summary client for CI integration (updated MCover 1.2.4, MUnit 0.9.3.x)
 
 In TestMain.new():
 
 	#if MCOVER
 		var client = new m.cover.coverage.munit.client.MCoverPrintClient();
+		var httpClient = new HTTPClient(new m.cover.coverage.munit.client.MCoverSummaryReportClient());
 	#else
-		var client = new massive.munit.client.RichPrintClient();
+		var client = new RichPrintClient();
+		var httpClient = new HTTPClient(new SummaryReportClient());
 	#end
 
 	var runner:TestRunner = new TestRunner(client);	
+	runner.addResultClient(httpClient);
 
 ### Step 2. Run munit
 
@@ -188,7 +207,7 @@ To test and run with MCover just add the '-coverage' flag
 
 ### Step 3. Configure MCoverPrintClient
 
-By default, the MCoverPrintClient includes all the coverage reports
+By default, the MCoverPrintClient includes detailed coverage reports (except on Neko - see below). This includes:
 
 *	missing blocks
 *	class and package breakdowns
@@ -197,14 +216,15 @@ By default, the MCoverPrintClient includes all the coverage reports
 
 For JavaScript and Flash targets this is fine for munit's rich html output (as the contents of these reports are collapsable)
 
-For Neko targets (or if using the basic MUnit PrintClient) this amount of information can be overwhelming.
+For Neko targets (or when using the basic MUnit PrintClient) only the summary information is enabled by default as the full report information can be overwhelming on the console.
 
-To configure these settings use the follow properties when creating the client in TestMain:
+
+To configure these settings on any target, use the follow properties when creating the client in TestMain:
 
 	var client = new m.cover.coverage.munit.client.MCoverPrintClient();
-	client.includeMissingBlocks = false;
-	client.includeExecutionFrequency = false;
-	client.includeClassAndPackageBreakdowns = false;
+	client.includeMissingBlocks = true|false;
+	client.includeExecutionFrequency = true|false;
+	client.includeClassAndPackageBreakdowns = true|false;
 	...
 
 By default MCoverPrintClient creates a default munit TestResultClient (RichPrintClient) and a default MCover CoverageReportClient (PrintClient) to work with:
@@ -219,6 +239,45 @@ You can also specify alternatives through the constructor:
 	var client = new MCoverPrintClient(munitClient, mcoverClient);
 	...
 
+
+### Step 4. Accessing Coverage Reports on CI environment (or file system)
+
+The MCoverSummaryReportClient (MCover 1.2.4+) appends summary coverage information to the generated summary.txt file per target.
+
+It is added to the TestMain test runner via an HTTPClient
+
+
+	var httpClient = new HTTPClient(new m.cover.coverage.munit.client.MCoverSummaryReportClient());
+	...
+	runner.addResultClient(httpClient);
+
+
+MUnit will save the contents of this summary to the local file system (located in your project's munit report directory
+
+E.g.
+	
+	{reportDirectory}/test/summary/js/summary.txt
+
+Example output:
+
+	#test results
+	result:true
+	count:266
+	pass:266
+	fail:0
+	error:0
+	ignore:0
+	time:5.746999979019165
+
+	#coverage:percent,count/total
+	coverage:95.02%
+	packages:71.43%,5/7
+	files:86.36%,19/22
+	classes:86.36%,19/22
+	methods:93.51%,144/154
+	statements:95.24%,260/273
+	branches:93.48%,129/138
+	lines:96.06%,1244/1295
 
 
 

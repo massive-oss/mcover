@@ -406,6 +406,23 @@ List.prototype = {
 	}
 	,__class__: List
 }
+var Main = $hxClasses["Main"] = function() {
+	m.cover.coverage.MCoverage.getLogger().logStatement(0);
+	var account = new example.Account();
+	account.add(1);
+	account.add(5);
+	account.add(3);
+	account.remove(5);
+	var total = account.totalValue();
+	haxe.Log.trace(account.toString(),{ fileName : "Main.hx", lineNumber : 21, className : "Main", methodName : "new"});
+};
+Main.__name__ = ["Main"];
+Main.main = function() {
+	new Main();
+}
+Main.prototype = {
+	__class__: Main
+}
 var Reflect = $hxClasses["Reflect"] = function() { }
 Reflect.__name__ = ["Reflect"];
 Reflect.hasField = function(o,field) {
@@ -873,26 +890,32 @@ Type.prototype = {
 }
 var example = example || {}
 example.Account = $hxClasses["example.Account"] = function() {
+	m.cover.coverage.MCoverage.getLogger().logStatement(4);
 	this.values = [];
 };
 example.Account.__name__ = ["example","Account"];
 example.Account.prototype = {
 	values: null
 	,add: function(value) {
+		m.cover.coverage.MCoverage.getLogger().logStatement(5);
 		this.values.push(value);
 	}
 	,remove: function(value) {
+		m.cover.coverage.MCoverage.getLogger().logStatement(6);
 		this.values.remove(value);
 	}
 	,toString: function() {
+		m.cover.coverage.MCoverage.getLogger().logStatement(7);
 		return this.values.toString();
 	}
 	,totalValue: function() {
+		m.cover.coverage.MCoverage.getLogger().logStatement(9);
 		var total = 0;
 		var _g = 0, _g1 = this.values;
 		while(_g < _g1.length) {
 			var value = _g1[_g];
 			++_g;
+			m.cover.coverage.MCoverage.getLogger().logStatement(8);
 			total = example.Calculator.add(total,value);
 		}
 		return total;
@@ -925,13 +948,16 @@ example.AccountTest.prototype = {
 	,__class__: example.AccountTest
 }
 example.Calculator = $hxClasses["example.Calculator"] = function() {
+	m.cover.coverage.MCoverage.getLogger().logStatement(1);
 };
 example.Calculator.__name__ = ["example","Calculator"];
 example.Calculator.add = function(a,b) {
+	m.cover.coverage.MCoverage.getLogger().logStatement(2);
 	return a + b;
 }
 example.Calculator.greatestValue = function(a,b) {
-	if(a > b) return a;
+	m.cover.coverage.MCoverage.getLogger().logStatement(3);
+	if(m.cover.coverage.MCoverage.getLogger().logBranch(0,a > b)) return a;
 	return b;
 }
 example.Calculator.prototype = {
@@ -2380,18 +2406,28 @@ m.cover.coverage.client.PrintClient.prototype = {
 	,serializeSummary: function() {
 		var output = "";
 		var r = this.coverage.getResults();
-		var s = 4;
-		var w = 20;
 		output = this.printLine("OVERALL COVERAGE STATS:");
 		output += this.printLine("");
-		output += this.printTabs(["","total packages",r.pc + " / " + r.p],s,w);
-		output += this.printTabs(["","total files",r.fc + " / " + r.f],s,w);
-		output += this.printTabs(["","total classes",r.cc + " / " + r.c],s,w);
-		output += this.printTabs(["","total methods",r.mc + " / " + r.m],s,w);
-		output += this.printTabs(["","total statements",r.sc + " / " + r.s],s,w);
-		output += this.printTabs(["","total branches",r.bc + " / " + r.b],s,w);
-		output += this.printTabs(["","total lines",r.lc + " / " + r.l],s,w);
+		output += this.printSummaryLine("packages",r.pc,r.p);
+		output += this.printSummaryLine("files",r.fc,r.f);
+		output += this.printSummaryLine("classes",r.cc,r.c);
+		output += this.printSummaryLine("methods",r.mc,r.m);
+		output += this.printSummaryLine("statements",r.sc,r.s);
+		output += this.printSummaryLine("branches",r.bc,r.b);
+		output += this.printSummaryLine("lines",r.lc,r.l);
 		return output;
+	}
+	,printSummaryLine: function(name,count,total) {
+		var a = [""];
+		a.push(name);
+		a.push("" + m.cover.util.NumberUtil.round(count / total * 100,2) + "%");
+		a.push("" + count + " / " + total);
+		var s = 4;
+		var w = 12;
+		return this.printTabs(a,s,11,w);
+	}
+	,getPercentage: function(count,total) {
+		return m.cover.util.NumberUtil.round(count / total * 100,2);
 	}
 	,serializePackageResults: function() {
 		var output = "";
@@ -2527,11 +2563,14 @@ m.cover.coverage.client.PrintClient.prototype = {
 	,printLine: function(value) {
 		return this.newline + Std.string(value);
 	}
-	,printTabs: function(args,initialColumnWidth,columnWidth) {
+	,printTabs: function(args,initialColumnWidth,columnWidth,secondColumnWidth) {
+		if(secondColumnWidth == null) secondColumnWidth = -1;
 		if(columnWidth == null) columnWidth = 11;
 		if(initialColumnWidth == null) initialColumnWidth = 4;
 		var s = "";
 		var isFirst = true;
+		var isSecond = false;
+		if(secondColumnWidth == -1) secondColumnWidth = columnWidth;
 		var _g = 0;
 		while(_g < args.length) {
 			var arg = args[_g];
@@ -2539,7 +2578,11 @@ m.cover.coverage.client.PrintClient.prototype = {
 			arg = Std.string(arg);
 			if(isFirst) {
 				isFirst = false;
+				isSecond = true;
 				s += StringTools.rpad(arg,this.tab,initialColumnWidth);
+			} else if(isSecond) {
+				isSecond = false;
+				s += StringTools.rpad(arg,this.tab,secondColumnWidth);
 			} else s += StringTools.rpad(arg,this.tab,columnWidth);
 		}
 		return this.newline + s;
@@ -3330,19 +3373,19 @@ m.cover.coverage.munit.client.MCoverPrintClient.prototype = {
 			return m.cover.coverage.MCoverage.getLogger();
 		} catch( e ) {
 			var msg = "ERROR: Unable to initialize MCover Logger\n" + e;
-			haxe.Log.trace(msg,{ fileName : "MCoverPrintClient.hx", lineNumber : 155, className : "m.cover.coverage.munit.client.MCoverPrintClient", methodName : "initializeMCoverLogger"});
+			haxe.Log.trace(msg,{ fileName : "MCoverPrintClient.hx", lineNumber : 158, className : "m.cover.coverage.munit.client.MCoverPrintClient", methodName : "initializeMCoverLogger"});
 		}
 		return null;
 	}
 	,init: function() {
-		this.includeMissingBlocks = true;
-		this.includeExecutionFrequency = true;
-		this.includeClassAndPackageBreakdowns = true;
+		this.includeMissingBlocks = false;
+		this.includeExecutionFrequency = false;
+		this.includeClassAndPackageBreakdowns = false;
 		this.currentCoveredClass = null;
 		this.classPercentage = 0;
 		this.coveredClasses = new Hash();
-		this.mcoverClient.includeMissingBlocks = true;
-		this.mcoverClient.includeExecutionFrequency = true;
+		this.mcoverClient.includeMissingBlocks = false;
+		this.mcoverClient.includeExecutionFrequency = false;
 		this.mcoverLogger.addClient(this.mcoverClient);
 	}
 	,setCurrentTestClass: function(className) {
@@ -5305,7 +5348,7 @@ js.Boot.__init();
 	var Enum = { };
 	var Void = $hxClasses["Void"] = { __ename__ : ["Void"]};
 }
-haxe.Resource.content = [];
+haxe.Resource.content = [{ name : "MCoverData", data : "s2647:Q3kzMDptLmNvdmVyLmNvdmVyYWdlLmRhdGEuQ292ZXJhZ2VubnE6MEN5Mjk6bS5jb3Zlci5jb3ZlcmFnZS5kYXRhLlBhY2thZ2V6eTA6cTowQ3kyNjptLmNvdmVyLmNvdmVyYWdlLmRhdGEuRmlsZXp5NzpNYWluLmh4cTowQ3kyNzptLmNvdmVyLmNvdmVyYWdlLmRhdGEuQ2xhenp6eTQ6TWFpbnE6MEN5Mjg6bS5jb3Zlci5jb3ZlcmFnZS5kYXRhLk1ldGhvZHp5MzpuZXdxOjBDeTMxOm0uY292ZXIuY292ZXJhZ2UuZGF0YS5TdGF0ZW1lbnR6blI0UjJSNlI2UjhpMTE3aTE1M3kzNjpzcmMlMkZNYWluLmh4JTNBMTMlM0ElMjBjaGFycyUyMDItMzhhenp6enpoYWkxM2kxNGkxNWkxNmkxN2kxOGkxOWkyMGkyMWh6Z2hxaGdoYlI4emhpMWdoYlI2emhpMWdoYlI0emhpMWc6MUNSMWkxeTc6ZXhhbXBsZXE6MENSM3p5MjM6ZXhhbXBsZSUyRkNhbGN1bGF0b3IuaHhxOjBDUjV6eTE4OmV4YW1wbGUuQ2FsY3VsYXRvcnE6MUNSN2kxeTM6YWRkcToyQ1I5aTJuUjEyUjExeTEwOkNhbGN1bGF0b3JSMTNSMTRpMTE1aTEyN3k1MTpzcmMlMkZleGFtcGxlJTJGQ2FsY3VsYXRvci5oeCUzQTklM0ElMjBjaGFycyUyMDItMTRhaTF6emkxaTJoYWk5aHpnaHFoZzowQ1I3elI4cToxQ1I5aTFuUjEyUjExUjE1UjEzUjhpNjBpNjJ5NTI6c3JjJTJGZXhhbXBsZSUyRkNhbGN1bGF0b3IuaHglM0E1JTNBJTIwY2hhcnMlMjAyMi0yNGFpMXp6emkxaGFpNWh6Z2hxaGc6MkNSN2kyeTEzOmdyZWF0ZXN0VmFsdWVxOjNDUjlpM25SMTJSMTFSMTVSMTNSMThpMTk0aTIxMnk1MjpzcmMlMkZleGFtcGxlJTJGQ2FsY3VsYXRvci5oeCUzQTE0JTNBJTIwY2hhcnMlMjAyLTIwYWkxenppMmkzaGFpMTVoemdocTowQ3kyODptLmNvdmVyLmNvdmVyYWdlLmRhdGEuQnJhbmNoem5SMTJSMTFSMTVSMTNSMThpMTk3aTIwMnk1MjpzcmMlMkZleGFtcGxlJTJGQ2FsY3VsYXRvci5oeCUzQTE0JTNBJTIwY2hhcnMlMjA1LTEwYWkxenppMnpoYWkxNGh6emdoZ2hiUjh6UjE0aTFSMThpMmhpM2doYlIxM3poaTFnOjFDUjNpMXkyMDpleGFtcGxlJTJGQWNjb3VudC5oeHE6MENSNXp5MTU6ZXhhbXBsZS5BY2NvdW50cToxQ1I3aTFSMTRxOjVDUjlpNW5SMjJSMTF5NzpBY2NvdW50UjIzUjE0aTE0MmkxNjB5NDk6c3JjJTJGZXhhbXBsZSUyRkFjY291bnQuaHglM0ExMyUzQSUyMGNoYXJzJTIwMi0yMGFpMWkxemkxaTVoYWkxM2h6Z2hxaGc6NENSN2k0eTEwOnRvdGFsVmFsdWVxOjhDUjlpOG5SMjJSMTFSMjRSMjNSMjZpMzg2aTQyMnk0OTpzcmMlMkZleGFtcGxlJTJGQWNjb3VudC5oeCUzQTMxJTNBJTIwY2hhcnMlMjAzLTM5YWkxaTF6aTRpOGhhaTMxaHpnOjlDUjlpOW5SMjJSMTFSMjRSMjNSMjZpMzQxaTM1NXk0OTpzcmMlMkZleGFtcGxlJTJGQWNjb3VudC5oeCUzQTI4JTNBJTIwY2hhcnMlMjAyLTE2YWkxaTF6aTRpOWhhaTI4aTI5aTMwaTMyaTMzaHpnaHFoZzowQ1I3elI4cTo0Q1I5aTRuUjIyUjExUjI0UjIzUjhpODhpOTl5NDg6c3JjJTJGZXhhbXBsZSUyRkFjY291bnQuaHglM0E4JTNBJTIwY2hhcnMlMjAyLTEzYWkxaTF6emk0aGFpOGh6Z2hxaGc6M0NSN2kzeTg6dG9TdHJpbmdxOjdDUjlpN25SMjJSMTFSMjRSMjNSMzBpMjcyaTI5Nnk0OTpzcmMlMkZleGFtcGxlJTJGQWNjb3VudC5oeCUzQTIzJTNBJTIwY2hhcnMlMjAyLTI2YWkxaTF6aTNpN2hhaTIzaHpnaHFoZzoyQ1I3aTJ5NjpyZW1vdmVxOjZDUjlpNm5SMjJSMTFSMjRSMjNSMzJpMjA2aTIyNnk0OTpzcmMlMkZleGFtcGxlJTJGQWNjb3VudC5oeCUzQTE4JTNBJTIwY2hhcnMlMjAyLTIyYWkxaTF6aTJpNmhhaTE4aHpnaHFoZ2hiUjMwaTNSMjZpNFI4elIxNGkxUjMyaTJoaTVnaGJSMjN6aGkxZ2hiUjEyelIyMmkxaGkyZ2hiUjJ6UjExaTFoaTJxOjRhaTFpMXp6aTRoOjNhaTF6emkyaTNoOjJhaTF6emkxaTJoOjlhaTFpMXppNGk5aDoxYWkxenp6aTFoOjhhaTFpMXppNGk4aDowYXp6enp6aDo3YWkxaTF6aTNpN2g6NmFpMWkxemkyaTZoOjVhaTFpMXppMWk1aGhxOjBhaTF6emkyemhocWhxaGc"}];
 {
 	if(typeof document != "undefined") js.Lib.document = document;
 	if(typeof window != "undefined") {
@@ -5333,6 +5376,7 @@ js["XMLHttpRequest"] = window.XMLHttpRequest?XMLHttpRequest:window.ActiveXObject
 	return $r;
 }(this));
 ExampleTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, testExample : { Test : null}, testAsyncExample : { AsyncTest : null}, testExampleThatOnlyRunsWithDebugFlag : { TestDebug : null}}};
+Main.__meta__ = { statics : { main : { IgnoreCover : null}}};
 example.AccountTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, shouldBeEmptyAtConstructor : { Test : null}, shouldAddValueToTotal : { Test : null}}};
 example.CalculatorTest.__meta__ = { fields : { beforeClass : { BeforeClass : null}, afterClass : { AfterClass : null}, setup : { Before : null}, tearDown : { After : null}, shouldAddValues : { Test : null}, shouldReturn10 : { Test : null}}};
 haxe.Serializer.USE_CACHE = false;

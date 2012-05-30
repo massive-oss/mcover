@@ -138,8 +138,7 @@ To enable function entry/exit logging
 		{
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 		}
-
-	
+		
 		for(cls in classMacroHash.keys())
 		{
 			var args = classMacroHash.get(cls);
@@ -149,7 +148,7 @@ To enable function entry/exit logging
 				var argsString = "[\"" + args.join("\",\"") + "\"]";
 				//traceToFile(cls);
 				Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
-				//Compiler.keep(cl, null, true);//ignored in haxe 2_0_8
+				Compiler.keep(cls, null, true);//ignored in haxe 2_0_8
 			}
 			else
 			{

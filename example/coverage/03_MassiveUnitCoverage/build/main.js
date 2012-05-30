@@ -1,29 +1,135 @@
-$estr = function() { return js.Boot.__string_rec(this,''); }
-if(typeof js=='undefined') js = {}
-js.Boot = function() { }
+var $_, $hxClasses = $hxClasses || {}, $estr = function() { return js.Boot.__string_rec(this,''); }
+function $extend(from, fields) {
+	function inherit() {}; inherit.prototype = from; var proto = new inherit();
+	for (var name in fields) proto[name] = fields[name];
+	return proto;
+}
+var IntIter = $hxClasses["IntIter"] = function(min,max) {
+	this.min = min;
+	this.max = max;
+};
+IntIter.__name__ = ["IntIter"];
+IntIter.prototype = {
+	min: null
+	,max: null
+	,hasNext: function() {
+		return this.min < this.max;
+	}
+	,next: function() {
+		return this.min++;
+	}
+	,__class__: IntIter
+}
+var Main = $hxClasses["Main"] = function() {
+	var account = new example.Account();
+	account.add(1);
+	account.add(5);
+	account.add(3);
+	account.remove(5);
+	var total = account.totalValue();
+	haxe.Log.trace(account.toString(),{ fileName : "Main.hx", lineNumber : 21, className : "Main", methodName : "new"});
+};
+Main.__name__ = ["Main"];
+Main.main = function() {
+	new Main();
+}
+Main.prototype = {
+	__class__: Main
+}
+var Std = $hxClasses["Std"] = function() { }
+Std.__name__ = ["Std"];
+Std["is"] = function(v,t) {
+	return js.Boot.__instanceof(v,t);
+}
+Std.string = function(s) {
+	return js.Boot.__string_rec(s,"");
+}
+Std["int"] = function(x) {
+	return x | 0;
+}
+Std.parseInt = function(x) {
+	var v = parseInt(x,10);
+	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
+	if(isNaN(v)) return null;
+	return v;
+}
+Std.parseFloat = function(x) {
+	return parseFloat(x);
+}
+Std.random = function(x) {
+	return Math.floor(Math.random() * x);
+}
+Std.prototype = {
+	__class__: Std
+}
+var example = example || {}
+example.Account = $hxClasses["example.Account"] = function() {
+	this.values = [];
+};
+example.Account.__name__ = ["example","Account"];
+example.Account.prototype = {
+	values: null
+	,add: function(value) {
+		this.values.push(value);
+	}
+	,remove: function(value) {
+		this.values.remove(value);
+	}
+	,toString: function() {
+		return this.values.toString();
+	}
+	,totalValue: function() {
+		var total = 0;
+		var _g = 0, _g1 = this.values;
+		while(_g < _g1.length) {
+			var value = _g1[_g];
+			++_g;
+			total = example.Calculator.add(total,value);
+		}
+		return total;
+	}
+	,__class__: example.Account
+}
+example.Calculator = $hxClasses["example.Calculator"] = function() {
+};
+example.Calculator.__name__ = ["example","Calculator"];
+example.Calculator.add = function(a,b) {
+	return a + b;
+}
+example.Calculator.greatestValue = function(a,b) {
+	if(a > b) return a;
+	return b;
+}
+example.Calculator.prototype = {
+	__class__: example.Calculator
+}
+var haxe = haxe || {}
+haxe.Log = $hxClasses["haxe.Log"] = function() { }
+haxe.Log.__name__ = ["haxe","Log"];
+haxe.Log.trace = function(v,infos) {
+	js.Boot.__trace(v,infos);
+}
+haxe.Log.clear = function() {
+	js.Boot.__clear_trace();
+}
+haxe.Log.prototype = {
+	__class__: haxe.Log
+}
+var js = js || {}
+js.Boot = $hxClasses["js.Boot"] = function() { }
 js.Boot.__name__ = ["js","Boot"];
 js.Boot.__unhtml = function(s) {
 	return s.split("&").join("&amp;").split("<").join("&lt;").split(">").join("&gt;");
 }
 js.Boot.__trace = function(v,i) {
 	var msg = i != null?i.fileName + ":" + i.lineNumber + ": ":"";
-	msg += js.Boot.__unhtml(js.Boot.__string_rec(v,"")) + "<br/>";
+	msg += js.Boot.__string_rec(v,"");
 	var d = document.getElementById("haxe:trace");
-	if(d == null) alert("No haxe:trace element defined\n" + msg); else d.innerHTML += msg;
+	if(d != null) d.innerHTML += js.Boot.__unhtml(msg) + "<br/>"; else if(typeof(console) != "undefined" && console.log != null) console.log(msg);
 }
 js.Boot.__clear_trace = function() {
 	var d = document.getElementById("haxe:trace");
 	if(d != null) d.innerHTML = "";
-}
-js.Boot.__closure = function(o,f) {
-	var m = o[f];
-	if(m == null) return null;
-	var f1 = function() {
-		return m.apply(o,arguments);
-	};
-	f1.scope = o;
-	f1.method = m;
-	return f1;
 }
 js.Boot.__string_rec = function(o,s) {
 	if(o == null) return "null";
@@ -74,7 +180,7 @@ js.Boot.__string_rec = function(o,s) {
 		if(hasp && !o.hasOwnProperty(k)) {
 			continue;
 		}
-		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__") {
+		if(k == "prototype" || k == "__class__" || k == "__super__" || k == "__interfaces__" || k == "__properties__") {
 			continue;
 		}
 		if(str.length != 2) str += ", \n";
@@ -165,7 +271,7 @@ js.Boot.__init = function() {
 	if(String.prototype.cca == null) String.prototype.cca = String.prototype.charCodeAt;
 	String.prototype.charCodeAt = function(i) {
 		var x = this.cca(i);
-		if(x != x) return null;
+		if(x != x) return undefined;
 		return x;
 	};
 	var oldsub = String.prototype.substr;
@@ -178,10 +284,19 @@ js.Boot.__init = function() {
 		} else if(len < 0) len = this.length + len - pos;
 		return oldsub.apply(this,[pos,len]);
 	};
-	$closure = js.Boot.__closure;
+	Function.prototype["$bind"] = function(o) {
+		var f = function() {
+			return f.method.apply(f.scope,arguments);
+		};
+		f.scope = o;
+		f.method = this;
+		return f;
+	};
 }
-js.Boot.prototype.__class__ = js.Boot;
-js.Lib = function() { }
+js.Boot.prototype = {
+	__class__: js.Boot
+}
+js.Lib = $hxClasses["js.Lib"] = function() { }
 js.Lib.__name__ = ["js","Lib"];
 js.Lib.isIE = null;
 js.Lib.isOpera = null;
@@ -196,142 +311,17 @@ js.Lib.eval = function(code) {
 js.Lib.setErrorHandler = function(f) {
 	js.Lib.onerror = f;
 }
-js.Lib.prototype.__class__ = js.Lib;
-if(typeof haxe=='undefined') haxe = {}
-haxe.Log = function() { }
-haxe.Log.__name__ = ["haxe","Log"];
-haxe.Log.trace = function(v,infos) {
-	js.Boot.__trace(v,infos);
+js.Lib.prototype = {
+	__class__: js.Lib
 }
-haxe.Log.clear = function() {
-	js.Boot.__clear_trace();
-}
-haxe.Log.prototype.__class__ = haxe.Log;
-Main = function(p) {
-	if( p === $_ ) return;
-	var account = new example.Account();
-	account.add(1);
-	account.add(5);
-	account.add(3);
-	account.remove(5);
-	var total = account.totalValue();
-	haxe.Log.trace(account.toString(),{ fileName : "Main.hx", lineNumber : 21, className : "Main", methodName : "new"});
-}
-Main.__name__ = ["Main"];
-Main.main = function() {
-	new Main();
-}
-Main.prototype.__class__ = Main;
-Std = function() { }
-Std.__name__ = ["Std"];
-Std["is"] = function(v,t) {
-	return js.Boot.__instanceof(v,t);
-}
-Std.string = function(s) {
-	return js.Boot.__string_rec(s,"");
-}
-Std["int"] = function(x) {
-	if(x < 0) return Math.ceil(x);
-	return Math.floor(x);
-}
-Std.parseInt = function(x) {
-	var v = parseInt(x,10);
-	if(v == 0 && x.charCodeAt(1) == 120) v = parseInt(x);
-	if(isNaN(v)) return null;
-	return v;
-}
-Std.parseFloat = function(x) {
-	return parseFloat(x);
-}
-Std.random = function(x) {
-	return Math.floor(Math.random() * x);
-}
-Std.prototype.__class__ = Std;
-if(typeof example=='undefined') example = {}
-example.Calculator = function(p) {
-}
-example.Calculator.__name__ = ["example","Calculator"];
-example.Calculator.add = function(a,b) {
-	return a + b;
-}
-example.Calculator.greatestValue = function(a,b) {
-	if(a > b) return a;
-	return b;
-}
-example.Calculator.prototype.__class__ = example.Calculator;
-example.Account = function(p) {
-	if( p === $_ ) return;
-	this.values = [];
-}
-example.Account.__name__ = ["example","Account"];
-example.Account.prototype.values = null;
-example.Account.prototype.add = function(value) {
-	this.values.push(value);
-}
-example.Account.prototype.remove = function(value) {
-	this.values.remove(value);
-}
-example.Account.prototype.toString = function() {
-	return this.values.toString();
-}
-example.Account.prototype.totalValue = function() {
-	var total = 0;
-	var _g = 0, _g1 = this.values;
-	while(_g < _g1.length) {
-		var value = _g1[_g];
-		++_g;
-		total = example.Calculator.add(total,value);
-	}
-	return total;
-}
-example.Account.prototype.__class__ = example.Account;
-IntIter = function(min,max) {
-	if( min === $_ ) return;
-	this.min = min;
-	this.max = max;
-}
-IntIter.__name__ = ["IntIter"];
-IntIter.prototype.min = null;
-IntIter.prototype.max = null;
-IntIter.prototype.hasNext = function() {
-	return this.min < this.max;
-}
-IntIter.prototype.next = function() {
-	return this.min++;
-}
-IntIter.prototype.__class__ = IntIter;
-$_ = {}
 js.Boot.__res = {}
 js.Boot.__init();
-{
-	js.Lib.document = document;
-	js.Lib.window = window;
-	onerror = function(msg,url,line) {
-		var f = js.Lib.onerror;
-		if( f == null )
-			return false;
-		return f(msg,[url+":"+line]);
-	}
-}
-{
-	String.prototype.__class__ = String;
-	String.__name__ = ["String"];
-	Array.prototype.__class__ = Array;
-	Array.__name__ = ["Array"];
-	Int = { __name__ : ["Int"]};
-	Dynamic = { __name__ : ["Dynamic"]};
-	Float = Number;
-	Float.__name__ = ["Float"];
-	Bool = { __ename__ : ["Bool"]};
-	Class = { __name__ : ["Class"]};
-	Enum = { };
-	Void = { __ename__ : ["Void"]};
-}
 {
 	Math.__name__ = ["Math"];
 	Math.NaN = Number["NaN"];
 	Math.NEGATIVE_INFINITY = Number["NEGATIVE_INFINITY"];
 	Math.POSITIVE_INFINITY = Number["POSITIVE_INFINITY"];
+	$hxClasses["Math"] = Math;
 	Math.isFinite = function(i) {
 		return isFinite(i);
 	};
@@ -339,6 +329,32 @@ js.Boot.__init();
 		return isNaN(i);
 	};
 }
-js.Lib.onerror = null;
+{
+	String.prototype.__class__ = $hxClasses["String"] = String;
+	String.__name__ = ["String"];
+	Array.prototype.__class__ = $hxClasses["Array"] = Array;
+	Array.__name__ = ["Array"];
+	var Int = $hxClasses["Int"] = { __name__ : ["Int"]};
+	var Dynamic = $hxClasses["Dynamic"] = { __name__ : ["Dynamic"]};
+	var Float = $hxClasses["Float"] = Number;
+	Float.__name__ = ["Float"];
+	var Bool = $hxClasses["Bool"] = Boolean;
+	Bool.__ename__ = ["Bool"];
+	var Class = $hxClasses["Class"] = { __name__ : ["Class"]};
+	var Enum = { };
+	var Void = $hxClasses["Void"] = { __ename__ : ["Void"]};
+}
+{
+	if(typeof document != "undefined") js.Lib.document = document;
+	if(typeof window != "undefined") {
+		js.Lib.window = window;
+		js.Lib.window.onerror = function(msg,url,line) {
+			var f = js.Lib.onerror;
+			if(f == null) return false;
+			return f(msg,[url + ":" + line]);
+		};
+	}
+}
 Main.__meta__ = { statics : { main : { IgnoreCover : null}}};
+js.Lib.onerror = null;
 Main.main()

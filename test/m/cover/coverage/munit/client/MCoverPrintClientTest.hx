@@ -144,6 +144,8 @@ class MCoverPrintClientTest
 	@Test
 	public function shouldCreateCoverageForCurrentTestClass()
 	{
+		instance.includeMissingBlocks = true;
+		
 		var coverage = coverageLogger.coverage;
 		var branch = NodeMock.createBranch();
 		var statement = NodeMock.createStatement();
@@ -156,13 +158,13 @@ class MCoverPrintClientTest
 		branch.falseCount = 0;
 		statement.count = 0;
 		instance.setCurrentTestClass("item2Test");
-		
-		var coverageResult = munitClient.testCoverage;
 
-		Assert.isNotNull(coverageResult);
-		Assert.areEqual("package.class", coverageResult.className);
-		Assert.areEqual(25, coverageResult.percent);
-		Assert.areEqual(2, coverageResult.blocks.length);
+		var lastClassCoverageResult = munitClient.testCoverage;
+
+		Assert.isNotNull(lastClassCoverageResult);
+		Assert.areEqual("package.class", lastClassCoverageResult.className);
+		Assert.areEqual(25, lastClassCoverageResult.percent);
+		Assert.areEqual(2, lastClassCoverageResult.blocks.length);
 	}
 
 	@Test

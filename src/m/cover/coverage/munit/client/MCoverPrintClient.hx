@@ -163,16 +163,22 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	function init()
 	{
-		includeMissingBlocks = false;
-		includeExecutionFrequency = false;
-		includeClassAndPackageBreakdowns = false;
+		#if neko
+			var VERBOSE:Bool = false;
+		#else
+			var VERBOSE:Bool = Std.is(client, RichPrintClient);
+		#end
+		
+		includeMissingBlocks = VERBOSE;
+		includeExecutionFrequency = VERBOSE;
+		includeClassAndPackageBreakdowns = VERBOSE;
 		
 		currentCoveredClass = null;
 		classPercentage = 0;
 		coveredClasses = new Hash();
 
-		mcoverClient.includeMissingBlocks = false;
-		mcoverClient.includeExecutionFrequency = false;
+		mcoverClient.includeMissingBlocks = includeMissingBlocks;
+		mcoverClient.includeExecutionFrequency = includeExecutionFrequency;
 		mcoverLogger.addClient(mcoverClient);	
 	}
 

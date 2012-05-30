@@ -1,3 +1,10 @@
+v1.2.4 - 30.05.12
+
+- Added MCoverSummaryReportClient to leverage better CI support in munit 0.9.3.x
+- Changed default ouput of MCoverPrintClient (only prints summary info by default)
+- Switched hxml files broken by Haxe209 to bash scripts
+- Updated documentation regarding MCoverSummaryReportClient
+
 v1.2.3 - 24.05.12
 
 - Fixed 'missing a return' compilation error when returns are located within if/else or switch statements
