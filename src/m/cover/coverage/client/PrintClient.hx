@@ -31,6 +31,8 @@ package m.cover.coverage.client;
 import m.cover.coverage.CoverageReportClient;
 import m.cover.coverage.DataTypes;
 import m.cover.util.Timer;
+import m.cover.util.NumberUtil;
+
 
 @IgnoreLogging
 class PrintClient implements AdvancedCoverageReportClient
@@ -213,19 +215,38 @@ class PrintClient implements AdvancedCoverageReportClient
 		var output = "";
 		var r = coverage.getResults();
 
-		var s:Int = SHORT_FIRST_TAB_WIDTH;
-		var w:Int = LONG_FIRST_TAB_WIDTH;
-
+	
 		output = printLine("OVERALL COVERAGE STATS:");
 		output += printLine("");
-		output += printTabs(["", "total packages", r.pc + " / " + r.p], s, w);
-		output += printTabs(["", "total files", r.fc + " / " + r.f], s, w);
-		output += printTabs(["", "total classes", r.cc + " / " + r.c], s, w);
-		output += printTabs(["", "total methods", r.mc + " / " + r.m], s, w);
-		output += printTabs(["", "total statements", r.sc + " / " + r.s], s, w);
-		output += printTabs(["", "total branches", r.bc + " / " + r.b], s, w);
-		output += printTabs(["", "total lines", r.lc + " / " + r.l], s, w);
+
+		output += printSummaryLine("packages", r.pc, r.p);
+		output += printSummaryLine("files", r.fc, r.f);
+		output += printSummaryLine("classes", r.cc, r.c);
+		output += printSummaryLine("methods", r.mc, r.m);
+		output += printSummaryLine("statements", r.sc, r.s);
+		output += printSummaryLine("branches", r.bc, r.b);
+		output += printSummaryLine("lines", r.lc, r.l);
+
 		return output;
+	}
+
+	function printSummaryLine(name:String, count:Int, total:Int):String
+	{
+		var a:Array<String> = [""];
+		a.push(name);
+		a.push("" + NumberUtil.round((count/total)*100, 2) + "%");
+		a.push("" + count + " / " + total);
+
+		var s:Int = SHORT_FIRST_TAB_WIDTH;
+		var w:Int = 12;//LONG_FIRST_TAB_WIDTH;
+
+		return printTabs(a, s, DEFAULT_TAB_WIDTH, w);
+	}
+
+	function getPercentage(count:Int, total:Int):Float
+	{
+		return NumberUtil.round((count/total)*100, 2);
+
 	}
 
 	function serializePackageResults():String
@@ -447,10 +468,13 @@ class PrintClient implements AdvancedCoverageReportClient
 		return newline + Std.string(value);
 	}
 
-	function printTabs(args:Array<Dynamic>,?initialColumnWidth=SHORT_FIRST_TAB_WIDTH, ?columnWidth:Int=DEFAULT_TAB_WIDTH):String
+	function printTabs(args:Array<Dynamic>,?initialColumnWidth=SHORT_FIRST_TAB_WIDTH, ?columnWidth:Int=DEFAULT_TAB_WIDTH, ?secondColumnWidth:Int=-1):String
 	{
 		var s:String = "";
 		var isFirst:Bool = true;
+		var isSecond:Bool = false;
+
+		if(secondColumnWidth == -1) secondColumnWidth = columnWidth;
 
 		for(arg in args)
 		{
@@ -458,7 +482,13 @@ class PrintClient implements AdvancedCoverageReportClient
 			if(isFirst)
 			{
 				isFirst = false;
+				isSecond = true;
 				s += StringTools.rpad(arg, tab, initialColumnWidth);
+			}
+			else if(isSecond)
+			{
+				isSecond = false;
+				s += StringTools.rpad(arg, tab, secondColumnWidth);
 			}
 			else
 			{
