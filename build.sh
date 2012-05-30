@@ -8,4 +8,5 @@ bash build.sh
 cd ../
 
 haxelib run munit test -neko -coverage
+
 haxelib run mlib install
