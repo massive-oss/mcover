@@ -1,3 +1,0 @@
--cmd haxelib run mlib allClasses
--cmd cd example/coverage
--cmd haxe build.hxml

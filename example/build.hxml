@@ -1,6 +1,0 @@
--cmd cd coverage
--cmd haxe build.hxml
--cmd cd ../
--cmd cd logger
--cmd haxe build.hxml
--cmd cd ../

@@ -1,3 +1,0 @@
--cmd cd 01_BasicLogging
--cmd haxe build.hxml
--cmd cd ../
