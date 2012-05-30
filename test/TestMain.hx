@@ -1,6 +1,7 @@
-import massive.munit.client.PrintClient;
+import massive.munit.client.RichPrintClient;
 import massive.munit.client.HTTPClient;
 import massive.munit.client.JUnitReportClient;
+import massive.munit.client.SummaryReportClient;
 import massive.munit.TestRunner;
 
 #if js
@@ -25,16 +26,19 @@ class TestMain
 	{
 		var suites = new Array<Class<massive.munit.TestSuite>>();
 		suites.push(TestSuite);
-		
+
 		#if MCOVER
-			var client = new m.cover.coverage.munit.client.MCoverPrintClient();
+			var client = new massive.mcover.munit.client.MCoverPrintClient();
+			var httpClient = new HTTPClient(new massive.mcover.munit.client.MCoverSummaryReportClient());
 		#else
-			var client = new massive.munit.client.RichPrintClient();
+			var client = new RichPrintClient();
+			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
-		var runner:TestRunner = new TestRunner(client);
-		runner.completionHandler = completionHandler;
+		var runner:TestRunner = new TestRunner(client);	
+		runner.addResultClient(httpClient);
 		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
+		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
 	

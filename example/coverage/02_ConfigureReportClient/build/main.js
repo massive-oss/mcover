@@ -1307,18 +1307,28 @@ m.cover.coverage.client.PrintClient.prototype.serializeOverallPercentage = funct
 m.cover.coverage.client.PrintClient.prototype.serializeSummary = function() {
 	var output = "";
 	var r = this.coverage.getResults();
-	var s = 4;
-	var w = 20;
 	output = this.printLine("OVERALL COVERAGE STATS:");
 	output += this.printLine("");
-	output += this.printTabs(["","total packages",r.pc + " / " + r.p],s,w);
-	output += this.printTabs(["","total files",r.fc + " / " + r.f],s,w);
-	output += this.printTabs(["","total classes",r.cc + " / " + r.c],s,w);
-	output += this.printTabs(["","total methods",r.mc + " / " + r.m],s,w);
-	output += this.printTabs(["","total statements",r.sc + " / " + r.s],s,w);
-	output += this.printTabs(["","total branches",r.bc + " / " + r.b],s,w);
-	output += this.printTabs(["","total lines",r.lc + " / " + r.l],s,w);
+	output += this.printSummaryLine("packages",r.pc,r.p);
+	output += this.printSummaryLine("files",r.fc,r.f);
+	output += this.printSummaryLine("classes",r.cc,r.c);
+	output += this.printSummaryLine("methods",r.mc,r.m);
+	output += this.printSummaryLine("statements",r.sc,r.s);
+	output += this.printSummaryLine("branches",r.bc,r.b);
+	output += this.printSummaryLine("lines",r.lc,r.l);
 	return output;
+}
+m.cover.coverage.client.PrintClient.prototype.printSummaryLine = function(name,count,total) {
+	var a = [""];
+	a.push(name);
+	a.push("" + m.cover.util.NumberUtil.round(count / total * 100,2) + "%");
+	a.push("" + count + " / " + total);
+	var s = 4;
+	var w = 12;
+	return this.printTabs(a,s,11,w);
+}
+m.cover.coverage.client.PrintClient.prototype.getPercentage = function(count,total) {
+	return m.cover.util.NumberUtil.round(count / total * 100,2);
 }
 m.cover.coverage.client.PrintClient.prototype.serializePackageResults = function() {
 	var output = "";
@@ -1454,11 +1464,14 @@ m.cover.coverage.client.PrintClient.prototype.serializeExecutionFrequency = func
 m.cover.coverage.client.PrintClient.prototype.printLine = function(value) {
 	return this.newline + Std.string(value);
 }
-m.cover.coverage.client.PrintClient.prototype.printTabs = function(args,initialColumnWidth,columnWidth) {
+m.cover.coverage.client.PrintClient.prototype.printTabs = function(args,initialColumnWidth,columnWidth,secondColumnWidth) {
+	if(secondColumnWidth == null) secondColumnWidth = -1;
 	if(columnWidth == null) columnWidth = 11;
 	if(initialColumnWidth == null) initialColumnWidth = 4;
 	var s = "";
 	var isFirst = true;
+	var isSecond = false;
+	if(secondColumnWidth == -1) secondColumnWidth = columnWidth;
 	var _g = 0;
 	while(_g < args.length) {
 		var arg = args[_g];
@@ -1466,7 +1479,11 @@ m.cover.coverage.client.PrintClient.prototype.printTabs = function(args,initialC
 		arg = Std.string(arg);
 		if(isFirst) {
 			isFirst = false;
+			isSecond = true;
 			s += StringTools.rpad(arg,this.tab,initialColumnWidth);
+		} else if(isSecond) {
+			isSecond = false;
+			s += StringTools.rpad(arg,this.tab,secondColumnWidth);
 		} else s += StringTools.rpad(arg,this.tab,columnWidth);
 	}
 	return this.newline + s;
@@ -1514,6 +1531,14 @@ haxe.io.Error.OutsideBounds = ["OutsideBounds",2];
 haxe.io.Error.OutsideBounds.toString = $estr;
 haxe.io.Error.OutsideBounds.__enum__ = haxe.io.Error;
 haxe.io.Error.Custom = function(e) { var $x = ["Custom",3,e]; $x.__enum__ = haxe.io.Error; $x.toString = $estr; return $x; }
+m.cover.util.NumberUtil = function() { }
+m.cover.util.NumberUtil.__name__ = ["m","cover","util","NumberUtil"];
+m.cover.util.NumberUtil.round = function(value,precision) {
+	if(precision == null) precision = 4;
+	value = value * Math.pow(10,precision);
+	return Math.round(value) / Math.pow(10,precision);
+}
+m.cover.util.NumberUtil.prototype.__class__ = m.cover.util.NumberUtil;
 Std = function() { }
 Std.__name__ = ["Std"];
 Std["is"] = function(v,t) {
@@ -3380,6 +3405,7 @@ m.cover.coverage.client.PrintClient.DEFAULT_TAB_WIDTH = 11;
 m.cover.coverage.client.PrintClient.SHORT_FIRST_TAB_WIDTH = 4;
 m.cover.coverage.client.PrintClient.LONG_FIRST_TAB_WIDTH = 20;
 m.cover.coverage.client.TraceClient.__meta__ = { obj : { IgnoreLogging : null}};
+m.cover.util.NumberUtil.__meta__ = { obj : { IgnoreCover : null, IgnoreLogging : null}};
 m.cover.coverage.data.Method.__meta__ = { obj : { IgnoreLogging : null}, fields : { hxSerialize : { IgnoreLogging : null}, hxUnserialize : { IgnoreLogging : null}}};
 haxe.Unserializer.DEFAULT_RESOLVER = Type;
 haxe.Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";

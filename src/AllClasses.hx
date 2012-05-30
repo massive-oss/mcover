@@ -51,6 +51,7 @@ import m.cover.coverage.macro.CoverageExpressionParser;
 import m.cover.coverage.macro.CoverageMacroDelegate;
 import m.cover.coverage.MCoverage;
 import m.cover.coverage.munit.client.MCoverPrintClient;
+import m.cover.coverage.munit.client.MCoverSummaryReportClient;
 import m.cover.Exception;
 import m.cover.logger.client.LoggerClient;
 import m.cover.logger.client.LoggerClientImpl;

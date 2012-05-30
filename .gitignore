@@ -9,3 +9,4 @@ mcover.sublime-workspace
 example/coverage/01_BasicCoverage/.mcover/debug-log.txt
 example/logger/01_BasicLogging/.mcover/cached-classes-null-IgnoreLogging.txt
 example/logger/01_BasicLogging/.mcover/debug-log.txt
+example/coverage/01_BasicCoverage/.mcover/cached-classes-null-IgnoreCover.txt
