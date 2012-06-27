@@ -29,6 +29,9 @@
 package m.cover.macro;
 
 #if macro
+
+import haxe.macro.Context;
+
 class ClassPathFilter
 {
 	/**
@@ -186,7 +189,7 @@ class ClassPathFilter
 		{
 			temp = contents;
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9@])+)", "m");
+			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		
 			while(regIgnore.match(temp))
 			{
@@ -199,11 +202,11 @@ class ClassPathFilter
 
 		if(includeClassMeta != null)
 		{
-			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9@])+)", "m");
+			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		}
 		else
 		{
-			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9@])+)/;
+			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/;
 		}
 
 		temp = contents;
@@ -212,11 +215,13 @@ class ClassPathFilter
 		{
 			var cls = prefix + regInclude.matched(2);
 
-			if(cls.indexOf("@") > -1)
+			trace(cls, true);
+
+			if(isPartialClass(cls, path))
 			{
 				//Added support for MCore Partials Macros
 				excludes.push(cls);
-				//excludes.push(cls.split("@").join("_partial_"));
+				excludes.push(cls + "_generated");
 			}
 			else if(excludesHash.exists(cls) || skip(cls))
 			{
@@ -232,6 +237,31 @@ class ClassPathFilter
 		cache.addToCache(path, includes, excludes);
 	}
 
+
+	/**
+	Customisation for MCore partials.
+	Checks for pattern Class_xxx.hx where there also exists a Class.hx at the same location
+	
+	Ignores Class_xxx_generated.hx
+	*/
+	function isPartialClass(cls:String, path:String):Bool
+	{
+		var parts = cls.split("_");
+
+		if(parts.length == 2)
+		{
+			var baseCls = parts[0].split(".").pop();
+			var paths = path.split("/");
+
+			paths.pop();
+
+			var basePath = paths.join("/") + "/" + baseCls + ".hx";
+
+			return neko.FileSystem.exists(basePath);
+		}
+
+		return false;
+	}
 
 
 	/**

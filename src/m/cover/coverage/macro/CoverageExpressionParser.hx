@@ -227,7 +227,6 @@ import m.cover.macro.ExpressionParser;
 
 		file = neko.FileSystem.fullPath(file);
 
-
 		//info.fileName = Context.resolvePath(info.fileName);
 		var classFile = neko.FileSystem.fullPath(Context.resolvePath(target.info.fileName));
 
@@ -245,25 +244,37 @@ import m.cover.macro.ExpressionParser;
 			else if(!strict && classFile.indexOf(cp) == 0)
 			{
 				//the current pos file location doesn't match the class being compiled.
-				//this case needs to be handled for partial macros
+				//this case needs to be handled for MCore partial macros
 				//need to determine actual cp
 
 				var info = target.info.clone();
 
 				var packagePath = target.info.packageName.split(".").join("/");
 
+				var alternateLocation:String = null;
+
 				if(file.indexOf(packagePath) != -1)
 				{
 					cp = file.split(packagePath)[0];
 
+
+					if(StringTools.endsWith(file, "_generated.hx"))
+					{
+						var parts = file.split("_");
+
+						alternateLocation = classFile.split(".").join("_" + parts[1] + ".");
+						file = file.split("_").shift() + ".hx";
+					}
+
 					info = ClassInfo.fromFile(file, cp);
+
 					info.methodName = target.info.methodName;
 				}
 				
 				//var log = [info, file, cp];
 				//Context.warning(log.join("\n"), Context.currentPos());
 
-				return createReference(cp, file, startPos, endPos, isBranch, info);
+				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation);
 			}
 		}
 
@@ -278,7 +289,7 @@ import m.cover.macro.ExpressionParser;
 		return null;
 	}
 
-	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo):AbstractBlock
+	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo, ?alternateLocation:String):AbstractBlock
 	{
 		if(info == null) info = target.info;
 
@@ -325,9 +336,20 @@ import m.cover.macro.ExpressionParser;
 		block.max = posInfo.max;
 
 		var posString = Std.string(startPos);
-		posString = posString.substr(5, posString.length-6);
+		posString = posString.substr(5, posString.length-6);//get path string
 
-		block.location = posString.split(" characters ").join(" chars ");
+		posString = posString.split(" characters ").join(" chars ");
+
+		if(alternateLocation != null)
+		{
+			block.location = alternateLocation + posString.split(":").pop();
+		}
+		else
+		{
+			block.location = posString;
+		}
+
+		
 
 		var lines:Array<Int> = [];
 		var startLine = -1;
