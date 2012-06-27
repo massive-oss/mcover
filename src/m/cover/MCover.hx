@@ -103,6 +103,7 @@ To enable function entry/exit logging
 		initialiseTrace();
 		
 		if(exclusions == null) exclusions = [];
+
 		classPaths = convertToFullPaths(classPaths);
 
 		for(delegateClass in delegateClasses)
@@ -120,7 +121,6 @@ To enable function entry/exit logging
 
 			for(cls in classHash.keys())
 			{
-
 				var args:Array<String> = null;
 
 				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
@@ -156,8 +156,10 @@ To enable function entry/exit logging
 			}
 		}
 
+		trace(exclusions);
+
 		flush();
-	
+		
 		for(pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, classPaths);
@@ -262,6 +264,11 @@ To enable function entry/exit logging
 	static function traceToFile(msg:Dynamic, ?pos:haxe.PosInfos)
 	{
 		traceOutput += "\n" + StringTools.rpad(pos.className + ":" + pos.lineNumber + " ", " ", 60) + "| " + Std.string(msg);
+
+		if(pos.customParams != null && pos.customParams[0] == true)
+		{
+			flush();
+		}
 	}
 
 	/**

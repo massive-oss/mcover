@@ -186,7 +186,7 @@ class ClassPathFilter
 		{
 			temp = contents;
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9@])+)", "m");
 		
 			while(regIgnore.match(temp))
 			{
@@ -199,11 +199,11 @@ class ClassPathFilter
 
 		if(includeClassMeta != null)
 		{
-			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9])+)", "m");
+			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9@])+)", "m");
 		}
 		else
 		{
-			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
+			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9@])+)/;
 		}
 
 		temp = contents;
@@ -212,8 +212,13 @@ class ClassPathFilter
 		{
 			var cls = prefix + regInclude.matched(2);
 
-
-			if(excludesHash.exists(cls) || skip(cls))
+			if(cls.indexOf("@") > -1)
+			{
+				//Added support for MCore Partials Macros
+				excludes.push(cls);
+				//excludes.push(cls.split("@").join("_partial_"));
+			}
+			else if(excludesHash.exists(cls) || skip(cls))
 			{
 				excludes.push(cls);
 			}

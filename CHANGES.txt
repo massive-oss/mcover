@@ -1,3 +1,9 @@
+v1.2.5 - 27.06.12
+- Minor bug fixes
+- Added currentFileName to ClassParser
+- Added support for edge cases for generated expressions where expr pos file differs from current file (prints warning rather than error)
+- moved class info (like fileName, className, methodName, location) into separate ClassInfo class)
+
 v1.2.4 - 30.05.12
 
 - Added MCoverSummaryReportClient to leverage better CI support in munit 0.9.3.x

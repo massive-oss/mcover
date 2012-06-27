@@ -36,6 +36,7 @@ import haxe.macro.Type;
 import m.cover.macro.ClassParser;
 import m.cover.coverage.DataTypes;
 import m.cover.macro.MacroUtil;
+import m.cover.macro.ClassInfo;
 import m.cover.macro.ExpressionParser;
 
 @:keep class CoverageExpressionParser implements ExpressionParser
@@ -61,7 +62,6 @@ import m.cover.macro.ExpressionParser;
 		includeFieldMeta = null;
 		coveredLines =  new IntHash();
 	}
-
 
 	public function parseMethod(field:Field, f:Function):Void
 	{
@@ -223,8 +223,18 @@ import m.cover.macro.ExpressionParser;
 	{
 		var posInfo = Context.getPosInfos(startPos);
 		var file:String = posInfo.file;
+		var strict = true;
 
 		file = neko.FileSystem.fullPath(file);
+
+
+		//info.fileName = Context.resolvePath(info.fileName);
+		var classFile = neko.FileSystem.fullPath(Context.resolvePath(target.info.fileName));
+
+		if(file != classFile)
+		{
+			strict = false;
+		}
 
 		for (cp in CoverageMacroDelegate.classPathHash)
 		{
@@ -232,10 +242,33 @@ import m.cover.macro.ExpressionParser;
 			{	
 				return createReference(cp, file, startPos, endPos, isBranch);
 			}
+			else if(!strict && classFile.indexOf(cp) == 0)
+			{
+				//the current pos file location doesn't match the class being compiled.
+				//this case needs to be handled for partial macros
+				//need to determine actual cp
+
+				var info = target.info.clone();
+
+				var packagePath = target.info.packageName.split(".").join("/");
+
+				if(file.indexOf(packagePath) != -1)
+				{
+					cp = file.split(packagePath)[0];
+
+					info = ClassInfo.fromFile(file, cp);
+					info.methodName = target.info.methodName;
+				}
+				
+				//var log = [info, file, cp];
+				//Context.warning(log.join("\n"), Context.currentPos());
+
+				return createReference(cp, file, startPos, endPos, isBranch, info);
+			}
 		}
 
 		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(startPos);
-		error += "\n    " + target.currentLocation;
+		error += "\n    " + target.info.location;
 		for (cp in CoverageMacroDelegate.classPathHash)
 		{
 			error += "\n   " + cp;
@@ -245,9 +278,10 @@ import m.cover.macro.ExpressionParser;
 		return null;
 	}
 
-
-	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool):AbstractBlock
+	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo):AbstractBlock
 	{
+		if(info == null) info = target.info;
+
 		var block:AbstractBlock;
 		
 		if(isBranch)
@@ -261,8 +295,8 @@ import m.cover.macro.ExpressionParser;
 			block.id = statementCount++;
 		}
 
+		if(cp.charAt(cp.length-1) == "/") cp = cp.substr(0, cp.length-1);
 		file = file.substr(cp.length+1,  file.length-cp.length-1);
-
 
 		block.file = file;
 
@@ -281,9 +315,9 @@ import m.cover.macro.ExpressionParser;
 		parts.pop();
 
 		block.packageName = (parts.length > 0) ? parts.join(".") : "";
-		block.className = target.currentClassName;
+		block.className = info.className;
 		block.qualifiedClassName = (block.packageName != "") ? block.packageName + "." + block.className : block.className;
-		block.methodName = target.currentMethodName;
+		block.methodName = info.methodName;
 
 		var posInfo = Context.getPosInfos(startPos);
 

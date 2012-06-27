@@ -56,25 +56,9 @@ interface ClassParser
 	var functionStack(default, null):Array<Function>;
 
 	/**
-	name of the current class
+	current expression stack (i.e. hierachial list of ancestors for the current expression)
 	*/
-	var currentClassName(default, null):String;
-
-	/**
-	name of the current package
-	*/
-	var currentPackageName(default, null):String;
-
-	/**
-	name of the current method
-	*/
-	var currentMethodName(default, null):String;
-
-	/**
-	fully qualified path to current method
-	e.g. foo.bar.ClassName.methodName
-	*/
-	var currentLocation(default, null):String;
+	var info(default, null):ClassInfo;
 
 	/**
 	registers an ExpressionParser to handler parse
@@ -84,10 +68,7 @@ interface ClassParser
 
 class ClassParserImpl implements ClassParser
 {
-	public var currentClassName(default, null):String;
-	public var currentPackageName(default, null):String;
-	public var currentMethodName(default, null):String;
-	public var currentLocation(default, null):String;
+	public var info(default, null):ClassInfo;
 
 	public var functionStack(default, null):Array<Function>;
 	public var exprStack(default, null):Array<Expr>;
@@ -107,18 +88,30 @@ class ClassParserImpl implements ClassParser
 		fieldParsers = [];
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
-		
+
+		info = new ClassInfo();
+
 		switch(type)
 		{
 			case TInst(t, params):
 			{
 				var parts = Std.string(t).split(".");
-				currentClassName = parts.pop();
-				currentPackageName = parts.join(".");
+				info.className = parts.pop();
+				info.packageName = parts.join(".");
+
 			}
 			default: null;
 		}
-		//trace(currentPackageName + "." + currentClassName);
+
+		if(fields.length > 0)
+		{
+
+			info.fileName = Context.getPosInfos(fields[0].pos).file;
+			
+		}
+		
+		//trace(info.fileName);
+		//trace(info.packageName + "." + info.className);
 	}
 
 	/**
@@ -199,10 +192,9 @@ class ClassParserImpl implements ClassParser
 
 	function parseMethod(field:Field, f:Function)
 	{
-		currentMethodName = field.name;
-		currentLocation = currentPackageName + "." + currentClassName + "." + currentMethodName;
+		info.methodName = field.name;
 
-		//trace(" 	" + currentMethodName);
+		//trace(" 	" + info.methodName);
 
 		if(f.expr == null ) return;
 		functionStack = [f];

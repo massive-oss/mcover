@@ -68,12 +68,12 @@ class LoggerExpressionParser implements ExpressionParser
 
 	public function parseMethod(field:Field, f:Function):Void
 	{
-		trace(target.currentLocation);
+		trace(target.info.location);
 
 		methodReturnCount = 0;
 		functionReturnCount = new IntHash();
 
-		if(target.currentClassName == "ContentQuery")
+		if(target.info.className == "ContentQuery")
 		{
 			switch(f.expr.expr)
 		{
@@ -159,7 +159,7 @@ class LoggerExpressionParser implements ExpressionParser
 					count = functionReturnCount.get(target.functionStack.length-1);
 				}
 
-				trace(target.currentLocation + "\n" + target.functionStack.length + "\n" + functionReturnCount + ", " + methodReturnCount);
+				trace(target.info.location + "\n" + target.functionStack.length + "\n" + functionReturnCount + ", " + methodReturnCount);
 					
 				if(count == 0)
 				{
@@ -169,7 +169,7 @@ class LoggerExpressionParser implements ExpressionParser
 				}
 				else
 				{
-					trace("ignoring " + target.currentLocation);
+					trace("ignoring " + target.info.location);
 				}
 				
 			}

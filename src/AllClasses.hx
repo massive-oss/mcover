@@ -63,6 +63,7 @@ import m.cover.logger.LoggerImpl;
 import m.cover.logger.macro.LoggerExpressionParser;
 import m.cover.logger.macro.LoggerMacroDelegate;
 import m.cover.logger.MCoverLogger;
+import m.cover.macro.ClassInfo;
 import m.cover.macro.ClassParser;
 import m.cover.macro.ClassPathFilter;
 import m.cover.macro.ExpressionParser;
