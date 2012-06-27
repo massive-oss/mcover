@@ -10,3 +10,5 @@ example/coverage/01_BasicCoverage/.mcover/debug-log.txt
 example/logger/01_BasicLogging/.mcover/cached-classes-null-IgnoreLogging.txt
 example/logger/01_BasicLogging/.mcover/debug-log.txt
 example/coverage/01_BasicCoverage/.mcover/cached-classes-null-IgnoreCover.txt
+example/coverage/02_ConfigureReportClient/.mcover/debug-log.txt
+example/coverage/04_CustomReportClient/.mcover/debug-log.txt

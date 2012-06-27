@@ -1,4 +1,0 @@
-
-m.cover.macro.FilteredClassCache:73                         | init
-m.cover.macro.FilteredClassCache:81                         | tempId = /ws/MassiveCover/example/coverage/04_CustomReportClient/src,/ws/MassiveCover/example/coverage/common/src,,other.*,example.IgnoredWithMacroFilter
-m.cover.macro.FilteredClassCache:82                         | id = /ws/MassiveCover/example/coverage/04_CustomReportClient/src,/ws/MassiveCover/example/coverage/common/src,,other.*,example.IgnoredWithMacroFilter
