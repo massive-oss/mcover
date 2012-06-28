@@ -52,10 +52,14 @@ class ClassInfo
 		}
 	}
 
+	/**
+	Expects a fully qualified file path
+	*/
 	public static function fromFile(file:String, cp:String):ClassInfo
 	{
+		var slash = Sys.systemName() == 'Windows' ? "\\" : "/";
 
-		if(cp.charAt(cp.length-1) != "/") cp += "/";
+		if(cp.charAt(cp.length-1) != slash) cp += slash;
 		var info = new ClassInfo();
 		info.fileName = file;
 
@@ -63,7 +67,7 @@ class ClassInfo
 
 		path = path.substr(0, -3);//remove .hx
 
-		var parts = path.split("/");
+		var parts = path.split(slash);
 
 		info.className = parts.pop();
 		info.packageName = parts.join(".");

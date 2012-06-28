@@ -215,8 +215,6 @@ class ClassPathFilter
 		{
 			var cls = prefix + regInclude.matched(2);
 
-			trace(cls, true);
-
 			if(isPartialClass(cls, path))
 			{
 				//Added support for MCore Partials Macros
@@ -256,7 +254,6 @@ class ClassPathFilter
 			paths.pop();
 
 			var basePath = paths.join("/") + "/" + baseCls + ".hx";
-
 			return neko.FileSystem.exists(basePath);
 		}
 

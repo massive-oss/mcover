@@ -39,6 +39,11 @@ import m.cover.macro.MacroUtil;
 import m.cover.macro.ClassInfo;
 import m.cover.macro.ExpressionParser;
 
+#if haxe_208
+import neko.Sys;
+#end
+
+
 @:keep class CoverageExpressionParser implements ExpressionParser
 {
 
@@ -47,7 +52,7 @@ import m.cover.macro.ExpressionParser;
 	
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
-	static public var IS_WINDOWS = neko.Sys.systemName() == "Windows"; 
+	static public var IS_WINDOWS = Sys.systemName() == "Windows"; 
 
 	public var target(default, default):ClassParser;
 
@@ -227,7 +232,6 @@ import m.cover.macro.ExpressionParser;
 
 		file = neko.FileSystem.fullPath(file);
 
-		//info.fileName = Context.resolvePath(info.fileName);
 		var classFile = neko.FileSystem.fullPath(Context.resolvePath(target.info.fileName));
 
 		if(file != classFile)
@@ -239,7 +243,7 @@ import m.cover.macro.ExpressionParser;
 		{
 			if(file.indexOf(cp) == 0)
 			{	
-				return createReference(cp, file, startPos, endPos, isBranch);
+				return createReference(cp, file, startPos, endPos, isBranch, null, classFile);
 			}
 			else if(!strict && classFile.indexOf(cp) == 0)
 			{
@@ -249,21 +253,25 @@ import m.cover.macro.ExpressionParser;
 
 				var info = target.info.clone();
 
-				var packagePath = target.info.packageName.split(".").join("/");
+
+				var slash = IS_WINDOWS ? "\\" : "/";
+				var packagePath = target.info.packageName.split(".").join(slash);
 
 				var alternateLocation:String = null;
 
 				if(file.indexOf(packagePath) != -1)
 				{
-					cp = file.split(packagePath)[0];
+					var temp = file.split(packagePath);
+					
+					var fileName = temp.pop();
+					var fileClassPath = temp.join(packagePath);//in case package dir repeated in full path
 
-
-					if(StringTools.endsWith(file, "_generated.hx"))
+					if(StringTools.endsWith(fileName, "_generated.hx"))
 					{
-						var parts = file.split("_");
+						var parts = fileName.split("_");
 
+						file = classFile;
 						alternateLocation = classFile.split(".").join("_" + parts[1] + ".");
-						file = file.split("_").shift() + ".hx";
 					}
 
 					info = ClassInfo.fromFile(file, cp);
@@ -284,7 +292,7 @@ import m.cover.macro.ExpressionParser;
 		{
 			error += "\n   " + cp;
 		}
-
+		Context.error(error, Context.currentPos());
 		throw new CoverageException(error);
 		return null;
 	}
@@ -342,14 +350,13 @@ import m.cover.macro.ExpressionParser;
 
 		if(alternateLocation != null)
 		{
+			if(IS_WINDOWS) alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
 			block.location = alternateLocation + posString.split(":").pop();
 		}
 		else
 		{
 			block.location = posString;
 		}
-
-		
 
 		var lines:Array<Int> = [];
 		var startLine = -1;

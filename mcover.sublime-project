@@ -2,16 +2,13 @@
 	"folders":
 	[
 		{
-			"path": "/ws/MassiveCover"
+			"path": "."
 		},
 		{
-			"path": "/ws/MassiveUnit"
+			"path": "./../MassiveUnit"
 		},
 		{
-			"path": "/ws/MacroLogger"
-		},
-		{
-			"path": "/ws/MassiveLib"
+			"path": "./../MassiveLib"
 		}
 	]
 }
