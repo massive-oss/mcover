@@ -1,3 +1,10 @@
+v1.2.5.2 - 29.06.12
+- Hotfix for MCore partials on windows
+- Removed examples from haxelib package (still on gitub)
+
+v1.2.5.1 - 28.06.12
+- Hotfix for MCore partials on windows
+
 v1.2.5 - 27.06.12
 - Minor bug fixes
 - Added currentFileName to ClassParser
