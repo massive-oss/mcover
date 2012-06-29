@@ -28,6 +28,12 @@
 
 package m.cover.macro;
 
+#if (neko||cpp||php||java||cs)
+#if haxe_208
+	import neko.Sys;
+#end
+#end
+
 class ClassInfo
 {
 	public var fileName:String;
@@ -35,7 +41,6 @@ class ClassInfo
 	public var packageName:String;
 	public var methodName:String;
 	public var location(get_location, null):String;
-
 	public function new()
 	{
 	}
@@ -53,13 +58,21 @@ class ClassInfo
 	}
 
 	/**
-	Expects a fully qualified file path
+	* Expectes a file path within the corresponding classPath
+	* @param file 	path to file
+	* @param cp 		classpath path
 	*/
 	public static function fromFile(file:String, cp:String):ClassInfo
 	{
-		var slash = Sys.systemName() == 'Windows' ? "\\" : "/";
+		var slash:String = "/";
+		if(cp.indexOf("\\") > cp.indexOf("/"))
+		{
+			slash = "\\";
+		}
 
 		if(cp.charAt(cp.length-1) != slash) cp += slash;
+	
+	
 		var info = new ClassInfo();
 		info.fileName = file;
 
@@ -83,8 +96,7 @@ class ClassInfo
 		info.packageName = packageName;
 		info.methodName = methodName;
 
-		return info;
-			
+		return info;	
 	}
 
 	function get_location()

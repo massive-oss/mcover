@@ -13,44 +13,19 @@ class ClassInfoTest
 	var instance:ClassInfo; 
 	
 	public function new() 
-	{
-		
+	{	
 	}
-	
-	@BeforeClass
-	public function beforeClass():Void
-	{
-	}
-	
-	@AfterClass
-	public function afterClass():Void
-	{
-	}
-	
-	@Before
-	public function setup():Void
-	{
-	}
-	
-	@After
-	public function tearDown():Void
-	{
-	}
-	
 	
 	@Test
 	public function should_return_location():Void
 	{
 		instance = new ClassInfo();
-
 		Assert.isNull(instance.location);
 
 		instance.className = "Class";
-
 		Assert.areEqual("Class", instance.location);
 
 		instance.methodName = "method";
-
 		Assert.areEqual("Class.method", instance.location);
 
 		instance.packageName = "";
@@ -58,8 +33,6 @@ class ClassInfoTest
 
 		instance.packageName = "package";
 		Assert.areEqual("package.Class.method", instance.location);
-
-
 	}
 
 	@Test
@@ -96,7 +69,6 @@ class ClassInfoTest
 		Assert.areEqual(instance.fileName, fromFile.fileName);
 		Assert.areEqual(instance.packageName, fromFile.packageName);
 		Assert.areEqual(instance.className, fromFile.className);
-
 		Assert.isNull(fromFile.methodName);
 		Assert.areEqual("package.Class", fromFile.location);
 	}
@@ -105,19 +77,10 @@ class ClassInfoTest
 	public function toString_should_include_className()
 	{
 		instance = createInstance();
-
 		Assert.areEqual(instance.fileName + ":" + instance.location, instance.toString());
-
-
 		instance.className = null;
-
 		Assert.areEqual(instance.fileName, instance.toString());
-
-
 	}
-
-	//////
-
 
 	function createInstance():ClassInfo
 	{
@@ -127,6 +90,5 @@ class ClassInfoTest
 		instance.methodName = "method";
 		instance.fileName = "src/package/Class.hx";
 		return instance;
-
 	}
 }
