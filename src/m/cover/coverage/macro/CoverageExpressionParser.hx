@@ -41,6 +41,9 @@ import m.cover.macro.ExpressionParser;
 
 #if haxe_208
 import neko.Sys;
+import neko.FileSystem;
+#else
+import sys.FileSystem;
 #end
 
 
@@ -230,9 +233,9 @@ import neko.Sys;
 		var file:String = posInfo.file;
 		var strict = true;
 
-		file = neko.FileSystem.fullPath(file);
+		file = FileSystem.fullPath(file);
 
-		var classFile = neko.FileSystem.fullPath(Context.resolvePath(target.info.fileName));
+		var classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
 
 		if(file != classFile)
 		{

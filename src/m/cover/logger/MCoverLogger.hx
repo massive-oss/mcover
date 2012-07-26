@@ -28,9 +28,13 @@
 
 package m.cover.logger;
 
+
 #if neko
-import neko.vm.Deque;
+import neko.vm.Mutex;
+#elseif cpp
+import cpp.vm.Mutex;
 #end
+
 import m.cover.logger.Logger;
 import m.cover.logger.LoggerImpl;
 
@@ -38,8 +42,8 @@ import m.cover.logger.LoggerImpl;
 @IgnoreCover
 class MCoverLogger
 {
-	#if neko
-		static public var mutex:neko.vm.Mutex;
+	#if (neko||cpp)
+		static public var mutex:Mutex;
 	#end
 
 	static public var logger(default, null):Logger;
@@ -48,15 +52,15 @@ class MCoverLogger
 	@IgnoreCover
 	public static function getLogger():Logger
 	{
-		#if neko
-			if(mutex == null) mutex = new neko.vm.Mutex();
+		#if (neko||cpp)
+			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 		if(logger == null)
 		{
 			logger = new LoggerImpl();
 		}
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 		return logger;
 	}
 

@@ -12,3 +12,8 @@ example/logger/01_BasicLogging/.mcover/debug-log.txt
 example/coverage/01_BasicCoverage/.mcover/cached-classes-null-IgnoreCover.txt
 example/coverage/02_ConfigureReportClient/.mcover/debug-log.txt
 example/coverage/04_CustomReportClient/.mcover/debug-log.txt
+example/coverage/01_BasicCoverage/build/cpp/
+example/coverage/02_ConfigureReportClient/build/cpp/
+example/*build*
+example/coverage/04_CustomReportClient/build/cpp/
+example/logger/01_BasicLogging/build/cpp/

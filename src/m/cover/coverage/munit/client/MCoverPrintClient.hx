@@ -163,7 +163,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	function init()
 	{
-		#if neko
+		#if (neko||cpp||php)
 			var VERBOSE:Bool = false;
 		#else
 			var VERBOSE:Bool = Std.is(client, RichPrintClient);

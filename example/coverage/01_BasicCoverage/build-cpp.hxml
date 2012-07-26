@@ -1,0 +1,12 @@
+-main Main
+-cpp build/cpp
+-cp src
+--macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# mcover source
+-cp ../../../src
+# common example code
+-cp ../common/src
+-D HXCPP_M64
+-debug
+-cmd build/cpp/Main-debug
+# -cmd build/cpp/Main
