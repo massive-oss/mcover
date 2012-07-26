@@ -41,6 +41,16 @@ file|stamp|included class,included class|excluded class,excluded class
 
 */
 #if macro
+
+	
+#if haxe_208
+	import neko.io.File;
+	import neko.FileSystem;
+#else
+	import sys.io.File;
+	import sys.FileSystem;
+#end
+
 class FilteredClassCache
 {
 	var file:String;
@@ -54,7 +64,7 @@ class FilteredClassCache
 
 		#if !MCOVER_NO_CACHE
 			file = m.cover.MCover.TEMP_DIR + "/" + path;
-			if(neko.FileSystem.exists(file))
+			if(FileSystem.exists(file))
 			{
 				load(file);
 			}
@@ -164,7 +174,7 @@ class FilteredClassCache
 			buf.add(path + "|" + file.stamp + "|" + file.includes + "|" + file.excludes + "\n");
 		}
 
-		var f = neko.io.File.write(file, false);
+		var f = File.write(file, false);
 		f.writeString(buf.toString());
 		f.close();
 	}
@@ -172,7 +182,7 @@ class FilteredClassCache
 
 	function load(file:String)
 	{
-		var f = neko.io.File.read(file, true);
+		var f = File.read(file, true);
 		try
 		{
 			while( true )
@@ -203,9 +213,9 @@ class FilteredClassCache
 	*/
 	function getStamp(path:String):String
 	{
-		if(neko.FileSystem.exists(path) && !neko.FileSystem.isDirectory(path))
+		if(FileSystem.exists(path) && !FileSystem.isDirectory(path))
 		{
-			var stat = neko.FileSystem.stat(path);
+			var stat = FileSystem.stat(path);
 			return stat.mtime.toString();
 		}
 		return null;

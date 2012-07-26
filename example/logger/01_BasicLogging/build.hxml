@@ -34,3 +34,16 @@
 -cp ../common/src
 
 -cmd neko build/main.n
+
+--next
+
+-main Main
+-cpp build/cpp
+-cp src
+--macro m.cover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# mcover source
+-cp ../../../src
+# common example code
+-cp ../common/src
+
+-cmd cpp build/cpp/Main

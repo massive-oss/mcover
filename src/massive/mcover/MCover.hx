@@ -31,6 +31,12 @@ package massive.mcover;
 #if macro
 import haxe.macro.Context;
 
+
+#if haxe208
+	import neko.Lib;
+#end
+
+
 class MCover
 {
 	/**
@@ -39,7 +45,12 @@ class MCover
 	*/
 	static public function include(packageName:String, ?classPaths:Array<String>, ?exclusions:Array<String>)
 	{
-		neko.Lib.println("Warning: massive.mcover.MCover.include is depricated. Please use m.cover.MCover.coverage.");
+		#if haxe208
+			Lib.println("Warning: massive.mcover.MCover.include is depricated. Please use m.cover.MCover.coverage.");
+		#else
+			Sys.println("Warning: massive.mcover.MCover.include is depricated. Please use m.cover.MCover.coverage.");
+		#end
+		
 		var packages:Array<String> = [];
 		if(packageName != null) packages.push(packageName);
 		m.cover.MCover.coverage(packages, classPaths, exclusions);

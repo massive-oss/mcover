@@ -28,10 +28,14 @@
 
 package m.cover.macro;
 
-#if (neko||cpp||php||java||cs)
 #if haxe_208
-	import neko.Sys;
-#end
+	#if neko
+		import neko.Sys;
+	#elseif cpp
+		import cpp.Sys;
+	#elseif php
+		import php.Sys
+	#end
 #end
 
 class ClassInfo

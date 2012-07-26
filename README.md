@@ -1,9 +1,9 @@
 MassiveCover (MCover)
 ======================
 
-MassiveCover is a collection of macro based cross-platform code coverage and quality tools from Massive Interactive.
+MassiveCover is a collection of macro based cross-platform code coverage and quality tools.
 
-Massive Cover currently includes code coverage and function entry/exit logging. 
+It currently includes code coverage and function entry/exit logging, and supports the js, flash, neko and cpp targets in Haxe
 
 
 To install mcover:
@@ -124,3 +124,26 @@ Add the followng code to your application to stop recording and print report
 
 
 
+Changes
+----------
+
+See CHANGES.txt for full changes
+
+### Since 1.3.x
+
+* Added cpp target support
+
+### Since 1.2.x
+
+* Added function logging macro
+
+
+
+Building from source
+--------------
+
+OSX: Use the build.sh bash script (osx only)
+Windows: Manually run steps within build.sh
+
+
+Note: Some coverage tests will fail with munit `-coverage` flag on Windows due to complexity of running coverage on itself

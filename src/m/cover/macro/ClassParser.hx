@@ -35,6 +35,12 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.PosInfos;
 
+
+#if haxe208
+	import neko.Lib;
+#end
+
+
 /**
 Generic recursive parser of expressions inside a class's fields.
 Provides mechanism for adding one or more ExpressionParser instances to take reponsibility for modifying field contents.
@@ -472,7 +478,11 @@ class ClassParserImpl implements ClassParser
 	{
 		#if MACRO_LOGGER_DEBUG
 			var msg = pos.className + "(" + pos.lineNumber + "):\n   " + Std.string(value);
-			neko.Lib.println(msg);
+			#if haxe_208
+				Lib.println(msg);
+			#else
+				Sys.println(msg);
+			#end
 		#end
 	}
 }	

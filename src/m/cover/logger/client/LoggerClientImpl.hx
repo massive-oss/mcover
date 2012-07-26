@@ -64,7 +64,6 @@ class LoggerClientImpl implements LoggerClient
 
 		reportFull(buf, logs, recording);
 		
-
 		reportFrequency(buf, logs, recording);
 		reportSlowest(buf, logs, recording);
 		

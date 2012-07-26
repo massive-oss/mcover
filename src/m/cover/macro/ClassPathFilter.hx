@@ -29,6 +29,14 @@
 package m.cover.macro;
 
 #if macro
+	
+#if haxe_208
+	import neko.io.File;
+	import neko.FileSystem;
+#else
+	import sys.io.File;
+	import sys.FileSystem;
+#end
 
 import haxe.macro.Context;
 
@@ -124,9 +132,9 @@ class ClassPathFilter
 			prefix += ".";
 			path += "/" + pack.split(".").join("/");
 		}
-		if( !neko.FileSystem.exists(path) || !neko.FileSystem.isDirectory(path) ) return;
+		if( !FileSystem.exists(path) || !FileSystem.isDirectory(path) ) return;
 
-		for(file in neko.FileSystem.readDirectory(path))
+		for(file in FileSystem.readDirectory(path))
 		{	
 			var filePath = path + "/" + file;
 
@@ -134,7 +142,7 @@ class ClassPathFilter
 			{
 				includeFile(filePath);
 			}
-			else if(neko.FileSystem.isDirectory(filePath) && !skip(prefix + file) )
+			else if(FileSystem.isDirectory(filePath) && !skip(prefix + file) )
 			{
 				includePackage(cp, prefix + file);
 			}
@@ -177,7 +185,7 @@ class ClassPathFilter
 		var includes:Array<String> = [];
 		var excludes:Array<String> = [];
 
-		var contents:String = neko.io.File.getContent(path);
+		var contents:String = File.getContent(path);
 
 		var prefix = getPackageDefinitionInFile(contents);
 
@@ -254,7 +262,7 @@ class ClassPathFilter
 			paths.pop();
 
 			var basePath = paths.join("/") + "/" + baseCls + ".hx";
-			return neko.FileSystem.exists(basePath);
+			return FileSystem.exists(basePath);
 		}
 
 		return false;
@@ -296,7 +304,7 @@ class ClassPathFilter
 	*/
 	function getPackageDefinitionInFile(contents:String):String
 	{
-		//var contents = neko.io.File.getContent(path);
+		//var contents = File.getContent(path);
 		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/;
 
 		if(reg.match(contents))
@@ -318,7 +326,7 @@ class ClassPathFilter
 		var contents:String;
 
 		var reg:EReg = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
-		contents = neko.io.File.getContent(path);
+		contents = File.getContent(path);
 		
 		while(reg.match(contents))
 		{

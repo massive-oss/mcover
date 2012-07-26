@@ -2494,13 +2494,13 @@ m.cover.coverage.CoverageLoggerImpl.prototype = {
 	}
 	,reportCurrentTest: function(skipClients) {
 		if(skipClients == null) skipClients = false;
-		if(this.currentTest == null) throw new m.cover.coverage.CoverageException("No test specified to report on.",null,{ fileName : "CoverageLogger.hx", lineNumber : 137, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "reportCurrentTest"});
+		if(this.currentTest == null) throw new m.cover.coverage.CoverageException("No test specified to report on.",null,{ fileName : "CoverageLogger.hx", lineNumber : 143, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "reportCurrentTest"});
 		this.generateReportResults(true);
 		if(!skipClients) this.reportToClients();
 	}
 	,generateReportResults: function(currentTestOnly) {
 		if(currentTestOnly == null) currentTestOnly = false;
-		if(this.coverage == null) this.initializeCoverage();
+		if(this.coverage == null) this.initializeCoverage(null);
 		if(currentTestOnly) {
 			this.coverage.setStatementResultsHash(this.testStatementResultsById);
 			this.coverage.setBranchResultsHash(this.testBranchResultsById);
@@ -2531,11 +2531,11 @@ m.cover.coverage.CoverageLoggerImpl.prototype = {
 	,initializeCoverage: function(resourceName) {
 		if(resourceName == null) resourceName = m.cover.coverage.MCoverage.RESOURCE_DATA;
 		var serializedData = haxe.Resource.getString(resourceName);
-		if(serializedData == null) throw new m.cover.coverage.CoverageException("No generated coverage data found in haxe Resource '" + resourceName + "'",null,{ fileName : "CoverageLogger.hx", lineNumber : 196, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "initializeCoverage"});
+		if(serializedData == null) throw new m.cover.coverage.CoverageException("No generated coverage data found in haxe Resource '" + resourceName + "'",null,{ fileName : "CoverageLogger.hx", lineNumber : 201, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "initializeCoverage"});
 		try {
 			this.coverage = haxe.Unserializer.run(serializedData);
 		} catch( e ) {
-			throw new m.cover.coverage.CoverageException("Unable to unserialize coverage data in " + resourceName,e,{ fileName : "CoverageLogger.hx", lineNumber : 203, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "initializeCoverage"});
+			throw new m.cover.coverage.CoverageException("Unable to unserialize coverage data in " + resourceName,e,{ fileName : "CoverageLogger.hx", lineNumber : 208, className : "m.cover.coverage.CoverageLoggerImpl", methodName : "initializeCoverage"});
 		}
 	}
 	,logStatement: function(id) {
@@ -2614,7 +2614,7 @@ m.cover.coverage.client.TraceClient.prototype = $extend(m.cover.coverage.client.
 	printReport: function() {
 		m.cover.coverage.client.PrintClient.prototype.printReport.call(this);
 		this.output += this.newline;
-		haxe.Log.trace(this.newline + this.output,{ fileName : "TraceClient.hx", lineNumber : 45, className : "m.cover.coverage.client.TraceClient", methodName : "printReport"});
+		haxe.Log.trace(this.newline + this.output,{ fileName : "TraceClient.hx", lineNumber : 56, className : "m.cover.coverage.client.TraceClient", methodName : "printReport"});
 	}
 	,__class__: m.cover.coverage.client.TraceClient
 });
