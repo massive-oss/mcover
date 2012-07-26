@@ -1,3 +1,6 @@
+v1.3.0 - 26.07.12
+- Added support for cpp target
+
 v1.2.5.2 - 29.06.12
 - Hotfix for MCore partials on windows
 - Removed examples from haxelib package (still on gitub)

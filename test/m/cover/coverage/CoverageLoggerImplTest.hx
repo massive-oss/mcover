@@ -166,7 +166,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	public function shouldNotReInitializeCoverageWhenRunnerAdded()
 	{
 		instance.addClient(client);
-		instance.initializeCoverage();
+		instance.initializeCoverage(null);
 		var coverage = instance.coverage;
 
 		instance.report();
@@ -179,7 +179,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	public function shouldInitializeCoverage()
 	{
 		Assert.isNull(instance.coverage);
-		instance.initializeCoverage();
+		instance.initializeCoverage(null);
 		Assert.isNotNull(instance.coverage);
 	}
 

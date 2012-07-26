@@ -52,6 +52,24 @@
  */
 package m.cover.util;
 
+
+#if haxe_208
+	#if neko
+		import neko.Sys;
+	#elseif cpp
+		import cpp.Sys;
+	#elseif php
+		import php.Sys
+	#end
+#end
+
+#if neko
+import neko.vm.Thread;
+#elseif cpp
+import cpp.vm.Thread;
+#end
+
+
 @IgnoreCover
 @IgnoreLogging
 
@@ -59,15 +77,18 @@ class Timer
 {
 	public var run:Void -> Void;
 	
-	#if (php)
+	
+	#if php
 
 	#else
+
 		var id:Null<Int>;
+		
 		#if js
 			static var arr:Array<Timer> = [];
 			var timerId:Int;
-		#elseif neko
-			var runThread:neko.vm.Thread;
+		#elseif (neko||cpp||php)
+			var runThread:Thread;
 		#end
 
 		public function new(time_ms:Int)
@@ -83,9 +104,9 @@ class Timer
 				id = arr.length;
 				arr[id] = this;
 				timerId = untyped window.setInterval("m.cover.util.Timer.arr["+id+"].run();",time_ms);
-			#elseif neko
+			#elseif (neko||cpp||php)
 				var me = this;
-				runThread = neko.vm.Thread.create(function() { me.runLoop(time_ms); } );
+				runThread = Thread.create(function() { me.runLoop(time_ms); } );
 			#end
 		}
 
@@ -112,20 +133,20 @@ class Timer
 					while ( p >= 0 && arr[p] == null) p--;
 					arr = arr.slice(0, p + 1);
 				}
-			#elseif neko
+			#elseif (neko||cpp||php)
 				run = defaultRun;
 				runThread.sendMessage("stop");
 			#end
 			id = null;
 		}
 
-		#if neko
+		#if (neko||cpp||php)
 			function runLoop(time_ms)
 			{
 				var shouldStop = false;
 				while( !shouldStop )
 				{
-					neko.Sys.sleep(time_ms/1000);
+					Sys.sleep(time_ms/1000);
 					try
 					{
 						run();
@@ -135,7 +156,7 @@ class Timer
 						trace(ex);
 						trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
 					}
-					var msg = neko.vm.Thread.readMessage(false);
+					var msg = Thread.readMessage(false);
 					if (msg == "stop") shouldStop = true;
 				}
 			}
@@ -151,6 +172,7 @@ class Timer
 			};
 			return t;
 		}
+
 	#end
 
 	/**
@@ -169,12 +191,10 @@ class Timer
 	{
 		#if flash
 			return flash.Lib.getTimer() / 1000;
-		#elseif neko
-			return neko.Sys.time();
-		#elseif php
-			return php.Sys.time();
 		#elseif js
 			return Date.now().getTime() / 1000;
+		#elseif (neko||cpp||php)
+			return Sys.time();
 		#elseif cpp
 			return untyped __time_stamp();
 		#else

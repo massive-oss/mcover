@@ -37,7 +37,14 @@ import m.cover.coverage.macro.CoverageMacroDelegate;
 import m.cover.logger.macro.LoggerMacroDelegate;
 import m.cover.macro.MacroDelegate;
 
-
+#if haxe_208
+	import neko.io.File;
+	import neko.Sys;
+	import neko.FileSystem;
+#else
+	import sys.io.File;
+	import sys.FileSystem;
+#end
 
 /**
 MCover provides a collection of macro based tools for measuring code quality and behavior.
@@ -98,7 +105,7 @@ To enable function entry/exit logging
 	*/
 	static function include(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
-		if(!neko.FileSystem.exists(TEMP_DIR)) neko.FileSystem.createDirectory(TEMP_DIR);
+		if(!FileSystem.exists(TEMP_DIR)) FileSystem.createDirectory(TEMP_DIR);
 
 		initialiseTrace();
 		
@@ -174,7 +181,7 @@ To enable function entry/exit logging
 
 		for(path in paths)
 		{
-			fullPaths.push(neko.FileSystem.fullPath(path));	
+			fullPaths.push(FileSystem.fullPath(path));	
 		}
 		return fullPaths;
 	}
@@ -215,7 +222,7 @@ To enable function entry/exit logging
 		{
 			trace(e);
 			flush();
-			neko.Sys.sleep(.1);
+			Sys.sleep(.1);
 			Context.error("Exception parsing class: " + e, Context.currentPos());
 		}
 
@@ -250,7 +257,7 @@ To enable function entry/exit logging
 	*/
 	static function initialiseTrace()
 	{
-		var file = neko.io.File.write(TRACE_OUTPUT_FILE, false);
+		var file = File.write(TRACE_OUTPUT_FILE, false);
 		file.writeString("");
 		file.close();
 
@@ -278,7 +285,7 @@ To enable function entry/exit logging
 	{
 		if(traceOutput == "") return;
 
-		var file = neko.io.File.append(TRACE_OUTPUT_FILE, false);	
+		var file = File.append(TRACE_OUTPUT_FILE, false);	
 		file.writeString(traceOutput);
 		file.close();
 		traceOutput = "";

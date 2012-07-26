@@ -30,6 +30,10 @@ package m.cover.coverage;
 
 #if neko
 import neko.vm.Deque;
+import neko.vm.Mutex;
+#elseif cpp
+import cpp.vm.Deque;
+import cpp.vm.Mutex;
 #end
 
 import m.cover.coverage.CoverageLogger;
@@ -41,8 +45,8 @@ class MCoverage
 {
 	static public var RESOURCE_DATA:String = "MCoverData";
 
-	#if neko
-		static public var mutex:neko.vm.Mutex;
+	#if (neko||cpp)
+		static public var mutex:Mutex;
 	#end
 
 	static public var logger(default, null):CoverageLogger;
@@ -51,15 +55,15 @@ class MCoverage
 	@IgnoreCover
 	public static function getLogger():CoverageLogger
 	{
-		#if neko
-			if(mutex == null) mutex = new neko.vm.Mutex();
+		#if (neko||cpp)
+			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 		if(logger == null)
 		{
 			logger = new CoverageLoggerImpl();
 		}
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 		return logger;
 	}
 

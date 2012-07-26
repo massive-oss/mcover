@@ -27,6 +27,17 @@
 ****/
 
 package m.cover.coverage.client;
+
+#if haxe208
+	#if neko
+	import neko.Lib;
+	#elseif cpp
+	import cpp.Lib;
+	#elseif php
+	import php.Lib;
+	#end
+#end
+
 @IgnoreLogging
 class TraceClient extends PrintClient
 {
@@ -56,13 +67,13 @@ class TraceClient extends PrintClient
 	
 		textArea.innerHTML += output;
 		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
-
-		#elseif neko
-			neko.Lib.print(output);
-		#elseif cpp
-			cpp.Lib.print(output);
-		#elseif php
-			php.Lib.print(output);
+			
+		#if (neko || cpp || php)
+			#if haxe_208 
+				Lib.print(output);
+			#else
+				Sys.print(output);
+			#end
 		#else
 			trace(newline + output);
 		#end

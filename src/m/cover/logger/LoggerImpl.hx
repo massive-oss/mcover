@@ -35,14 +35,23 @@ import m.cover.logger.data.LogRecording;
 import m.cover.logger.client.LoggerClient;
 import m.cover.logger.client.LoggerClientImpl;
 
+
+#if neko
+import neko.vm.Deque;
+import neko.vm.Mutex;
+#elseif cpp
+import cpp.vm.Deque;
+import cpp.vm.Mutex;
+#end
+
 @IgnoreLogging
 @IgnoreCover
 class LoggerImpl implements Logger
 {
 	static public var MAX_STACK_DEPTH_LIMIT:Int = 26;
 
-	#if neko
-		static public var mutex:neko.vm.Mutex = new neko.vm.Mutex();
+	#if (neko||cpp)
+		static public var mutex:Mutex = new Mutex();
 	#end
 
 	/*
@@ -95,7 +104,7 @@ class LoggerImpl implements Logger
 	{
 		if(!isRecording) return -1;
 
-		#if neko mutex.acquire(); #end
+		#if (neko||cpp) mutex.acquire(); #end
 
 		var t = Timer.stamp();
 		var log = new Log(count ++);
@@ -117,7 +126,7 @@ class LoggerImpl implements Logger
 
 		if(depth > maxDepth) maxDepth = depth;
 
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 
 		return log.id;
 	}
@@ -135,7 +144,7 @@ class LoggerImpl implements Logger
 		
 		if(!logsById.exists(entryId))
 		{
-			#if neko mutex.release(); #end
+			#if (neko||cpp) mutex.release(); #end
 			trace("WARNING: Cannot find matching entry log. " + [entryId, pos]);
 			return;
 		}
@@ -154,7 +163,6 @@ class LoggerImpl implements Logger
 				{
 					log.exit(null, t);
 					depth --;
-					//#if neko neko.Lib.println("skipping " + log.toString()); #end
 					log = stack.pop();
 				}
 			}
@@ -169,7 +177,7 @@ class LoggerImpl implements Logger
 		catch(e:Dynamic)
 		{
 			trace(e);
-			#if neko mutex.release(); #end
+			#if (neko||cpp) mutex.release(); #end
 		}
 		
 
@@ -221,7 +229,7 @@ class LoggerImpl implements Logger
 
 	public function report(?recording:LogRecording=null):Void
 	{
-		#if neko mutex.acquire(); #end
+		#if (neko||cpp) mutex.acquire(); #end
 
 		if(recording ==  null) recording = getRecording();
 
@@ -242,7 +250,7 @@ class LoggerImpl implements Logger
 				client.report(logs, recording);
 			}
 		}
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 	}
 
 	function clientCompletedHandler(client:LoggerClient)

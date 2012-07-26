@@ -35,6 +35,12 @@ import m.cover.coverage.DataTypes;
 import m.cover.coverage.client.TraceClient;
 import m.cover.coverage.CoverageReportClient;
 
+#if neko
+import neko.vm.Mutex;
+#elseif cpp
+import cpp.vm.Mutex;
+#end
+
 
 interface CoverageLogger
 {
@@ -63,7 +69,7 @@ interface CoverageLogger
 	function getClients():Array<CoverageReportClient>;
 
 
-	function initializeCoverage(?resourceName:String = null):Void;
+	function initializeCoverage(resourceName:String):Void;
 
 	function logStatement(id:Int):Void;
 
@@ -75,8 +81,8 @@ interface CoverageLogger
 @IgnoreLogging
 class CoverageLoggerImpl implements CoverageLogger
 {
-	#if neko
-	static public var mutex:neko.vm.Mutex;
+	#if (neko||cpp)
+	static public var mutex:Mutex;
 	#end
 
 	/**
@@ -147,7 +153,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		if(coverage == null)
 		{
-			initializeCoverage();	
+			initializeCoverage(null);	
 		}
 		
 		if(currentTestOnly)
@@ -188,8 +194,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		return clients.concat([]);
 	}
 
-
-	public function initializeCoverage(?resourceName:String = null)
+	public function initializeCoverage(resourceName:String):Void
 	{
 		if(resourceName == null) resourceName = MCoverage.RESOURCE_DATA;
 		var serializedData:String = haxe.Resource.getString(resourceName);
@@ -211,8 +216,8 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function logStatement(id:Int)
 	{	
-		#if neko
-			if(mutex == null) mutex = new neko.vm.Mutex();
+		#if (neko||cpp)
+			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 
@@ -222,7 +227,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		{				
 			updateStatementHash(testStatementResultsById, id);
 		}
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 	}
 
 	@IgnoreCover
@@ -247,8 +252,8 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
 	{
-		#if neko
-			if(mutex == null) mutex = new neko.vm.Mutex();
+		#if (neko||cpp)
+			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 
@@ -270,7 +275,7 @@ class CoverageLoggerImpl implements CoverageLogger
 			updateBranchHash(testBranchResultsById, id, bool);
 		}
 
-		#if neko mutex.release(); #end
+		#if (neko||cpp) mutex.release(); #end
 		return value;
 	}
 
