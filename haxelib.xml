@@ -3,6 +3,8 @@
 	<tag v="cross" />
 	<tag v="macro" />
 	<tag v="utility" />
+	<tag v="massive" />
+	<tag v="cpp" />
 	<description>MCover is a collection of macro-based cross-platform code coverage and quality tools.</description>
 	<version name="1.3.0">Added support for cpp target. See CHANGES.txt for full list of changes</version>
 </project>

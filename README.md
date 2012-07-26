@@ -129,11 +129,11 @@ Changes
 
 See CHANGES.txt for full changes
 
-### Since 1.3.x
+### New since 1.3.x
 
 * Added cpp target support
 
-### Since 1.2.x
+### New since 1.2.x
 
 * Added function logging macro
 
@@ -145,5 +145,4 @@ Building from source
 OSX: Use the build.sh bash script (osx only)
 Windows: Manually run steps within build.sh
 
-
-Note: Some coverage tests will fail with munit `-coverage` flag on Windows due to complexity of running coverage on itself
+> Note: Make sure to set the dev path of mcover to /src before running tests (it's a bit tricky running code coverage on itself!)
