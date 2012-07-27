@@ -336,7 +336,13 @@ class CoverageLoggerImpl implements CoverageLogger
 			if (completionHandler != null)
 			{
 				executeCompletionHandler();
-				//Timer.delay(executeCompletionHandler, 1);
+
+				// #if php
+				// 	executeCompletionHandler();
+				// #else
+				// 	Timer.delay(executeCompletionHandler, 1);
+				// #end
+				
 			}
 		}
 	}

@@ -65,7 +65,11 @@ class EMMAPrintClient implements CoverageReportClient
 
 		xml.addChild(all);
 
-		var timer = Timer.delay(reportComplete, 10);
+		#if php
+			reportComplete();
+		#else
+			var timer = Timer.delay(reportComplete, 10);
+		#end
 	}
 
 	function reportComplete()
