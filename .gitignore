@@ -24,3 +24,7 @@ example/logger/01_BasicLogging/build/main.js
 example/logger/01_BasicLogging/build/main.n
 example/logger/01_BasicLogging/build/main.swf
 example/coverage/02_ConfigureReportClient/build/main.n
+example/coverage/01_BasicCoverage/build/main.js
+example/coverage/01_BasicCoverage/build/main.n
+example/coverage/01_BasicCoverage/build/main.swf
+example/coverage/04_CustomReportClient/build/main.n
