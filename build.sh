@@ -1,3 +1,5 @@
+set -e
+
 #!/bin/bash
 haxelib run mlib allClasses
 haxe buildAllClasses.hxml
