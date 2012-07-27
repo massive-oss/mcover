@@ -1,0 +1,10 @@
+-main Main
+-php build/php
+-cp src
+--macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# mcover source
+-cp ../../../src
+# common example code
+-cp ../common/src
+-debug
+-cmd php build/php/index.php

@@ -17,3 +17,10 @@ example/coverage/02_ConfigureReportClient/build/cpp/
 example/*build*
 example/coverage/04_CustomReportClient/build/cpp/
 example/logger/01_BasicLogging/build/cpp/
+example/logger/01_BasicLogging/build/php/
+example/coverage/01_BasicCoverage/build/php/
+example/coverage/02_ConfigureReportClient/build/php/
+example/logger/01_BasicLogging/build/main.js
+example/logger/01_BasicLogging/build/main.n
+example/logger/01_BasicLogging/build/main.swf
+example/coverage/02_ConfigureReportClient/build/main.n
