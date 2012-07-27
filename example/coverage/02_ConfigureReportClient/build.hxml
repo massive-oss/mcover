@@ -48,3 +48,16 @@
 -D HXCPP_M64
 
 -cmd build/cpp/Main
+
+--next
+
+-main Main
+-php build/php
+-cp src
+--macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# mcover source
+-cp ../../../src
+# common example code
+-cp ../common/src
+-cmd php build/php/index.php
+
