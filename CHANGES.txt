@@ -1,3 +1,6 @@
+v1.3.2 - 
+- cpp: issue #9 0% branch coverage prints -21474836.48% on cpp target
+
 v1.3.1 - 27.07.12
 - Added support for php target
 

@@ -104,7 +104,7 @@ class MCoverSummaryReportClient extends SummaryReportClient
 
 	function appendResult(name:String, count:Int, total:Int)
 	{
-		var percent = m.cover.util.NumberUtil.round((count/total)*100, 2);
+		var percent = (count == 0 ? 0 : m.cover.util.NumberUtil.round((count/total)*100, 2));
 		return name + ":" + percent + "%," + count + "/" + total;
 	}
 }

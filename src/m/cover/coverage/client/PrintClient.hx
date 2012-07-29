@@ -238,7 +238,15 @@ class PrintClient implements AdvancedCoverageReportClient
 	{
 		var a:Array<String> = [""];
 		a.push(name);
-		a.push("" + NumberUtil.round((count/total)*100, 2) + "%");
+		if(count == 0)
+		{
+			a.push("0%");
+		}
+		else
+		{
+			a.push("" + NumberUtil.round((count/total)*100, 2) + "%");	
+		}
+		
 		a.push("" + count + " / " + total);
 
 		var s:Int = SHORT_FIRST_TAB_WIDTH;

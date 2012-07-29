@@ -287,7 +287,7 @@ class EMMAPrintClient implements CoverageReportClient
 	{
 		try
 		{
-			var p = Math.round((count/total)*100);
+			var p = (count == 0 ? 0 : Math.round((count/total)*100));
 
 			#if (!neko && !flash9) 
 				if(Math.isNaN(p)) throw "NaN";
