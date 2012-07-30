@@ -1,10 +1,7 @@
 MassiveCover (MCover)
 ======================
 
-MassiveCover is a collection of macro based cross-platform code coverage and quality tools.
-
-It currently includes code coverage and function entry/exit logging, and supports the js, flash, neko and cpp and php targets in Haxe
-
+MassiveCover is a collection of macro based cross-platform code coverage and quality tools. MassiveCover runs on all main Haxe targets including js, flash, neko, cpp and php.
 
 To install mcover:
 
@@ -40,13 +37,17 @@ Example macro usage:
 
 ### Cross Platform
 
-MCover has been designed to work with any HaXe target. Officially we support the following:
+MCover has been designed to work with any Haxe target. Officially we support the following:
 
 *	ActionScript
 *	JavaScript
 *	Neko
+*	CPP
+*	PHP
 
-**NOTE:** MCover requires Haxe 2.0.8
+
+
+**NOTE:** MCover requires Haxe 2.0.8 or greater
 
 
 Code Coverage
