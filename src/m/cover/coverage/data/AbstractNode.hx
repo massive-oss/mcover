@@ -53,7 +53,10 @@ class AbstractNode
 
 		return resultCache;
 	}
-	
+
+	/**
+	Returns coverage as float beween 0 and 100 
+	*/
 	@IgnoreLogging
 	public function getPercentage():Float
 	{

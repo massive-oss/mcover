@@ -1,0 +1,17 @@
+usage: report [input] [output] [classpath]
+
+    Coverts a mcover data file into a standalone report
+
+Arguments:
+
+   input      : path to raw mcover data file (*.mcover)
+   output     : path to output directory or file
+   classpath  : path to classpath src matching coverage input, repeatable
+
+Optional params
+
+	n/a
+
+Example:
+
+    mcover report neko.mcover bin/report src
