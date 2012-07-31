@@ -95,7 +95,6 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public var currentTest(default, set_currentTest):String;
 
-
 	/*
 	 * total execution count for statements by id
 	*/
@@ -107,15 +106,14 @@ class CoverageLoggerImpl implements CoverageLogger
 	var allBranchResultsById:IntHash<BranchResult>;
 
 	/*
-	 * statement execution counts for current test
+	 * stores a cache of test results against currentTest string
 	*/
-	var testStatementResultsById:IntHash<Int>;
-	
-	/*
-	 * branch execution counts for current test
-	*/
-	var testBranchResultsById:IntHash<BranchResult>;
+	var filteredResultsHash:Hash<FilteredCoverageResults>;
 
+	/*
+	 * results for active 'currentTest'
+	*/
+	var currentFilteredResults:FilteredCoverageResults;
 
 	var clients:Array<CoverageReportClient>;
 	var clientCompleteCount:Int;
@@ -125,6 +123,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		allStatementResultsById = new IntHash();
 		allBranchResultsById = new IntHash();
+		filteredResultsHash = new Hash();
 		clients = [];
 	}
 
@@ -133,7 +132,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		generateReportResults(false);
 
 		if(!skipClients)
-		{
+		{	
 			reportToClients();
 		}
 	}
@@ -158,8 +157,8 @@ class CoverageLoggerImpl implements CoverageLogger
 		
 		if(currentTestOnly)
 		{
-			coverage.setStatementResultsHash(testStatementResultsById);
-			coverage.setBranchResultsHash(testBranchResultsById);	
+			coverage.setStatementResultsHash(currentFilteredResults.statementResultsById);
+			coverage.setBranchResultsHash(currentFilteredResults.branchResultsById);	
 		}
 		else
 		{
@@ -223,9 +222,9 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		updateStatementHash(allStatementResultsById, id);
 
-		if(currentTest != null)
+		if(currentFilteredResults != null)
 		{				
-			updateStatementHash(testStatementResultsById, id);
+			updateStatementHash(currentFilteredResults.statementResultsById, id);
 		}
 		#if (neko||cpp) mutex.release(); #end
 	}
@@ -270,9 +269,9 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		updateBranchHash(allBranchResultsById, id, bool);
 
-		if(currentTest != null)
+		if(currentFilteredResults != null)
 		{
-			updateBranchHash(testBranchResultsById, id, bool);
+			updateBranchHash(currentFilteredResults.branchResultsById, id, bool);
 		}
 
 		#if (neko||cpp) mutex.release(); #end
@@ -306,8 +305,21 @@ class CoverageLoggerImpl implements CoverageLogger
 	function set_currentTest(value:String):String
 	{
 		currentTest = value;
-		testStatementResultsById = new IntHash();
-		testBranchResultsById = new IntHash();
+
+		if(value == null)
+		{
+			currentFilteredResults = null;
+			return value;
+		}
+
+		if(!filteredResultsHash.exists(value))
+		{
+			var result:FilteredCoverageResults = {filter:value, statementResultsById:new IntHash(), branchResultsById:new IntHash()};
+			filteredResultsHash.set(value, result); 
+		}
+
+		currentFilteredResults = filteredResultsHash.get(value);
+
 		return value;
 	}
 
@@ -354,3 +366,22 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 }
+
+typedef FilteredCoverageResults =
+{
+	/*
+	 * name of class being covered
+	*/	
+	filter:String,
+
+	/*
+	 * statement execution counts for current test
+	*/
+	statementResultsById:IntHash<Int>,
+	
+	/*
+	 * branch execution counts for current test
+	*/
+	branchResultsById:IntHash<BranchResult>
+}
+
