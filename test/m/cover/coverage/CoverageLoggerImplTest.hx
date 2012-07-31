@@ -255,7 +255,11 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 		Assert.areEqual(0, mockClient.coverage.getPercentage());
 
+		instance.currentTest = "foo";
+		
+		instance.reportCurrentTest();
 
+		Assert.isTrue(mockClient.coverage.getPercentage() > 0);
 	}
 
 
