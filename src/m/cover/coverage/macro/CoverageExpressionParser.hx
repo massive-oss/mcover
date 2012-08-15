@@ -347,6 +347,7 @@ import sys.FileSystem;
 		block.max = posInfo.max;
 
 		var posString = Std.string(startPos);
+
 		posString = posString.substr(5, posString.length-6);//get path string
 
 		posString = posString.split(" characters ").join(" chars ");
@@ -354,7 +355,11 @@ import sys.FileSystem;
 		if(alternateLocation != null)
 		{
 			if(IS_WINDOWS) alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
-			block.location = alternateLocation + posString.split(":").pop();
+
+			var p = posString.split(":");
+			p.shift();
+
+			block.location = alternateLocation + ":" + p.join(":");
 		}
 		else
 		{
@@ -393,7 +398,7 @@ import sys.FileSystem;
 				block.lines.push(i);
 			}
 		}
-	
+
 		if(isBranch)
 		{
 			CoverageMacroDelegate.coverage.addBranch(cast(block, Branch));

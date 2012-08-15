@@ -1,3 +1,6 @@
+v1.3.3
+- all: issue #12 - Line number missing from coverage block string output (if single line)
+
 v1.3.2 - 
 - cpp: issue #9 0% branch coverage prints -21474836.48% on cpp target
 - all: issue #10 - Added ability to resume recording of filtered results when using CoverageLogger.currentTest
