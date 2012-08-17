@@ -1,5 +1,7 @@
 v1.3.3
 - all: issue #12 - Line number missing from coverage block string output (if single line)
+- all: fixed broken test for issue #10 (test shouldn't have been failing)
+- php: missing ';' in import
 
 v1.3.2 - 
 - cpp: issue #9 0% branch coverage prints -21474836.48% on cpp target

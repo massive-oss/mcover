@@ -9,7 +9,7 @@ import m.cover.coverage.CoverageLogger;
 import m.cover.MCover;
 import m.cover.coverage.data.Coverage;
 import m.cover.coverage.data.Branch;
-
+import m.cover.coverage.data.Statement;
 import m.cover.coverage.client.TraceClient;
 
 class CoverageLoggerImplTest extends CoverageLoggerTest
@@ -39,14 +39,16 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	override public function setup():Void
 	{
 		super.setup();
+		originalTrace = haxe.Log.trace;
 		instance = new CoverageLoggerImpl();
-	
+
 	}
 	
 	@After
 	override public function tearDown():Void
 	{
 		super.tearDown();
+		haxe.Log.trace = originalTrace;
 
 	}
 	
@@ -99,7 +101,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
-		originalTrace = haxe.Log.trace;
 		haxe.Log.trace = function(value:Dynamic,?infos : haxe.PosInfos){};
 
 		Assert.areEqual(0, instance.getClients().length);
@@ -227,39 +228,55 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		}	
 	}
 
+
 	@Test
 	public function shouldOnlyReportLogsSinceCurrentTestWasSet()
 	{
 		var mockClient = cast(client, CoverageReportClientMock);
-		
+		mockClient.coverage =  new CoverageMock();
+
+		var coverage = mockClient.coverage;
+
+		untyped instance.coverage = mockClient.coverage;
+
 		instance.addClient(client);
+		
+		instance.currentTest = null;
 		
 		instance.logStatement(0);
 		instance.logBranch(0, true);
+
 		instance.currentTest = "foo";
 
 		instance.reportCurrentTest();
 
-		Assert.areEqual(0, mockClient.coverage.getPercentage());
+		var percent:Float =  coverage.getPercentage();
 
-		instance.logStatement(1);
-		instance.logBranch(0, false);
+		Assert.areEqual(0, percent);
+
+		instance.logStatement(0);
+		instance.logBranch(0, true);
 
 		instance.reportCurrentTest();
 
-		Assert.isTrue(mockClient.coverage.getPercentage() > 0);
+		percent = coverage.getPercentage();
+
+		Assert.isTrue(percent > 0);
 
 		instance.currentTest = "bar";
-		
+
 		instance.reportCurrentTest();
 
-		Assert.areEqual(0, mockClient.coverage.getPercentage());
+		percent = coverage.getPercentage();
+
+		Assert.areEqual(0, percent);
 
 		instance.currentTest = "foo";
 		
 		instance.reportCurrentTest();
 
-		Assert.isTrue(mockClient.coverage.getPercentage() > 0);
+		percent = coverage.getPercentage();
+		Assert.isTrue(percent > 0);
 	}
 
 
@@ -267,7 +284,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	public function shouldNotUpdateClientIfReportCurrentTestSkipClientsIsTrue()
 	{
 		instance.addClient(client);
-		instance.currentTest = "foo";
+		instance.currentTest = "shouldNotUpdateClientIfReportCurrentTestSkipClientsIsTrue";
 		instance.logStatement(0);
 		instance.reportCurrentTest(true);
 
@@ -300,6 +317,42 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		return new CoverageLoggerImpl();
 	}
+}
 
+class CoverageMock extends Coverage
+{
+	public function new()
+	{
+		super();
+
+		var s = new Statement();
+		s.id = 0;
+		s.file = "src/example/Foo.hx";
+		s.packageName = "example";
+		s.className = "Foo";
+		s.qualifiedClassName = "example.Foo";
+		s.methodName = "test";
+		s.min = 50;
+		s.max = 60;
+		s.location = "location";
+		s.lookup = [0,0,0,0,0];
+
+		addStatement(s);
+
+		var b = new Branch();
+		b.id = 0;
+		b.file = "src/example/Foo.hx";
+		b.packageName = "example";
+		b.className = "Foo";
+		b.qualifiedClassName = "example.Foo";
+		b.methodName = "test";
+		b.min = 50;
+		b.max = 60;
+		b.location = "location";
+		b.lookup = [0,0,0,0,0];
+
+		addBranch(b);
+
+	}
 
 }

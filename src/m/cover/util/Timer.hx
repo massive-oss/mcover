@@ -59,7 +59,7 @@ package m.cover.util;
 	#elseif cpp
 		import cpp.Sys;
 	#elseif php
-		import php.Sys
+		import php.Sys;
 	#end
 #end
 
