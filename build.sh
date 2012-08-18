@@ -1,5 +1,8 @@
 set -e
 
+mkdir -p build
+mkdir -p build/bin
+
 #!/bin/bash
 haxelib run mlib allClasses
 haxe buildAllClasses.hxml
@@ -13,8 +16,8 @@ echo  $( date -r ${day} ) | md5 >${fname}
 haxelib run mlib install
 
 
-# cd example
-# bash build.sh
-# cd ../
+cd example
+bash build.sh
+cd ../
 
 haxelib run munit test -neko -coverage
