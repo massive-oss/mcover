@@ -78,7 +78,6 @@ class ExceptionTest
 		exception = createInstance("message");
 		var str = exception.toString();
 		Assert.isTrue(str.indexOf(getTypeString() + ": message") == 0);
-		trace(str);
 		Assert.isTrue(str.indexOf("at " + getTestName()) != -1);
 		Assert.isTrue(str.indexOf("Caused by: cause") == -1);
 	}
