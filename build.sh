@@ -5,10 +5,16 @@ haxelib run mlib allClasses
 haxe buildAllClasses.hxml
 
 
-cd example
-bash build.sh
-cd ../
+day=$( date +%s )
+fname="src/stamp.txt"
 
-haxelib run munit test -neko -coverage
+echo  $( date -r ${day} ) | md5 >${fname}
 
 haxelib run mlib install
+
+
+# cd example
+# bash build.sh
+# cd ../
+
+haxelib run munit test -neko -coverage

@@ -51,16 +51,30 @@ file|stamp|included class,included class|excluded class,excluded class
 	import sys.FileSystem;
 #end
 
+import haxe.macro.Context;
+
 class FilteredClassCache
 {
 	var file:String;
 
 	var id:String;
 	var fileHash:Hash<CachedClasses>;
+	var md5:String;
 
 	public function new(path:String)
 	{
 		fileHash = new Hash();
+
+		try
+		{
+			var stampPath = Context.resolvePath("stamp.txt");
+			md5 = StringTools.trim(File.getContent(stampPath));
+		}
+		catch(e:Dynamic)
+		{
+			md5 = "";
+		}
+
 
 		#if !MCOVER_NO_CACHE
 			file = m.cover.MCover.TEMP_DIR + "/" + path;
@@ -80,7 +94,6 @@ class FilteredClassCache
 	*/
 	public function init(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>)
 	{
-		trace("init");
 		var tempId = "";
 		if(classPaths != null) tempId += classPaths.join(",");
 		tempId += ",";
@@ -88,11 +101,13 @@ class FilteredClassCache
 		tempId += ",";
 		if(exclusions != null) tempId += exclusions.join(",");
 
+		tempId += "," + md5;
+
 		trace("tempId = " + tempId);
 		trace("id = " + id);
 		if(tempId != id)
 		{
-			trace("reset");
+			trace("reset cache");
 			id = tempId;
 			fileHash = new Hash();
 		}
@@ -168,7 +183,7 @@ class FilteredClassCache
 
 		buf.add("@" + id + "\n");
 
-		for(path in fileHash.keys())
+		for (path in fileHash.keys())
 		{
 			var file = fileHash.get(path);
 			buf.add(path + "|" + file.stamp + "|" + file.includes + "|" + file.excludes + "\n");
@@ -185,7 +200,7 @@ class FilteredClassCache
 		var f = File.read(file, true);
 		try
 		{
-			while( true )
+			while ( true )
 			{
 				var line = StringTools.trim(f.readLine());
 				

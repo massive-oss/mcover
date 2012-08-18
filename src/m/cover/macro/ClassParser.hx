@@ -111,13 +111,8 @@ class ClassParserImpl implements ClassParser
 
 		if(fields.length > 0)
 		{
-
 			info.fileName = Context.getPosInfos(fields[0].pos).file;
-			
 		}
-		
-		//trace(info.fileName);
-		//trace(info.packageName + "." + info.className);
 	}
 
 	/**
@@ -199,8 +194,6 @@ class ClassParserImpl implements ClassParser
 	function parseMethod(field:Field, f:Function)
 	{
 		info.methodName = field.name;
-
-		//trace(" 	" + info.methodName);
 
 		if(f.expr == null ) return;
 		functionStack = [f];

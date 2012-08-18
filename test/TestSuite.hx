@@ -20,6 +20,9 @@ import m.cover.coverage.data.StatementTest;
 import m.cover.coverage.MCoverageTest;
 import m.cover.coverage.munit.client.MCoverPrintClientTest;
 import m.cover.ExceptionTest;
+import m.cover.logger.data.LogRecordingTest;
+import m.cover.logger.data.LogTest;
+import m.cover.logger.LoggerExceptionTest;
 import m.cover.macro.ClassInfoTest;
 import m.cover.util.TimerTest;
 
@@ -55,6 +58,9 @@ class TestSuite extends massive.munit.TestSuite
 		add(m.cover.coverage.MCoverageTest);
 		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
 		add(m.cover.ExceptionTest);
+		add(m.cover.logger.data.LogRecordingTest);
+		add(m.cover.logger.data.LogTest);
+		add(m.cover.logger.LoggerExceptionTest);
 		add(m.cover.macro.ClassInfoTest);
 		add(m.cover.util.TimerTest);
 	}

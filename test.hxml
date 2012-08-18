@@ -4,14 +4,14 @@
 -main TestMain
 -cp src
 -cp test
--lib munit
--lib mlib
+
 -debug
 -swf-version 9
 -swf build/test/as3_test.swf
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
-
+-lib munit
+-lib mlib
 --next
 
 ##Flash 8
@@ -30,19 +30,19 @@
 ## JavaScript
 -main TestMain
 -debug
--cp src
--cp test
+
 -lib munit
 -lib mlib
 -js build/test/js_test.js
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
+-cp src
+-cp test
 --next
 
 ## neko
 -main TestMain
--cp src
--cp test
+
 -lib munit
 -lib mlib
 -debug
@@ -50,6 +50,9 @@
 -D MCOVER_DEBUG
 # --macro m.cover.MCover.configure(true, true)
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
+
+-cp src
+-cp test
 
 # --macro m.cover.MLogger.include([''], ['src'], null)
 # --macro m.cover.MCover.include('',['src'])

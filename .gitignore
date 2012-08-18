@@ -29,3 +29,4 @@ example/coverage/01_BasicCoverage/build/main.n
 example/coverage/01_BasicCoverage/build/main.swf
 example/coverage/04_CustomReportClient/build/main.n
 .DS_Store
+/src/stamp.txt

@@ -60,12 +60,12 @@ class AbstractNode
 		var r = getResults();
 		try
 		{
-			var p = Math.round((r.bt + r.bf + r.sc + r.mc)/(2*r.b + r.s + r.m)*10000)/100;
+			var count = r.bt + r.bf + r.sc + r.mc;
+			var total = 2*r.b + r.s + r.m;
 
-			#if (!neko && !flash9) 
-			if(Math.isNaN(p)) throw "NaN";
-			#end
-			return p;
+			if(count == 0 || total == 0) return 0;
+
+			return Math.round((count/total)*10000)/100;
 		}
 		catch(e:Dynamic){}
 		return 0;

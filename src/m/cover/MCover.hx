@@ -128,6 +128,7 @@ To enable function entry/exit logging
 
 			for(cls in classHash.keys())
 			{
+				
 				var args:Array<String> = null;
 
 				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
@@ -153,7 +154,6 @@ To enable function entry/exit logging
 			if(args.length > 0)
 			{
 				var argsString = "[\"" + args.join("\",\"") + "\"]";
-				//traceToFile(cls);
 				Compiler.addMetadata("@:build(m.cover.MCover.build(" + argsString + "))", cls);
 				Compiler.keep(cls, null, true);//ignored in haxe 2_0_8
 			}
@@ -163,7 +163,7 @@ To enable function entry/exit logging
 			}
 		}
 
-		trace(exclusions);
+		trace("Excluding: " + exclusions);
 
 		flush();
 		

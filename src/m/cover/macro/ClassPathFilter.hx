@@ -214,7 +214,11 @@ class ClassPathFilter
 		}
 		else
 		{
-			regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/;
+			#if haxe_210
+				regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])+)/m;
+			#else
+				regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/m;
+			#end
 		}
 
 		temp = contents;
@@ -305,7 +309,7 @@ class ClassPathFilter
 	function getPackageDefinitionInFile(contents:String):String
 	{
 		//var contents = File.getContent(path);
-		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/;
+		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/m;
 
 		if(reg.match(contents))
 		{
@@ -315,28 +319,6 @@ class ClassPathFilter
 	}
 
 	////////////
-
-
-	/**
-	* returns all class definitions in a file.
-	*/
-	function getClassesInFileSimple(path:String):Array<String>
-	{
-		var classes:Array<String> = [];
-		var contents:String;
-
-		var reg:EReg = ~/(.*)class ([A-Z]([A-Za-z0-9])+)/;
-		contents = File.getContent(path);
-		
-		while(reg.match(contents))
-		{
-			var cls = reg.matched(2);
-			classes.push(cls);
-			contents = reg.matchedRight();
-		}
-		return classes;
-	}
-
 	
 }
 #end
