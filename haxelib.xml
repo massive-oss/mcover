@@ -6,5 +6,5 @@
 	<tag v="massive" />
 	<tag v="cpp" />
 	<description>MCover is a collection of macro-based cross-platform code coverage and quality tools.</description>
-	<version name="1.3.3">Fixed issue #12 - Line number missing from coverage block string output (if single line). See CHANGES.txt for full list of changes</version>
+	<version name="1.3.4">Updated for Haxe 2.10 (changed regexp engine in macros). See CHANGES.txt for full list of changes</version>
 </project>
