@@ -102,7 +102,7 @@ class AbstractNodeTest
 
 		#if flash
 			r1.sc = untyped __global__["NaN"];
-		#else
+		#elseif !cpp
 			r1.sc = null;
 		#end
 

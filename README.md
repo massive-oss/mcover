@@ -134,6 +134,7 @@ See CHANGES.txt for full changes
 
 * Added cpp target support
 * Added php target support
+* Updated for Haxe 2.10
 
 ### New since 1.2.x
 

@@ -1,7 +1,7 @@
 v1.3.4
 
 - all: updated macro regexp for Haxe 2.10
-- all: fixed issue with classes inside of comments being added to include class list
+- all: fixed issue with classes inside of comments being added to include class list in Haxe 2.10
 - all : removed some internal logging/traces
 - added new tests for logger macro classes
 - dev: added md5 hash cached classes file to ensure reset when rebuilding mcover from source

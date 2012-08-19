@@ -109,7 +109,7 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 	}
 
 
-	public function reportFinalCoverage(percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
+	public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
 		?executionFrequency:String=null

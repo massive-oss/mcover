@@ -2,9 +2,6 @@
 
 ## Flash 9+
 -main TestMain
--cp src
--cp test
-
 -debug
 -swf-version 9
 -swf build/test/as3_test.swf
@@ -12,12 +9,14 @@
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 -lib munit
 -lib mlib
+
+-cp src
+-cp test
 --next
 
 ##Flash 8
 # -main TestMain
-# -cp src
-# -cp test
+
 # -lib munit
 # -lib mlib
 # -debug
@@ -25,6 +24,8 @@
 # -swf-version 8
 # -swf build/test/as2_test.swf
 # -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
+# -cp src
+# -cp test
 # --next
 
 ## JavaScript
@@ -48,11 +49,22 @@
 -debug
 -neko build/test/neko_test.n
 -D MCOVER_DEBUG
-# --macro m.cover.MCover.configure(true, true)
+-resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
+-cp src
+-cp test
+
+--next
+
+## cpp
+-main TestMain
+
+-lib munit
+-lib mlib
+-debug
+-cpp build/test/cpp_test
+-D MCOVER_DEBUG
+-D HXCPP_M64
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 
 -cp src
 -cp test
-
-# --macro m.cover.MLogger.include([''], ['src'], null)
-# --macro m.cover.MCover.include('',['src'])
