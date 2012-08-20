@@ -1,7 +1,7 @@
 package;
 
-import m.cover.logger.MCoverLogger;
-import m.cover.logger.Logger;
+import mcover.logger.MCoverLogger;
+import mcover.logger.Logger;
 import example.Example;
 
 #if haxe_208

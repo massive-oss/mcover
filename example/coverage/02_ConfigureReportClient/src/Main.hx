@@ -1,8 +1,8 @@
 package;
 
-import m.cover.coverage.MCoverage;
-import m.cover.coverage.CoverageLogger;
-import m.cover.coverage.client.TraceClient;
+import mcover.coverage.MCoverage;
+import mcover.coverage.CoverageLogger;
+import mcover.coverage.client.TraceClient;
 import example.Example;
 
 /**

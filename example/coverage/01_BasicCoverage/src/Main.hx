@@ -1,7 +1,7 @@
 package;
 
-import m.cover.coverage.MCoverage;
-import m.cover.coverage.CoverageLogger;
+import mcover.coverage.MCoverage;
+import mcover.coverage.CoverageLogger;
 import example.Example;
 
 #if haxe_208
