@@ -1,5 +1,5 @@
-v1.4.0
-- all: issue #14 - changed top level package from m.cover to mcover 
+v1.4.0 - 21.08.12
+- all: issue #14 - changed top level package from m.cover to mcover to avoid conflicts with local vars called 'm'
 
 v1.3.4 - 20.08.12
 
