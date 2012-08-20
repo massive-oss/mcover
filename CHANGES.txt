@@ -1,4 +1,7 @@
-v1.3.4
+v1.4.0
+- all: issue #14 - changed top level package from m.cover to mcover 
+
+v1.3.4 - 20.08.12
 
 - all: updated macro regexp for Haxe 2.10
 - all: fixed issue with classes inside of comments being added to include class list in Haxe 2.10

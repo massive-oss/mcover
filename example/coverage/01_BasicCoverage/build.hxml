@@ -3,7 +3,7 @@
 -swf-version 10
 -swf-header 1024:769:60:FFFFFF
 -cp src
---macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
@@ -14,7 +14,7 @@
 -main Main
 -js build/main.js
 -cp src
---macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
@@ -25,7 +25,7 @@
 -main Main
 -neko build/main.n
 -cp src
---macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
@@ -38,7 +38,7 @@
 -main Main
 -cpp build/cpp
 -cp src
---macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
@@ -53,7 +53,7 @@
 -main Main
 -php build/php
 -cp src
---macro m.cover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code

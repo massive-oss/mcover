@@ -2,7 +2,7 @@
 -main Main
 -cpp build/cpp
 -cp src
---macro m.cover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+--macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 ## mcover source
 -cp ../../../src
 ## common example code

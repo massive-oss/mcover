@@ -20,7 +20,7 @@ MCover can provide detailed coverage of executed code, including:
 
 Example macro usage:
 
-	--macro m.cover.MCover.coverage([''], ['src'])
+	--macro mcover.MCover.coverage([''], ['src'])
 
 ### Function logging
 
@@ -32,7 +32,7 @@ MCover can generate timing metrics around function entry/exit times, including:
 
 Example macro usage:
 
-	--macro m.cover.MCover.logger([''], ['src'])
+	--macro mcover.MCover.logger([''], ['src'])
 
 
 ### Cross Platform
@@ -60,7 +60,7 @@ For detailed information see src/m/cover/coverage/README.md
 Add the following to your hxml file:
 
 	-lib mcover
-	--macro m.cover.MCover.coverage(['{package}'], {classPaths}, {ignoredClasses})
+	--macro mcover.MCover.coverage(['{package}'], {classPaths}, {ignoredClasses})
 
 Where:
 
@@ -71,7 +71,7 @@ Where:
 
 Example:
 
-	--macro m.cover.MCover.coverage(['com.example'], ['src'], null)
+	--macro mcover.MCover.coverage(['com.example'], ['src'], null)
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
@@ -79,7 +79,7 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 Add the followng code to your application after code has executed:
 
-	var logger = m.cover.coverage.MCoverage.getLogger();
+	var logger = mcover.coverage.MCoverage.getLogger();
 	logger.report();
 
 
@@ -93,7 +93,7 @@ For detailed information see src/m/cover/logger/README.md
 Add the following to your hxml file:
 
 	-lib mcover
-	--macro m.cover.MCover.logger(['{package}'], {classPaths}, {ignoredClasses})
+	--macro mcover.MCover.logger(['{package}'], {classPaths}, {ignoredClasses})
 
 Where:
 
@@ -104,7 +104,7 @@ Where:
 
 Example:
 
-	--macro m.cover.MCover.logger(['com.example'], ['src'], null)
+	--macro mcover.MCover.logger(['com.example'], ['src'], null)
 
 Note: Only use single quotation marks (' ') to avoid compiler issues on windows platforms
 
@@ -113,12 +113,12 @@ Note: Only use single quotation marks (' ') to avoid compiler issues on windows 
 
 Add the followng code to your application to start recording
 
-	var logger = m.cover.coverage.MCoverLogger.getLogger();
+	var logger = mcover.coverage.MCoverLogger.getLogger();
 	logger.startRecording();
 
 Add the followng code to your application to stop recording and print report
 
-	var logger = m.cover.coverage.MCoverLogger.getLogger();
+	var logger = mcover.coverage.MCoverLogger.getLogger();
 	logger.stopRecording();
 	logger.report();
 
@@ -129,6 +129,10 @@ Changes
 ----------
 
 See CHANGES.txt for full changes
+
+### New since 1.4.x
+
+* Changed top level package from `m.cover` to `mcover`
 
 ### New since 1.3.x
 
