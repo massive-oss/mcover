@@ -1,9 +1,9 @@
-<mlib bin="build">
+<mlib bin="bin">
 	<resources>
 		<resource type="src" path="src" />
 		<!--<resource type="run" path="bin/munit.n" />-->
 		<resource type="license" path="resource/license.mtt" />
 		<!--<resource path="example" dest="example" />-->
-		<resource path="build/haxedoc.xml" dest="" />
+		<resource path="bin/haxedoc.xml" dest="" />
 	</resources>
 </mlib>

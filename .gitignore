@@ -2,5 +2,6 @@ temp.hxml
 mcover.sublime-workspace
 .DS_Store
 /src/stamp.txt
-build/
+bin
 .mcover
+workspace.json

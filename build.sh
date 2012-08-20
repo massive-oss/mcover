@@ -1,7 +1,6 @@
 set -e
 
-mkdir -p build
-mkdir -p build/bin
+mkdir -p bin/temp
 
 #!/bin/bash
 haxelib run mlib allClasses

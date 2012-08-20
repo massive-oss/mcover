@@ -4,7 +4,7 @@
 -main TestMain
 -debug
 -swf-version 9
--swf build/test/as3_test.swf
+-swf bin/test/as3_test.swf
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 -lib munit
@@ -22,7 +22,7 @@
 # -debug
 # -D MCOVER_DEBUG
 # -swf-version 8
-# -swf build/test/as2_test.swf
+# -swf bin/test/as2_test.swf
 # -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 # -cp src
 # -cp test
@@ -34,7 +34,7 @@
 
 -lib munit
 -lib mlib
--js build/test/js_test.js
+-js bin/test/js_test.js
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 -cp src
@@ -47,7 +47,7 @@
 -lib munit
 -lib mlib
 -debug
--neko build/test/neko_test.n
+-neko bin/test/neko_test.n
 -D MCOVER_DEBUG
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
 -cp src
@@ -61,7 +61,7 @@
 -lib munit
 -lib mlib
 -debug
--cpp build/test/cpp_test
+-cpp bin/test/cpp_test
 -D MCOVER_DEBUG
 -D HXCPP_M64
 -resource test/m/cover/coverage/MockResouce.txt@MockMCoverResource
