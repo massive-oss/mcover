@@ -1,6 +1,6 @@
 package mcover.cli.report;
 
-import m.cover.coverage.DataTypes;
+import mcover.coverage.DataTypes;
 import mcover.cli.report.CoverageReport;
 
 class BasicCoverageReport extends CoverageReportBase

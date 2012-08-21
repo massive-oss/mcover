@@ -29,7 +29,6 @@
 package ;
 
 import m.cover.MCover;
-import m.cover.munit.client.MCoverPrintClient;
 import mcover.coverage.client.EMMAPrintClient;
 import mcover.coverage.client.PrintClient;
 import mcover.coverage.client.TraceClient;

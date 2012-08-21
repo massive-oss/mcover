@@ -1,5 +1,5 @@
 package mcover.cli.report;
-import m.cover.coverage.DataTypes;
+import mcover.coverage.DataTypes;
 
 interface CoverageReport
 {

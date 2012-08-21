@@ -1,7 +1,7 @@
 package mcover.cli.report;
 
 import massive.neko.io.File;
-import m.cover.coverage.DataTypes;
+import mcover.coverage.DataTypes;
 import mcover.cli.report.CoverageReport;
 
 class HTMLCoverageReport extends CoverageReportBase

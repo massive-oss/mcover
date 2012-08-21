@@ -1,7 +1,7 @@
 package mcover.cli.cmd;
 
 import massive.neko.io.File;
-import m.cover.coverage.data.Coverage;
+import mcover.coverage.data.Coverage;
 import mcover.cli.report.BasicCoverageReport;
 import mcover.cli.report.HTMLCoverageReport;
 
