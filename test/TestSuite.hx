@@ -1,27 +1,30 @@
 import massive.munit.TestSuite;
 
-import m.cover.coverage.client.CoverageReportClientTest;
-import m.cover.coverage.client.EMMAPrintClientTest;
-import m.cover.coverage.client.PrintClientTest;
-import m.cover.coverage.CoverageExceptionTest;
-import m.cover.coverage.CoverageLoggerImplTest;
-import m.cover.coverage.CoverageLoggerTest;
-import m.cover.coverage.data.AbstractBlockTest;
-import m.cover.coverage.data.AbstractNodeListTest;
-import m.cover.coverage.data.AbstractNodeTest;
-import m.cover.coverage.data.BranchTest;
-import m.cover.coverage.data.ClazzTest;
-import m.cover.coverage.data.CoverageTest;
-import m.cover.coverage.data.DataUtilTest;
-import m.cover.coverage.data.FileTest;
-import m.cover.coverage.data.MethodTest;
-import m.cover.coverage.data.PackageTest;
-import m.cover.coverage.data.StatementTest;
-import m.cover.coverage.MCoverageTest;
-import m.cover.coverage.munit.client.MCoverPrintClientTest;
-import m.cover.ExceptionTest;
-import m.cover.macro.ClassInfoTest;
-import m.cover.util.TimerTest;
+import mcover.coverage.client.CoverageReportClientTest;
+import mcover.coverage.client.EMMAPrintClientTest;
+import mcover.coverage.client.PrintClientTest;
+import mcover.coverage.CoverageExceptionTest;
+import mcover.coverage.CoverageLoggerImplTest;
+import mcover.coverage.CoverageLoggerTest;
+import mcover.coverage.data.AbstractBlockTest;
+import mcover.coverage.data.AbstractNodeListTest;
+import mcover.coverage.data.AbstractNodeTest;
+import mcover.coverage.data.BranchTest;
+import mcover.coverage.data.ClazzTest;
+import mcover.coverage.data.CoverageTest;
+import mcover.coverage.data.DataUtilTest;
+import mcover.coverage.data.FileTest;
+import mcover.coverage.data.MethodTest;
+import mcover.coverage.data.PackageTest;
+import mcover.coverage.data.StatementTest;
+import mcover.coverage.MCoverageTest;
+import mcover.coverage.munit.client.MCoverPrintClientTest;
+import mcover.ExceptionTest;
+import mcover.logger.data.LogRecordingTest;
+import mcover.logger.data.LogTest;
+import mcover.logger.LoggerExceptionTest;
+import mcover.macro.ClassInfoTest;
+import mcover.util.TimerTest;
 
 /**
  * Auto generated Test Suite for MassiveUnit.
@@ -35,27 +38,30 @@ class TestSuite extends massive.munit.TestSuite
 	{
 		super();
 
-		add(m.cover.coverage.client.CoverageReportClientTest);
-		add(m.cover.coverage.client.EMMAPrintClientTest);
-		add(m.cover.coverage.client.PrintClientTest);
-		add(m.cover.coverage.CoverageExceptionTest);
-		add(m.cover.coverage.CoverageLoggerImplTest);
-		add(m.cover.coverage.CoverageLoggerTest);
-		add(m.cover.coverage.data.AbstractBlockTest);
-		add(m.cover.coverage.data.AbstractNodeListTest);
-		add(m.cover.coverage.data.AbstractNodeTest);
-		add(m.cover.coverage.data.BranchTest);
-		add(m.cover.coverage.data.ClazzTest);
-		add(m.cover.coverage.data.CoverageTest);
-		add(m.cover.coverage.data.DataUtilTest);
-		add(m.cover.coverage.data.FileTest);
-		add(m.cover.coverage.data.MethodTest);
-		add(m.cover.coverage.data.PackageTest);
-		add(m.cover.coverage.data.StatementTest);
-		add(m.cover.coverage.MCoverageTest);
-		add(m.cover.coverage.munit.client.MCoverPrintClientTest);
-		add(m.cover.ExceptionTest);
-		add(m.cover.macro.ClassInfoTest);
-		add(m.cover.util.TimerTest);
+		add(mcover.coverage.client.CoverageReportClientTest);
+		add(mcover.coverage.client.EMMAPrintClientTest);
+		add(mcover.coverage.client.PrintClientTest);
+		add(mcover.coverage.CoverageExceptionTest);
+		add(mcover.coverage.CoverageLoggerImplTest);
+		add(mcover.coverage.CoverageLoggerTest);
+		add(mcover.coverage.data.AbstractBlockTest);
+		add(mcover.coverage.data.AbstractNodeListTest);
+		add(mcover.coverage.data.AbstractNodeTest);
+		add(mcover.coverage.data.BranchTest);
+		add(mcover.coverage.data.ClazzTest);
+		add(mcover.coverage.data.CoverageTest);
+		add(mcover.coverage.data.DataUtilTest);
+		add(mcover.coverage.data.FileTest);
+		add(mcover.coverage.data.MethodTest);
+		add(mcover.coverage.data.PackageTest);
+		add(mcover.coverage.data.StatementTest);
+		add(mcover.coverage.MCoverageTest);
+		add(mcover.coverage.munit.client.MCoverPrintClientTest);
+		add(mcover.ExceptionTest);
+		add(mcover.logger.data.LogRecordingTest);
+		add(mcover.logger.data.LogTest);
+		add(mcover.logger.LoggerExceptionTest);
+		add(mcover.macro.ClassInfoTest);
+		add(mcover.util.TimerTest);
 	}
 }

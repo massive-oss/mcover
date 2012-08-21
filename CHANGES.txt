@@ -1,5 +1,24 @@
-v1.3.2 - 
+v1.4.0 - 21.08.12
+- all: issue #14 - changed top level package from m.cover to mcover to avoid conflicts with local vars called 'm'
+
+v1.3.4 - 20.08.12
+
+- all: updated macro regexp for Haxe 2.10
+- all: fixed issue with classes inside of comments being added to include class list in Haxe 2.10
+- all : removed some internal logging/traces
+- added new tests for logger macro classes
+- dev: added md5 hash cached classes file to ensure reset when rebuilding mcover from source
+- dev: changed order of cp's in test file to prevent installed versions of mcover to take precedence over local source when running mcover's tests
+- cpp/php : fixed edge case relating to issue #9
+
+v1.3.3 - 17.08.12
+- all: issue #12 - Line number missing from coverage block string output (if single line)
+- all: fixed broken test for issue #10 (test shouldn't have been failing)
+- php: missing ';' in import
+
+v1.3.2 - ??
 - cpp: issue #9 0% branch coverage prints -21474836.48% on cpp target
+- all: issue #10 - Added ability to resume recording of filtered results when using CoverageLogger.currentTest
 
 v1.3.1 - 27.07.12
 - Added support for php target
