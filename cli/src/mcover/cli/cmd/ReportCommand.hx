@@ -4,6 +4,7 @@ import massive.neko.io.File;
 import mcover.coverage.data.Coverage;
 import mcover.cli.report.BasicCoverageReport;
 import mcover.cli.report.HTMLCoverageReport;
+import mcover.cli.report.RawCoverageReport;
 
 class ReportCommand extends MCoverCommand
 {
@@ -88,7 +89,11 @@ class ReportCommand extends MCoverCommand
 
 		var htmlReport = new HTMLCoverageReport(output, classPaths);
 		htmlReport.report(coverage);
-		
+
+		var rawReport = new RawCoverageReport(output, classPaths);
+		rawReport.report(coverage);
+
+
 	}
 
 	function parseCoverageData(file:File):Coverage
