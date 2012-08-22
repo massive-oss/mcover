@@ -8,11 +8,13 @@ import mcover.cli.report.RawCoverageReport;
 
 class ReportCommand extends MCoverCommand
 {
-	var file:File;
-	var output:File;
+	var src:File;
+	var out:File;
 	var classPaths:Array<File>;
 
-	var coverage:Coverage;
+	var targets:Array<File>;
+
+	var coverage:Array<Coverage>;
 
 	public function new()
 	{
@@ -23,61 +25,12 @@ class ReportCommand extends MCoverCommand
 	{
 		super.initialise();
 
-		var filePath = console.getNextArg();
-		
-		if (filePath == null)
-		{
-			error("Missing input path. Please refer to help.");
-			return;
-		}
+		src = initializeSource();
+		out = initializeOut();
+		classPaths = initializeClassPaths();
 
-		file = console.dir.resolveFile(filePath);
-
-		if (!file.exists)
-		{
-			error("input file path (" + file + ") does not exist.");
-			return;
-		}
-
-		var outputPath = console.getNextArg();
-
-		if (outputPath == null)
-		{
-			error("Missing output path. Please refer to help.");
-			return;
-		}
-
-		output = console.dir.resolveDirectory(outputPath, true);
-
-		
-		var classPath = console.getNextArg();
-		if (classPath == null) classPath = "src";
-
-		classPaths = [];
-
-		
-
-		while (classPath != null)
-		{
-			var cp = console.dir.resolveDirectory(classPath);
-			if (!cp.exists)
-			{
-				error("classpath path (" + cp + ") does not exist.");
-				return;
-			}
-			classPaths.push(cp);
-
-			classPath = console.getNextArg();
-		}
-
-
-		coverage = parseCoverageData(file);
-
-		if (coverage == null)
-		{
-			error("Invalid coverage data file. Unable to load " + file);
-			return;
-		}
+		targets = initializeTargets(src);
+		coverage = initializeCoverage(targets);
 	}
 
 	override public function execute():Void
@@ -85,15 +38,118 @@ class ReportCommand extends MCoverCommand
 		super.execute();
 
 		var basicReport = new BasicCoverageReport();
-		basicReport.report(coverage);
+		//basicReport.report(coverage);
 
-		var htmlReport = new HTMLCoverageReport(output, classPaths);
-		htmlReport.report(coverage);
+		var htmlReport = new HTMLCoverageReport(out, classPaths);
+		//htmlReport.report(coverage);
 
-		var rawReport = new RawCoverageReport(output, classPaths);
-		rawReport.report(coverage);
+		var rawReport = new RawCoverageReport(out, classPaths);
+		rawReport.report(coverage[0]);
 
 
+	}
+
+
+	//---------------------------------------------------------------------------  init
+
+
+	function initializeSource():File
+	{
+		var path = ".mcover/data";
+
+		var file = console.dir.resolveDirectory(path);
+
+		if (!file.exists)
+		{
+			error("mcover data (" + file + ") does not exist.");
+			return null;
+		}
+
+		return file;
+	}
+
+	function initializeOut():File
+	{
+		var path = console.getNextArg();
+
+		if (path == null)
+		{
+			error("Missing out path. Please refer to help.");
+			return null;
+		}
+
+		return console.dir.resolveDirectory(path, true);
+	}
+
+	function initializeClassPaths():Array<File>
+	{
+		var classPaths = [];
+
+		var classPath = console.getNextArg();
+		if (classPath == null) classPath = "src";
+
+		while (classPath != null)
+		{
+			var cp = console.dir.resolveDirectory(classPath);
+			if (!cp.exists)
+			{
+				error("classpath path (" + cp + ") does not exist.");
+				return null;
+			}
+			classPaths.push(cp);
+
+			classPath = console.getNextArg();
+		}
+
+		return classPaths;
+
+	}
+
+	function initializeTargets(src:File):Array<File>
+	{
+		var defaultTargets = ["neko", "cpp", "php", "as3", "js"];
+		var targets:Array<File> = [];
+
+		for(t in defaultTargets)
+		{
+			if(console.getOption(t) == null) continue;
+
+			var file = src.resolveFile(t + ".mcover");
+
+			if(file.exists)
+				targets.push(file);
+		}
+
+		if(targets.length == 0)
+		{
+			var t = null;
+
+			while(t == null)
+			{
+				t = console.getOption("-target","   Please specifiy target (" + defaultTargets.join(",") + ")");
+				var file = src.resolveFile(t + ".mcover");
+
+				if(file.exists)
+					targets.push(file);
+			}
+			
+		}
+
+		return targets;
+	}
+
+	function initializeCoverage(targets:Array<File>):Array<Coverage>
+	{
+		var coverage:Array<Coverage> = [];
+		for(target in targets)
+		{
+			var c = parseCoverageData(target);
+			if (c == null)
+				error("Invalid coverage data file. Unable to load " + target);
+
+			coverage.push(c);
+		}
+		return coverage;
 	}
 
 	function parseCoverageData(file:File):Coverage

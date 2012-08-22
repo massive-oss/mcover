@@ -59,12 +59,13 @@ class Main
 			var serializedData = haxe.Serializer.run(logger.coverage);
 
 			if(!FileSystem.exists(".mcover")) FileSystem.createDirectory(".mcover");
+			if(!FileSystem.exists(".mcover/data")) FileSystem.createDirectory(".mcover/data");
 			#if neko
-				File.saveContent(".mcover/neko.mcover", serializedData);
+				File.saveContent(".mcover/data/neko.mcover", serializedData);
 			#elseif cpp
-				File.saveContent(".mcover/cpp.mcover", serializedData);
+				File.saveContent(".mcover/data/cpp.mcover", serializedData);
 			#elseif php
-				File.saveContent(".mcover/php.mcover", serializedData);
+				File.saveContent(".mcover/data/php.mcover", serializedData);
 			#end
 		#end
 		
