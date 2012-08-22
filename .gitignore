@@ -4,3 +4,4 @@ mcover.sublime-workspace
 /src/stamp.txt
 build/
 .mcover
+bin
