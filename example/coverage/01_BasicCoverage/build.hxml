@@ -1,5 +1,5 @@
 -main Main
--swf build/example/main.swf
+-swf bin/example/main.swf
 -swf-version 10
 -swf-header 1024:769:60:FFFFFF
 -cp src
@@ -12,7 +12,7 @@
 --next
 
 -main Main
--js build/example/main.js
+-js bin/example/main.js
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
@@ -23,7 +23,7 @@
 --next
 
 -main Main
--neko build/example/main.n
+-neko bin/example/main.n
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
@@ -31,12 +31,12 @@
 # common example code
 -cp ../common/src
 
--cmd neko build/example/main.n
+-cmd neko bin/example/main.n
 
 --next
 
 -main Main
--cpp build/example/cpp
+-cpp bin/example/cpp
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
@@ -45,13 +45,13 @@
 -cp ../common/src
 -D HXCPP_M64
 -debug
--cmd build/example/cpp/Main-debug
-# -cmd build/example/cpp/Main
+-cmd bin/example/cpp/Main-debug
+# -cmd bin/example/cpp/Main
 
 --next
 
 -main Main
--php build/example/php
+-php bin/example/php
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
@@ -59,4 +59,4 @@
 # common example code
 -cp ../common/src
 -debug
--cmd php build/example/php/index.php
+-cmd php bin/example/php/index.php

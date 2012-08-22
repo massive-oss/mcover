@@ -4,5 +4,5 @@
 -lib mlib
 -resource templates/help_report.txt@help_report
 
--neko ../build/mcover.n
--cmd cp ../build/mcover.n ../src/run.n
+-neko ../bin/mcover.n
+-cmd cp ../bin/mcover.n ../src/run.n

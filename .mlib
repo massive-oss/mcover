@@ -1,7 +1,7 @@
 <mlib bin="bin">
 	<resources>
 		<resource type="src" path="src" />
-		<resource type="run" path="build/mcover.n" />
+		<resource type="run" path="bin/mcover.n" />
 		<resource type="license" path="resource/license.mtt" />
 		<!--<resource path="example" dest="example" />-->
 		<resource path="bin/haxedoc.xml" dest="" />

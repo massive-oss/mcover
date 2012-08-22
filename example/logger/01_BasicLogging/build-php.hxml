@@ -1,5 +1,5 @@
 -main Main
--php build/php
+-php bin/php
 -cp src
 --macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 ## mcover source
@@ -7,4 +7,4 @@
 ## common example code
 -cp ../common/src
 
--cmd php build/php/index.php
+-cmd php bin/php/index.php

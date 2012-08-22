@@ -1,6 +1,6 @@
 version=0.9.2.2
 src=test
-bin=build/test
-report=build/report
+bin=bin/test
+report=bin/report
 hxml=test.hxml
 classPaths=src

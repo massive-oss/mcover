@@ -9,7 +9,7 @@ do
 	{
 	    cd ${file:2} 
 	    echo `pwd`
-	    mkdir -p build
+	    mkdir -p bin
 	    haxe build.hxml
 	    cd ../../
 	}	 
