@@ -38,6 +38,6 @@ class Build extends mtask.core.BuildBase
 
 	@task function test()
 	{
-		msys.Process.run("haxelib", ["run", "munit", "test", "-neko", "-coverage"]);
+		msys.Process.run("haxelib", ["run", "munit", "test", "-coverage"]);
 	}
 }
