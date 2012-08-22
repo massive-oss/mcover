@@ -3,7 +3,7 @@
 -cp src
 -lib mlib
 -lib munit
--swf9 build/bin/mcover_all_as3.swf
+-swf9 bin/output/mcover_all_as3.swf
 
 --next
 
@@ -12,7 +12,7 @@
 -cp src
 -lib mlib
 -lib munit
--swf build/bin/mcover_all_as2.swf
+-swf bin/output/mcover_all_as2.swf
 
 --next
 
@@ -21,7 +21,7 @@
 -cp src
 -lib mlib
 -lib munit
--js build/bin/mcover_all.js
+-js bin/output/mcover_all.js
 
 --next
 
@@ -30,9 +30,9 @@
 -cp src
 -lib mlib
 -lib munit
--neko build/bin/mcover_all.n
+-neko bin/output/mcover_all.n
 
 --next
 
 #xml docs
--cmd haxe -xml build/haxedoc.xml -cp src -lib mlib -lib munit AllClasses
+-cmd haxe -xml bin/haxedoc.xml -cp src -lib mlib -lib munit AllClasses

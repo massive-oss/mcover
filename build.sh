@@ -3,9 +3,9 @@
 set -e
 
 echo '  create missing build directories'
-
-mkdir -p build
-mkdir -p build/bin
+mkdir -p bin
+mkdir -p bin/output
+mkdir -p bin/coverage
 
 echo '  compile CLI'
 cd cli
