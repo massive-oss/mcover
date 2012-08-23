@@ -1,7 +1,4 @@
-MassiveCover (MCover)
-======================
-
-MassiveCover is a collection of macro based cross-platform code coverage and quality tools. MassiveCover runs on all main Haxe targets including js, flash, neko, cpp and php.
+MCover is a collection of macro based cross-platform code coverage and quality tools. MCover runs on all main Haxe targets including js, flash, neko, cpp and php.
 
 To install mcover:
 
