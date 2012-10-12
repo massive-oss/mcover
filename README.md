@@ -125,7 +125,7 @@ Add the followng code to your application to stop recording and print report
 Changes
 ----------
 
-See CHANGES.txt for full changes
+See CHANGES for full changes
 
 ### New since 1.4.x
 
