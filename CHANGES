@@ -1,3 +1,6 @@
+v 1.4.x
+- updated edge case for detecting partial fragments using mpartial 1.1.0
+
 v1.4.0 - 21.08.12
 - all: issue #14 - changed top level package from m.cover to mcover to avoid conflicts with local vars called 'm'
 
