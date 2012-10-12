@@ -242,20 +242,21 @@ import sys.FileSystem;
 			strict = false;
 		}
 
+		var mpartial = Context.defined("mpartial");
+
 		for (cp in CoverageMacroDelegate.classPathHash)
 		{
 			if(file.indexOf(cp) == 0)
 			{	
-				return createReference(cp, file, startPos, endPos, isBranch, null, classFile);
-			}
-			else if(!strict && classFile.indexOf(cp) == 0)
-			{
-				//the current pos file location doesn't match the class being compiled.
-				//this case needs to be handled for MCore partial macros
-				//need to determine actual cp
+				if(strict)
+					return createReference(cp, file, startPos, endPos, isBranch, null, classFile);
 
+				if(!mpartial) continue;
+
+				//the current file pos file location doesn't match the class being compiled.
+				//this case needs to be handled for mpartial macros
+				
 				var info = target.info.clone();
-
 
 				var slash = IS_WINDOWS ? "\\" : "/";
 				var packagePath = target.info.packageName.split(".").join(slash);
@@ -269,7 +270,8 @@ import sys.FileSystem;
 					var fileName = temp.pop();
 					var fileClassPath = temp.join(packagePath);//in case package dir repeated in full path
 
-					if(StringTools.endsWith(fileName, "_generated.hx"))
+
+					if(fileName.indexOf("_") != -1)
 					{
 						var parts = fileName.split("_");
 
@@ -282,9 +284,6 @@ import sys.FileSystem;
 					info.methodName = target.info.methodName;
 				}
 				
-				//var log = [info, file, cp];
-				//Context.warning(log.join("\n"), Context.currentPos());
-
 				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation);
 			}
 		}
