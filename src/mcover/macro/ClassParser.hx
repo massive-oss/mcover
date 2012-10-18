@@ -173,9 +173,15 @@ class ClassParserImpl implements ClassParser
 	{
 		if(parser.ignoreFieldMeta != null)
 		{
+			var metas = parser.ignoreFieldMeta.split(",");
+
 			for(item in field.meta)
 			{
-				if(item.name == parser.ignoreFieldMeta) return false;
+				for(meta in metas)
+				{
+					if(item.name == meta) return false;
+				}
+				
 			}
 		}
 		else if(parser.includeFieldMeta != null)

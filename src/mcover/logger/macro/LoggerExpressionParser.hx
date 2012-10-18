@@ -54,7 +54,7 @@ class LoggerExpressionParser implements ExpressionParser
 	public function new()
 	{
 		counter = 0;
-		ignoreFieldMeta = "IgnoreLogging";
+		ignoreFieldMeta = "IgnoreLogging,:ignore,:macro";
 		includeFieldMeta = null;
 		
 		voidType = TPath({ name:"Void", pack:[], params:[], sub:null });

@@ -90,7 +90,7 @@ To enable function entry/exit logging
 		include(packages, classPaths, exclusions);
 	}
 
-	public static var TEMP_DIR:String = ".mcover";
+	public static var TEMP_DIR:String = ".temp/mcover";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
 	static var delegatesById:Hash<MacroDelegate> = new Hash();
