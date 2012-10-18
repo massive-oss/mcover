@@ -4,3 +4,6 @@ temp.hxml
 .mcover
 /bin
 /.temp
+
+/mcover.sublime-workspace
+/mcover.sublime-project
