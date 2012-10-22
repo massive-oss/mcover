@@ -1,10 +1,10 @@
 -main Main
--php bin/php
+-neko bin/main.n
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
 -cp ../common/src
--debug
--cmd php bin/php/index.php
+
+-cmd neko bin/main.n

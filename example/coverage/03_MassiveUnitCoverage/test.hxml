@@ -6,6 +6,7 @@
 -cp test
 -swf-version 9
 -swf build/test/as3_test.swf
+-lib mconsole
 --next
 #Flash 8
 
@@ -16,6 +17,7 @@
 -cp test
 -swf-version 8
 -swf build/test/as2_test.swf
+-lib mconsole
 --next
 # JavaScript
 -main TestMain
@@ -24,7 +26,7 @@
 -cp src
 -cp test
 -js build/test/js_test.js
-
+-lib mconsole
 --next
 
 # Neko
@@ -34,3 +36,4 @@
 -cp src
 -cp test
 -neko build/test/neko_test.n
+-lib mconsole

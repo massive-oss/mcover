@@ -1,22 +1,23 @@
 -main Main
--swf build/main.swf
+-swf bin/main.swf
 -swf-version 10
 -swf-header 1024:769:60:FFFFFF
 -cp src
 -cp ../../../src
+-lib mconsole
 --next
 
 -main Main
--js build/main.js
+-js bin/main.js
 -cp src
 -cp ../../../src
-
+-lib mconsole
 --next
 
 -main Main
--neko build/main.n
+-neko bin/main.n
 -cp src
 -cp ../../../src
-
--cmd neko build/main.n
+-lib mconsole
+-cmd neko bin/main.n
 -cmd echo "Built successfully. Now run 'munit test -coverage'"

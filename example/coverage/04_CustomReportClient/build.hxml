@@ -1,5 +1,5 @@
 -main Main
--swf build/main.swf
+-swf bin/main.swf
 -swf-version 10
 -swf-header 1024:769:60:FFFFFF
 -cp src
@@ -8,37 +8,37 @@
 -cp ../../../src
 # common example code
 -cp ../common/src
-
+-lib mconsole
 --next
 
 -main Main
--js build/main.js
+-js bin/main.js
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
 -cp ../common/src
-
+-lib mconsole
 
 
 --next
 
 -main Main
--neko build/main.n
+-neko bin/main.n
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
 -cp ../../../src
 # common example code
 -cp ../common/src
-
--cmd neko build/main.n
+-lib mconsole
+-cmd neko bin/main.n
 
 --next
 
 -main Main
--cpp build/cpp
+-cpp bin/cpp
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 # mcover source
@@ -46,5 +46,5 @@
 # common example code
 -cp ../common/src
 -D HXCPP_M64
-
--cmd build/cpp/Main
+-lib mconsole
+-cmd bin/cpp/Main

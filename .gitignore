@@ -7,3 +7,5 @@ temp.hxml
 
 /mcover.sublime-workspace
 /mcover.sublime-project
+bin
+.temp

@@ -1,11 +1,11 @@
 
 -main Main
--cpp build/cpp
+-cpp bin/cpp
 -cp src
 --macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
 ## mcover source
 -cp ../../../src
 ## common example code
 -cp ../common/src
-
--cmd build/cpp/Main
+-lib mconsole
+-cmd bin/cpp/Main

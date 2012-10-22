@@ -1,0 +1,6 @@
+-neko haxedoc.n
+--no-output
+-D macro
+-lib mconsole
+-cp src
+mcover.MCover
