@@ -11,7 +11,7 @@ class Build extends mtask.core.BuildBase
 	{
 		t.url = "http://github.com/massiveinteractive/mcover";
 		t.description = "A cross platform code coverage framework for Haxe with testing and profiling applications. Supports AVM1, AVM2, JavaScript, C++, PHP and Neko.";
-		t.versionDescription = "Please note: The top level package has changed from `m.cover` to `mcover` to remove single char package. See CHANGES for full list of changes.";
+		t.versionDescription = "Minor bugfixes. See CHANGES for full list of changes.";
 
 		t.addTag("cross");
 		t.addTag("macro");
