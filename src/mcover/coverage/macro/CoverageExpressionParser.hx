@@ -66,7 +66,7 @@ import sys.FileSystem;
 
 	public function new()
 	{
-		ignoreFieldMeta = "IgnoreCover,:ignore,:macro";
+		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
 		coveredLines =  new IntHash();
 	}

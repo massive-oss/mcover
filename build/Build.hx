@@ -18,9 +18,12 @@ class Build extends mtask.core.BuildBase
 		t.addTag("utility");
 		t.addTag("massive");
 
-		t.afterCompile = function()
+		t.addDependency("mconsole");
+
+		t.beforeCompile = function(path)
 		{
-			cp("src/*", t.path);
+			rm("src/haxelib.xml");
+			cp("src/*", path);
 		}
 	}
 

@@ -90,7 +90,7 @@ To enable function entry/exit logging
 		include(packages, classPaths, exclusions);
 	}
 
-	public static var TEMP_DIR:String = ".temp/mcover";
+	public static var TEMP_DIR:String = ".temp/mcover/";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
 	static var delegatesById:Hash<MacroDelegate> = new Hash();
@@ -107,8 +107,10 @@ To enable function entry/exit logging
 	{	
 		if(!FileSystem.exists(TEMP_DIR)) FileSystem.createDirectory(TEMP_DIR);
 
-		initialiseTrace();
-		
+		Console.removePrinter(Console.defaultPrinter);
+		Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
+		Console.start();
+
 		if(exclusions == null) exclusions = [];
 
 		classPaths = convertToFullPaths(classPaths);
@@ -140,8 +142,6 @@ To enable function entry/exit logging
 			}
 		}
 
-		flush();
-
 		if(Lambda.count(classMacroHash)==0)
 		{
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
@@ -165,8 +165,6 @@ To enable function entry/exit logging
 
 		trace("Excluding: " + exclusions);
 
-		flush();
-		
 		for(pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, classPaths);
@@ -221,7 +219,6 @@ To enable function entry/exit logging
 		catch(e:Exception)
 		{
 			trace(e);
-			flush();
 			Sys.sleep(.1);
 			Context.error("Exception parsing class: " + e, Context.currentPos());
 		}
@@ -243,54 +240,33 @@ To enable function entry/exit logging
 		{
 			instance.generate(types);
 		}
-		flush();       
 	}
 
-	///// TRACE OUTPUT ///////
 
-	static var TRACE_OUTPUT_FILE = TEMP_DIR + "/debug-log.txt";
-	static var traceOutput:String = "";
-
-	/**
-	maps trace function to MCover.traceToFile
-	Clears existing trace output from file
-	*/
-	static function initialiseTrace()
-	{
-		var file = File.write(TRACE_OUTPUT_FILE, false);
-		file.writeString("");
-		file.close();
-
-		haxe.Log.trace = traceToFile;
-	}
-
-	/**
-	Custom trace function that appends trace messages to text file.
-	Used to avoid slowdown from default trace writing to stdout in recursive expression parser
-	*/
-	static function traceToFile(msg:Dynamic, ?pos:haxe.PosInfos)
-	{
-		traceOutput += "\n" + StringTools.rpad(pos.className + ":" + pos.lineNumber + " ", " ", 60) + "| " + Std.string(msg);
-
-		if(pos.customParams != null && pos.customParams[0] == true)
-		{
-			flush();
-		}
-	}
-
-	/**
-	Writes trace output to file
-	*/
-	static function flush()
-	{
-		if(traceOutput == "") return;
-
-		var file = File.append(TRACE_OUTPUT_FILE, false);	
-		file.writeString(traceOutput);
-		file.close();
-		traceOutput = "";
-	}
 }
+
+
+class FilePrinter extends mconsole.FilePrinter
+{
+
+	public function new(path:String)
+	{
+		if(FileSystem.exists(path))
+			FileSystem.deleteFile(path);
+		super(path);
+	}
+
+	/**
+	Fiters out any logs outside of current package.
+	*/
+	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
+	{
+		if(StringTools.startsWith(pos.className, "mcover"))
+			super.print(level, params, indent, pos);
+	}
+
+}
+
 
 #end
 

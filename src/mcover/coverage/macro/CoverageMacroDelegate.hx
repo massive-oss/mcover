@@ -59,7 +59,7 @@ class CoverageMacroDelegate extends MacroDelegateImpl
 	{
 		super();
 		id = "coverage";
-		filter.ignoreClassMeta = "IgnoreCover";
+		filter.ignoreClassMeta = "IgnoreCover,:IgnoreCover,:ignore";
 	}
 
 	/**

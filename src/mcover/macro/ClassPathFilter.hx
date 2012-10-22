@@ -195,13 +195,16 @@ class ClassPathFilter
 
 		if(ignoreClassMeta != null)
 		{
+			var ignoreClassMetas = "(" + ignoreClassMeta.split(",").join("|") + ")";//e.g. :(IgnoreCover|:IgnoreCover|:ignore|:macro)
+
+			trace("ignoreClassMetas: " + ignoreClassMetas);
 			temp = contents;
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg("@" + ignoreClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
+			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		
 			while(regIgnore.match(temp))
 			{
-				excludesHash.set(prefix + regIgnore.matched(2), true);
+				excludesHash.set(prefix + regIgnore.matched(3), true);
 				temp = regIgnore.matchedRight();
 			}
 		}
