@@ -27,15 +27,17 @@ class Build extends mtask.core.BuildBase
 		}
 	}
 
-	@task function release()
-	{
-		invoke("clean");
-		invoke("test");
-		invoke("build haxelib");
-	}
-
 	@task function test()
 	{
 		msys.Process.run("haxelib", ["run", "munit", "test", "-coverage"]);
+	}
+
+	@task function teamcity()
+	{
+		invoke("test");
+		cmd("haxelib", ["run", "munit", "report", "teamcity"]);
+
+		invoke("build haxelib");
+		invoke("build example");
 	}
 }
