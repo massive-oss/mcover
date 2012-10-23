@@ -12,21 +12,8 @@
 
 -cp src
 -cp test
+
 --next
-
-##Flash 8
-# -main TestMain
-
-# -lib munit
-# -lib mlib
-# -debug
-# -D MCOVER_DEBUG
-# -swf-version 8
-# -swf bin/test/as2_test.swf
-# -resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
-# -cp src
-# -cp test
-# --next
 
 ## JavaScript
 -main TestMain
@@ -53,18 +40,18 @@
 -cp src
 -cp test
 
---next
+# --next
 
 ## cpp
--main TestMain
+# -main TestMain
 
--lib munit
--lib mlib
--debug
--cpp bin/test/cpp_test
--D MCOVER_DEBUG
--D HXCPP_M64
--resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
+# -lib munit
+# -lib mlib
+# -debug
+# -cpp bin/test/cpp_test
+# -D MCOVER_DEBUG
+# -D HXCPP_M64
+# -resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
 
--cp src
--cp test
+# -cp src
+# -cp test
