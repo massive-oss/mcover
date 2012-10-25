@@ -82,9 +82,9 @@ class PrintClient implements AdvancedCoverageReportClient
 	var classCompletedCount:Int;
 	var classPartialCount:Int;
 
-	static inline var DEFAULT_TAB_WIDTH:Int = 11;
-	static inline var SHORT_FIRST_TAB_WIDTH:Int = 4;
-	static inline var LONG_FIRST_TAB_WIDTH:Int = 20;
+	@:extern static inline var DEFAULT_TAB_WIDTH:Int = 11;
+	@:extern static inline var SHORT_FIRST_TAB_WIDTH:Int = 4;
+	@:extern static inline var LONG_FIRST_TAB_WIDTH:Int = 20;
 			
 	public function new()
 	{

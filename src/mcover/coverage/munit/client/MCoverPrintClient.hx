@@ -28,12 +28,22 @@
 
 package mcover.coverage.munit.client;
 
-import massive.munit.ITestResultClient;
+
 import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
 import mcover.coverage.CoverageReportClient;
-import mcover.coverage.DataTypes;
 import mcover.coverage.MCoverage;
+
+
+#if haxe_211
+import mcover.coverage.DataTypes;
+import massive.munit.ITestResultClient;
+#else
+import massive.munit.ITestResultClient;
+import mcover.coverage.DataTypes;
+#end
+
+
 
 /**
 Addes coverage percentage to each test class as well as coverage summary once tests have finished
@@ -43,7 +53,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	/**
 	 * Default id of this client.
 	 */
-	public static inline var DEFAULT_ID:String = "MCoverPrintClient";
+	@:extern public static inline var DEFAULT_ID:String = "MCoverPrintClient";
 
 	/**
 	 * The unique identifier for the client.
