@@ -55,7 +55,7 @@ class ReportCommand extends MCoverCommand
 
 	function initializeSource():File
 	{
-		var path = ".mcover/data";
+		var path = ".temp/mcover/data";
 
 		var file = console.dir.resolveDirectory(path);
 

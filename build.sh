@@ -26,9 +26,13 @@ echo  $( date -r ${day} ) | md5 >${fname}
 haxelib run mlib install
 
 echo '  run examples'
-cd example
-bash build.sh
-cd ../
+# cd example
+# bash build.sh
+# cd ../
+cd example/coverage/01_BasicCoverage
+haxe build-neko.hxml
+haxelib run mcover r bin/report -neko
+cd ../../../
 
-echo '  run tests neko'
-haxelib run munit test -neko -coverage
+# echo '  run tests neko'
+# haxelib run munit test -neko -coverage

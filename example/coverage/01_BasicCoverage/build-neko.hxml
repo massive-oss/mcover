@@ -2,6 +2,7 @@
 -neko bin/main.n
 -cp src
 --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+-lib mcover
 # mcover source
 -cp ../../../src
 # common example code
