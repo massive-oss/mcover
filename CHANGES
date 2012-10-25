@@ -1,8 +1,12 @@
-v 1.4.x
+v 1.4.2
+- cache file naming causing issues on some platforms
+- minor compatibility updates for building with haxe svn (2.11)
+
+v 1.4.1
 - updated edge case for detecting partial fragments using mpartial 1.1.0
-- moved cache to .temp/mcover (was .mcover)
-- skip coverage for @:macro methods
-- added support for @:ignore on methods
+- moved log/cache to .temp/mcover (was .mcover). Updated to use mconsole file printer for logs
+- skips coverage for @:macro methods
+- added support for @:ignore and @:ignoreCover metadata
 
 v1.4.0 - 21.08.12
 - all: issue #14 - changed top level package from m.cover to mcover to avoid conflicts with local vars called 'm'

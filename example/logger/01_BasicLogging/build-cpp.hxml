@@ -7,5 +7,9 @@
 -cp ../../../src
 ## common example code
 -cp ../common/src
+<<<<<<< HEAD
 
+=======
+-lib mconsole
+>>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 -cmd bin/cpp/Main

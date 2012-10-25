@@ -4,19 +4,24 @@
 -swf-header 1024:769:60:FFFFFF
 -cp src
 -cp ../../../src
+-lib mconsole
 --next
 
 -main Main
 -js bin/main.js
 -cp src
 -cp ../../../src
-
+-lib mconsole
 --next
 
 -main Main
 -neko bin/main.n
 -cp src
 -cp ../../../src
+<<<<<<< HEAD
 
+=======
+-lib mconsole
+>>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 -cmd neko bin/main.n
 -cmd echo "Built successfully. Now run 'munit test -coverage'"

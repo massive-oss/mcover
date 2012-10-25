@@ -8,6 +8,7 @@
 -cp ../../../src
 # common example code
 -cp ../common/src
+-lib mconsole
 
 --next
 
@@ -19,7 +20,7 @@
 -cp ../../../src
 # common example code
 -cp ../common/src
-
+-lib mconsole
 
 
 --next
@@ -32,6 +33,7 @@
 -cp ../../../src
 # common example code
 -cp ../common/src
+-lib mconsole
 
 -cmd neko bin/main.n
 
@@ -46,7 +48,11 @@
 # common example code
 -cp ../common/src
 -D HXCPP_M64
+<<<<<<< HEAD
 
+=======
+-lib mconsole
+>>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 -cmd bin/cpp/Main
 
 --next
@@ -59,5 +65,9 @@
 -cp ../../../src
 # common example code
 -cp ../common/src
+<<<<<<< HEAD
+=======
+-lib mconsole
+>>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 -cmd php bin/php/index.php
 
