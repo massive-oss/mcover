@@ -73,6 +73,7 @@ import cpp.vm.Thread;
 @IgnoreCover
 @IgnoreLogging
 
+@:expose('mcover.util.Timer')
 class Timer 
 {
 	public var run:Void -> Void;
