@@ -29,7 +29,7 @@
 package mcover;
 
 import haxe.PosInfos;
-import haxe.Stack;
+import haxe.CallStack;
 
 class Exception
 {
@@ -70,8 +70,8 @@ class Exception
 
 		if(cause != null)
 		{
-			causeExceptionStack = haxe.Stack.exceptionStack();
-			causeCallStack = haxe.Stack.callStack();
+			causeExceptionStack = haxe.CallStack.exceptionStack();
+			causeCallStack = haxe.CallStack.callStack();
 		}
 	}
 

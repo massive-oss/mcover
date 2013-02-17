@@ -34,36 +34,36 @@ import mcover.coverage.data.Branch;
 @IgnoreLogging
 @:keep class Coverage extends AbstractNodeList
 {
-	var statements:IntHash<Array<Int>>;
-	var branches:IntHash<Array<Int>>;
+	var statements:Map<Int,Array<Int>>;
+	var branches:Map<Int,Array<Int>>;
 
 	/*
 	 * total execution count for statements by id
 	*/
-	public var statementResultsById(default, null):IntHash<Int>;
+	public var statementResultsById(default, null):Map<Int,Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	public var branchResultsById(default, null):IntHash<BranchResult>;
+	public var branchResultsById(default, null):Map<Int,BranchResult>;
 
 	public function new()
 	{
 		super();
-		statements = new IntHash();
-		branches = new IntHash();		
-		statementResultsById = new IntHash();
-		branchResultsById = new IntHash();
+		statements = new Map();
+		branches = new Map();		
+		statementResultsById = new Map();
+		branchResultsById = new Map();
 	}
 
-	public function setStatementResultsHash(hash:IntHash<Int>)
+	public function setStatementResultsMap(map:Map<Int,Int>)
 	{
-		statementResultsById = hash;
+		statementResultsById = map;
 	}
 
-	public function setBranchResultsHash(hash:IntHash<BranchResult>)
+	public function setBranchResultsMap(map:Map<Int,BranchResult>)
 	{
-		branchResultsById = hash;
+		branchResultsById = map;
 	}
 
 	public function addStatement(block:Statement)

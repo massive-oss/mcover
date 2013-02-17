@@ -37,14 +37,8 @@ import mcover.coverage.macro.CoverageMacroDelegate;
 import mcover.logger.macro.LoggerMacroDelegate;
 import mcover.macro.MacroDelegate;
 
-#if haxe_208
-	import neko.io.File;
-	import neko.Sys;
-	import neko.FileSystem;
-#else
-	import sys.io.File;
-	import sys.FileSystem;
-#end
+import sys.io.File;
+import sys.FileSystem;
 
 /**
 MCover provides a collection of macro based tools for measuring code quality and behavior.
@@ -93,7 +87,7 @@ To enable function entry/exit logging
 	public static var TEMP_DIR:String = ".temp/mcover/";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
-	static var delegatesById:Hash<MacroDelegate> = new Hash();
+	static var delegatesById:Map<String,MacroDelegate> = new Map();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
@@ -119,9 +113,7 @@ To enable function entry/exit logging
 			if(!FileSystem.exists(path)) FileSystem.createDirectory(path);
 		}
 
-		Console.removePrinter(Console.defaultPrinter);
-		Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
-		Console.start();
+		initLogging();
 
 		if(exclusions == null) exclusions = [];
 
@@ -134,34 +126,34 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
-		var classMacroHash:Hash<Array<String>> = new Hash();
+		var classMacroMap:Map<String,Array<String>> = new Map();
 
 		for(delegate in delegates)
 		{
-			var classHash = delegate.filterClasses(packages, classPaths, exclusions);
+			var classMap = delegate.filterClasses(packages, classPaths, exclusions);
 
-			for(cls in classHash.keys())
+			for(cls in classMap.keys())
 			{
 				
 				var args:Array<String> = null;
 
-				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
+				if(classMacroMap.exists(cls)) args = classMacroMap.get(cls);
 				else args = [];
 
-				if(classHash.get(cls) == true) args.push(delegate.id);
+				if(classMap.get(cls) == true) args.push(delegate.id);
 
-				classMacroHash.set(cls, args);
+				classMacroMap.set(cls, args);
 			}
 		}
 
-		if(Lambda.count(classMacroHash)==0)
+		if(Lambda.count(classMacroMap)==0)
 		{
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 		}
 		
-		for(cls in classMacroHash.keys())
+		for(cls in classMacroMap.keys())
 		{
-			var args = classMacroHash.get(cls);
+			var args = classMacroMap.get(cls);
 
 			if(args.length > 0)
 			{
@@ -203,7 +195,7 @@ To enable function entry/exit logging
 	@param ids 	Array of MacroDelegagte ids for including in this class build
 	@return updated array of fields for the class
 	*/
-	@:macro public static function build(ids:Array<String>):Array<Field>
+	macro public static function build(ids:Array<String>):Array<Field>
 	{
 		var classParser = new ClassParserImpl(); 
 
@@ -255,29 +247,58 @@ To enable function entry/exit logging
 	}
 
 
-}
 
-
-class FilePrinter extends mconsole.FilePrinter
-{
-
-	public function new(path:String)
+	static function initLogging()
 	{
+		// Console.removePrinter(Console.defaultPrinter);
+		// Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
+		// Console.start();
+
+
+		var path = TEMP_DIR + "mcover.log";
+
 		if(FileSystem.exists(path))
 			FileSystem.deleteFile(path);
-		super(path);
+
+
+		var file = sys.io.File.write(path, false);
+		file.writeString("");
+		file.close();
+
+
+		haxe.Log.trace = function trace( v : Dynamic, ?infos : haxe.PosInfos ) : Void 
+		{
+			var file = sys.io.File.append(path, false);
+			file.writeString(infos.className + "." + infos.methodName + "[" + infos.lineNumber + "] " + Std.string(v) + "\n");
+			file.close();
+		}
+
 	}
 
-	/**
-	Fiters out any logs outside of current package.
-	*/
-	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
-	{
-		if(StringTools.startsWith(pos.className, "mcover"))
-			super.print(level, params, indent, pos);
-	}
 
 }
+
+
+// class FilePrinter extends mconsole.FilePrinter
+// {
+
+// 	public function new(path:String)
+// 	{
+// 		if(FileSystem.exists(path))
+// 			FileSystem.deleteFile(path);
+// 		super(path);
+// 	}
+
+// 	/**
+// 	Fiters out any logs outside of current package.
+// 	*/
+// 	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
+// 	{
+// 		if(StringTools.startsWith(pos.className, "mcover"))
+// 			super.print(level, params, indent, pos);
+// 	}
+
+// }
 
 
 #end

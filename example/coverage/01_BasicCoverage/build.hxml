@@ -35,20 +35,20 @@
 
 --next
 
--main Main
--cpp bin/example/cpp
--cp src
---macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
-# mcover source
--cp ../../../src
-# common example code
--cp ../common/src
--D HXCPP_M64
--debug
--cmd bin/example/cpp/Main-debug
-# -cmd bin/example/cpp/Main
-
---next
+# -main Main
+# -cpp bin/cpp
+# -cp src
+# --macro mcover.MCover.coverage([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# # mcover source
+# -cp ../../../src
+# # common example code
+# -cp ../common/src
+# -D HXCPP_M64
+# -debug
+# -lib mconsole
+# -cmd bin/cpp/Main-debug
+# # -cmd bin/cpp/Main
+# --next
 
 -main Main
 -php bin/example/php

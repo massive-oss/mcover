@@ -28,16 +28,6 @@
 
 package mcover.coverage.client;
 
-#if haxe208
-	#if neko
-	import neko.Lib;
-	#elseif cpp
-	import cpp.Lib;
-	#elseif php
-	import php.Lib;
-	#end
-#end
-
 @IgnoreLogging
 class TraceClient extends PrintClient
 {
@@ -69,11 +59,7 @@ class TraceClient extends PrintClient
 		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
 			
 		#if (neko || cpp || php)
-			#if haxe_208 
-				Lib.print(output);
-			#else
-				Sys.print(output);
-			#end
+			Sys.print(output);
 		#else
 			trace(newline + output);
 		#end

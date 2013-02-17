@@ -105,8 +105,8 @@ class CoverageLoggerTest
 
 	function debug(?pos:PosInfos)
 	{
-		#if neko
-		neko.Lib.println(pos.methodName);
+		#if sys
+		Sys.println(pos.methodName);
 		#else
 		trace(pos.methodName);
 		#end

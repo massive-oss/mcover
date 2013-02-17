@@ -3,25 +3,8 @@ package;
 import mcover.coverage.MCoverage;
 import mcover.coverage.CoverageLogger;
 import example.Example;
-
-#if haxe_208
-	#if neko
-	import neko.Sys;
-	import neko.io.File;
-	import neko.FileSystem;
-	#elseif cpp
-	import cpp.Sys;
-	import cpp.io.File;
-	import cpp.FileSystem;
-	#elseif php
-	import php.Sys;
-	import php.io.File;
-	import php.FileSystem;
-	#end
-#elseif sys
-	import sys.io.File;
-	import sys.FileSystem;
-#end
+import sys.io.File;
+import sys.FileSystem;
 
 
 /**
@@ -42,7 +25,7 @@ class Main
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
 
-		#if (neko||cpp||php)
+		#if sys
 			while(completed != true)
 			{
 				Sys.sleep(.1);
