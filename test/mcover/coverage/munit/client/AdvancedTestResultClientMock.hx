@@ -101,6 +101,8 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 		this.time = time;
 		if (completionHandler != null) 
 			completionHandler(this);
+
+		return null;
 	}
 
 	public function setCurrentTestClassCoverage(result:CoverageResult):Void

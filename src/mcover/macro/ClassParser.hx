@@ -93,7 +93,7 @@ class ClassParserImpl implements ClassParser
 
 		switch(type)
 		{
-			case TInst(t, params):
+			case TInst(t, _):
 			{
 				var parts = Std.string(t).split(".");
 				info.className = parts.pop();
@@ -239,7 +239,7 @@ class ClassParserImpl implements ClassParser
 		{
 			case EContinue: null;
 			case EBreak: null;
-			case EConst(c): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
+			case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
 			case EFunction(name, f): 
 			{
 				//e.g. var f = function()
@@ -248,7 +248,7 @@ class ClassParserImpl implements ClassParser
 				expr.expr = EFunction(name, f);
 				functionStack.pop();
 			}
-			case EDisplayNew(t): null;  //no idea what this is??
+			case EDisplayNew(_): null;  //no idea what this is??
 			case EDisplay(e, isCall):
 			{
 				//no idea what this is???
@@ -311,14 +311,6 @@ class ClassParserImpl implements ClassParser
 				//e.g. new Foo();
 				params = parseExprs(params);
 				expr.expr = ENew(t, params);
-			}
-			
-			case EType(e, field):
-			{
-				//e.g. Foo.bar;
-				e = parseExpr(e);
-				expr.expr = EType(e, field);
-
 			}
 			case ECall(e, params):
 			{
@@ -403,7 +395,7 @@ class ClassParserImpl implements ClassParser
 				expr.expr = EBlock(exprs);
 
 			}
-			case EUntyped(e1): null;//don't want to mess around with untyped code
+			case EUntyped(_): null;//don't want to mess around with untyped code
 			default: debug(expr.expr);
 		}
 
@@ -420,7 +412,7 @@ class ClassParserImpl implements ClassParser
 
 	}
 
-	function parseESwitch(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>)
+	function parseESwitch(expr:Expr, e:Expr, cases: Array<Case>, edef:Null<Expr>)
 	{
 		e = parseExpr(e);
 

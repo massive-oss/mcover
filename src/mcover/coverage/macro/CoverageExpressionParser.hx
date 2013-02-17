@@ -143,7 +143,7 @@ import sys.FileSystem;
 	{
 		switch(op)
 		{
-			case OpAssignOp(op): null;//
+			case OpAssignOp(_): null;//
 			case OpBoolOr:
 				
 				e1 = createBranchCoverageExpr(e1);
@@ -421,7 +421,7 @@ import sys.FileSystem;
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 
-		var eType = EType(identFieldExpr2, "MCoverage");
+		var eType = EField(identFieldExpr2, "MCoverage");
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 

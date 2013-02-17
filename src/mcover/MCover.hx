@@ -113,9 +113,7 @@ To enable function entry/exit logging
 			if(!FileSystem.exists(path)) FileSystem.createDirectory(path);
 		}
 
-		Console.removePrinter(Console.defaultPrinter);
-		Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
-		Console.start();
+		initLogging();
 
 		if(exclusions == null) exclusions = [];
 
@@ -197,7 +195,7 @@ To enable function entry/exit logging
 	@param ids 	Array of MacroDelegagte ids for including in this class build
 	@return updated array of fields for the class
 	*/
-	@:macro public static function build(ids:Array<String>):Array<Field>
+	macro public static function build(ids:Array<String>):Array<Field>
 	{
 		var classParser = new ClassParserImpl(); 
 
@@ -249,29 +247,58 @@ To enable function entry/exit logging
 	}
 
 
-}
 
-
-class FilePrinter extends mconsole.FilePrinter
-{
-
-	public function new(path:String)
+	static function initLogging()
 	{
+		// Console.removePrinter(Console.defaultPrinter);
+		// Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
+		// Console.start();
+
+
+		var path = TEMP_DIR + "mcover.log";
+
 		if(FileSystem.exists(path))
 			FileSystem.deleteFile(path);
-		super(path);
+
+
+		var file = sys.io.File.write(path, false);
+		file.writeString("");
+		file.close();
+
+
+		haxe.Log.trace = function trace( v : Dynamic, ?infos : haxe.PosInfos ) : Void 
+		{
+			var file = sys.io.File.append(path, false);
+			file.writeString(infos.className + "." + infos.methodName + "[" + infos.lineNumber + "] " + Std.string(v) + "\n");
+			file.close();
+		}
+
 	}
 
-	/**
-	Fiters out any logs outside of current package.
-	*/
-	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
-	{
-		if(StringTools.startsWith(pos.className, "mcover"))
-			super.print(level, params, indent, pos);
-	}
 
 }
+
+
+// class FilePrinter extends mconsole.FilePrinter
+// {
+
+// 	public function new(path:String)
+// 	{
+// 		if(FileSystem.exists(path))
+// 			FileSystem.deleteFile(path);
+// 		super(path);
+// 	}
+
+// 	/**
+// 	Fiters out any logs outside of current package.
+// 	*/
+// 	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
+// 	{
+// 		if(StringTools.startsWith(pos.className, "mcover"))
+// 			super.print(level, params, indent, pos);
+// 	}
+
+// }
 
 
 #end
