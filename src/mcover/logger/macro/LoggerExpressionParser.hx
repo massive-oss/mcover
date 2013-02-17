@@ -48,7 +48,7 @@ class LoggerExpressionParser implements ExpressionParser
 	var counter:Int;
 
 	var methodReturnCount:Int;
-	var functionReturnCount:IntHash<Int>;
+	var functionReturnCount:Map<Int,Int>;
 	var voidType:ComplexType;
 
 	public function new()
@@ -60,13 +60,13 @@ class LoggerExpressionParser implements ExpressionParser
 		voidType = TPath({ name:"Void", pack:[], params:[], sub:null });
 
 		methodReturnCount = 0;
-		functionReturnCount = new IntHash();
+		functionReturnCount = new Map();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
 	{
 		methodReturnCount = 0;
-		functionReturnCount = new IntHash();
+		functionReturnCount = new Map();
 	}
 
 	/**

@@ -67,7 +67,7 @@ class LoggerImpl implements Logger
 	var logs:Array<Log>;
 
 	var stack:Array<Log>;
-	var logsById:IntHash<Log>;
+	var logsById:Map<Int,Log>;
 	var recording:LogRecording;
 
 	public var clients(default, null):Array<LoggerClient>;
@@ -89,7 +89,7 @@ class LoggerImpl implements Logger
 		count = 0;
 		logs = [];
 		stack = [];
-		logsById = new IntHash();
+		logsById = new Map();
 		depth = 0;
 		maxDepth = 0;
 	}
@@ -145,7 +145,7 @@ class LoggerImpl implements Logger
 		if(!logsById.exists(entryId))
 		{
 			#if (neko||cpp) mutex.release(); #end
-			trace("WARNING: Cannot find matching entry log. " + [entryId, pos]);
+			trace("WARNING: Cannot find matching entry log. " + entryId + ", " + pos);
 			return;
 		}
 

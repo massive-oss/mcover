@@ -39,13 +39,7 @@ import mcover.macro.MacroUtil;
 import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
 
-#if haxe_208
-import neko.Sys;
-import neko.FileSystem;
-#else
 import sys.FileSystem;
-#end
-
 
 @:keep class CoverageExpressionParser implements ExpressionParser
 {
@@ -61,14 +55,14 @@ import sys.FileSystem;
 
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
-	var coveredLines:IntHash<Bool>;
+	var coveredLines:Map<Int,Bool>;
 	var exprPos:Position;
 
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
-		coveredLines =  new IntHash();
+		coveredLines =  new Map();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
@@ -244,7 +238,7 @@ import sys.FileSystem;
 
 		var mpartial = Context.defined("mpartial");
 
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			if(file.indexOf(cp) == 0)
 			{	
@@ -290,7 +284,7 @@ import sys.FileSystem;
 
 		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(startPos);
 		error += "\n    " + target.info.location;
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			error += "\n   " + cp;
 		}

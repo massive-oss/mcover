@@ -46,7 +46,7 @@ class LoggerMacroDelegate extends MacroDelegateImpl
 		filter.ignoreClassMeta = "IgnoreLogging,:IgnoreLogging,:ignore";
 	}
 
-	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>
+	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Map<String,Bool>
 	{
 		return super.filterClasses(packages, classPaths, exclusions);
 	}

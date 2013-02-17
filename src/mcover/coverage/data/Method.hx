@@ -33,15 +33,15 @@ import mcover.coverage.data.Branch;
 @IgnoreLogging
 @:keep class Method extends AbstractNode
 {
-	var statementsById:IntHash<Statement>;
-	var branchesById:IntHash<Branch>;
+	var statementsById:Map<Int,Statement>;
+	var branchesById:Map<Int,Branch>;
 
 	public function new()
 	{
 		super();
 
-		statementsById = new IntHash();
-		branchesById = new IntHash();
+		statementsById = new Map();
+		branchesById = new Map();
 	}
 
 	public function addStatement(value:Statement)

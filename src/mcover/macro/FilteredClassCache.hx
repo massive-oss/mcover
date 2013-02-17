@@ -42,14 +42,8 @@ file|stamp|included class,included class|excluded class,excluded class
 */
 #if macro
 
-	
-#if haxe_208
-	import neko.io.File;
-	import neko.FileSystem;
-#else
-	import sys.io.File;
-	import sys.FileSystem;
-#end
+import sys.io.File;
+import sys.FileSystem;
 
 import haxe.macro.Context;
 
@@ -58,12 +52,12 @@ class FilteredClassCache
 	var file:String;
 
 	var id:String;
-	var fileHash:Hash<CachedClasses>;
+	var fileMap:Map<String,CachedClasses>;
 	var md5:String;
 
 	public function new(path:String)
 	{
-		fileHash = new Hash();
+		fileMap = new Map();
 
 		try
 		{
@@ -109,7 +103,7 @@ class FilteredClassCache
 		{
 			trace("reset cache");
 			id = tempId;
-			fileHash = new Hash();
+			fileMap = new Map();
 		}
 	}
 
@@ -125,9 +119,9 @@ class FilteredClassCache
 			return false;
 		#end
 
-		if(fileHash.exists(path))
+		if(fileMap.exists(path))
 		{
-			var file = fileHash.get(path);
+			var file = fileMap.get(path);
 			var stamp = getStamp(path);
 
 			if(file.stamp == stamp) return true;	
@@ -143,7 +137,7 @@ class FilteredClassCache
 	*/
 	public function getIncludedClassesInFile(path:String):Array<String>
 	{
-		var file = fileHash.get(path);
+		var file = fileMap.get(path);
 
 		return file.includes != "" ? file.includes.split(",") : [];		
 	}
@@ -156,7 +150,7 @@ class FilteredClassCache
 	*/
 	public function getExcludedClassesInFile(path:String):Array<String>
 	{
-		var file = fileHash.get(path);
+		var file = fileMap.get(path);
 
 		return file.excludes != "" ? file.excludes.split(",") : [];		
 	}
@@ -168,7 +162,7 @@ class FilteredClassCache
 	{
 		var stamp = getStamp(path);
 		var cache:CachedClasses = {stamp:stamp, includes:includes.join(","), excludes:excludes.join(",")};
-		fileHash.set(path, cache);
+		fileMap.set(path, cache);
 	}
 
 	/**
@@ -183,9 +177,9 @@ class FilteredClassCache
 
 		buf.add("@" + id + "\n");
 
-		for (path in fileHash.keys())
+		for (path in fileMap.keys())
 		{
-			var file = fileHash.get(path);
+			var file = fileMap.get(path);
 			buf.add(path + "|" + file.stamp + "|" + file.includes + "|" + file.excludes + "\n");
 		}
 
@@ -212,7 +206,7 @@ class FilteredClassCache
 				{
 					var a = line.split("|");
 					var cache:CachedClasses = {stamp:a[1], includes:a[2],excludes:a[3]};
-						fileHash.set(a[0], cache);
+						fileMap.set(a[0], cache);
 				}
 			}
 		}

@@ -49,7 +49,7 @@ interface CoverageReportClient
 	public var output(default, null):String;
 }
 
-interface AdvancedCoverageReportClient implements CoverageReportClient
+interface AdvancedCoverageReportClient extends CoverageReportClient
 {
 	var includeMissingBlocks(default, default):Bool;
 	var includeExecutionFrequency(default, default):Bool;

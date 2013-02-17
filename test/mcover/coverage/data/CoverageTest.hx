@@ -137,9 +137,9 @@ class CoverageTest extends AbstractNodeListTest
 		var statement = NodeMock.createStatement();
 		coverage.addStatement(statement);
 
-		var hash:IntHash<Int> = new IntHash();
-		hash.set(statement.id, 10);
-		coverage.setStatementResultsHash(hash);
+		var map:Map<Int,Int> = new Map();
+		map.set(statement.id, 10);
+		coverage.setStatementResultsMap(map);
 
 		var r = coverage.getResults();
 
@@ -152,12 +152,12 @@ class CoverageTest extends AbstractNodeListTest
 		var branch = NodeMock.createBranch();
 		coverage.addBranch(branch);
 
-		var hash:IntHash<BranchResult> = new IntHash();
+		var map:Map<Int,BranchResult> = new Map();
 
 		var result:BranchResult = {id:branch.id, trueCount:5, falseCount:5, total:10};
 
-		hash.set(branch.id, result);
-		coverage.setBranchResultsHash(hash);
+		map.set(branch.id, result);
+		coverage.setBranchResultsMap(map);
 
 		var r = coverage.getResults();
 

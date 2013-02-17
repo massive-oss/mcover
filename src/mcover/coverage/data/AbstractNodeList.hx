@@ -33,16 +33,16 @@ import mcover.coverage.data.CoverageResult;
 @IgnoreLogging
 @:keep class AbstractNodeList extends AbstractNode
 {
-	var itemsById:IntHash<AbstractNode>;
-	var items:Hash<Int>;
+	var itemsById:Map<Int,AbstractNode>;
+	var items:Map<String,Int>;
 	public var itemCount(default, null):Int;
 
 	public function new()
 	{
 		super();
 		itemCount = 0;
-		itemsById = new IntHash();
-		items = new Hash();
+		itemsById = new Map();
+		items = new Map();
 	}
 
 	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode

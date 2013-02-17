@@ -93,20 +93,20 @@ class LoggerClientImpl implements LoggerClient
 	{
 		buf.add("\n\nHighest Frequency:\n");
 
-		var hash:Hash<LogCount> = new Hash();
+		var map:Map<String,LogCount> = new Map();
 
 		for(log in logs)
 		{
 
 			var logCount:LogCount;
-			if(hash.exists(log.name)) logCount = hash.get(log.name);
+			if(map.exists(log.name)) logCount = map.get(log.name);
 			else logCount = {name:log.name, count:0};
 			
 			logCount.count ++;
-			hash.set(log.name, logCount);
+			map.set(log.name, logCount);
 		}
 
-		var a = Lambda.array(hash);
+		var a = Lambda.array(map);
 		a.sort(sortOnCount);
 
 		var count = 0;

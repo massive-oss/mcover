@@ -37,14 +37,8 @@ import mcover.coverage.macro.CoverageMacroDelegate;
 import mcover.logger.macro.LoggerMacroDelegate;
 import mcover.macro.MacroDelegate;
 
-#if haxe_208
-	import neko.io.File;
-	import neko.Sys;
-	import neko.FileSystem;
-#else
-	import sys.io.File;
-	import sys.FileSystem;
-#end
+import sys.io.File;
+import sys.FileSystem;
 
 /**
 MCover provides a collection of macro based tools for measuring code quality and behavior.
@@ -93,7 +87,7 @@ To enable function entry/exit logging
 	public static var TEMP_DIR:String = ".temp/mcover/";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
-	static var delegatesById:Hash<MacroDelegate> = new Hash();
+	static var delegatesById:Map<String,MacroDelegate> = new Map();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
@@ -134,34 +128,34 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
-		var classMacroHash:Hash<Array<String>> = new Hash();
+		var classMacroMap:Map<String,Array<String>> = new Map();
 
 		for(delegate in delegates)
 		{
-			var classHash = delegate.filterClasses(packages, classPaths, exclusions);
+			var classMap = delegate.filterClasses(packages, classPaths, exclusions);
 
-			for(cls in classHash.keys())
+			for(cls in classMap.keys())
 			{
 				
 				var args:Array<String> = null;
 
-				if(classMacroHash.exists(cls)) args = classMacroHash.get(cls);
+				if(classMacroMap.exists(cls)) args = classMacroMap.get(cls);
 				else args = [];
 
-				if(classHash.get(cls) == true) args.push(delegate.id);
+				if(classMap.get(cls) == true) args.push(delegate.id);
 
-				classMacroHash.set(cls, args);
+				classMacroMap.set(cls, args);
 			}
 		}
 
-		if(Lambda.count(classMacroHash)==0)
+		if(Lambda.count(classMacroMap)==0)
 		{
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 		}
 		
-		for(cls in classMacroHash.keys())
+		for(cls in classMacroMap.keys())
 		{
-			var args = classMacroHash.get(cls);
+			var args = classMacroMap.get(cls);
 
 			if(args.length > 0)
 			{

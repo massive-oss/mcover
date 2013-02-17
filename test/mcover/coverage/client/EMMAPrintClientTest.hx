@@ -146,9 +146,9 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		var statement =NodeMock.createStatement();
 		coverage.addStatement(statement);
 
-		var hash:IntHash<Int> = new IntHash();
-		hash.set(statement.id, statementCount);
-		coverage.setStatementResultsHash(hash);
+		var map:Map<Int,Int> = new Map();
+		map.set(statement.id, statementCount);
+		coverage.setStatementResultsMap(map);
 
 		var statement2 = NodeMock.createStatement(1);
 		statement2.methodName="method2";
@@ -157,12 +157,12 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		var branch = NodeMock.createBranch();
 		coverage.addBranch(branch);
 
-		var hash:IntHash<BranchResult> = new IntHash();
+		var map:Map<Int,BranchResult> = new Map();
 
 		var result:BranchResult = {id:branch.id, trueCount:branchTrueCount, falseCount:branchFalseCount, total:branchTrueCount + branchFalseCount};
 
-		hash.set(branch.id, result);
-		coverage.setBranchResultsHash(hash);
+		map.set(branch.id, result);
+		coverage.setBranchResultsMap(map);
 
 		var branch2 = NodeMock.createBranch(1);
 		coverage.addBranch(branch2);

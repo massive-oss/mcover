@@ -52,17 +52,6 @@
  */
 package mcover.util;
 
-
-#if haxe_208
-	#if neko
-		import neko.Sys;
-	#elseif cpp
-		import cpp.Sys;
-	#elseif php
-		import php.Sys;
-	#end
-#end
-
 #if neko
 import neko.vm.Thread;
 #elseif cpp
@@ -155,7 +144,7 @@ class Timer
 					catch( ex:Dynamic )
 					{
 						trace(ex);
-						trace(haxe.Stack.toString(haxe.Stack.exceptionStack()));
+						trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
 					}
 					var msg = Thread.readMessage(false);
 					if (msg == "stop") shouldStop = true;

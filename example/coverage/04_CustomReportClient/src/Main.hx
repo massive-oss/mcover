@@ -33,10 +33,10 @@ class Main
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
 
-		#if neko
+		#if sys
 			while(completed != true)
 			{
-				neko.Sys.sleep(.1);
+				Sys.sleep(.1);
 			}
 		#end
 	}
