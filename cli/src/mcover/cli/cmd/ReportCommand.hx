@@ -1,10 +1,19 @@
 package mcover.cli.cmd;
 
-import massive.neko.io.File;
+#if !haxe3
+import massive.sys.io.File;
+#end
+
 import mcover.coverage.data.Coverage;
 import mcover.cli.report.BasicCoverageReport;
 import mcover.cli.report.HTMLCoverageReport;
 import mcover.cli.report.RawCoverageReport;
+
+
+#if haxe3
+import massive.sys.io.File;
+#end
+
 
 class ReportCommand extends MCoverCommand
 {

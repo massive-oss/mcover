@@ -28,7 +28,7 @@
 ****/
 
 package mcover.cli.cmd;
-import massive.neko.cmd.Command;
+import massive.sys.cmd.Command;
 
 class MCoverCommand extends Command
 {

@@ -1,8 +1,15 @@
 package mcover.cli.report;
 
-import massive.neko.io.File;
+#if !haxe3
+import massive.sys.io.File;
+#end
+
 import mcover.coverage.DataTypes;
 import mcover.cli.report.CoverageReport;
+
+#if haxe3
+import massive.sys.io.File;
+#end
 
 class RawCoverageReport extends CoverageReportBase
 {
