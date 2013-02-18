@@ -11,7 +11,7 @@ class Build extends mtask.core.BuildBase
 	{
 		t.url = "http://github.com/massiveinteractive/mcover";
 		t.description = "A cross platform code coverage framework for Haxe with testing and profiling applications. Supports AVM1, AVM2, JavaScript, C++, PHP and Neko.";
-		t.versionDescription = "Minor tweaks to support haxe svn (2.11). See CHANGES for details.";
+		t.versionDescription = "Added better handling/support for coverage of macro generated functions/code blocks";
 
 		t.addTag("cross");
 		t.addTag("macro");
@@ -24,6 +24,11 @@ class Build extends mtask.core.BuildBase
 		{
 			rm("src/haxelib.xml");
 			cp("src/*", path);
+		}
+
+		t.afterCompile = function(path)
+		{
+			cp("bin/release/haxelib/haxelib.xml", "src/haxelib.xml");
 		}
 	}
 

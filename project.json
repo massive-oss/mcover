@@ -1,5 +1,12 @@
 {
-	"name":"MassiveCover",
-	"version":"1.4.2",
-	"id":"mcover"
+	"project": 
+	{
+		"name": "MassiveCover",
+		"version": "1.5.0",
+		"id": "mcover"
+	},
+	"haxelib":
+	{
+		"user": "massive"
+	}
 }
