@@ -1,38 +1,38 @@
 # Flash 9+
 -main AllClasses
--cp src
 -lib mlib
 -lib munit
+-cp src
 -swf9 bin/output/mcover_all_as3.swf
 
 --next
 
 #Flash 8
 -main AllClasses
--cp src
 -lib mlib
 -lib munit
+-cp src
 -swf bin/output/mcover_all_as2.swf
 
 --next
 
 # JavaScript
 -main AllClasses
--cp src
 -lib mlib
 -lib munit
+-cp src
 -js bin/output/mcover_all.js
 
 --next
 
 # Neko
 -main AllClasses
--cp src
 -lib mlib
 -lib munit
+-cp src
 -neko bin/output/mcover_all.n
 
 --next
 
 #xml docs
--cmd haxe -xml bin/haxedoc.xml -cp src -lib mlib -lib munit AllClasses
+-cmd haxe -xml bin/haxedoc.xml -lib mlib -lib munit -cp src AllClasses

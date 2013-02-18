@@ -286,7 +286,7 @@ import sys.FileSystem;
 
 		//At this point it is likely that the method/block was generated via macros
 		//and has different position info to the target class being parsed.
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			if(classFile.indexOf(cp) == 0)
 			{
@@ -302,7 +302,7 @@ import sys.FileSystem;
 		error += "\n    Location: " + target.info.location;
 		error += "\n    Referenced pos: " + Std.string(startPos);
 		error += "\n    Searched classpaths:";
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			error += "\n      " + cp;
 		}
