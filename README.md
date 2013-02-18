@@ -5,6 +5,11 @@ To install mcover:
 	haxelib install mcover
 
 
+
+**Haxe 2:** Official releases of MCover support Haxe 2.0.8 and greater
+
+**Haxe 3:** Please use the new pre-release branch `feature/haxe-3`
+
 Features
 ---------------------
 
@@ -41,10 +46,6 @@ MCover has been designed to work with any Haxe target. Officially we support the
 *	Neko
 *	CPP
 *	PHP
-
-
-
-**NOTE:** MCover requires Haxe 2.0.8 or greater
 
 
 Code Coverage
@@ -126,6 +127,11 @@ Changes
 ----------
 
 See CHANGES for full changes
+
+
+### New since 1.5.x
+
+* Improved handling of macro generated code blocks
 
 ### New since 1.4.x
 
