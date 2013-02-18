@@ -216,7 +216,7 @@ class ClassParserImpl implements ClassParser
 	function parseExpr(expr:Expr):Expr
 	{
 		if(expr == null) return null;
-		if(expr.expr == null && expr.pos == null) return null;
+		if(expr.expr == null && expr.pos == null) return expr;
 		
 		exprStack.push(expr);	
 
@@ -423,8 +423,7 @@ class ClassParserImpl implements ClassParser
 			c.expr = parseExpr(c.expr);	
 		}
 
-		if(edef != null)
-			edef = parseExpr(edef);
+		edef = parseExpr(edef);
 
 		expr.expr = ESwitch(e, cases, edef);
 	}
