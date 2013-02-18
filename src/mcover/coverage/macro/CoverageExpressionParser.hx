@@ -229,6 +229,7 @@ import sys.FileSystem;
 
 		file = FileSystem.fullPath(file);
 
+		var posFile = Context.resolvePath(posInfo.file);
 		var classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
 
 		if(file != classFile)
@@ -240,6 +241,7 @@ import sys.FileSystem;
 
 		for (cp in CoverageMacroDelegate.classPathMap)
 		{
+
 			if(file.indexOf(cp) == 0)
 			{	
 				if(strict)
@@ -278,22 +280,38 @@ import sys.FileSystem;
 					info.methodName = target.info.methodName;
 				}
 				
-				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation);
+				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation, true);
 			}
 		}
 
-		var error = "Unable to find file in any class paths (" + file + ") " + Std.string(startPos);
-		error += "\n    " + target.info.location;
-		for (cp in CoverageMacroDelegate.classPathMap)
+		//At this point it is likely that the method/block was generated via macros
+		//and has different position info to the target class being parsed.
+		for (cp in CoverageMacroDelegate.classPathHash)
 		{
-			error += "\n   " + cp;
+			if(classFile.indexOf(cp) == 0)
+			{
+				file = classFile;
+				var alternateLocation:String = posFile;
+
+				return createReference(cp, file, startPos, endPos, isBranch, target.info, alternateLocation, true);
+			}
+		}
+
+		
+		var error = "Unable to find referenced file (" + file + ") or target file (" + classFile + ") in any class paths.";
+		error += "\n    Location: " + target.info.location;
+		error += "\n    Referenced pos: " + Std.string(startPos);
+		error += "\n    Searched classpaths:";
+		for (cp in CoverageMacroDelegate.classPathHash)
+		{
+			error += "\n      " + cp;
 		}
 		Context.error(error, Context.currentPos());
 		throw new CoverageException(error);
 		return null;
 	}
 
-	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo, ?alternateLocation:String):AbstractBlock
+	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo, ?alternateLocation:String, ?generatedByMacro:Bool=false):AbstractBlock
 	{
 		if(info == null) info = target.info;
 
@@ -353,6 +371,9 @@ import sys.FileSystem;
 			p.shift();
 
 			block.location = alternateLocation + ":" + p.join(":");
+
+			if(generatedByMacro)
+				block.location += " @:macro";
 		}
 		else
 		{
