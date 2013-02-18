@@ -1,7 +1,7 @@
 <project name="mcover" url="http://github.com/massiveinteractive/mcover" license="MIT">
 	<user name="massive"/>
 	<description><![CDATA[A cross platform code coverage framework for Haxe with testing and profiling applications. Supports AVM1, AVM2, JavaScript, C++, PHP and Neko.]]></description>
-	<version name="1.4.2"><![CDATA[Minor tweaks to support haxe svn (2.11). See CHANGES for details.]]></version>
+	<version name="1.5.0"><![CDATA[Added better handling/support for coverage of macro generated functions/code blocks]]></version>
 	<depends name="mconsole"/>
 	<tag v="cross"/>
 	<tag v="macro"/>
