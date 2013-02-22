@@ -234,9 +234,27 @@ import sys.FileSystem;
 		var strict = true;
 
 		file = FileSystem.fullPath(file);
+		
+		var posFile:String = null;
+		
+		try
+		{
+			posFile = Context.resolvePath(posInfo.file);
+		}
+		catch(e:Dynamic)
+		{
+			posFile = file;
+		}
 
-		var posFile = Context.resolvePath(posInfo.file);
-		var classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
+		var classFile:String = null;
+		try
+		{
+			classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
+		}
+		catch(e:Dynamic)
+		{
+			classFile =  FileSystem.fullPath(target.info.fileName);
+		}
 
 		if(file != classFile)
 		{
