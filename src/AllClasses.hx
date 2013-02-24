@@ -1,6 +1,5 @@
 package ;
 
-import m.cover.MCover;
 import mcover.coverage.client.EMMAPrintClient;
 import mcover.coverage.client.PrintClient;
 import mcover.coverage.client.TraceClient;
