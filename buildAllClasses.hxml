@@ -3,7 +3,7 @@
 -lib mlib
 -lib munit
 -cp src
--swf9 bin/output/mcover_all_as3.swf
+-swf bin/output/mcover_all_as3.swf
 
 --next
 
@@ -13,7 +13,7 @@
 -lib munit
 -cp src
 -swf bin/output/mcover_all_as2.swf
-
+-swf-version 8
 --next
 
 # JavaScript
