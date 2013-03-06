@@ -34,8 +34,6 @@ import mcover.logger.data.Log;
 import mcover.logger.data.LogRecording;
 import mcover.logger.client.LoggerClient;
 import mcover.logger.client.LoggerClientImpl;
-
-
 #if neko
 import neko.vm.Deque;
 import neko.vm.Mutex;
@@ -73,12 +71,15 @@ class LoggerImpl implements Logger
 	public var clients(default, null):Array<LoggerClient>;
 	var clientCompleteCount:Int;
 
+	var actualClients:Array<LoggerClient>;
+
 	public var defaultClient:LoggerClient;
 
 
 	public function new()
 	{	
 		defaultClient = new LoggerClientImpl();
+		actualClients = [defaultClient];
 		clients = [];
 		clientCompleteCount = 0;
 		reset();
@@ -126,6 +127,14 @@ class LoggerImpl implements Logger
 
 		if(depth > maxDepth) maxDepth = depth;
 
+		#if MCOVER_LOG_ALL
+		for(client in actualClients)
+		{
+			client.logEntry(log,recording);
+		}
+		#end
+
+
 		#if (neko||cpp) mutex.release(); #end
 
 		return log.id;
@@ -162,7 +171,16 @@ class LoggerImpl implements Logger
 				while(log != null && log != entryLog)
 				{
 					log.exit(null, t);
+
 					depth --;
+
+					#if MCOVER_LOG_ALL
+					for(client in actualClients)
+					{
+						client.logExit(log,recording);
+					}
+					#end
+
 					log = stack.pop();
 				}
 			}
@@ -171,8 +189,18 @@ class LoggerImpl implements Logger
 			depth --;
 
 			entryLog.exit(pos, t);
-
+			
 			if(depth < 0) depth = 0;
+
+			#if MCOVER_LOG_ALL
+			for(client in actualClients)
+			{
+				client.logExit(log,recording);
+			}
+			#end
+
+
+
 		}
 		catch(e:Dynamic)
 		{
@@ -183,8 +211,6 @@ class LoggerImpl implements Logger
 
 		#if neko mutex.release(); #end
 	}
-
-	
 
 	public function startRecording():Void
 	{
@@ -237,19 +263,12 @@ class LoggerImpl implements Logger
 
 		clientCompleteCount = 0;
 
-		if(clients.length == 0 && defaultClient != null)
+		for(client in actualClients)
 		{
-			defaultClient.completionHandler = clientCompletedHandler;
-			defaultClient.report(logs, recording);
+			client.completionHandler = clientCompletedHandler;
+			client.report(logs, recording);
 		}
-		else
-		{
-			for(client in clients)
-			{
-				client.completionHandler = clientCompletedHandler;
-				client.report(logs, recording);
-			}
-		}
+
 		#if (neko||cpp) mutex.release(); #end
 	}
 
@@ -272,6 +291,8 @@ class LoggerImpl implements Logger
 	{
 		clients.remove(client);
 		clients.push(client);
+
+		actualClients = clients;
 	}
 
 	/**
@@ -282,6 +303,9 @@ class LoggerImpl implements Logger
 	public function removeClient(client:LoggerClient):Void
 	{
 		clients.remove(client);
+
+		if(clients.length == 0)
+		actualClients = [defaultClient];
 	}
 
 

@@ -87,6 +87,8 @@ class Log
 		entryPos = pos;
 		entryTime = time;
 		this.depth = depth;
+		if(depth < 0) depth = 0;
+
 	}
 
 	public function exit(pos:PosInfos, time:Float)
@@ -113,8 +115,9 @@ class Log
 		{
 			if(entryPos == null) return null;
 
-			name = entryPos.className + "/" + entryPos.methodName;
+			name = entryPos.className + "." + entryPos.methodName;
 			if(inlined) name += "/function_" + entryPos.lineNumber;
+
 		}
 		return name;
 	}

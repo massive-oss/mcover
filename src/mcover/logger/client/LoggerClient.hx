@@ -51,4 +51,7 @@ interface LoggerClient
 	@param recording 	additional metadata such as start/end time
 	*/
 	function report(logs:Array<Log>, recording:LogRecording):Void;
+
+	function logEntry(log:Log, recording:LogRecording):Void;
+	function logExit(log:Log, recording:LogRecording):Void;
 }

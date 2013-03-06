@@ -1,0 +1,12 @@
+
+-main Main
+-neko bin/main.n
+-cp src
+--macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# mcover source
+-cp ../../../src
+# common example code
+-cp ../common/src
+-D MCOVER_LOG_ALL
+-lib mconsole
+-cmd neko bin/main.n

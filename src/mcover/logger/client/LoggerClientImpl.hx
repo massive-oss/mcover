@@ -37,6 +37,7 @@ import mcover.util.NumberUtil;
 @IgnoreCover
 class LoggerClientImpl implements LoggerClient
 {
+	static var padding = "                                                                         ";
 	/**
 	Handler which if present, should be called when the client has completed its processing of the results.
 	 */
@@ -52,6 +53,23 @@ class LoggerClientImpl implements LoggerClient
 		output = "";
 	}
 
+	public function logEntry(log:Log, recording:LogRecording):Void
+	{
+		if(recording == null) return;
+
+		var time = formatTime(log.entryTime - recording.startTime);
+		var char =">";
+		print(time + "| " + padding.substr(0, log.depth) + char + " " + log.name + ":" + log.entryPos.lineNumber);
+	}
+
+	public function logExit(log:Log, recording:LogRecording):Void
+	{
+		if(recording == null) return;
+		var time = formatTime(log.entryTime - recording.startTime);
+		var char = log.skipped ? "!" : "<";
+		var lineNumber:String = (log.exitPos != null) ? Std.string(log.exitPos.lineNumber) : "?";
+		print(time + "| " + padding.substr(0, log.depth) + char + " " + log.name + ":" + lineNumber);
+	}
 	/**
 	Generates report output for the current logs
 	
@@ -71,7 +89,7 @@ class LoggerClientImpl implements LoggerClient
 
 		output = buf.toString();	
 
-		trace(output);
+		print(output);
 
 		if(completionHandler != null) completionHandler(this);
 	}
@@ -156,7 +174,6 @@ class LoggerClientImpl implements LoggerClient
 	{
 		buf.add("\n\nFull log:\n");
 		var count = 0;
-		var padding = "                                                                         ";
 
 		for(log in logs)
 		{
@@ -177,6 +194,15 @@ class LoggerClientImpl implements LoggerClient
 	{
 		value = NumberUtil.round(value, decimalCount);
 		return StringTools.rpad(Std.string(value), char, length);
+	}
+
+	function print(s:String)
+	{
+		#if sys
+		Sys.stdout().writeString(s+"\n");
+		#else
+		trace(s);
+		#end
 	}
 }
 
