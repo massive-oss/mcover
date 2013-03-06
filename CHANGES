@@ -1,3 +1,7 @@
+v 1.5.1
+- hotfix for edge case with position file path not found using Context.resolvePath
+- hotfix for excpetion thrown when creating temp directory on windows 
+
 v 1.5.0
 - added better coverage handling/ support for macro generated functions/code blocks
 

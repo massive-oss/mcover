@@ -40,6 +40,14 @@ Format:
 file|stamp|included class,included class|excluded class,excluded class
 
 */
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
+
 #if macro
 
 import sys.io.File;
@@ -52,12 +60,12 @@ class FilteredClassCache
 	var file:String;
 
 	var id:String;
-	var fileMap:Map<String,CachedClasses>;
+	var fileMap:StringMap<CachedClasses>;
 	var md5:String;
 
 	public function new(path:String)
 	{
-		fileMap = new Map();
+		fileMap = new StringMap();
 
 		try
 		{
@@ -103,7 +111,7 @@ class FilteredClassCache
 		{
 			trace("reset cache");
 			id = tempId;
-			fileMap = new Map();
+			fileMap = new StringMap();
 		}
 	}
 

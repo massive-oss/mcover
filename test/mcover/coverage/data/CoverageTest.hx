@@ -5,6 +5,13 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import mcover.coverage.data.Branch;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
+
 class CoverageTest extends AbstractNodeListTest
 {	
 	var coverage:Coverage;
@@ -137,7 +144,7 @@ class CoverageTest extends AbstractNodeListTest
 		var statement = NodeMock.createStatement();
 		coverage.addStatement(statement);
 
-		var map:Map<Int,Int> = new Map();
+		var map:IntMap<Int> = new IntMap();
 		map.set(statement.id, 10);
 		coverage.setStatementResultsMap(map);
 
@@ -152,7 +159,7 @@ class CoverageTest extends AbstractNodeListTest
 		var branch = NodeMock.createBranch();
 		coverage.addBranch(branch);
 
-		var map:Map<Int,BranchResult> = new Map();
+		var map:IntMap<BranchResult> = new IntMap();
 
 		var result:BranchResult = {id:branch.id, trueCount:5, falseCount:5, total:10};
 

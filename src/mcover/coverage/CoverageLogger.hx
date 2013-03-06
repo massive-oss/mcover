@@ -41,6 +41,13 @@ import neko.vm.Mutex;
 import cpp.vm.Mutex;
 #end
 
+#if haxe3
+import haxe.ds.StringMap;
+import haxe.ds.IntMap;
+#else
+private typedef StringMap<T> = Hash<T>
+private typedef IntMap<T> = IntHash<T>
+#end
 
 interface CoverageLogger
 {
@@ -98,17 +105,17 @@ class CoverageLoggerImpl implements CoverageLogger
 	/*
 	 * total execution count for statements by id
 	*/
-	var allStatementResultsById:Map<Int,Int>;
+	var allStatementResultsById:IntMap<Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	var allBranchResultsById:Map<Int,BranchResult>;
+	var allBranchResultsById:IntMap<BranchResult>;
 
 	/*
 	 * stores a cache of test results against currentTest string
 	*/
-	var filteredResultsMap:Map<String,FilteredCoverageResults>;
+	var filteredResultsMap:StringMap<FilteredCoverageResults>;
 
 	/*
 	 * results for active 'currentTest'
@@ -121,9 +128,9 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function new()
 	{
-		allStatementResultsById = new Map();
-		allBranchResultsById = new Map();
-		filteredResultsMap = new Map();
+		allStatementResultsById = new IntMap();
+		allBranchResultsById = new IntMap();
+		filteredResultsMap = new StringMap();
 		clients = [];
 	}
 
@@ -230,7 +237,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 	@IgnoreCover
-	function updateStatementMap(map:Map<Int,Int>, id:Int)
+	function updateStatementMap(map:IntMap<Int>, id:Int)
 	{
 		var count = 1;
 
@@ -279,7 +286,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 	@IgnoreCover
-	function updateBranchMap(map:Map<Int,BranchResult>, id:Int, value:Bool)
+	function updateBranchMap(map:IntMap<BranchResult>, id:Int, value:Bool)
 	{
 		var r:BranchResult = null;
 		
@@ -314,7 +321,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		if(!filteredResultsMap.exists(value))
 		{
-			var result:FilteredCoverageResults = {filter:value, statementResultsById:new Map(), branchResultsById:new Map()};
+			var result:FilteredCoverageResults = {filter:value, statementResultsById:new IntMap(), branchResultsById:new IntMap()};
 			filteredResultsMap.set(value, result); 
 		}
 
@@ -377,11 +384,11 @@ typedef FilteredCoverageResults =
 	/*
 	 * statement execution counts for current test
 	*/
-	statementResultsById:Map<Int,Int>,
+	statementResultsById:IntMap<Int>,
 	
 	/*
 	 * branch execution counts for current test
 	*/
-	branchResultsById:Map<Int,BranchResult>
+	branchResultsById:IntMap<BranchResult>
 }
 

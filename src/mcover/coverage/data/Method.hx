@@ -27,21 +27,29 @@
 ****/
 
 package mcover.coverage.data;
+
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 import mcover.coverage.data.CoverageResult;
 import mcover.coverage.data.Statement;
 import mcover.coverage.data.Branch;
+
 @IgnoreLogging
 @:keep class Method extends AbstractNode
 {
-	var statementsById:Map<Int,Statement>;
-	var branchesById:Map<Int,Branch>;
+	var statementsById:IntMap<Statement>;
+	var branchesById:IntMap<Branch>;
 
 	public function new()
 	{
 		super();
 
-		statementsById = new Map();
-		branchesById = new Map();
+		statementsById = new IntMap();
+		branchesById = new IntMap();
 	}
 
 	public function addStatement(value:Statement)

@@ -35,8 +35,13 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 	public var finalCoveragePackageBreakdown:String;
 	public var finalCoverageExecutionFrequency:String;
 	
-
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar 
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
+	
 	private function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;

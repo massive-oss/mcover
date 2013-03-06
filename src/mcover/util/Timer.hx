@@ -58,10 +58,15 @@ import neko.vm.Thread;
 import cpp.vm.Thread;
 #end
 
+#if haxe3
+import haxe.CallStack;
+#else
+import haxe.Stack;
+private typedef CallStack = haxe.Stack;
+#end
 
 @IgnoreCover
 @IgnoreLogging
-
 @:expose('mcover.util.Timer')
 class Timer 
 {
@@ -144,7 +149,7 @@ class Timer
 					catch( ex:Dynamic )
 					{
 						trace(ex);
-						trace(haxe.CallStack.toString(haxe.CallStack.exceptionStack()));
+						trace(CallStack.toString(CallStack.exceptionStack()));
 					}
 					var msg = Thread.readMessage(false);
 					if (msg == "stop") shouldStop = true;

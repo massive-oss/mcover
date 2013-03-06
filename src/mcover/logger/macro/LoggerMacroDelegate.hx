@@ -28,6 +28,13 @@
 
 package mcover.logger.macro;
 
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
+
 #if macro
 
 import mcover.MCover;
@@ -46,7 +53,7 @@ class LoggerMacroDelegate extends MacroDelegateImpl
 		filter.ignoreClassMeta = "IgnoreLogging,:IgnoreLogging,:ignore";
 	}
 
-	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Map<String,Bool>
+	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):StringMap<Bool>
 	{
 		return super.filterClasses(packages, classPaths, exclusions);
 	}

@@ -40,6 +40,12 @@ import mcover.macro.MacroDelegate;
 import sys.io.File;
 import sys.FileSystem;
 
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
 /**
 MCover provides a collection of macro based tools for measuring code quality and behavior.
 
@@ -87,7 +93,7 @@ To enable function entry/exit logging
 	public static var TEMP_DIR:String = ".temp/mcover/";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
-	static var delegatesById:Map<String,MacroDelegate> = new Map();
+	static var delegatesById:StringMap<MacroDelegate> = new StringMap();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
@@ -108,9 +114,11 @@ To enable function entry/exit logging
 			var part = temp.shift();
 			if(part == "" && temp.length == 0) break;
 
-			path += part + "/";
+			path += part;
 
 			if(!FileSystem.exists(path)) FileSystem.createDirectory(path);
+
+			path += "/";
 		}
 
 		initLogging();
@@ -126,7 +134,7 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
-		var classMacroMap:Map<String,Array<String>> = new Map();
+		var classMacroMap:StringMap<Array<String>> = new StringMap();
 
 		for(delegate in delegates)
 		{
@@ -195,7 +203,8 @@ To enable function entry/exit logging
 	@param ids 	Array of MacroDelegagte ids for including in this class build
 	@return updated array of fields for the class
 	*/
-	macro public static function build(ids:Array<String>):Array<Field>
+	#if haxe3 macro #else @macro #end
+	public static function build(ids:Array<String>):Array<Field>
 	{
 		var classParser = new ClassParserImpl(); 
 
@@ -265,8 +274,7 @@ To enable function entry/exit logging
 		file.writeString("");
 		file.close();
 
-
-		haxe.Log.trace = function trace( v : Dynamic, ?infos : haxe.PosInfos ) : Void 
+		haxe.Log.trace = function ( v : Dynamic, ?infos : haxe.PosInfos )
 		{
 			var file = sys.io.File.append(path, false);
 			file.writeString(infos.className + "." + infos.methodName + "[" + infos.lineNumber + "] " + Std.string(v) + "\n");

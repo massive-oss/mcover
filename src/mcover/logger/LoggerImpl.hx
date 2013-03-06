@@ -44,6 +44,12 @@ import cpp.vm.Deque;
 import cpp.vm.Mutex;
 #end
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 @IgnoreLogging
 @IgnoreCover
 class LoggerImpl implements Logger
@@ -67,7 +73,7 @@ class LoggerImpl implements Logger
 	var logs:Array<Log>;
 
 	var stack:Array<Log>;
-	var logsById:Map<Int,Log>;
+	var logsById:IntMap<Log>;
 	var recording:LogRecording;
 
 	public var clients(default, null):Array<LoggerClient>;
@@ -89,7 +95,7 @@ class LoggerImpl implements Logger
 		count = 0;
 		logs = [];
 		stack = [];
-		logsById = new Map();
+		logsById = new IntMap();
 		depth = 0;
 		maxDepth = 0;
 	}

@@ -28,6 +28,12 @@
 
 package mcover.coverage.macro;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -38,7 +44,6 @@ import mcover.coverage.DataTypes;
 import mcover.macro.MacroUtil;
 import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
-
 import sys.FileSystem;
 
 @:keep class CoverageExpressionParser implements ExpressionParser
@@ -55,14 +60,14 @@ import sys.FileSystem;
 
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
-	var coveredLines:Map<Int,Bool>;
+	var coveredLines:IntMap<Bool>;
 	var exprPos:Position;
 
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
-		coveredLines =  new Map();
+		coveredLines =  new IntMap();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
@@ -143,7 +148,6 @@ import sys.FileSystem;
 	{
 		switch(op)
 		{
-			case OpAssignOp(_): null;//
 			case OpBoolOr:
 				
 				e1 = createBranchCoverageExpr(e1);
@@ -228,6 +232,7 @@ import sys.FileSystem;
 		var strict = true;
 
 		file = FileSystem.fullPath(file);
+		
 
 		var posFile:String = null;
 		var classFile:String = null;
@@ -250,7 +255,7 @@ import sys.FileSystem;
 		}
 		catch(e:Dynamic)
 		{
-			classFile = FileSystem.fullPath(target.info.fileName);
+			classFile =  FileSystem.fullPath(target.info.fileName);
 		}
 
 		if(file != classFile)
@@ -463,7 +468,12 @@ import sys.FileSystem;
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 
+		#if haxe3
 		var eType = EField(identFieldExpr2, "MCoverage");
+		#else
+		var eType = EType(identFieldExpr2, "MCoverage");
+		#end
+		
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 

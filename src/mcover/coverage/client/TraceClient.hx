@@ -44,25 +44,5 @@ class TraceClient extends PrintClient
 		output += newline;
 
 		trace(newline + output);
-		/*
-
-		#if js
-		var textArea = js.Lib.document.getElementById("haxe:trace");
-		if (textArea == null) 
-		{	
-			var error:String = "MissingElementException: 'haxe:trace' element not found in html file";
-			js.Lib.alert(error);
-			return;
-		}
-	
-		textArea.innerHTML += output;
-		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
-			
-		#if (neko || cpp || php)
-			Sys.print(output);
-		#else
-			trace(newline + output);
-		#end
-		*/
 	}
 }
