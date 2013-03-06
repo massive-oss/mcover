@@ -28,6 +28,12 @@
 
 package mcover.macro;
 
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap = Hash
+#end
+
 #if macro
 interface MacroDelegate
 {
@@ -39,9 +45,9 @@ interface MacroDelegate
 	@param packages 	array of package names (defaults to [""])
 	@param classpaths 	array of class paths (defaults to [""])
 	@param exclusions 	array of excluded classes or wildcard patterns (defaults to [])
-	@return Hash of class keys with boolean value to indicate include or exclude
+	@return Map of class keys with boolean value to indicate include or exclude
 	*/
-	function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>;
+	function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):StringMap<Bool>;
 
 	/**
 	@return the type of class to use on class @:build parsing
@@ -75,7 +81,7 @@ class MacroDelegateImpl implements MacroDelegate
 		return null;
 	}
 
-	public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>
+	public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):StringMap<Bool>
 	{
 		if(packages ==  null || packages.length == 0) packages = [""];
 

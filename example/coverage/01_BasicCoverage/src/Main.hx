@@ -4,16 +4,6 @@ import mcover.coverage.MCoverage;
 import mcover.coverage.CoverageLogger;
 import example.Example;
 
-#if haxe_208
-	#if neko
-	import neko.Sys;
-	#elseif cpp
-	import cpp.Sys;
-	#elseif php
-	import php.Sys;
-	#end
-#end
-
 /**
 Main class as @IgnoreCover meta to ensure it is not included in the coverage
 */
@@ -32,7 +22,7 @@ class Main
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
 
-		#if (neko||cpp||php)
+		#if sys
 			while(completed != true)
 			{
 				Sys.sleep(.1);

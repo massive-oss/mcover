@@ -28,16 +28,6 @@
 
 package mcover.macro;
 
-#if haxe_208
-	#if neko
-		import neko.Sys;
-	#elseif cpp
-		import cpp.Sys;
-	#elseif php
-		import php.Sys;
-	#end
-#end
-
 class ClassInfo
 {
 	public var fileName:String;

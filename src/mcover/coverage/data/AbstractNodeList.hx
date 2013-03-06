@@ -28,21 +28,30 @@
 
 package mcover.coverage.data;
 
+#if haxe3
+import haxe.ds.StringMap;
+import haxe.ds.IntMap;
+#else
+private typedef StringMap = Hash
+private typedef IntMap = IntHash
+#end
+
 import mcover.coverage.data.AbstractNode;
 import mcover.coverage.data.CoverageResult;
+
 @IgnoreLogging
 @:keep class AbstractNodeList extends AbstractNode
 {
-	var itemsById:IntHash<AbstractNode>;
-	var items:Hash<Int>;
+	var itemsById:IntMap<AbstractNode>;
+	var items:StringMap<Int>;
 	public var itemCount(default, null):Int;
 
 	public function new()
 	{
 		super();
 		itemCount = 0;
-		itemsById = new IntHash();
-		items = new Hash();
+		itemsById = new IntMap();
+		items = new StringMap();
 	}
 
 	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode

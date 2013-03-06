@@ -28,6 +28,14 @@
 
 package mcover.coverage.macro;
 
+#if haxe3
+import haxe.ds.StringMap;
+import haxe.ds.IntMap;
+#else
+private typedef StringMap = Hash
+private typedef IntMap = IntHash
+#end
+
 #if macro
 import haxe.macro.Context;
 import mcover.MCover;
@@ -52,7 +60,7 @@ class CoverageMacroDelegate extends MacroDelegateImpl
 	/**
 	Used by CoverageExpressionParser to lookup valid class paths
 	*/
-	static public var classPathHash:IntHash<String> = new IntHash();
+	static public var classPathMap:IntMap<String> = new IntMap();
 
 
 	public function new()
@@ -67,12 +75,12 @@ class CoverageMacroDelegate extends MacroDelegateImpl
 
 	@see mcover.MacroDelegate
 	*/
-	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):Hash<Bool>
+	override public function filterClasses(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null):StringMap<Bool>
 	{
 		
 		for(cp in classPaths)
 		{
-			classPathHash.set(Lambda.count(classPathHash), cp);
+			classPathMap.set(Lambda.count(classPathMap), cp);
 		}
 
 		return super.filterClasses(packages, classPaths, exclusions);

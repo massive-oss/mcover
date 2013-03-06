@@ -35,11 +35,11 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.PosInfos;
 
+#if haxe3
 
-#if haxe208
-	import neko.Lib;
+#else
+private typedef Case = { values : Array<Expr>, expr : Expr }
 #end
-
 
 /**
 Generic recursive parser of expressions inside a class's fields.
@@ -99,7 +99,11 @@ class ClassParserImpl implements ClassParser
 
 		switch(type)
 		{
-			case TInst(t, params):
+			#if haxe3
+			case TInst(t, _):
+			#else
+			case TInst(t,params):
+			#end
 			{
 				var parts = Std.string(t).split(".");
 				info.className = parts.pop();
@@ -222,6 +226,7 @@ class ClassParserImpl implements ClassParser
 	function parseExpr(expr:Expr):Expr
 	{
 		if(expr == null) return null;
+		if(expr.expr == null && expr.pos == null) return expr;
 		
 		exprStack.push(expr);	
 
@@ -243,173 +248,143 @@ class ClassParserImpl implements ClassParser
 	{
 		switch(expr.expr)
 		{
+		
 			case EContinue: null;
 			case EBreak: null;
-			case EConst(c): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
 			case EFunction(name, f): 
-			{
 				//e.g. var f = function()
 				functionStack.push(f);
 				f.expr = parseExpr(f.expr);
 				expr.expr = EFunction(name, f);
 				functionStack.pop();
-			}
-			case EDisplayNew(t): null;  //no idea what this is??
+			
 			case EDisplay(e, isCall):
-			{
 				//no idea what this is???
 				e = parseExpr(e);
 				expr.expr = EDisplay(e, isCall);
-			}
+			
 			case ECast(e, t):
-			{
 				// cast(foo, Foo);
 				e = parseExpr(e);
 				expr.expr = ECast(e, t);
-			}
+			
 			case EIf(econd, eif, eelse):
-			{
 				//e.g. if(){}else{}
 				parseEIf(expr, econd, eif, eelse);
-			}
 		
 			case ESwitch(e, cases, edef):
-			{	
 				parseESwitch(expr, e, cases, edef);
-			}
+
 			case ETry(e, catches):
-			{
 				//e.g. try{...}catch(){}
 				parseExpr(e);
 				for(c in catches)
 				{
 					parseExpr(c.expr);
 				}
-			}
+
 			case EThrow(e): 
-			{
 				//e.g. throw "ARRGH!"
 				e = parseExpr(e);
 				expr.expr = EThrow(e);
-			}
+			
 			case EWhile(econd, e, normalWhile):
-			{
 				//e.g. while(i<2){}
 				econd = parseExpr(econd);
 				e = parseExpr(e);
 				expr.expr = EWhile(econd, e, normalWhile);
-			}
+			
 			case EField(e, field):
-			{
 				//e.g. isFoo
 				e = parseExpr(e);
 				expr.expr = EField(e, field);
-			}
+			
 			case EParenthesis(e): 
-			{
 				//e.g. (...)
 				e = parseExpr(e);
 				expr.expr = EParenthesis(e);
-			}
 			
 			case ENew(t, params):
-			{
 				//e.g. new Foo();
 				params = parseExprs(params);
 				expr.expr = ENew(t, params);
-			}
 			
-			case EType(e, field):
-			{
-				//e.g. Foo.bar;
-				e = parseExpr(e);
-				expr.expr = EType(e, field);
-
-			}
 			case ECall(e, params):
-			{
 				//e.g. method(); 
 				e = parseExpr(e);
 				params = parseExprs(params);
 				expr.expr = ECall(e, params);
-			}
+			
 			case EReturn(e):
-			{
 				//e.g. return foo;
 				e = parseExpr(e);
 				expr.expr = EReturn(e);
-			}
+			
 			case EVars(vars):
-			{
 				//e.g. var i = xxx;
 				for(v in vars)
 				{
 					v.expr = parseExpr(v.expr);
 				}
-			}
+			
 			case EBinop(op, e1, e2):
-			{
 				//e.g. i<2; a||b, i==b
 				e1 = parseExpr(e1);
 				e2 = parseExpr(e2);
 				expr.expr = EBinop(op, e1, e2);
-			}
 			case EUnop(op,postFix,e):
-			{
 				//e.g. i++;
 				e = parseExpr(e);
 				expr.expr = EUnop(op, postFix, e);
-			}
 			case ETernary(econd, eif, eelse): 
-			{
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
 				parseETernary(expr, econd, eif, eelse);
-			}
 			case EObjectDecl(fields):
-			{
 				//e.g. var o = { a:"a", b:"b" }
 				for(f in fields)
 				{
 					parseExpr(f.expr);
 				}
-			}
 			case EFor(it, e):
-			{
 				//e.g. for(i in 0...5){}
 				it = parseExpr(it);
 				e = parseExpr(e);
 				expr.expr = EFor(it, e);
-			}
 			case EIn(e1, e2):
-			{
 				//e.g. for(i in 0...5){}
 				e1 = parseExpr(e1);
 				e2 = parseExpr(e2);
 				expr.expr = EIn(e1, e2);
-			}
 			case EArrayDecl(values):
-			{
 				//e.g. a = [1,2,3];
 				for(v in values)
 				{
 					v = parseExpr(v);
 				}
-			}
 			case EArray(e1, e2):
-			{
 				//not sure dif with EArrayDecl
 				e1 = parseExpr(e1);
 				e2 = parseExpr(e2);
 				expr.expr = EArray(e1, e2);
-			}
 			case EBlock(exprs): 
-			{
 				//array of expressions e.g. {...}
 				exprs = parseExprs(exprs);
 				expr.expr = EBlock(exprs);
-
-			}
-			case EUntyped(e1): null;//don't want to mess around with untyped code
+		
+			#if haxe3
+				case EUntyped(_): null;//don't want to mess around with untyped code
+				case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
+				case EDisplayNew(_): null;  //no idea what this is??
+			#else
+				case EConst(c: null;//i.e. any constant (string, type, int, regex, ident (local var ref))
+				case EDisplayNew(r): null;  //no idea what this is??
+				case EType(e, field):
+					//e.g. Foo.bar;
+					e = parseExpr(e);
+					expr.expr = EType(e, field);
+				case EUntyped(e1): null;//don't want to mess around with untyped code
+			#end
+			
 			default: debug(expr.expr);
 		}
 
@@ -426,7 +401,7 @@ class ClassParserImpl implements ClassParser
 
 	}
 
-	function parseESwitch(expr:Expr, e:Expr, cases: Array<{ values : Array<Expr>, expr : Expr }>, edef:Null<Expr>)
+	function parseESwitch(expr:Expr, e:Expr, cases: Array<Case>, edef:Null<Expr>)
 	{
 		e = parseExpr(e);
 
@@ -437,6 +412,7 @@ class ClassParserImpl implements ClassParser
 		}
 
 		edef = parseExpr(edef);
+
 		expr.expr = ESwitch(e, cases, edef);
 	}
 
@@ -477,11 +453,7 @@ class ClassParserImpl implements ClassParser
 	{
 		#if MACRO_LOGGER_DEBUG
 			var msg = pos.className + "(" + pos.lineNumber + "):\n   " + Std.string(value);
-			#if haxe_208
-				Lib.println(msg);
-			#else
-				Sys.println(msg);
-			#end
+			Sys.println(msg);
 		#end
 	}
 }	

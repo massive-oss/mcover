@@ -28,16 +28,6 @@
 
 package mcover.coverage.client;
 
-#if haxe208
-	#if neko
-	import neko.Lib;
-	#elseif cpp
-	import cpp.Lib;
-	#elseif php
-	import php.Lib;
-	#end
-#end
-
 @IgnoreLogging
 class TraceClient extends PrintClient
 {
@@ -54,29 +44,5 @@ class TraceClient extends PrintClient
 		output += newline;
 
 		trace(newline + output);
-		/*
-
-		#if js
-		var textArea = js.Lib.document.getElementById("haxe:trace");
-		if (textArea == null) 
-		{	
-			var error:String = "MissingElementException: 'haxe:trace' element not found in html file";
-			js.Lib.alert(error);
-			return;
-		}
-	
-		textArea.innerHTML += output;
-		js.Lib.window.scrollTo(0,js.Lib.document.body.scrollHeight);
-			
-		#if (neko || cpp || php)
-			#if haxe_208 
-				Lib.print(output);
-			#else
-				Sys.print(output);
-			#end
-		#else
-			trace(newline + output);
-		#end
-		*/
 	}
 }
