@@ -1,3 +1,6 @@
+v 2.0.0
+- added support for haxe3 RC
+
 v 1.5.1
 - hotfix for edge case with position file path not found using Context.resolvePath
 - hotfix for excpetion thrown when creating temp directory on windows 
