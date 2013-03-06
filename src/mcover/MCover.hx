@@ -43,7 +43,7 @@ import sys.FileSystem;
 #if haxe3
 import haxe.ds.StringMap;
 #else
-typedef StringMap = Hash
+private typedef StringMap<T> = Hash<T>
 #end
 
 /**
@@ -203,7 +203,8 @@ To enable function entry/exit logging
 	@param ids 	Array of MacroDelegagte ids for including in this class build
 	@return updated array of fields for the class
 	*/
-	macro public static function build(ids:Array<String>):Array<Field>
+	#if haxe3 macro #else @macro #end
+	public static function build(ids:Array<String>):Array<Field>
 	{
 		var classParser = new ClassParserImpl(); 
 
@@ -273,8 +274,7 @@ To enable function entry/exit logging
 		file.writeString("");
 		file.close();
 
-
-		haxe.Log.trace = function trace( v : Dynamic, ?infos : haxe.PosInfos ) : Void 
+		haxe.Log.trace = function ( v : Dynamic, ?infos : haxe.PosInfos )
 		{
 			var file = sys.io.File.append(path, false);
 			file.writeString(infos.className + "." + infos.methodName + "[" + infos.lineNumber + "] " + Std.string(v) + "\n");

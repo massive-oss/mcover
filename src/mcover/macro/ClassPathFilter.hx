@@ -30,8 +30,10 @@ package mcover.macro;
 
 #if haxe3
 import haxe.ds.StringMap;
+import haxe.crypto.Md5;
 #else
-private typedef StringMap = Hash
+import haxe.Md5;
+private typedef StringMap<T> = Hash<T>
 #end
 
 
@@ -94,7 +96,7 @@ class ClassPathFilter
 
 
 		var cacheName = includeClassMeta + "-" + ignoreClassMeta;
-		cache = new FilteredClassCache("cache-" + haxe.crypto.Md5.encode(cacheName) + ".txt");
+		cache = new FilteredClassCache("cache-" + Md5.encode(cacheName) + ".txt");
 		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths

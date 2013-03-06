@@ -8,7 +8,7 @@ import mcover.coverage.data.Branch;
 #if haxe3
 import haxe.ds.IntMap;
 #else
-private typedef IntMap = IntHash
+private typedef IntMap<T> = IntHash<T>
 #end
 
 

@@ -45,8 +45,8 @@ import cpp.vm.Mutex;
 import haxe.ds.StringMap;
 import haxe.ds.IntMap;
 #else
-private typedef StringMap = Hash
-private typedef IntMap = IntHash
+private typedef StringMap<T> = Hash<T>
+private typedef IntMap<T> = IntHash<T>
 #end
 
 interface CoverageLogger

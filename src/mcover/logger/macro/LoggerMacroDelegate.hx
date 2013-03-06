@@ -31,7 +31,7 @@ package mcover.logger.macro;
 #if haxe3
 import haxe.ds.StringMap;
 #else
-private typedef StringMap = Hash
+private typedef StringMap<T> = Hash<T>
 #end
 
 

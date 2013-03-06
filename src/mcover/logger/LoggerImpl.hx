@@ -47,7 +47,7 @@ import cpp.vm.Mutex;
 #if haxe3
 import haxe.ds.IntMap;
 #else
-private typedef IntMap = IntHash
+private typedef IntMap<T> = IntHash<T>
 #end
 
 @IgnoreLogging

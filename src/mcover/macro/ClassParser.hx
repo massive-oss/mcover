@@ -376,7 +376,7 @@ class ClassParserImpl implements ClassParser
 				case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
 				case EDisplayNew(_): null;  //no idea what this is??
 			#else
-				case EConst(c: null;//i.e. any constant (string, type, int, regex, ident (local var ref))
+				case EConst(c): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
 				case EDisplayNew(r): null;  //no idea what this is??
 				case EType(e, field):
 					//e.g. Foo.bar;

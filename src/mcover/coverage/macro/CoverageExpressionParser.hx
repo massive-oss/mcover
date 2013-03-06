@@ -30,6 +30,11 @@ package mcover.coverage.macro;
 
 #if haxe3
 import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
+#if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;

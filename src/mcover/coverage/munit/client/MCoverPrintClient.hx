@@ -41,7 +41,7 @@ import haxe.ds.StringMap;
 #else
 import massive.munit.ITestResultClient;
 import mcover.coverage.DataTypes;
-private typedef StringMap = Hash
+private typedef StringMap<T> = Hash<T>
 #end
 
 /**
@@ -62,7 +62,12 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar 
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
 	function get_completionHandler():ITestResultClient -> Void {return completionHandler;}
 	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
 	
