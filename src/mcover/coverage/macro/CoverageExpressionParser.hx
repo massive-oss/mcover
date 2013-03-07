@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,6 +28,12 @@
 
 package mcover.coverage.macro;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -38,14 +44,7 @@ import mcover.coverage.DataTypes;
 import mcover.macro.MacroUtil;
 import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
-
-#if haxe_208
-import neko.Sys;
-import neko.FileSystem;
-#else
 import sys.FileSystem;
-#end
-
 
 @:keep class CoverageExpressionParser implements ExpressionParser
 {
@@ -61,14 +60,14 @@ import sys.FileSystem;
 
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
-	var coveredLines:IntHash<Bool>;
+	var coveredLines:IntMap<Bool>;
 	var exprPos:Position;
 
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
-		coveredLines =  new IntHash();
+		coveredLines =  new IntMap();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
@@ -149,7 +148,6 @@ import sys.FileSystem;
 	{
 		switch(op)
 		{
-			case OpAssignOp(op): null;//
 			case OpBoolOr:
 				
 				e1 = createBranchCoverageExpr(e1);
@@ -235,18 +233,22 @@ import sys.FileSystem;
 
 		file = FileSystem.fullPath(file);
 		
+
 		var posFile:String = null;
-		
+		var classFile:String = null;
+
 		try
 		{
 			posFile = Context.resolvePath(posInfo.file);
 		}
 		catch(e:Dynamic)
 		{
-			posFile = file;
+			if(!FileSystem.exists(file))
+				throw e;
+			else
+				posFile = file;
 		}
 
-		var classFile:String = null;
 		try
 		{
 			classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
@@ -263,7 +265,7 @@ import sys.FileSystem;
 
 		var mpartial = Context.defined("mpartial");
 
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 
 			if(file.indexOf(cp) == 0)
@@ -308,10 +310,9 @@ import sys.FileSystem;
 			}
 		}
 
-
 		//At this point it is likely that the method/block was generated via macros
 		//and has different position info to the target class being parsed.
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			if(classFile.indexOf(cp) == 0)
 			{
@@ -327,7 +328,7 @@ import sys.FileSystem;
 		error += "\n    Location: " + target.info.location;
 		error += "\n    Referenced pos: " + Std.string(startPos);
 		error += "\n    Searched classpaths:";
-		for (cp in CoverageMacroDelegate.classPathHash)
+		for (cp in CoverageMacroDelegate.classPathMap)
 		{
 			error += "\n      " + cp;
 		}
@@ -467,7 +468,12 @@ import sys.FileSystem;
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 
+		#if haxe3
+		var eType = EField(identFieldExpr2, "MCoverage");
+		#else
 		var eType = EType(identFieldExpr2, "MCoverage");
+		#end
+		
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 

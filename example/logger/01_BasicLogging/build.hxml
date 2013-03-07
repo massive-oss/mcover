@@ -37,18 +37,18 @@
 
 --next
 
--main Main
--cpp bin/cpp
--cp src
---macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
-# mcover source
--cp ../../../src
-# common example code
--cp ../common/src
--lib mconsole
--cmd bin/cpp/Main
+# -main Main
+# -cpp bin/cpp
+# -cp src
+# --macro mcover.MCover.logger([''], ['src','../common/src'], ['other.*','example.IgnoredWithMacroFilter'])
+# # mcover source
+# -cp ../../../src
+# # common example code
+# -cp ../common/src
+# -lib mconsole
+# -cmd bin/cpp/Main
 
---next
+# --next
 
 -main Main
 -php bin/php

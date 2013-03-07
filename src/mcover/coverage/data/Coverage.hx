@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,42 +28,48 @@
 
 package mcover.coverage.data;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 import mcover.coverage.data.CoverageResult;
 import mcover.coverage.data.Branch;
 
 @IgnoreLogging
 @:keep class Coverage extends AbstractNodeList
 {
-	var statements:IntHash<Array<Int>>;
-	var branches:IntHash<Array<Int>>;
+	var statements:IntMap<Array<Int>>;
+	var branches:IntMap<Array<Int>>;
 
 	/*
 	 * total execution count for statements by id
 	*/
-	public var statementResultsById(default, null):IntHash<Int>;
+	public var statementResultsById(default, null):IntMap<Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	public var branchResultsById(default, null):IntHash<BranchResult>;
+	public var branchResultsById(default, null):IntMap<BranchResult>;
 
 	public function new()
 	{
 		super();
-		statements = new IntHash();
-		branches = new IntHash();		
-		statementResultsById = new IntHash();
-		branchResultsById = new IntHash();
+		statements = new IntMap();
+		branches = new IntMap();		
+		statementResultsById = new IntMap();
+		branchResultsById = new IntMap();
 	}
 
-	public function setStatementResultsHash(hash:IntHash<Int>)
+	public function setStatementResultsMap(map:IntMap<Int>)
 	{
-		statementResultsById = hash;
+		statementResultsById = map;
 	}
 
-	public function setBranchResultsHash(hash:IntHash<BranchResult>)
+	public function setBranchResultsMap(map:IntMap<BranchResult>)
 	{
-		branchResultsById = hash;
+		branchResultsById = map;
 	}
 
 	public function addStatement(block:Statement)

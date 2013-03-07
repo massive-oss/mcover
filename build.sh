@@ -1,12 +1,9 @@
 set -e
 
+haxelib dev mcover `pwd`/src
+
 mkdir -p bin
 mkdir -p bin/output
-
-#!/bin/bash
-haxelib run mlib allClasses
-haxe buildAllClasses.hxml
-
 
 day=$( date +%s )
 fname="src/stamp.txt"

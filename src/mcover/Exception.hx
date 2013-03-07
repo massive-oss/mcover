@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -29,7 +29,13 @@
 package mcover;
 
 import haxe.PosInfos;
+
+#if haxe3
+import haxe.CallStack;
+#else
 import haxe.Stack;
+private typedef CallStack = haxe.Stack;
+#end
 
 class Exception
 {
@@ -70,8 +76,8 @@ class Exception
 
 		if(cause != null)
 		{
-			causeExceptionStack = haxe.Stack.exceptionStack();
-			causeCallStack = haxe.Stack.callStack();
+			causeExceptionStack = CallStack.exceptionStack();
+			causeCallStack = CallStack.callStack();
 		}
 	}
 

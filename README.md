@@ -4,6 +4,7 @@ To install mcover:
 
 	haxelib install mcover
 
+
 MCover supports Haxe 2.10 and Haxe 3
 
 Features
@@ -126,7 +127,7 @@ See CHANGES for full changes
 
 ### New since 2.0.0
 
-* Haxe 3 support
+* Haxe 3 support, includes some breaking changes to APIs to better align with Haxe 3
 * Updated for Munit 2.0
 * Removed support for Haxe 2.08 and 2.09
 

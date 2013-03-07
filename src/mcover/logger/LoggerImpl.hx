@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -44,6 +44,12 @@ import cpp.vm.Deque;
 import cpp.vm.Mutex;
 #end
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 @IgnoreLogging
 @IgnoreCover
 class LoggerImpl implements Logger
@@ -67,7 +73,7 @@ class LoggerImpl implements Logger
 	var logs:Array<Log>;
 
 	var stack:Array<Log>;
-	var logsById:IntHash<Log>;
+	var logsById:IntMap<Log>;
 	var recording:LogRecording;
 
 	public var clients(default, null):Array<LoggerClient>;
@@ -89,7 +95,7 @@ class LoggerImpl implements Logger
 		count = 0;
 		logs = [];
 		stack = [];
-		logsById = new IntHash();
+		logsById = new IntMap();
 		depth = 0;
 		maxDepth = 0;
 	}
@@ -145,7 +151,7 @@ class LoggerImpl implements Logger
 		if(!logsById.exists(entryId))
 		{
 			#if (neko||cpp) mutex.release(); #end
-			trace("WARNING: Cannot find matching entry log. " + [entryId, pos]);
+			trace("WARNING: Cannot find matching entry log. " + entryId + ", " + pos);
 			return;
 		}
 

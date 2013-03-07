@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -41,6 +41,13 @@ import neko.vm.Mutex;
 import cpp.vm.Mutex;
 #end
 
+#if haxe3
+import haxe.ds.StringMap;
+import haxe.ds.IntMap;
+#else
+private typedef StringMap<T> = Hash<T>
+private typedef IntMap<T> = IntHash<T>
+#end
 
 interface CoverageLogger
 {
@@ -98,17 +105,17 @@ class CoverageLoggerImpl implements CoverageLogger
 	/*
 	 * total execution count for statements by id
 	*/
-	var allStatementResultsById:IntHash<Int>;
+	var allStatementResultsById:IntMap<Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	var allBranchResultsById:IntHash<BranchResult>;
+	var allBranchResultsById:IntMap<BranchResult>;
 
 	/*
 	 * stores a cache of test results against currentTest string
 	*/
-	var filteredResultsHash:Hash<FilteredCoverageResults>;
+	var filteredResultsMap:StringMap<FilteredCoverageResults>;
 
 	/*
 	 * results for active 'currentTest'
@@ -121,9 +128,9 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function new()
 	{
-		allStatementResultsById = new IntHash();
-		allBranchResultsById = new IntHash();
-		filteredResultsHash = new Hash();
+		allStatementResultsById = new IntMap();
+		allBranchResultsById = new IntMap();
+		filteredResultsMap = new StringMap();
 		clients = [];
 	}
 
@@ -157,13 +164,13 @@ class CoverageLoggerImpl implements CoverageLogger
 		
 		if(currentTestOnly)
 		{
-			coverage.setStatementResultsHash(currentFilteredResults.statementResultsById);
-			coverage.setBranchResultsHash(currentFilteredResults.branchResultsById);	
+			coverage.setStatementResultsMap(currentFilteredResults.statementResultsById);
+			coverage.setBranchResultsMap(currentFilteredResults.branchResultsById);	
 		}
 		else
 		{
-			coverage.setStatementResultsHash(allStatementResultsById);
-			coverage.setBranchResultsHash(allBranchResultsById);
+			coverage.setStatementResultsMap(allStatementResultsById);
+			coverage.setBranchResultsMap(allBranchResultsById);
 		}
 
 		coverage.getResults(false);
@@ -220,25 +227,25 @@ class CoverageLoggerImpl implements CoverageLogger
 		 	mutex.acquire();
 		#end
 
-		updateStatementHash(allStatementResultsById, id);
+		updateStatementMap(allStatementResultsById, id);
 
 		if(currentFilteredResults != null)
 		{				
-			updateStatementHash(currentFilteredResults.statementResultsById, id);
+			updateStatementMap(currentFilteredResults.statementResultsById, id);
 		}
 		#if (neko||cpp) mutex.release(); #end
 	}
 
 	@IgnoreCover
-	function updateStatementHash(hash:IntHash<Int>, id:Int)
+	function updateStatementMap(map:IntMap<Int>, id:Int)
 	{
 		var count = 1;
 
-		if(hash.exists(id))
+		if(map.exists(id))
 		{
-			count = hash.get(id) + 1;
+			count = map.get(id) + 1;
 		}
-		hash.set(id, count);
+		map.set(id, count);
 	}
 	
 	/**
@@ -267,11 +274,11 @@ class CoverageLoggerImpl implements CoverageLogger
 			bool = value;
 		}
 
-		updateBranchHash(allBranchResultsById, id, bool);
+		updateBranchMap(allBranchResultsById, id, bool);
 
 		if(currentFilteredResults != null)
 		{
-			updateBranchHash(currentFilteredResults.branchResultsById, id, bool);
+			updateBranchMap(currentFilteredResults.branchResultsById, id, bool);
 		}
 
 		#if (neko||cpp) mutex.release(); #end
@@ -279,18 +286,18 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 	@IgnoreCover
-	function updateBranchHash(hash:IntHash<BranchResult>, id:Int, value:Bool)
+	function updateBranchMap(map:IntMap<BranchResult>, id:Int, value:Bool)
 	{
 		var r:BranchResult = null;
 		
-		if(hash.exists(id))
+		if(map.exists(id))
 		{
-			r = hash.get(id);
+			r = map.get(id);
 		}
 		else
 		{
 			r = {id:id, trueCount:0, falseCount:0, total:0};
-			hash.set(id, r);
+			map.set(id, r);
 		}
 
 		//record current value
@@ -312,13 +319,13 @@ class CoverageLoggerImpl implements CoverageLogger
 			return value;
 		}
 
-		if(!filteredResultsHash.exists(value))
+		if(!filteredResultsMap.exists(value))
 		{
-			var result:FilteredCoverageResults = {filter:value, statementResultsById:new IntHash(), branchResultsById:new IntHash()};
-			filteredResultsHash.set(value, result); 
+			var result:FilteredCoverageResults = {filter:value, statementResultsById:new IntMap(), branchResultsById:new IntMap()};
+			filteredResultsMap.set(value, result); 
 		}
 
-		currentFilteredResults = filteredResultsHash.get(value);
+		currentFilteredResults = filteredResultsMap.get(value);
 
 		return value;
 	}
@@ -377,11 +384,11 @@ typedef FilteredCoverageResults =
 	/*
 	 * statement execution counts for current test
 	*/
-	statementResultsById:IntHash<Int>,
+	statementResultsById:IntMap<Int>,
 	
 	/*
 	 * branch execution counts for current test
 	*/
-	branchResultsById:IntHash<BranchResult>
+	branchResultsById:IntMap<BranchResult>
 }
 

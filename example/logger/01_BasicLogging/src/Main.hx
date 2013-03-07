@@ -3,17 +3,6 @@ package;
 import mcover.logger.MCoverLogger;
 import mcover.logger.Logger;
 import example.Example;
-
-#if haxe_208
-	#if neko
-	import neko.Sys;
-	#elseif cpp
-	import cpp.Sys;
-	#elseif php
-	import php.Sys;
-	#end
-#end
-
 /**
 Main class as @IgnoreLogging meta to ensure it is not included in the coverage
 */

@@ -136,7 +136,7 @@ class Example
 		}
 	}
 
-	function oneLineMethod():Bool return true
+	function oneLineMethod():Bool return true;
 
 }
 

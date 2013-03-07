@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -49,7 +49,11 @@ interface CoverageReportClient
 	public var output(default, null):String;
 }
 
+#if haxe3
+interface AdvancedCoverageReportClient extends CoverageReportClient
+#else
 interface AdvancedCoverageReportClient implements CoverageReportClient
+#end
 {
 	var includeMissingBlocks(default, default):Bool;
 	var includeExecutionFrequency(default, default):Bool;

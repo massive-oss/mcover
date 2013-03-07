@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,21 +27,29 @@
 ****/
 
 package mcover.coverage.data;
+
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 import mcover.coverage.data.CoverageResult;
 import mcover.coverage.data.Statement;
 import mcover.coverage.data.Branch;
+
 @IgnoreLogging
 @:keep class Method extends AbstractNode
 {
-	var statementsById:IntHash<Statement>;
-	var branchesById:IntHash<Branch>;
+	var statementsById:IntMap<Statement>;
+	var branchesById:IntMap<Branch>;
 
 	public function new()
 	{
 		super();
 
-		statementsById = new IntHash();
-		branchesById = new IntHash();
+		statementsById = new IntMap();
+		branchesById = new IntMap();
 	}
 
 	public function addStatement(value:Statement)

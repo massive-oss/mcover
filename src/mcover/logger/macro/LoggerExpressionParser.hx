@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,6 +28,12 @@
 
 package mcover.logger.macro;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -48,7 +54,7 @@ class LoggerExpressionParser implements ExpressionParser
 	var counter:Int;
 
 	var methodReturnCount:Int;
-	var functionReturnCount:IntHash<Int>;
+	var functionReturnCount:IntMap<Int>;
 	var voidType:ComplexType;
 
 	public function new()
@@ -60,13 +66,13 @@ class LoggerExpressionParser implements ExpressionParser
 		voidType = TPath({ name:"Void", pack:[], params:[], sub:null });
 
 		methodReturnCount = 0;
-		functionReturnCount = new IntHash();
+		functionReturnCount = new IntMap();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
 	{
 		methodReturnCount = 0;
-		functionReturnCount = new IntHash();
+		functionReturnCount = new IntMap();
 	}
 
 	/**
@@ -94,7 +100,7 @@ class LoggerExpressionParser implements ExpressionParser
 			{
 				parseEThrow(expr, e);
 			}
-			case EFunction(name, f): 
+			case EFunction(_, _): 
 			{
 				functionReturnCount.set(target.functionStack.length, 0);
 			}
@@ -126,8 +132,8 @@ class LoggerExpressionParser implements ExpressionParser
 		
 		switch (lastExpr.expr)
 		{
-			case EReturn(e): null;//already handled
-			case EThrow(e): null;//already handled
+			case EReturn(_): null;//already handled
+			case EThrow(_): null;//already handled
 			default:
 			{
 				var count = 0;
@@ -315,8 +321,8 @@ class LoggerExpressionParser implements ExpressionParser
 				}	
 				switch (expr.expr)
 				{
-					case EReturn(e1): expr.expr = EReturn(exitExprs.eReturnValue);
-					case EThrow(e1): expr.expr = EThrow(exitExprs.eReturnValue);
+					case EReturn(_): expr.expr = EReturn(exitExprs.eReturnValue);
+					case EThrow(_): expr.expr = EThrow(exitExprs.eReturnValue);
 					default: throw new LoggerException("Unexpected exprDef " + expr);
 				}
 			}
@@ -325,8 +331,8 @@ class LoggerExpressionParser implements ExpressionParser
 				var eExit:Expr;
 				switch (expr.expr)
 				{
-					case EReturn(e1): eExit = {expr:EReturn(exitExprs.eReturnValue), pos:expr.pos};
-					case EThrow(e1): eExit = {expr:EThrow(exitExprs.eReturnValue), pos:expr.pos};
+					case EReturn(_): eExit = {expr:EReturn(exitExprs.eReturnValue), pos:expr.pos};
+					case EThrow(_): eExit = {expr:EThrow(exitExprs.eReturnValue), pos:expr.pos};
 					default : throw new LoggerException("Unexpected exprDef " + expr);
 				}
 				var exprs:Array<Expr> = [exitExprs.eExitLogCall, eExit];
@@ -461,7 +467,7 @@ class LoggerExpressionParser implements ExpressionParser
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 
-		var eType = EType(identFieldExpr2, "MCoverLogger");
+		var eType = EField(identFieldExpr2, "MCoverLogger");
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
