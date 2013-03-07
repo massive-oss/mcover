@@ -124,6 +124,11 @@ Changes
 
 See CHANGES for full changes
 
+### New since 2.0.0
+
+* Haxe 3 support
+* Updated for Munit 2.0
+* Removed support for Haxe 2.08 and 2.09
 
 ### New since 1.5.x
 
