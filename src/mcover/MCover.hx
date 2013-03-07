@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -282,32 +282,7 @@ To enable function entry/exit logging
 		}
 
 	}
-
-
 }
-
-
-// class FilePrinter extends mconsole.FilePrinter
-// {
-
-// 	public function new(path:String)
-// 	{
-// 		if(FileSystem.exists(path))
-// 			FileSystem.deleteFile(path);
-// 		super(path);
-// 	}
-
-// 	/**
-// 	Fiters out any logs outside of current package.
-// 	*/
-// 	override public function print(level: mconsole.LogLevel, params:Array<Dynamic>, indent:Int, pos:haxe.PosInfos):Void
-// 	{
-// 		if(StringTools.startsWith(pos.className, "mcover"))
-// 			super.print(level, params, indent, pos);
-// 	}
-
-// }
-
 
 #end
 
