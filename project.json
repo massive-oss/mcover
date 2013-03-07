@@ -8,5 +8,10 @@
 	"haxelib":
 	{
 		"user": "massive"
+	},
+	"dependencies": 
+	{
+		"mlib":"2.x",
+		"munit":"2.x"
 	}
 }
