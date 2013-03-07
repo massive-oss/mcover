@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -28,16 +28,19 @@
 
 package mcover.macro;
 
-#if macro
-	
-#if haxe_208
-	import neko.io.File;
-	import neko.FileSystem;
+#if haxe3
+import haxe.ds.StringMap;
+import haxe.crypto.Md5;
 #else
-	import sys.io.File;
-	import sys.FileSystem;
+import haxe.Md5;
+private typedef StringMap<T> = Hash<T>
 #end
 
+
+#if macro
+	
+import sys.io.File;
+import sys.FileSystem;
 import haxe.macro.Context;
 
 class ClassPathFilter
@@ -54,7 +57,7 @@ class ClassPathFilter
 	*/
 	public var includeClassMeta:String;
 
-	var classHash:Hash<Bool>;
+	var classMap:StringMap<Bool>;
 	var skip:String -> Bool;
 
 	var cache:FilteredClassCache;
@@ -72,9 +75,9 @@ class ClassPathFilter
 	* @param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
 	* @return array of classes
 	*/
-	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Hash<Bool>
+	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):StringMap<Bool>
 	{
-		classHash = new Hash();
+		classMap = new StringMap();
 
 		if(exclusions == null || exclusions.length == 0)
 		{
@@ -93,7 +96,7 @@ class ClassPathFilter
 
 
 		var cacheName = includeClassMeta + "-" + ignoreClassMeta;
-		cache = new FilteredClassCache("cache-" + haxe.Md5.encode(cacheName) + ".txt");
+		cache = new FilteredClassCache("cache-" + Md5.encode(cacheName) + ".txt");
 		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths
@@ -115,7 +118,7 @@ class ClassPathFilter
 
 		cache.save();
 
-		return classHash;
+		return classMap;
 	}
 
 
@@ -152,7 +155,7 @@ class ClassPathFilter
 	}
 
 	/**
-	Includes the classes in a file to the classHash.
+	Includes the classes in a file to the classMap.
 	Adds the path to the cache if not up to date
 	*/
 	function includeFile(path:String)
@@ -164,11 +167,11 @@ class ClassPathFilter
 		
 		for(cls in cache.getIncludedClassesInFile(path))
 		{
-			classHash.set(cls, true);
+			classMap.set(cls, true);
 		}
 		for(cls in cache.getExcludedClassesInFile(path))
 		{
-			classHash.set(cls, false);
+			classMap.set(cls, false);
 		}	
 	}
 
@@ -190,7 +193,7 @@ class ClassPathFilter
 
 		var prefix = getPackageDefinitionInFile(contents);
 
-		var excludesHash:Hash<Bool> = new Hash(); 
+		var excludesMap:StringMap<Bool> = new StringMap(); 
 
 		var temp:String;
 
@@ -204,7 +207,7 @@ class ClassPathFilter
 		
 			while(regIgnore.match(temp))
 			{
-				excludesHash.set(prefix + regIgnore.matched(3), true);
+				excludesMap.set(prefix + regIgnore.matched(3), true);
 				temp = regIgnore.matchedRight();
 			}
 		}
@@ -217,11 +220,14 @@ class ClassPathFilter
 		}
 		else
 		{
-			#if haxe_210
+
+			//Note(Dom, Feb 2013): Commenting out alternative as i'm assuming this is a change from from 210 on...
+			// #if haxe_210
 				regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])+)/m;
-			#else
-				regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/m;
-			#end
+			// #else
+			// 	regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/m;
+			// #end
+
 		}
 
 		temp = contents;
@@ -236,7 +242,7 @@ class ClassPathFilter
 				excludes.push(cls);
 				excludes.push(cls + "_generated");
 			}
-			else if(excludesHash.exists(cls) || skip(cls))
+			else if(excludesMap.exists(cls) || skip(cls))
 			{
 				excludes.push(cls);
 			}

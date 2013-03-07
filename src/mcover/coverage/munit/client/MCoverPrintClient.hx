@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -34,16 +34,15 @@ import massive.munit.TestResult;
 import mcover.coverage.CoverageReportClient;
 import mcover.coverage.MCoverage;
 
-
-#if haxe_211
+#if haxe3
 import mcover.coverage.DataTypes;
 import massive.munit.ITestResultClient;
+import haxe.ds.StringMap;
 #else
 import massive.munit.ITestResultClient;
 import mcover.coverage.DataTypes;
+private typedef StringMap<T> = Hash<T>
 #end
-
-
 
 /**
 Addes coverage percentage to each test class as well as coverage summary once tests have finished
@@ -63,9 +62,14 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	public var completionHandler(get_completeHandler, set_completeHandler):ITestResultClient -> Void;
-	function get_completeHandler():ITestResultClient -> Void {return completionHandler;}
-	function set_completeHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
+	@:isVar 
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
+	function get_completionHandler():ITestResultClient -> Void {return completionHandler;}
+	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
 	
 	/**
 	* includes detailed missing class blocks (statements/branches) in output
@@ -88,7 +92,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	var mcoverLogger:CoverageLogger;
 	var mcoverClient:mcover.coverage.AdvancedCoverageReportClient;
 
-	var coveredClasses:Hash<Clazz>;
+	var coveredClasses:StringMap<Clazz>;
 	var currentCoveredClass:String;
 	var classPercentage:Float;
 
@@ -185,7 +189,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		
 		currentCoveredClass = null;
 		classPercentage = 0;
-		coveredClasses = new Hash();
+		coveredClasses = new StringMap();
 
 		mcoverClient.includeMissingBlocks = includeMissingBlocks;
 		mcoverClient.includeExecutionFrequency = includeExecutionFrequency;

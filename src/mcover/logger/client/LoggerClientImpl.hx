@@ -1,5 +1,5 @@
 /****
-* Copyright 2012 Massive Interactive. All rights reserved.
+* Copyright 2013 Massive Interactive. All rights reserved.
 * 
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
@@ -27,6 +27,13 @@
 ****/
 
 package mcover.logger.client;
+
+#if haxe3
+import haxe.ds.StringMap;
+#else
+private typedef StringMap<T> = Hash<T>
+#end
+
 
 import mcover.logger.data.Log;
 import mcover.logger.data.LogRecording;
@@ -93,20 +100,20 @@ class LoggerClientImpl implements LoggerClient
 	{
 		buf.add("\n\nHighest Frequency:\n");
 
-		var hash:Hash<LogCount> = new Hash();
+		var map:StringMap<LogCount> = new StringMap();
 
 		for(log in logs)
 		{
 
 			var logCount:LogCount;
-			if(hash.exists(log.name)) logCount = hash.get(log.name);
+			if(map.exists(log.name)) logCount = map.get(log.name);
 			else logCount = {name:log.name, count:0};
 			
 			logCount.count ++;
-			hash.set(log.name, logCount);
+			map.set(log.name, logCount);
 		}
 
-		var a = Lambda.array(hash);
+		var a = Lambda.array(map);
 		a.sort(sortOnCount);
 
 		var count = 0;
