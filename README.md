@@ -4,11 +4,7 @@ To install mcover:
 
 	haxelib install mcover
 
-
-
-**Haxe 2:** Official releases of MCover support Haxe 2.0.8 and greater
-
-**Haxe 3:** Please use the new pre-release branch `feature/haxe-3`
+MCover supports Haxe 2.10 and Haxe 3
 
 Features
 ---------------------
