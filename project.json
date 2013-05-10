@@ -2,12 +2,13 @@
 	"project": 
 	{
 		"name": "MassiveCover",
-		"version": "2.0.1",
+		"version": "2.0.2",
 		"id": "mcover",
 		"devDependencies": 
 		{
 			"mlib":"2.x",
-			"munit":"2.x"
+			"munit":"2.x",
+			"mtask":">=1.4 <2"
 		}
 	},
 	"haxelib":
