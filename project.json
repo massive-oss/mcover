@@ -4,10 +4,13 @@
 		"name": "MassiveCover",
 		"version": "2.0.2",
 		"id": "mcover",
+		"dependencies":
+		{
+			"munit":"2"
+		},
 		"devDependencies": 
 		{
-			"mlib":"2.x",
-			"munit":"2.x",
+			"mlib":"2",
 			"mtask":">=1.4 <2"
 		}
 	},
