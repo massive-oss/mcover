@@ -1,0 +1,14 @@
+{
+	"name": "mcover",
+	"license": "MIT",
+	"tags": ["cross","macro","utility","massive"],
+	"description": "A cross platform code coverage framework for Haxe with testing and profiling applications. Supports AVM1, AVM2, JavaScript, C++, PHP and Neko.",
+	"contributors": ["massive"],
+	"releasenote": "Add haxelib.json",
+	"version": "2.0.3",
+	"url": "http://github.com/massiveinteractive/mcover",
+	"dependencies": 
+	{
+		"mconsole": ""
+	}
+}

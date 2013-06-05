@@ -11,7 +11,8 @@ class Build extends mtask.core.BuildBase
 	{
 		t.url = "http://github.com/massiveinteractive/mcover";
 		t.description = "A cross platform code coverage framework for Haxe with testing and profiling applications. Supports AVM1, AVM2, JavaScript, C++, PHP and Neko.";
-		t.versionDescription = "Hotfix: Catch exception thrown when referenced pos file path not found using Context.resolvePath";
+		t.versionDescription = "Add haxelib.json";
+		t.username = "massive";
 
 		t.addTag("cross");
 		t.addTag("macro");

@@ -10,3 +10,6 @@ temp.hxml
 bin
 .temp
 /lib/
+/.idea/
+/.project
+/MassiveCover.iml

@@ -1,3 +1,6 @@
+v 2.0.3
+- added haxelib.json
+
 v 2.0.1
 - added support for haxe3 RC
 - removed dependency on mconsole
