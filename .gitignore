@@ -13,3 +13,4 @@ bin
 /.idea/
 /.project
 /MassiveCover.iml
+/build/User.hx
