@@ -169,17 +169,14 @@ import sys.FileSystem;
 		var pos = startPos;
 		
 		var baseExpr = getReferenceToLogger(pos);
+
 		pos = baseExpr.pos;
 
 		var eField = EField(baseExpr, "logStatement");
-		pos = MacroUtil.incrementPos(pos, 13);
 		var fieldExpr = {expr:eField, pos:pos};
 		
-		pos = MacroUtil.incrementPos(pos, blockId.length);
 		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
 
-		pos = MacroUtil.incrementPos(pos, 2);
-		
 		return {expr:ECall(fieldExpr, [arg1]), pos:pos};
 	}
 
@@ -197,21 +194,16 @@ import sys.FileSystem;
 		pos = baseExpr.pos;
 
 		var eField = EField(baseExpr, "logBranch");
-		pos = MacroUtil.incrementPos(pos, 4);
 		var fieldExpr = {expr:eField, pos:pos};
 		
 		var args:Array<Expr> = [];
 
-		pos = MacroUtil.incrementPos(pos, blockId.length);
-	
 		args.push({expr:EConst(CInt(blockId)), pos:pos});
 
-		pos = MacroUtil.incrementPos(pos, 5);
 		args.push({expr:expr.expr, pos:pos});
 
 		if(compareExpr != null)
 		{
-			pos = MacroUtil.incrementPos(pos, 5);
 			args.push({expr:compareExpr.expr, pos:pos});
 		}
 		
@@ -454,23 +446,18 @@ import sys.FileSystem;
 	function getReferenceToLogger(pos:Position):Expr
 	{
 		var eIdentField = EConst(CIdent("mcover"));
-		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr = {expr:eIdentField, pos:pos};
 
 		var eIdentField2 = EField(identFieldExpr, "coverage");
-		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
 		var eType = EField(identFieldExpr2, "MCoverage");
 		
-		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
 		var eField = EField(typeExpr, "getLogger");
-		pos = MacroUtil.incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 
-		pos = MacroUtil.incrementPos(pos, 2);
 		return {expr:ECall(fieldExpr, []), pos:pos};
 	}
 

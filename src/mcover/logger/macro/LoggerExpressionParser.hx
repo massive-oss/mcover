@@ -428,7 +428,6 @@ class LoggerExpressionParser implements ExpressionParser
 		var loggerExpr = getReferenceToLogger(pos);
 		
 		var eField = EField(loggerExpr, method);
-		pos = MacroUtil.incrementPos(pos, method.length + 1);
 		
 		var fieldExpr = {
 			expr:eField,
@@ -452,24 +451,18 @@ class LoggerExpressionParser implements ExpressionParser
 	*/
 	function getReferenceToLogger(pos:Position):Expr
 	{
-				var eIdentField = EConst(CIdent("mcover"));
-		pos = MacroUtil.incrementPos(pos, 7);
+		var eIdentField = EConst(CIdent("mcover"));
 		var identFieldExpr = {expr:eIdentField, pos:pos};
 
 		var eIdentField2 = EField(identFieldExpr, "logger");
-		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
-
 		var eType = EField(identFieldExpr2, "MCoverLogger");
-		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};
 
 		var eField = EField(typeExpr, "getLogger");
-		pos = MacroUtil.incrementPos(pos, 9);
 		var fieldExpr = {expr:eField, pos:pos};
 
-		pos = MacroUtil.incrementPos(pos, 2);
 		return {expr:ECall(fieldExpr, []), pos:pos};
 	}	
 
