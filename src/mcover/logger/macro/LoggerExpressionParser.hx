@@ -28,12 +28,6 @@
 
 package mcover.logger.macro;
 
-#if haxe3
-import haxe.ds.IntMap;
-#else
-private typedef IntMap<T> = IntHash<T>
-#end
-
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -54,7 +48,7 @@ class LoggerExpressionParser implements ExpressionParser
 	var counter:Int;
 
 	var methodReturnCount:Int;
-	var functionReturnCount:IntMap<Int>;
+	var functionReturnCount:Map<Int,Int>;
 	var voidType:ComplexType;
 
 	public function new()
@@ -66,13 +60,13 @@ class LoggerExpressionParser implements ExpressionParser
 		voidType = TPath({ name:"Void", pack:[], params:[], sub:null });
 
 		methodReturnCount = 0;
-		functionReturnCount = new IntMap();
+		functionReturnCount = new Map();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
 	{
 		methodReturnCount = 0;
-		functionReturnCount = new IntMap();
+		functionReturnCount = new Map();
 	}
 
 	/**

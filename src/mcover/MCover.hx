@@ -40,12 +40,6 @@ import mcover.macro.MacroDelegate;
 import sys.io.File;
 import sys.FileSystem;
 
-#if haxe3
-import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
-
 /**
 MCover provides a collection of macro based tools for measuring code quality and behavior.
 
@@ -93,7 +87,7 @@ To enable function entry/exit logging
 	public static var TEMP_DIR:String = ".temp/mcover/";
 	static var delegateClasses:Array<Class<MacroDelegate>> = [];
 	static var delegates:Array<MacroDelegate> = [];
-	static var delegatesById:StringMap<MacroDelegate> = new StringMap();
+	static var delegatesById:Map<String,MacroDelegate> = new Map();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
@@ -134,7 +128,7 @@ To enable function entry/exit logging
 			delegatesById.set(delegate.id, delegate);
 		}
 
-		var classMacroMap:StringMap<Array<String>> = new StringMap();
+		var classMacroMap:Map<String,Array<String>> = new Map();
 
 		for(delegate in delegates)
 		{
@@ -203,8 +197,7 @@ To enable function entry/exit logging
 	@param ids 	Array of MacroDelegagte ids for including in this class build
 	@return updated array of fields for the class
 	*/
-	#if haxe3 macro #else @macro #end
-	public static function build(ids:Array<String>):Array<Field>
+	macro public static function build(ids:Array<String>):Array<Field>
 	{
 		var classParser = new ClassParserImpl(); 
 

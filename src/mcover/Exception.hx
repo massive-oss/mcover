@@ -30,12 +30,7 @@ package mcover;
 
 import haxe.PosInfos;
 
-#if haxe3
 import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = haxe.Stack;
-#end
 
 class Exception
 {

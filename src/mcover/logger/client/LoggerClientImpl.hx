@@ -28,13 +28,6 @@
 
 package mcover.logger.client;
 
-#if haxe3
-import haxe.ds.StringMap;
-#else
-private typedef StringMap<T> = Hash<T>
-#end
-
-
 import mcover.logger.data.Log;
 import mcover.logger.data.LogRecording;
 import mcover.logger.client.LoggerClient;
@@ -100,7 +93,7 @@ class LoggerClientImpl implements LoggerClient
 	{
 		buf.add("\n\nHighest Frequency:\n");
 
-		var map:StringMap<LogCount> = new StringMap();
+		var map:Map<String,LogCount> = new Map();
 
 		for(log in logs)
 		{

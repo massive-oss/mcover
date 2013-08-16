@@ -49,11 +49,7 @@ interface CoverageReportClient
 	public var output(default, null):String;
 }
 
-#if haxe3
 interface AdvancedCoverageReportClient extends CoverageReportClient
-#else
-interface AdvancedCoverageReportClient implements CoverageReportClient
-#end
 {
 	var includeMissingBlocks(default, default):Bool;
 	var includeExecutionFrequency(default, default):Bool;

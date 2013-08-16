@@ -58,12 +58,7 @@ import neko.vm.Thread;
 import cpp.vm.Thread;
 #end
 
-#if haxe3
 import haxe.CallStack;
-#else
-import haxe.Stack;
-private typedef CallStack = haxe.Stack;
-#end
 
 @IgnoreCover
 @IgnoreLogging

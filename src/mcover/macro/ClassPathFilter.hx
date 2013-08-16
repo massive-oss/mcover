@@ -28,14 +28,7 @@
 
 package mcover.macro;
 
-#if haxe3
-import haxe.ds.StringMap;
 import haxe.crypto.Md5;
-#else
-import haxe.Md5;
-private typedef StringMap<T> = Hash<T>
-#end
-
 
 #if macro
 	
@@ -57,7 +50,7 @@ class ClassPathFilter
 	*/
 	public var includeClassMeta:String;
 
-	var classMap:StringMap<Bool>;
+	var classMap:Map<String,Bool>;
 	var skip:String -> Bool;
 
 	var cache:FilteredClassCache;
@@ -75,9 +68,9 @@ class ClassPathFilter
 	* @param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
 	* @return array of classes
 	*/
-	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):StringMap<Bool>
+	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Map<String,Bool>
 	{
-		classMap = new StringMap();
+		classMap = new Map();
 
 		if(exclusions == null || exclusions.length == 0)
 		{
@@ -193,7 +186,7 @@ class ClassPathFilter
 
 		var prefix = getPackageDefinitionInFile(contents);
 
-		var excludesMap:StringMap<Bool> = new StringMap(); 
+		var excludesMap:Map<String,Bool> = new Map(); 
 
 		var temp:String;
 

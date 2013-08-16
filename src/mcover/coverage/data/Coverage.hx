@@ -28,46 +28,40 @@
 
 package mcover.coverage.data;
 
-#if haxe3
-import haxe.ds.IntMap;
-#else
-private typedef IntMap<T> = IntHash<T>
-#end
-
 import mcover.coverage.data.CoverageResult;
 import mcover.coverage.data.Branch;
 
 @IgnoreLogging
 @:keep class Coverage extends AbstractNodeList
 {
-	var statements:IntMap<Array<Int>>;
-	var branches:IntMap<Array<Int>>;
+	var statements:Map<Int,Array<Int>>;
+	var branches:Map<Int,Array<Int>>;
 
 	/*
 	 * total execution count for statements by id
 	*/
-	public var statementResultsById(default, null):IntMap<Int>;
+	public var statementResultsById(default, null):Map<Int,Int>;
 	
 	/*
 	 * total execution summary for branches by id
 	*/
-	public var branchResultsById(default, null):IntMap<BranchResult>;
+	public var branchResultsById(default, null):Map<Int,BranchResult>;
 
 	public function new()
 	{
 		super();
-		statements = new IntMap();
-		branches = new IntMap();		
-		statementResultsById = new IntMap();
-		branchResultsById = new IntMap();
+		statements = new Map();
+		branches = new Map();		
+		statementResultsById = new Map();
+		branchResultsById = new Map();
 	}
 
-	public function setStatementResultsMap(map:IntMap<Int>)
+	public function setStatementResultsMap(map:Map<Int,Int>)
 	{
 		statementResultsById = map;
 	}
 
-	public function setBranchResultsMap(map:IntMap<BranchResult>)
+	public function setBranchResultsMap(map:Map<Int,BranchResult>)
 	{
 		branchResultsById = map;
 	}

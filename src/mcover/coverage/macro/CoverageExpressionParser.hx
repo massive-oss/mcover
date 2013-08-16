@@ -28,12 +28,6 @@
 
 package mcover.coverage.macro;
 
-#if haxe3
-import haxe.ds.IntMap;
-#else
-private typedef IntMap<T> = IntHash<T>
-#end
-
 #if macro
 import haxe.macro.Expr;
 import haxe.macro.Context;
@@ -60,14 +54,14 @@ import sys.FileSystem;
 
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
-	var coveredLines:IntMap<Bool>;
+	var coveredLines:Map<Int,Bool>;
 	var exprPos:Position;
 
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
-		coveredLines =  new IntMap();
+		coveredLines =  new Map();
 	}
 
 	public function parseMethod(field:Field, f:Function):Void
@@ -467,12 +461,7 @@ import sys.FileSystem;
 		pos = MacroUtil.incrementPos(pos, 7);
 		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
 
-
-		#if haxe3
 		var eType = EField(identFieldExpr2, "MCoverage");
-		#else
-		var eType = EType(identFieldExpr2, "MCoverage");
-		#end
 		
 		pos = MacroUtil.incrementPos(pos, 5);
 		var typeExpr = {expr:eType, pos:pos};

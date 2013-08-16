@@ -35,12 +35,6 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.PosInfos;
 
-#if haxe3
-
-#else
-private typedef Case = { values : Array<Expr>, expr : Expr }
-#end
-
 /**
 Generic recursive parser of expressions inside a class's fields.
 Provides mechanism for adding one or more ExpressionParser instances to take reponsibility for modifying field contents.
@@ -99,11 +93,7 @@ class ClassParserImpl implements ClassParser
 
 		switch(type)
 		{
-			#if haxe3
 			case TInst(t, _):
-			#else
-			case TInst(t,params):
-			#end
 			{
 				var parts = Std.string(t).split(".");
 				info.className = parts.pop();
@@ -371,19 +361,9 @@ class ClassParserImpl implements ClassParser
 				exprs = parseExprs(exprs);
 				expr.expr = EBlock(exprs);
 		
-			#if haxe3
 				case EUntyped(_): null;//don't want to mess around with untyped code
 				case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
 				case EDisplayNew(_): null;  //no idea what this is??
-			#else
-				case EConst(c): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
-				case EDisplayNew(r): null;  //no idea what this is??
-				case EType(e, field):
-					//e.g. Foo.bar;
-					e = parseExpr(e);
-					expr.expr = EType(e, field);
-				case EUntyped(e1): null;//don't want to mess around with untyped code
-			#end
 			
 			default: debug(expr.expr);
 		}
