@@ -391,12 +391,13 @@ import sys.FileSystem;
 
 		if(alternateLocation != null)
 		{
-			if(IS_WINDOWS) alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
+			// match everything before line number as path
+			// we can't simply split on ":" because
+			// on windows, paths contain ":" 
+			var r = ~/^.+:(\d+)/;
+			r.match(posString);
 
-			var p = posString.split(":");
-			p.shift();
-
-			block.location = alternateLocation + ":" + p.join(":");
+			block.location = alternateLocation + ":" + r.matched(1) + r.matchedRight();
 
 			if(generatedByMacro)
 				block.location += " @:macro";
