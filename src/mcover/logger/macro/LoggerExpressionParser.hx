@@ -33,7 +33,6 @@ import haxe.macro.Expr;
 import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
-import mcover.macro.MacroUtil;
 import mcover.macro.ClassParser;
 import mcover.macro.ExpressionParser;
 
@@ -119,7 +118,7 @@ class LoggerExpressionParser implements ExpressionParser
 		
 		var pos:Position = exprs[0].pos;
 
-		var entryLogExpr = logEntry(pos, target.functionStack.length > 1);
+		var entryLogExpr = logEntry(target.functionStack.length > 1);
 		exprs.unshift(entryLogExpr);
 
 		var lastExpr = exprs[exprs.length-1];
@@ -156,42 +155,6 @@ class LoggerExpressionParser implements ExpressionParser
 		}
 
 		expr.expr = EBlock(exprs);
-	}
-
-	/**
-	Returns a variable containing the value returned from a call to the
-	logEntry method.
-
-	i.e.:
-
-		var ___logEntry:Int = MCoverLogger.getLogger().logEntry();
-
-	@param pos 					the position to generate at
-	@param isInlineFunction 	flag indicating if current code block is an inline function (EFunction)
-	@return call to logEntry along with local var to store returned value
-	*/
-	function logEntry(pos:Position, isInlineFunction:Bool=false):Expr
-	{
-		var args:Array<Expr> =
-		[{
-			expr:EConst(CIdent(isInlineFunction ? "true" : "false")),
-			pos:pos		
-		}];
-
-		var logCall = createLogExpr(pos, "logEntry", args);
-
-		var logVar = {
-				type:TPath({sub:null, name:"Int", pack:[], params:[]}),
-				name: "___logEntry",
-				expr:logCall
-		}
-
-		var expr =  {
-			expr:EVars([logVar]),
-			pos:pos
-		}
-
-		return expr;
 	}
 
 
@@ -334,7 +297,7 @@ class LoggerExpressionParser implements ExpressionParser
 
 				if (isMethodWithoutBrackets)
 				{
-					var entryLogExpr = logEntry(expr.pos, target.functionStack.length > 1);
+					var entryLogExpr = logEntry(target.functionStack.length > 1);
 					exprs.unshift(entryLogExpr);
 				}
 
@@ -342,6 +305,39 @@ class LoggerExpressionParser implements ExpressionParser
 			}
 		}
 	}
+
+	/**
+	Returns a variable containing the value returned from a call to the
+	logEntry method.
+
+	i.e.:
+
+		var ___logEntry:Int = MCoverLogger.getLogger().logEntry();
+
+	@param isInlineFunction 	flag indicating if current code block is an inline function (EFunction)
+	@return call to logEntry along with local var to store returned value
+	*/
+	function logEntry(isInlineFunction:Bool=false):Expr
+	{
+		return macro var ___logEntry = mcover.logger.MCoverLogger.getLogger().logEntry($v{isInlineFunction});
+	}
+
+	/**
+	Returns a call to the logExit method, including the generated entry id as an argument
+	i.e.:
+
+		MLog.getLogger().logExit(___logEntry);
+
+	@param pos - the position to generate at
+	@return call to logExit method
+	*/
+	function logExit(pos:Position):Expr
+	{
+		var entryVarName = "___logEntry";
+		return macro mcover.logger.MCoverLogger.getLogger().logExit($i{entryVarName});
+	}
+
+
 	/**
 	Generic helper for EReturns and EThrows that converts a value into three parts
 	- A local var to store the original expression
@@ -391,81 +387,6 @@ class LoggerExpressionParser implements ExpressionParser
 			eReturnValue:eReturnValue,
 		};
 	}
-
-
-	/**
-	Returns a call to the logExit method, including the generated entry id as an argument
-	i.e.:
-
-		MLog.getLogger().logExit(___logEntry);
-
-	@param pos - the position to generate at
-	@return call to logExit method
-	*/
-	function logExit(pos:Position):Expr
-	{
-		var entryId = {
-			expr:EConst(CIdent("___logEntry")),
-			pos:pos
-		}
-		return createLogExpr(pos, "logExit", [entryId]);
-	}
-
-	/**
-	Returns a call to the specified log method.
-	Either
-		MLog.getLogger().logEntry();
-	Or
-		MLog.getLogger().logExit(___logEntry);
-
-	@param pos - the position to add to
-	@param method - a method in the logger (either "logEntry" or "logExit")
-	@param args - optional arguments (used to pass through entry id to logExit)
-	@return a ECall expression to one of the methods listed above
-	*/
-	function createLogExpr(pos:Position, method:String, ?args:Array<Expr>):Expr
-	{
-		var loggerExpr = getReferenceToLogger(pos);
-		
-		var eField = EField(loggerExpr, method);
-		
-		var fieldExpr = {
-			expr:eField,
-			pos:pos
-		};
-
-		if (args == null) args = [];
-		
-		var expr = {
-			expr:ECall(fieldExpr, args),
-			pos:pos
-		};
-		return expr;
-	}
-
-	/**
-	Creates a call to mcover.MCoverLogger.getLogger();
-
-	@param pos - the position to add to
-	@return expr matching "mcover.MCoverLogger.getLogger()"
-	*/
-	function getReferenceToLogger(pos:Position):Expr
-	{
-		var eIdentField = EConst(CIdent("mcover"));
-		var identFieldExpr = {expr:eIdentField, pos:pos};
-
-		var eIdentField2 = EField(identFieldExpr, "logger");
-		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
-
-		var eType = EField(identFieldExpr2, "MCoverLogger");
-		var typeExpr = {expr:eType, pos:pos};
-
-		var eField = EField(typeExpr, "getLogger");
-		var fieldExpr = {expr:eField, pos:pos};
-
-		return {expr:ECall(fieldExpr, []), pos:pos};
-	}	
-
 }
 
 typedef ExitExprs = 

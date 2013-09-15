@@ -35,7 +35,6 @@ import haxe.macro.Compiler;
 import haxe.macro.Type;
 import mcover.macro.ClassParser;
 import mcover.coverage.DataTypes;
-import mcover.macro.MacroUtil;
 import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
 import sys.FileSystem;
@@ -163,21 +162,8 @@ import sys.FileSystem;
 	function createBlockCoverageExpr(expr:Expr, startPos:Position, endPos:Position):Expr
 	{
 		var block = createCodeBlockReference(startPos, endPos, false);
-		
-		var blockId = Std.string(block.id);
-
-		var pos = startPos;
-		
-		var baseExpr = getReferenceToLogger(pos);
-
-		pos = baseExpr.pos;
-
-		var eField = EField(baseExpr, "logStatement");
-		var fieldExpr = {expr:eField, pos:pos};
-		
-		var arg1 = {expr:EConst(CInt(blockId)), pos:pos};
-
-		return {expr:ECall(fieldExpr, [arg1]), pos:pos};
+		var blockId = macro $v{block.id};
+		return macro mcover.coverage.MCoverage.getLogger().logStatement($blockId);
 	}
 
 	/**
@@ -187,28 +173,14 @@ import sys.FileSystem;
 	{
 		var pos = expr.pos;
 		var block = createCodeBlockReference(pos, pos, true);
-	
-		var blockId = Std.string(block.id);
-
-		var baseExpr = getReferenceToLogger(pos);
-		pos = baseExpr.pos;
-
-		var eField = EField(baseExpr, "logBranch");
-		var fieldExpr = {expr:eField, pos:pos};
+		var blockId = macro $v{block.id}
 		
-		var args:Array<Expr> = [];
-
-		args.push({expr:EConst(CInt(blockId)), pos:pos});
-
-		args.push({expr:expr.expr, pos:pos});
+		var args = [blockId, expr];
 
 		if(compareExpr != null)
-		{
-			args.push({expr:compareExpr.expr, pos:pos});
-		}
-		
-		expr.expr = ECall(fieldExpr, args);
-		return expr;
+			args.push(compareExpr);
+
+		return macro mcover.coverage.MCoverage.getLogger().logBranch($a{args});
 	}
 
 	function createCodeBlockReference(startPos:Position, endPos:Position, ?isBranch:Bool = false):AbstractBlock
@@ -434,31 +406,6 @@ import sys.FileSystem;
 			CoverageMacroDelegate.coverage.addStatement(cast(block, Statement));
 		}
 		return block;
-	}
-
-
-	/**
-	Creates a call to MCoverage.getLogger();
-
-	@param pos - the position to add to
-	@return expr matching "mcover.coverage.MCoverage.getLogger()"
-	*/
-	function getReferenceToLogger(pos:Position):Expr
-	{
-		var eIdentField = EConst(CIdent("mcover"));
-		var identFieldExpr = {expr:eIdentField, pos:pos};
-
-		var eIdentField2 = EField(identFieldExpr, "coverage");
-		var identFieldExpr2 = {expr:eIdentField2, pos:pos};
-
-		var eType = EField(identFieldExpr2, "MCoverage");
-		
-		var typeExpr = {expr:eType, pos:pos};
-
-		var eField = EField(typeExpr, "getLogger");
-		var fieldExpr = {expr:eField, pos:pos};
-
-		return {expr:ECall(fieldExpr, []), pos:pos};
 	}
 
 }

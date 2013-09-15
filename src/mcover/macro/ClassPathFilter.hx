@@ -228,14 +228,8 @@ class ClassPathFilter
 		while(regInclude.match(temp))
 		{
 			var cls = prefix + regInclude.matched(2);
-
-			if(isPartialClass(cls, path))
-			{
-				//Added support for MCore Partials Macros
-				excludes.push(cls);
-				excludes.push(cls + "_generated");
-			}
-			else if(excludesMap.exists(cls) || skip(cls))
+			
+			if(excludesMap.exists(cls) || skip(cls))
 			{
 				excludes.push(cls);
 			}
@@ -247,31 +241,6 @@ class ClassPathFilter
 		}
 
 		cache.addToCache(path, includes, excludes);
-	}
-
-
-	/**
-	Customisation for MCore partials.
-	Checks for pattern Class_xxx.hx where there also exists a Class.hx at the same location
-	
-	Ignores Class_xxx_generated.hx
-	*/
-	function isPartialClass(cls:String, path:String):Bool
-	{
-		var parts = cls.split("_");
-
-		if(parts.length == 2)
-		{
-			var baseCls = parts[0].split(".").pop();
-			var paths = path.split("/");
-
-			paths.pop();
-
-			var basePath = paths.join("/") + "/" + baseCls + ".hx";
-			return FileSystem.exists(basePath);
-		}
-
-		return false;
 	}
 
 
