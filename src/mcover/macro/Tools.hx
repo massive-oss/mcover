@@ -11,9 +11,8 @@ using haxe.macro.Tools;
 
 class Tools
 {
-	public static function at(expr:ExprDef, ?pos:Position):Expr
+	public static function at(expr:ExprDef, pos:Position):Expr
 	{
-		if(pos == null) pos = Context.currentPos();
 		return {expr:expr, pos:pos};
 	}
 }

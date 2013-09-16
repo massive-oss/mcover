@@ -42,12 +42,29 @@ import mcover.coverage.DataTypes;
 using haxe.macro.Tools;
 using mcover.macro.Tools;
 
-class ClassParser
+class BuildMacro
 {
-	static var ignoreFieldMeta = ["IgnoreCover",":IgnoreCover",":ignore",":macro"];
+	static var ignoreFieldMeta:Map<String,Bool> = createIgnoreMeta();
 
-	public var classPaths:Map<String,Bool>;
+	static function createIgnoreMeta():Map<String,Bool>
+	{
+		var map = new Map<String,Bool>();
+		var values = ["IgnoreCover",":IgnoreCover",":ignore",":macro"];
 
+		for(v in values)
+		{
+			map.set(v, true);
+		}
+		return map;
+	}
+
+	static var IS_WINDOWS = Sys.systemName() == "Windows"; 
+	static var SLASH = IS_WINDOWS ? "\\" : "/";
+	static var USING_MPARTIAL:Bool = Context.defined("mpartial");
+
+
+
+	var classPaths:Map<String,Bool>;
 	var fields:Array<Field>;
 	var type:Null<haxe.macro.Type>;
 	var info(default, null):ClassInfo;
@@ -59,16 +76,17 @@ class ClassParser
 
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
-	static public var IS_WINDOWS = Sys.systemName() == "Windows"; 
+	
 
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
 	var coveredLines:Map<Int,Bool>;
-	var exprPos:Position;
 
-
-	public function new()
+	
+	public function new(classPaths:Map<String,Bool>)
 	{
+		this.classPaths = classPaths;
+
 		fields = Context.getBuildFields();
 		type = Context.getLocalType();
 
@@ -83,6 +101,7 @@ class ClassParser
 				var parts = Std.string(t).split(".");
 				info.className = parts.pop();
 				info.packageName = parts.join(".");
+				info.packagePath = parts.join(SLASH);
 
 			}
 			default: null;
@@ -114,9 +133,7 @@ class ClassParser
 						func.expr = parseExpr(func.expr);
 					}
 
-					field.kind = FFun(func);
-
-				default: null;
+				case _://null;
 			}
         }
         return fields;
@@ -127,11 +144,7 @@ class ClassParser
 	{
 		for(item in field.meta)
 		{
-			for(meta in ignoreFieldMeta)
-			{
-				if(item.name == meta) return true;
-			}
-			
+			if(ignoreFieldMeta.exists(item.name)) return true;
 		}
 		return false;
 	}
@@ -145,17 +158,20 @@ class ClassParser
 
 	function parseExpr(e:Expr):Expr
 	{
-		exprPos = e.pos;
-
 		return switch(e.expr)
 		{
 			case EFunction(name, func):
 				//e.g. var f = function()
-				functionStack.push(func);
-				if(func.expr != null)
+				
+				if(func.expr == null)
+					e;
+				else
+				{
+					functionStack.push(func);
 					func.expr = func.expr.map(parseExpr);
-				functionStack.pop();
-				EFunction(name, func).at(e.pos);
+					functionStack.pop();
+					EFunction(name, func).at(e.pos);
+				}
 
 			case EIf(econd,eif,eelse):
 				econd = coverBranch(econd.map(parseExpr));
@@ -199,16 +215,22 @@ class ClassParser
 	*/
 	function coverBlock(expr:Expr, exprs:Array<Expr>):Array<Expr>
 	{
-		if(exprs.length == 0)
+		var length = exprs.length;
+
+		var startPos:Position;
+		var endPos:Position;
+
+		if(length == 0)
 		{
 			//ensure empty methods are still covered (e.g. empty constructor) 
 			if(expr != functionStack[functionStack.length-1].expr) return exprs;
+			startPos = endPos = expr.pos;
 		}
-
-
-		var startPos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
-
-		var endPos:Position = (exprs.length == 0) ? expr.pos : exprs[exprs.length-1].pos;
+		else
+		{
+			startPos = exprs[0].pos;
+			endPos = exprs[length-1].pos;
+		}
 
 		var coverageExpr = createBlockCoverageExpr(expr, startPos, endPos);
 		exprs.unshift(coverageExpr);
@@ -226,7 +248,7 @@ class ClassParser
 				e1 = coverBranch(e1);
 				e2 = coverBranch(e2);
 			
-			default: null;//debug(expr);
+			case _://debug(expr);
 		}	
 		return EBinop(op, e1, e2);
 	}
@@ -251,8 +273,7 @@ class ClassParser
 	**/
 	function coverBranch(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
-		var pos = expr.pos;
-		var block = createCodeBlockReference(pos, pos, true);
+		var block = createCodeBlockReference(expr.pos, expr.pos, true);
 		var blockId = macro $v{block.id}
 		
 		var args = [blockId, expr];
@@ -301,8 +322,6 @@ class ClassParser
 			strict = false;
 		}
 
-		var mpartial = Context.defined("mpartial");
-
 		for (cp in classPaths.keys())
 		{
 
@@ -311,24 +330,19 @@ class ClassParser
 				if(strict)
 					return createReference(cp, file, startPos, endPos, isBranch, null, classFile);
 
-				if(!mpartial) continue;
+				if(!USING_MPARTIAL) continue;
 
 				//the current file pos file location doesn't match the class being compiled.
 				//this case needs to be handled for mpartial macros
 				
-				var info = info.clone();
-
-				var slash = IS_WINDOWS ? "\\" : "/";
-				var packagePath = info.packageName.split(".").join(slash);
-
 				var alternateLocation:String = null;
 
-				if(file.indexOf(packagePath) != -1)
+				if(file.indexOf(info.packagePath) != -1)
 				{
-					var temp = file.split(packagePath);
+					var temp = file.split(info.packagePath);
 					
 					var fileName = temp.pop();
-					var fileClassPath = temp.join(packagePath);//in case package dir repeated in full path
+					var fileClassPath = temp.join(info.packagePath);//in case package dir repeated in full path
 
 
 					if(fileName.indexOf("_") != -1)
@@ -401,13 +415,9 @@ class ClassParser
 		var parts:Array<String> = null;
 
 		if(IS_WINDOWS)
-		{
 			parts = filePath.split("\\");
-		}
 		else
-		{
 			parts = filePath.split("/");
-		}
 
 		parts.pop();
 
@@ -429,7 +439,8 @@ class ClassParser
 
 		if(alternateLocation != null)
 		{
-			if(IS_WINDOWS) alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
+			if(IS_WINDOWS)
+				alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
 
 			var p = posString.split(":");
 			p.shift();
@@ -478,13 +489,10 @@ class ClassParser
 		}
 
 		if(isBranch)
-		{
 			MCover.coverageData.addBranch(cast(block, Branch));
-		}
 		else
-		{
 			MCover.coverageData.addStatement(cast(block, Statement));
-		}
+
 		return block;
 	}
 }	

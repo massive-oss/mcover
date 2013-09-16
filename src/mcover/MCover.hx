@@ -81,13 +81,13 @@ To enable function entry/exit logging
 	static var classPaths:Map<String,Bool> = new Map();
 
 	/**
-	Used by ClassParser to store generated coverage data classes that will be compiled into application.
+	Used by BuildMacro to store generated coverage data classes that will be compiled into application.
 	*/
 	static public var coverageData = new Coverage();
 
 	/** 
 	Includes classes within multiple classpaths and/or packages.
-	Adds @:build(mcover.macro.ClassParser.build()) to included classes.
+	Adds @:build(mcover.macro.BuildMacro.build()) to included classes.
 	
 	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
 	@param cps 		array of classpaths to search in (defaults to local scope only [''])
@@ -179,8 +179,7 @@ To enable function entry/exit logging
 	*/
 	macro public static function build():Array<Field>
 	{
-		var classParser = new ClassParser(); 
-		classParser.classPaths = classPaths;
+		var classParser = new BuildMacro(classPaths); 
 		try
 		{
 			var fields = classParser.parseFields();

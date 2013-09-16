@@ -30,9 +30,15 @@ package mcover.macro;
 
 class ClassInfo
 {
+	
+	static var IS_WINDOWS = #if sys Sys.systemName() == "Windows" #else false #end; 
+	static var SLASH = IS_WINDOWS ? "\\" : "/";
+	
+
 	public var fileName:String;
 	public var className:String;
 	public var packageName:String;
+	public var packagePath:String;
 	public var methodName:String;
 	public var location(get_location, null):String;
 	public function new()
@@ -58,13 +64,7 @@ class ClassInfo
 	*/
 	public static function fromFile(file:String, cp:String):ClassInfo
 	{
-		var slash:String = "/";
-		if(cp.indexOf("\\") > cp.indexOf("/"))
-		{
-			slash = "\\";
-		}
-
-		if(cp.charAt(cp.length-1) != slash) cp += slash;
+		if(cp.charAt(cp.length-1) != SLASH) cp += SLASH;
 	
 	
 		var info = new ClassInfo();
@@ -74,10 +74,11 @@ class ClassInfo
 
 		path = path.substr(0, -3);//remove .hx
 
-		var parts = path.split(slash);
+		var parts = path.split(SLASH);
 
 		info.className = parts.pop();
 		info.packageName = parts.join(".");
+		info.packagePath = parts.join(SLASH);
 
 		return info;
 	}
@@ -88,8 +89,8 @@ class ClassInfo
 		info.fileName = fileName;
 		info.className = className;
 		info.packageName = packageName;
+		info.packagePath = packagePath;
 		info.methodName = methodName;
-
 		return info;	
 	}
 
@@ -112,7 +113,4 @@ class ClassInfo
 
 		return str;
 	}
-
-
-
 }
