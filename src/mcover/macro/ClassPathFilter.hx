@@ -88,8 +88,7 @@ class ClassPathFilter
 			packages = [""];
 
 
-		var cacheName = includeClassMeta + "-" + ignoreClassMeta;
-		cache = new FilteredClassCache("cache-" + Md5.encode(cacheName) + ".txt");
+		cache = new FilteredClassCache("cache.txt");
 		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths
