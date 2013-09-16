@@ -37,18 +37,11 @@ interface ExpressionParser
 	var ignoreFieldMeta(default, default):String;
 	var includeFieldMeta(default, default):String;
 
-	var target(default, default):ClassParser;
-
 	/**
 	Called once class parser has finished parsing expresions within a method
 	*/
-	function parseMethod(field:Field, f:Function):Void;
+	function parseMethod(func:Function, info:ClassInfo):Function;
 	
-	/**
-	Called once class parser has finished parsing contents of expr
-	*/
-	function parseExpr(expr:Expr):Expr;
-
 	
 }
 

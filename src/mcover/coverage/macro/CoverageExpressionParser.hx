@@ -39,6 +39,10 @@ import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
 import sys.FileSystem;
 
+import haxe.macro.ExprTools;
+using haxe.macro.ExprTools;
+using mcover.macro.Tools;
+
 @:keep class CoverageExpressionParser implements ExpressionParser
 {
 
@@ -49,80 +53,103 @@ import sys.FileSystem;
 	static var branchCount:Int = 0;
 	static public var IS_WINDOWS = Sys.systemName() == "Windows"; 
 
-	public var target(default, default):ClassParser;
-
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
 	var coveredLines:Map<Int,Bool>;
 	var exprPos:Position;
+
+	/**
+	current expression stack (i.e. hierachial list of ancestors for the current expression)
+	*/
+	var info:ClassInfo;
+
+	/**
+	Current function stack (ususally just the current method field (unless inside inline function))
+	*/
+	var functionStack:Array<Function>;
 
 	public function new()
 	{
 		ignoreFieldMeta = "IgnoreCover,:IgnoreCover,:ignore,:macro";
 		includeFieldMeta = null;
 		coveredLines =  new Map();
+		functionStack = [];
 	}
 
-	public function parseMethod(field:Field, f:Function):Void
+	public function parseMethod(func:Function, info:ClassInfo):Function
 	{
-
+		this.info = info;
+		functionStack = [func];
+		func.expr = parseExpr(func.expr);
+		return func;
 	}
 
 	/**
 	Wraps code branches and statement blocks with coverage logs
-	
-	@param expr 		the current expression
-	@param target 		the current ClassParser instance
+	@param e 		the current expression
 	@return the updated expression
-	@see ClassParser.parseExpr
 	*/
-	public function parseExpr(expr:Expr):Expr
-	{
-		exprPos = expr.pos;
 
-		switch(expr.expr)
+	function parseExpr(e:Expr):Expr
+	{
+		exprPos = e.pos;
+
+		return switch(e.expr)
 		{
-			case EIf(econd, eif, eelse):
-			{
-				econd = createBranchCoverageExpr(econd);
-				expr.expr = EIf(econd, eif, eelse);
-			}
-			case EWhile(econd, e, normalWhile):
-			{
-				econd = createBranchCoverageExpr(econd);
-				expr.expr = EWhile(econd, e, normalWhile);
-			}
+			case EFunction(name, func):
+				//e.g. var f = function()
+				functionStack.push(func);
+				if(func.expr != null)
+					func.expr = func.expr.map(parseExpr);
+				functionStack.pop();
+				EFunction(name, func).at(e.pos);
+
+			case EIf(econd,eif,eelse):
+				econd = coverBranch(econd.map(parseExpr));
+				eif = eif.map(parseExpr);
+				if(eelse != null)
+					eelse = eelse.map(parseExpr);
+				EIf(econd,eif,eelse).at(e.pos);
+
+			case EWhile(econd, expr, normalWhile):
+				expr = expr.map(parseExpr);
+				econd = coverBranch(econd);
+				EWhile(econd, e, normalWhile).at(e.pos);
+
 			case ETernary(econd, eif, eelse): 
-			{
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
-				econd = createBranchCoverageExpr(econd);
-				expr.expr = ETernary(econd, eif, eelse);
-			}
+				econd = coverBranch(econd);
+				eif = eif.map(parseExpr);
+				eelse = eelse.map(parseExpr);
+
+				ETernary(econd, eif, eelse).at(e.pos);
+
 			case EBlock(exprs): 
-			{
 				//e.g. {...}
-				parseEBlock(expr, exprs);
-			}
+				exprs = exprs.map(parseExpr);
+				exprs = coverBlock(e, exprs);
+				EBlock(exprs).at(e.pos);
+
 			case EBinop(op, e1, e2):
-			{
 				//e.g. i<2; a||b, i==b
-				parseEBinop(expr, op, e1, e2);
-			}
-			default: null;
+				e1 = e1.map(parseExpr);
+				e2 = e2.map(parseExpr);
+				coverBinop(op, e1, e2).at(e.pos);
+
+			case _: e.map(parseExpr);
 		}
-		return expr;
 	}
 
 	/**
 	adds coverage log to start of code block
 	Excludes empty code blocks that are NOT a top level class method
 	*/
-	function parseEBlock(expr:Expr, exprs:Array<Expr>)
+	function coverBlock(expr:Expr, exprs:Array<Expr>):Array<Expr>
 	{
 		if(exprs.length == 0)
 		{
 			//ensure empty methods are still covered (e.g. empty constructor) 
-			if(expr != target.functionStack[target.functionStack.length-1].expr) return;
+			if(expr != functionStack[functionStack.length-1].expr) return exprs;
 		}
 
 
@@ -133,22 +160,22 @@ import sys.FileSystem;
 		var coverageExpr = createBlockCoverageExpr(expr, startPos, endPos);
 		exprs.unshift(coverageExpr);
 		
-		expr.expr = EBlock(exprs);
+		return exprs;
 	}
 
 	//e.g. i<2; a||b, i==b
-	function parseEBinop(expr:Expr, op:Binop, e1:Expr, e2:Expr)
+	function coverBinop(op:Binop, e1:Expr, e2:Expr):ExprDef
 	{
 		switch(op)
 		{
 			case OpBoolOr:
 				
-				e1 = createBranchCoverageExpr(e1);
-				e2 = createBranchCoverageExpr(e2);
+				e1 = coverBranch(e1);
+				e2 = coverBranch(e2);
 			
 			default: null;//debug(expr);
 		}	
-		expr.expr = EBinop(op, e1, e2);
+		return EBinop(op, e1, e2);
 	}
 
 
@@ -169,7 +196,7 @@ import sys.FileSystem;
 	/**
 	* wraps a boolean value within a branch in a call to MCoverage.getLogger().logBranch(id, value, compareValue);
 	**/
-	function createBranchCoverageExpr(expr:Expr, ?compareExpr:Expr = null):Expr
+	function coverBranch(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
 		var pos = expr.pos;
 		var block = createCodeBlockReference(pos, pos, true);
@@ -209,11 +236,11 @@ import sys.FileSystem;
 
 		try
 		{
-			classFile = FileSystem.fullPath(Context.resolvePath(target.info.fileName));
+			classFile = FileSystem.fullPath(Context.resolvePath(info.fileName));
 		}
 		catch(e:Dynamic)
 		{
-			classFile =  FileSystem.fullPath(target.info.fileName);
+			classFile =  FileSystem.fullPath(info.fileName);
 		}
 
 		if(file != classFile)
@@ -236,10 +263,10 @@ import sys.FileSystem;
 				//the current file pos file location doesn't match the class being compiled.
 				//this case needs to be handled for mpartial macros
 				
-				var info = target.info.clone();
+				var info = info.clone();
 
 				var slash = IS_WINDOWS ? "\\" : "/";
-				var packagePath = target.info.packageName.split(".").join(slash);
+				var packagePath = info.packageName.split(".").join(slash);
 
 				var alternateLocation:String = null;
 
@@ -261,7 +288,7 @@ import sys.FileSystem;
 
 					info = ClassInfo.fromFile(file, cp);
 
-					info.methodName = target.info.methodName;
+					info.methodName = info.methodName;
 				}
 				
 				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation, true);
@@ -277,13 +304,13 @@ import sys.FileSystem;
 				file = classFile;
 				var alternateLocation:String = posFile;
 
-				return createReference(cp, file, startPos, endPos, isBranch, target.info, alternateLocation, true);
+				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation, true);
 			}
 		}
 
 		
 		var error = "Unable to find referenced file (" + file + ") or target file (" + classFile + ") in any class paths.";
-		error += "\n    Location: " + target.info.location;
+		error += "\n    Location: " + info.location;
 		error += "\n    Referenced pos: " + Std.string(startPos);
 		error += "\n    Searched classpaths:";
 		for (cp in CoverageMacroDelegate.classPathMap)
@@ -297,7 +324,7 @@ import sys.FileSystem;
 
 	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo, ?alternateLocation:String, ?generatedByMacro:Bool=false):AbstractBlock
 	{
-		if(info == null) info = target.info;
+		if(info == null) info = this.info;
 
 		var block:AbstractBlock;
 		

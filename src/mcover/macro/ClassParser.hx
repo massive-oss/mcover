@@ -35,26 +35,18 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.PosInfos;
 
+using haxe.macro.Tools;
+
 /**
 Generic recursive parser of expressions inside a class's fields.
 Provides mechanism for adding one or more ExpressionParser instances to take reponsibility for modifying field contents.
 
 For each ExpressionParser
 - checks if current field should be included/ignored
-- calls parseExpr for each nested expression
 
 */
 interface ClassParser
 {
-	/**
-	current expression stack (i.e. hierachial list of ancestors for the current expression)
-	*/
-	var exprStack(default, null):Array<Expr>;
-	/**
-	Current function stack (ususally just the current method field (unless inside inline function))
-	*/
-	var functionStack(default, null):Array<Function>;
-
 	/**
 	current expression stack (i.e. hierachial list of ancestors for the current expression)
 	*/
@@ -69,10 +61,6 @@ interface ClassParser
 class ClassParserImpl implements ClassParser
 {
 	public var info(default, null):ClassInfo;
-
-	public var functionStack(default, null):Array<Function>;
-	public var exprStack(default, null):Array<Expr>;
-
 
 	var fields:Array<Field>;
 	var type:Null<haxe.macro.Type>;
@@ -114,7 +102,6 @@ class ClassParserImpl implements ClassParser
 	*/
 	public function addExpressionParser(parser:ExpressionParser)
 	{
-		parser.target = this;
 		parsers.push(parser);
 	}
 
@@ -125,8 +112,6 @@ class ClassParserImpl implements ClassParser
 	{
 		if(parsers.length == 0) return null;
 
-		functionStack = [];
-		exprStack = [];
 		generatedFields = [];
 
 		for(field in fields)
@@ -189,246 +174,20 @@ class ClassParserImpl implements ClassParser
 		return true;
 	}
 
-
-
-	function parseMethod(field:Field, f:Function)
+	function parseMethod(field:Field, func:Function)
 	{
 		info.methodName = field.name;
 
-		if(f.expr == null ) return;
-		functionStack = [f];
-
-		f.expr = parseExpr(f.expr);
-
-		field.kind = FFun(f);
+		if(func.expr == null ) return;
 
 		for(parser in fieldParsers)
 		{
-			parser.parseMethod(field, f);
+			parser.parseMethod(func, info);
+
 		}
 	}
-		
 
-
-	/**
-		recursively steps through expressions and parses accordingly
-	*/
-	function parseExpr(expr:Expr):Expr
-	{
-		if(expr == null) return null;
-		if(expr.expr == null && expr.pos == null) return expr;
-		
-		exprStack.push(expr);	
-
-		expr = parse(expr);
-
-		for(parser in fieldParsers)
-		{
-			expr = parser.parseExpr(expr);
-		}
-
-		exprStack.pop();
-
-		return expr;
-	}
-
-
-
-	function parse(expr:Expr):Expr
-	{
-		switch(expr.expr)
-		{
-		
-			case EContinue: null;
-			case EBreak: null;
-			case EFunction(name, f): 
-				//e.g. var f = function()
-				functionStack.push(f);
-				f.expr = parseExpr(f.expr);
-				expr.expr = EFunction(name, f);
-				functionStack.pop();
-			
-			case EDisplay(e, isCall):
-				//no idea what this is???
-				e = parseExpr(e);
-				expr.expr = EDisplay(e, isCall);
-			
-			case ECast(e, t):
-				// cast(foo, Foo);
-				e = parseExpr(e);
-				expr.expr = ECast(e, t);
-			
-			case EIf(econd, eif, eelse):
-				//e.g. if(){}else{}
-				parseEIf(expr, econd, eif, eelse);
-		
-			case ESwitch(e, cases, edef):
-				parseESwitch(expr, e, cases, edef);
-
-			case ETry(e, catches):
-				//e.g. try{...}catch(){}
-				parseExpr(e);
-				for(c in catches)
-				{
-					parseExpr(c.expr);
-				}
-
-			case EThrow(e): 
-				//e.g. throw "ARRGH!"
-				e = parseExpr(e);
-				expr.expr = EThrow(e);
-			
-			case EWhile(econd, e, normalWhile):
-				//e.g. while(i<2){}
-				econd = parseExpr(econd);
-				e = parseExpr(e);
-				expr.expr = EWhile(econd, e, normalWhile);
-			
-			case EField(e, field):
-				//e.g. isFoo
-				e = parseExpr(e);
-				expr.expr = EField(e, field);
-			
-			case EParenthesis(e): 
-				//e.g. (...)
-				e = parseExpr(e);
-				expr.expr = EParenthesis(e);
-			
-			case ENew(t, params):
-				//e.g. new Foo();
-				params = parseExprs(params);
-				expr.expr = ENew(t, params);
-			
-			case ECall(e, params):
-				//e.g. method(); 
-				e = parseExpr(e);
-				params = parseExprs(params);
-				expr.expr = ECall(e, params);
-			
-			case EReturn(e):
-				//e.g. return foo;
-				e = parseExpr(e);
-				expr.expr = EReturn(e);
-			
-			case EVars(vars):
-				//e.g. var i = xxx;
-				for(v in vars)
-				{
-					v.expr = parseExpr(v.expr);
-				}
-			
-			case EBinop(op, e1, e2):
-				//e.g. i<2; a||b, i==b
-				e1 = parseExpr(e1);
-				e2 = parseExpr(e2);
-				expr.expr = EBinop(op, e1, e2);
-			case EUnop(op,postFix,e):
-				//e.g. i++;
-				e = parseExpr(e);
-				expr.expr = EUnop(op, postFix, e);
-			case ETernary(econd, eif, eelse): 
-				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
-				parseETernary(expr, econd, eif, eelse);
-			case EObjectDecl(fields):
-				//e.g. var o = { a:"a", b:"b" }
-				for(f in fields)
-				{
-					parseExpr(f.expr);
-				}
-			case EFor(it, e):
-				//e.g. for(i in 0...5){}
-				it = parseExpr(it);
-				e = parseExpr(e);
-				expr.expr = EFor(it, e);
-			case EIn(e1, e2):
-				//e.g. for(i in 0...5){}
-				e1 = parseExpr(e1);
-				e2 = parseExpr(e2);
-				expr.expr = EIn(e1, e2);
-			case EArrayDecl(values):
-				//e.g. a = [1,2,3];
-				for(v in values)
-				{
-					v = parseExpr(v);
-				}
-			case EArray(e1, e2):
-				//not sure dif with EArrayDecl
-				e1 = parseExpr(e1);
-				e2 = parseExpr(e2);
-				expr.expr = EArray(e1, e2);
-			case EBlock(exprs): 
-				//array of expressions e.g. {...}
-				exprs = parseExprs(exprs);
-				expr.expr = EBlock(exprs);
-		
-				case EUntyped(_): null;//don't want to mess around with untyped code
-				case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
-				case EDisplayNew(_): null;  //no idea what this is??
-			
-			default: debug(expr.expr);
-		}
-
-		return expr;
-	}
-
-
-	function parseEIf(expr:Expr, econd:Expr, eif:Expr, eelse:Expr)
-	{
-		econd = parseExpr(econd);
-		eif = parseExpr(eif);
-		eelse = parseExpr(eelse);
-		expr.expr = EIf(econd, eif, eelse);
-
-	}
-
-	function parseESwitch(expr:Expr, e:Expr, cases: Array<Case>, edef:Null<Expr>)
-	{
-		e = parseExpr(e);
-
-		for(c in cases)
-		{
-			c.values = parseExprs(c.values);
-			c.expr = parseExpr(c.expr);	
-		}
-
-		edef = parseExpr(edef);
-
-		expr.expr = ESwitch(e, cases, edef);
-	}
-
-	function parseETernary(expr:Expr, econd:Expr, eif:Expr, eelse:Expr)
-	{
-		econd = parseExpr(econd);
-		eif = parseExpr(eif);
-		eelse = parseExpr(eelse);
-		expr.expr = ETernary(econd, eif, eelse);
-	}
-
-
-	/////////
-
-
-	/**
-	parses an array of expressions
-
-	@return updated array of expressions
-	*/
-	public function parseExprs(exprs:Array<Expr>):Array<Expr>
-	{
-		var temp:Array<Expr> = exprs.concat([]);
-
-		for(expr in temp)
-		{
-			expr = parseExpr(expr);
-		}
-		return exprs;
-	}
-
-
-
-
-
-
+	
 	public function debug(value:Dynamic, ?pos:PosInfos)
 	{
 		#if MACRO_LOGGER_DEBUG

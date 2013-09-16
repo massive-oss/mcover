@@ -34,21 +34,41 @@ import haxe.macro.Context;
 import haxe.macro.Compiler;
 import haxe.macro.Type;
 import mcover.macro.ClassParser;
+import mcover.macro.ClassInfo;
 import mcover.macro.ExpressionParser;
+
+using haxe.macro.Tools;
+using mcover.macro.Tools;
 
 class LoggerExpressionParser implements ExpressionParser
 {
-	
 	public var ignoreFieldMeta(default, default):String;
 	public var includeFieldMeta(default, default):String;
-
-	public var target(default, default):ClassParser;
 
 	var counter:Int;
 
 	var methodReturnCount:Int;
 	var functionReturnCount:Map<Int,Int>;
 	var voidType:ComplexType;
+
+	/**
+	current expression stack (i.e. hierachial list of ancestors for the current expression)
+	*/
+	var info:ClassInfo;
+
+	/**
+	Current function stack (ususally just the current method field (unless inside inline function))
+	*/
+	var functionStack:Array<Function>;
+	
+	/**
+	current expression stack (i.e. hierachial list of ancestors for the current expression)
+	*/
+	var exprStack:Array<Expr>;
+
+
+	var currentExpr:Expr;
+
 
 	public function new()
 	{
@@ -62,10 +82,15 @@ class LoggerExpressionParser implements ExpressionParser
 		functionReturnCount = new Map();
 	}
 
-	public function parseMethod(field:Field, f:Function):Void
+	public function parseMethod(func:Function, info:ClassInfo):Function
 	{
+		this.info = info;
+		exprStack = [];
+		functionStack = [func];
 		methodReturnCount = 0;
 		functionReturnCount = new Map();
+		func.expr = parseExpr(func.expr);
+		return func;
 	}
 
 	/**
@@ -76,49 +101,73 @@ class LoggerExpressionParser implements ExpressionParser
 	@return the updated expression
 	@see ClassParser.parseExpr
 	*/
-	public function parseExpr(expr:Expr):Expr
+	function parseExpr(e:Expr):Expr
 	{
-		switch (expr.expr)
+		if(e == null || e.expr == null) return e;
+
+		currentExpr = e;
+		exprStack.push(e);	
+
+		var result = switch(e.expr)
 		{
-			case EReturn(e):
-			{
-				parseEReturn(expr, e);
-			}
+			case EFunction(name, func):
+				//e.g. var f = function()
+				functionStack.push(func);
+				func.expr = func.expr.map(parseExpr);
+				functionStack.pop();
+				functionReturnCount.set(functionStack.length, 0);
+				EFunction(name, func).at(e.pos);
+
+			case EReturn(e1):
+
+				e1 = e1.map(parseExpr);
+				var exprs = logReturn(e1);
+
+				if(exprs.length == 1)
+					EReturn(exprs[0]).at(e.pos);
+				else
+					EBlock(exprs).at(e.pos);
+
+			case EThrow(e1):
+				e1 = e1.map(parseExpr);
+				var exprs = logThrow(e1);
+
+				if(exprs.length == 1)
+					EThrow(exprs[0]).at(e.pos);
+				else
+					EBlock(exprs).at(e.pos);
+
 			case EBlock(exprs): 
-			{
-				//e.g. {...}
-				parseEBlock(expr, exprs);
-			}
-			case EThrow(e):
-			{
-				parseEThrow(expr, e);
-			}
-			case EFunction(_, _): 
-			{
-				functionReturnCount.set(target.functionStack.length, 0);
-			}
-			default: null;
+				exprs = exprs.map(parseExpr);
+				exprs = logBlock(exprs);
+				EBlock(exprs).at(e.pos);
+
+			case _: e.map(parseExpr);
 		}
-		return expr;
+
+		exprStack.pop();
+
+		return result;
+
 	}
 
 	/**
 	Wraps a top level function code block with loging calls.
 	- injects entry log at start of code block,
 	- injects exit log at end of code block if last expression isn't a return or throw
-	@param expr - the current block expr
 	@param exprs - the contents of the code block
 	*/
-	function parseEBlock(expr:Expr, exprs:Array<Expr>)
+	function logBlock(exprs:Array<Expr>)
 	{
-		if (exprs.length == 0) return;
+		if (exprs.length == 0) return exprs;
+		
 
-		var f = target.functionStack[target.functionStack.length-1];
-		if (expr != f.expr) return;//only care about the main block in a function
+		var f = functionStack[functionStack.length-1];
+		if (currentExpr != f.expr) return exprs;//only care about the main block in a function
 		
 		var pos:Position = exprs[0].pos;
 
-		var entryLogExpr = logEntry(target.functionStack.length > 1);
+		var entryLogExpr = logEntry(functionStack.length > 1);
 		exprs.unshift(entryLogExpr);
 
 		var lastExpr = exprs[exprs.length-1];
@@ -131,13 +180,13 @@ class LoggerExpressionParser implements ExpressionParser
 			{
 				var count = 0;
 
-				if (target.functionStack.length == 1) 
+				if (functionStack.length == 1) 
 				{
 					count = methodReturnCount;
 				}
 				else
 				{
-					count = functionReturnCount.get(target.functionStack.length-1);
+					count = functionReturnCount.get(functionStack.length-1);
 				}
 
 				if (count == 0)
@@ -148,13 +197,13 @@ class LoggerExpressionParser implements ExpressionParser
 				}
 				else
 				{
-					trace("ignoring " + target.info.location);
+					trace("ignoring " + info.location);
 				}
 				
 			}
 		}
 
-		expr.expr = EBlock(exprs);
+		return exprs;
 	}
 
 
@@ -180,30 +229,15 @@ class LoggerExpressionParser implements ExpressionParser
 		logExit(...);
 		return;
 
-	@param expr 		the original throw expression
 	@param e 			the expression being returned (or null)
 	*/
-	function parseEReturn(expr:Expr, e:Expr)
+	function logReturn(e:Expr):Array<Expr>
 	{
-		wrapExitExpr(expr, e);
+		var exprs = wrapExitExpr(e);
 		incrementReturnCount();
+		return exprs;
 	}
 
-	function incrementReturnCount()
-	{
-		if (target.functionStack.length == 1)
-		{
-			methodReturnCount ++;
-		}
-
-		var key = target.functionStack.length-1;
-		var count = 1;
-		if (functionReturnCount.exists(key) && functionReturnCount.get(key) > 0)
-		{
-			count = functionReturnCount.get(key) + 1;
-		}
-		functionReturnCount.set(key, count);
-	}
 
 	/**
 	Injects exit log around a thrown exception.
@@ -220,13 +254,30 @@ class LoggerExpressionParser implements ExpressionParser
 		logExit(...);
 		throw ____m1;
 
-	@param expr 		the original throw expression
 	@param e 			the expression being thrown
 	*/
-	function parseEThrow(expr:Expr, e:Expr)
+	function logThrow(e:Expr):Array<Expr>
 	{
-		wrapExitExpr(expr, e);
+		return wrapExitExpr(e);
 	}
+
+
+	function incrementReturnCount()
+	{
+		if (functionStack.length == 1)
+		{
+			methodReturnCount ++;
+		}
+
+		var key = functionStack.length-1;
+		var count = 1;
+		if (functionReturnCount.exists(key) && functionReturnCount.get(key) > 0)
+		{
+			count = functionReturnCount.get(key) + 1;
+		}
+		functionReturnCount.set(key, count);
+	}
+
 
 
 	/**
@@ -236,13 +287,14 @@ class LoggerExpressionParser implements ExpressionParser
 	Checks the parent expression and appends new values if already a code block (EBlock), otherwise
 	replaces throw/return with a code block 
 
-	@param expr 		the original throw expression
 	@param e 			the expression being thrown
 	*/
-	function wrapExitExpr(expr:Expr, e:Expr)
+	function wrapExitExpr(e:Expr):Array<Expr>
 	{
-		var exitExprs = createExitExprs(expr, e);	
-		var parentExpr = target.exprStack[target.exprStack.length-2];
+
+		var pos = currentExpr.pos;
+		var exitExprs = createExitExprs(currentExpr, e);	
+		var parentExpr = exprStack[exprStack.length-2];
 
 
 		
@@ -266,42 +318,41 @@ class LoggerExpressionParser implements ExpressionParser
 			{
 				for (i in 0...exprs.length)
 				{
-					if (exprs[i] == expr)
+					if (exprs[i] == currentExpr)
 					{
 						exprs.insert(i, exitExprs.eExitLogCall);
 						if (exitExprs.eVars != null)
-						{
 							exprs.insert(i, exitExprs.eVars);
-						}
 						break;
 					}
 				}	
-				switch (expr.expr)
+				switch (currentExpr.expr)
 				{
-					case EReturn(_): expr.expr = EReturn(exitExprs.eReturnValue);
-					case EThrow(_): expr.expr = EThrow(exitExprs.eReturnValue);
-					default: throw new LoggerException("Unexpected exprDef " + expr);
+					case EReturn(_): return [EReturn(exitExprs.eReturnValue).at(pos)];
+					case EThrow(_): return [EThrow(exitExprs.eReturnValue).at(pos)];
+					default: throw new LoggerException("Unexpected exprDef " + currentExpr);
 				}
 			}
 			default:
 			{
 				var eExit:Expr;
-				switch (expr.expr)
+				switch (currentExpr.expr)
 				{
-					case EReturn(_): eExit = {expr:EReturn(exitExprs.eReturnValue), pos:expr.pos};
-					case EThrow(_): eExit = {expr:EThrow(exitExprs.eReturnValue), pos:expr.pos};
-					default : throw new LoggerException("Unexpected exprDef " + expr);
+					case EReturn(_): eExit = EReturn(exitExprs.eReturnValue).at(pos);
+					case EThrow(_): eExit = EThrow(exitExprs.eReturnValue).at(pos);
+					default : throw new LoggerException("Unexpected exprDef " + currentExpr);
 				}
+
 				var exprs:Array<Expr> = [exitExprs.eExitLogCall, eExit];
 				if (exitExprs.eVars != null) exprs.unshift(exitExprs.eVars);
 
 				if (isMethodWithoutBrackets)
 				{
-					var entryLogExpr = logEntry(target.functionStack.length > 1);
+					var entryLogExpr = logEntry(functionStack.length > 1);
 					exprs.unshift(entryLogExpr);
 				}
 
-				expr.expr = EBlock(exprs);
+				return exprs;
 			}
 		}
 	}
