@@ -99,33 +99,33 @@ To enable function entry/exit logging
 
 		var path = "";
 		
-		while(temp.length > 0)
+		while (temp.length > 0)
 		{	
 			var part = temp.shift();
-			if(part == "" && temp.length == 0) break;
+			if (part == "" && temp.length == 0) break;
 
 			path += part;
 
-			if(!FileSystem.exists(path)) FileSystem.createDirectory(path);
+			if (!FileSystem.exists(path)) FileSystem.createDirectory(path);
 
 			path += "/";
 		}
 
 		initLogging();
 
-		if(packages == null || packages.length == 0)
+		if (packages == null || packages.length == 0)
 			packages = [""];
 
-		if(cps == null)
+		if (cps == null)
 			cps = [""];
 		
 		cps = convertToFullPaths(cps);
 
-		if(exclusions == null)
+		if (exclusions == null)
 			exclusions = [];
 
 
-		for(cp in cps)
+		for (cp in cps)
 		{
 			classPaths.set(cp, true);
 		}
@@ -136,12 +136,12 @@ To enable function entry/exit logging
 		var classes = filter.filter(cps, packages, exclusions);
 
 
-		if(classes.count() == 0)
+		if (classes.count() == 0)
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
 
-		for(cls in classes.keys())
+		for (cls in classes.keys())
 		{
-			if(classes.get(cls))
+			if (classes.get(cls))
 			{
 				Compiler.addMetadata("@:build(mcover.MCover.build())", cls);
 				Compiler.keep(cls, null, true);
@@ -154,7 +154,7 @@ To enable function entry/exit logging
 
 		trace("Excluding: " + exclusions);
 
-		for(pack in packages)
+		for (pack in packages)
 		{
 			Compiler.include(pack, true, exclusions, cps);
 		}
@@ -166,7 +166,7 @@ To enable function entry/exit logging
 	{
 		var fullPaths:Array<String> = [];
 
-		for(path in paths)
+		for (path in paths)
 		{
 			fullPaths.push(FileSystem.fullPath(path));	
 		}
@@ -220,7 +220,7 @@ To enable function entry/exit logging
 
 		var path = TEMP_DIR + "mcover.log";
 
-		if(FileSystem.exists(path))
+		if (FileSystem.exists(path))
 			FileSystem.deleteFile(path);
 
 

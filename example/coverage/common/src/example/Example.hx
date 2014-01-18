@@ -80,7 +80,7 @@ class Example
 	{
 		log(false);
 
-		if(value)
+		if (value)
 		{
 			log(false);
 		}
@@ -100,7 +100,7 @@ class Example
 	*/
 	function ignoredExpr()
 	{
-		@IgnoreCover if(false) log(false);
+		@IgnoreCover if (false) log(false);
 	}
 
 	/**
@@ -126,7 +126,7 @@ class Example
 
 	function ifMethod(?value:Bool=false)
 	{
-		if(value)
+		if (value)
 		{
 			log();
 		}
@@ -138,7 +138,7 @@ class Example
 
 	function elseIfMethod(?value:Int=0)
 	{
-		if(value == 0)
+		if (value == 0)
 		{
 			log();
 		}
@@ -154,7 +154,7 @@ class Example
 
 	function switchMethod(?value:Int)
 	{
-		switch(value)
+		switch (value)
 		{
 			case 0: log();
 			case 1: log();
@@ -167,7 +167,7 @@ class Example
 		try
 		{
 			log();
-			if(value == true)
+			if (value == true)
 			{
 				throw ("exception");
 			}
@@ -181,29 +181,29 @@ class Example
 	function whileLoop()
 	{
 		var i = 0;
-		while(i < 2)
+		while (i < 2)
 		{
 			i++;
 		}
 
 		//i = 0;
-		while(i < 2) //note: will never be true (ie. i == 2)
+		while (i < 2) //note: will never be true (ie. i == 2)
 		{
-			if(i == 1) break;
+			if (i == 1) break;
 			i++;
 		}
 	}
 
 	function forLoops()
 	{
-		for(i in 0...5)
+		for (i in 0...5)
 		{
 			log();
 		}
 
 		var a:Array<Int> = [1,2,3,4,5];
 
-		for(i in a)
+		for (i in a)
 		{
 			log();
 		}
@@ -225,22 +225,22 @@ class Example
 	}
 	function branchBool(a:Bool, b:Bool)
 	{
-		if(a || b)
+		if (a || b)
 		{
 			log();
 		}
 
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
 
-		if(a != b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a && b)
+		if (a && b)
 		{
 			log();
 		}
@@ -248,42 +248,42 @@ class Example
 
 	function branchInt(a:Int, b:Int)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
-		{
-			log();
-		}
-
-		if(a < b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a <= b)
+		if (a < b)
 		{
 			log();
 		}
 
-		if(a > b)
+		if (a <= b)
 		{
 			log();
 		}
 
-		if(a >= b)
+		if (a > b)
+		{
+			log();
+		}
+
+		if (a >= b)
 		{
 			log();
 		}
 	}
 	function branchString(a:String, b:String)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
+		if (a != b)
 		{
 			log();
 		}
@@ -291,31 +291,31 @@ class Example
 
 	function branchFloat(a:Float, b:Float)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
-		{
-			log();
-		}
-
-		if(a < b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a <= b)
+		if (a < b)
 		{
 			log();
 		}
 
-		if(a > b)
+		if (a <= b)
 		{
 			log();
 		}
 
-		if(a >= b)
+		if (a > b)
+		{
+			log();
+		}
+
+		if (a >= b)
 		{
 			log();
 		}

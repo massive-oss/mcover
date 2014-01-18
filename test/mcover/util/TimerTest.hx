@@ -37,9 +37,9 @@ class TimerTest
 	@After
 	public function tearDown():Void
 	{
-		if(timer != null) timer.stop();
+		if (timer != null) timer.stop();
 
-		if(originalTrace != null)
+		if (originalTrace != null)
 		{
 			haxe.Log.trace = originalTrace;
 		}
@@ -106,7 +106,7 @@ class TimerTest
 	@Test
 	public function shouldCleanUpOldIntervalsInJS()
 	{	
-		for(i in 0...101)
+		for (i in 0...101)
 		{
 			timer = new Timer(30);
 			timer.stop();

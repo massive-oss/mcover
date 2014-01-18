@@ -60,7 +60,7 @@ class TestResultClientStub implements IAdvancedTestResultClient
 
 	public function setCurrentTestClass(className:String):Void
 	{
-		if(currentTestClass == className) return;
+		if (currentTestClass == className) return;
 		
 		testClasses.push(className);
 		currentTestClass = className;

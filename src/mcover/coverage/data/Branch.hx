@@ -60,12 +60,12 @@ package mcover.coverage.data;
 	override public function toLocalString():String
 	{
 		var s = super.toLocalString();
-		if(!isCovered())
+		if (!isCovered())
 		{
 			s += " | ";
-			if(trueCount == 0) s += "t";
-			if(trueCount == 0 && falseCount == 0) s +=",";
-			if(falseCount == 0) s += "f";
+			if (trueCount == 0) s += "t";
+			if (trueCount == 0 && falseCount == 0) s +=",";
+			if (falseCount == 0) s += "f";
 		
 		}
 		return s;

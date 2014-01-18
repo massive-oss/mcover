@@ -73,7 +73,7 @@ class FilteredClassCache
 
 		#if !MCOVER_NO_CACHE
 			file = mcover.MCover.TEMP_DIR + "/" + path;
-			if(FileSystem.exists(file))
+			if (FileSystem.exists(file))
 			{
 				load(file);
 			}
@@ -90,17 +90,17 @@ class FilteredClassCache
 	public function init(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>)
 	{
 		var tempId = "";
-		if(classPaths != null) tempId += classPaths.join(",");
+		if (classPaths != null) tempId += classPaths.join(",");
 		tempId += ",";
-		if(packages != null) tempId += packages.join(",");
+		if (packages != null) tempId += packages.join(",");
 		tempId += ",";
-		if(exclusions != null) tempId += exclusions.join(",");
+		if (exclusions != null) tempId += exclusions.join(",");
 
 		tempId += "," + md5;
 
 		trace("tempId = " + tempId);
 		trace("id = " + id);
-		if(tempId != id)
+		if (tempId != id)
 		{
 			trace("reset cache");
 			id = tempId;
@@ -120,12 +120,12 @@ class FilteredClassCache
 			return false;
 		#end
 
-		if(fileMap.exists(path))
+		if (fileMap.exists(path))
 		{
 			var file = fileMap.get(path);
 			var stamp = getStamp(path);
 
-			if(file.stamp == stamp) return true;	
+			if (file.stamp == stamp) return true;	
 		}
 		return false;
 	}
@@ -199,7 +199,7 @@ class FilteredClassCache
 			{
 				var line = StringTools.trim(f.readLine());
 				
-				if(line.charAt(0) == "@")
+				if (line.charAt(0) == "@")
 				{
 					id = line.substr(1);
 				}
@@ -223,7 +223,7 @@ class FilteredClassCache
 	*/
 	function getStamp(path:String):String
 	{
-		if(FileSystem.exists(path) && !FileSystem.isDirectory(path))
+		if (FileSystem.exists(path) && !FileSystem.isDirectory(path))
 		{
 			var stat = FileSystem.stat(path);
 			return stat.mtime.toString();

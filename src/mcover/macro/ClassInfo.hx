@@ -47,7 +47,7 @@ class ClassInfo
 	
 	public function toString()
 	{
-		if(className != null)
+		if (className != null)
 		{
 			return fileName + ":" + location;
 		}
@@ -64,7 +64,7 @@ class ClassInfo
 	*/
 	public static function fromFile(file:String, cp:String):ClassInfo
 	{
-		if(cp.charAt(cp.length-1) != SLASH) cp += SLASH;
+		if (cp.charAt(cp.length-1) != SLASH) cp += SLASH;
 	
 	
 		var info = new ClassInfo();
@@ -98,18 +98,18 @@ class ClassInfo
 	{
 		var str = "";
 
-		if(className != null)
+		if (className != null)
 		{
-			if(packageName != null && packageName != "")
+			if (packageName != null && packageName != "")
 				str += packageName + ".";
 
 			str += className;
 
-			if(methodName != null)
+			if (methodName != null)
 				str += "." + methodName;
 		}
 		
-		if(str == "") return null;
+		if (str == "") return null;
 
 		return str;
 	}

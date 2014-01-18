@@ -54,7 +54,7 @@ class CoverageLoggerMock implements CoverageLogger
 
 	function executeCompletionHandler()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(0);
 		}

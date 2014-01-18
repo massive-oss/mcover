@@ -38,9 +38,9 @@ import mcover.coverage.data.CoverageResult;
 	public function getMethods():Array<Method>
 	{
 		var a:Array<Method> = [];
-		for(item in itemsById)
+		for (item in itemsById)
 		{
-			if(Type.getClass(item) == Method)
+			if (Type.getClass(item) == Method)
 			{
 				a.push(cast(item, Method));	
 			}

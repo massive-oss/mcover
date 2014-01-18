@@ -69,7 +69,7 @@ import mcover.coverage.data.Branch;
 	public function addStatement(block:Statement)
 	{
 		verifyBlockData(block);
-		if(statements.exists(block.id)) throw new Exception("Statement already exists: " + block.id + " " + block.toString());
+		if (statements.exists(block.id)) throw new Exception("Statement already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -85,7 +85,7 @@ import mcover.coverage.data.Branch;
 	public function addBranch(block:Branch)
 	{
 		verifyBlockData(block);
-		if(branches.exists(block.id)) throw new Exception("Branch already exists: " + block.id + " " + block.toString());
+		if (branches.exists(block.id)) throw new Exception("Branch already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -100,16 +100,16 @@ import mcover.coverage.data.Branch;
 
 	function verifyBlockData(block:AbstractBlock)
 	{
-		if(block.id == null) throw new Exception("id cannot be null");
-		if(block.packageName == null) throw new Exception("packageName cannot be null");
-		if(block.file == null) throw new Exception("file cannot be null");
-		if(block.qualifiedClassName == null) throw new Exception("qualifiedClassName cannot be null");
-		if(block.methodName == null) throw new Exception("methodName cannot be null");
+		if (block.id == null) throw new Exception("id cannot be null");
+		if (block.packageName == null) throw new Exception("packageName cannot be null");
+		if (block.file == null) throw new Exception("file cannot be null");
+		if (block.qualifiedClassName == null) throw new Exception("qualifiedClassName cannot be null");
+		if (block.methodName == null) throw new Exception("methodName cannot be null");
 	}
 
 	public function getBranchById(id:Int):Branch
 	{
-		if(!branches.exists(id)) throw new Exception("Branch does not exist: " + id);
+		if (!branches.exists(id)) throw new Exception("Branch does not exist: " + id);
 
 		var lookup:Array<Int> = branches.get(id).concat([]);
 		return lookupBranch(lookup);
@@ -118,7 +118,7 @@ import mcover.coverage.data.Branch;
 
 	public function getStatementById(id:Int):Statement
 	{
-		if(!statements.exists(id)) throw new Exception("Statement does not exist: " + id);
+		if (!statements.exists(id)) throw new Exception("Statement does not exist: " + id);
 		var lookup:Array<Int> = statements.get(id).concat([]);
 		return lookupStatement(lookup);
 	}
@@ -152,7 +152,7 @@ import mcover.coverage.data.Branch;
 
 		var packageName = index > 1 ? name.substr(0, index) : "";
 
-		if(!items.exists(packageName)) return null;
+		if (!items.exists(packageName)) return null;
 
 		var pckgId = items.get(packageName);
 		
@@ -160,9 +160,9 @@ import mcover.coverage.data.Branch;
 		
 		var classes = pckg.getClasses();
 
-		for(cls in classes)
+		for (cls in classes)
 		{
-			if(cls.name == name)
+			if (cls.name == name)
 			{
 				return cls;
 			}
@@ -174,7 +174,7 @@ import mcover.coverage.data.Branch;
 	public function getPackages():Array<Package>
 	{
 		var a:Array<Package> = [];
-		for(item in itemsById)
+		for (item in itemsById)
 		{
 			a.push(cast(item, Package));
 		}
@@ -186,12 +186,12 @@ import mcover.coverage.data.Branch;
 	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
-			for(lookup in statements)
+			for (lookup in statements)
 			{
 				var statement = lookupStatement(lookup.concat([]));
-				if(statementResultsById.exists(statement.id))
+				if (statementResultsById.exists(statement.id))
 				{
 					statement.count = statementResultsById.get(statement.id);
 				}
@@ -200,10 +200,10 @@ import mcover.coverage.data.Branch;
 					statement.count = 0;
 				}
 			}
-			for(lookup in branches)
+			for (lookup in branches)
 			{
 				var branch = lookupBranch(lookup.concat([]));
-				if(branchResultsById.exists(branch.id))
+				if (branchResultsById.exists(branch.id))
 				{
 					var result = branchResultsById.get(branch.id);
 					branch.trueCount = result.trueCount;

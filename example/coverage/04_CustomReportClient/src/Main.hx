@@ -34,7 +34,7 @@ class Main
 		logger.report();//print report to screen
 
 		#if sys
-			while(completed != true)
+			while (completed != true)
 			{
 				Sys.sleep(.1);
 			}
@@ -67,7 +67,7 @@ class CustomPrintClient extends PrintClient
 
 
 		var s = "\n*************************";
-		for(line in lines)
+		for (line in lines)
 		{
 			s += "\n*  " + line;
 		}

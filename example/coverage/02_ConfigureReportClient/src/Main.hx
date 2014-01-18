@@ -34,7 +34,7 @@ class Main
 		logger.report();//print report to screen
 
 		#if sys
-			while(completed != true)
+			while (completed != true)
 			{
 				Sys.sleep(.1);
 			}

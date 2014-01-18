@@ -72,7 +72,7 @@ class ClassPathFilter
 	{
 		classMap = new Map();
 
-		if(exclusions == null || exclusions.length == 0)
+		if (exclusions == null || exclusions.length == 0)
 		{
 			skip = function(c:String) return false;
 		}
@@ -81,10 +81,10 @@ class ClassPathFilter
 			skip = function(c:String) return isExcludedClass(exclusions, c);
 		}
 
-		if(null == classPaths)
+		if (null == classPaths)
 			classPaths = [""];
 
-		if(null == packages)
+		if (null == packages)
 			packages = [""];
 
 
@@ -92,17 +92,17 @@ class ClassPathFilter
 		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths
-		for( i in 0...classPaths.length )
+		for ( i in 0...classPaths.length )
 		{
 			var cp = StringTools.replace(classPaths[i], "\\", "/");
 			
-			if(StringTools.endsWith(cp, "/")) cp = cp.substr(0, -1);
+			if (StringTools.endsWith(cp, "/")) cp = cp.substr(0, -1);
 			classPaths[i] = cp;
 		}
 		
-		for(cp in classPaths)
+		for (cp in classPaths)
 		{
-			for(pack in packages)
+			for (pack in packages)
 			{
 				includePackage(cp, pack);
 			}
@@ -123,22 +123,22 @@ class ClassPathFilter
 		var prefix:String = pack;
 		var path:String = cp;
 
-		if(pack != "")
+		if (pack != "")
 		{
 			prefix += ".";
 			path += "/" + pack.split(".").join("/");
 		}
-		if( !FileSystem.exists(path) || !FileSystem.isDirectory(path) ) return;
+		if ( !FileSystem.exists(path) || !FileSystem.isDirectory(path) ) return;
 
-		for(file in FileSystem.readDirectory(path))
+		for (file in FileSystem.readDirectory(path))
 		{	
 			var filePath = path + "/" + file;
 
-			if(StringTools.endsWith(file, ".hx") )
+			if (StringTools.endsWith(file, ".hx") )
 			{
 				includeFile(filePath);
 			}
-			else if(FileSystem.isDirectory(filePath) && !skip(prefix + file) )
+			else if (FileSystem.isDirectory(filePath) && !skip(prefix + file) )
 			{
 				includePackage(cp, prefix + file);
 			}
@@ -152,16 +152,16 @@ class ClassPathFilter
 	*/
 	function includeFile(path:String)
 	{
-		if(!cache.isCached(path))
+		if (!cache.isCached(path))
 		{
 			addClassesInFileToCache(path);
 		}
 		
-		for(cls in cache.getIncludedClassesInFile(path))
+		for (cls in cache.getIncludedClassesInFile(path))
 		{
 			classMap.set(cls, true);
 		}
-		for(cls in cache.getExcludedClassesInFile(path))
+		for (cls in cache.getExcludedClassesInFile(path))
 		{
 			classMap.set(cls, false);
 		}	
@@ -189,7 +189,7 @@ class ClassPathFilter
 
 		var temp:String;
 
-		if(ignoreClassMeta != null)
+		if (ignoreClassMeta != null)
 		{
 			var ignoreClassMetas = "(" + ignoreClassMeta.split(",").join("|") + ")";//e.g. :(IgnoreCover|:IgnoreCover|:ignore|:macro)
 
@@ -197,7 +197,7 @@ class ClassPathFilter
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
 			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		
-			while(regIgnore.match(temp))
+			while (regIgnore.match(temp))
 			{
 				excludesMap.set(prefix + regIgnore.matched(3), true);
 				temp = regIgnore.matchedRight();
@@ -206,7 +206,7 @@ class ClassPathFilter
 
 		var regInclude:EReg = null;
 
-		if(includeClassMeta != null)
+		if (includeClassMeta != null)
 		{
 			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		}
@@ -224,11 +224,11 @@ class ClassPathFilter
 
 		temp = contents;
 
-		while(regInclude.match(temp))
+		while (regInclude.match(temp))
 		{
 			var cls = prefix + regInclude.matched(2);
 			
-			if(excludesMap.exists(cls) || skip(cls))
+			if (excludesMap.exists(cls) || skip(cls))
 			{
 				excludes.push(cls);
 			}
@@ -254,11 +254,11 @@ class ClassPathFilter
 	*/
 	function isExcludedClass(exclusions:Array<String>, clazz:String):Bool
 	{
-		for(pattern in exclusions)
+		for (pattern in exclusions)
 		{
-			if(pattern.indexOf("*") == -1)
+			if (pattern.indexOf("*") == -1)
 			{
-				 if(clazz == pattern) return true;
+				 if (clazz == pattern) return true;
 				 continue;
 			}
 
@@ -267,7 +267,7 @@ class ClassPathFilter
 
 			var reg = new EReg(expr, "");
 
-			if(reg.match(clazz))return true;
+			if (reg.match(clazz))return true;
 		}
 
 		return false;
@@ -281,7 +281,7 @@ class ClassPathFilter
 		//var contents = File.getContent(path);
 		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])+);/m;
 
-		if(reg.match(contents))
+		if (reg.match(contents))
 		{
 			return reg.matched(1) + ".";
 		}

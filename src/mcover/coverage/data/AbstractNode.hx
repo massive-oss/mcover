@@ -46,7 +46,7 @@ class AbstractNode
 	@IgnoreLogging
 	public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
 		}
@@ -63,7 +63,7 @@ class AbstractNode
 			var count = r.bt + r.bf + r.sc + r.mc;
 			var total = 2*r.b + r.s + r.m;
 
-			if(count == 0 || total == 0) return 0;
+			if (count == 0 || total == 0) return 0;
 
 			return Math.round((count/total)*10000)/100;
 		}

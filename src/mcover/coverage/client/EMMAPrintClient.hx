@@ -74,7 +74,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
@@ -110,13 +110,13 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 		
 		
-		for(pck in coverage.getPackages())
+		for (pck in coverage.getPackages())
 		{
 			var pckNode = createPackageNode(pck);
 			node.addChild(pckNode);
@@ -134,12 +134,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(file in pck.getFiles())
+		for (file in pck.getFiles())
 		{
 			var fileNode = createFileNode(file);
 			node.addChild(fileNode);
@@ -156,12 +156,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(clazz in file.getClasses())
+		for (clazz in file.getClasses())
 		{
 			var clazzNode = createClassNode(clazz);
 			node.addChild(clazzNode);
@@ -178,12 +178,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, CLAZZ);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(method in clazz.getMethods())
+		for (method in clazz.getMethods())
 		{
 			var methodNode = createMethodNode(method);
 			node.addChild(methodNode);
@@ -200,7 +200,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, METHOD);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
@@ -226,9 +226,9 @@ class EMMAPrintClient implements CoverageReportClient
 		node = createCoverageNode("block", bc, bt);
 		nodes.unshift(node);
 
-		if(level == METHOD)
+		if (level == METHOD)
 		{
-			if(bc > 0)
+			if (bc > 0)
 			{
 				node = createCoverageNode("method", 1, 1);
 			}
@@ -247,9 +247,9 @@ class EMMAPrintClient implements CoverageReportClient
 			nodes.unshift(node);
 		}
 
-		if(level == CLAZZ)
+		if (level == CLAZZ)
 		{
-			if(result.mc > 0)
+			if (result.mc > 0)
 			{
 				node = createCoverageNode("class", 1, 1);
 			}
@@ -290,9 +290,9 @@ class EMMAPrintClient implements CoverageReportClient
 			var p = (count == 0 ? 0 : Math.round((count/total)*100));
 
 			#if (!neko && !flash9) 
-				if(Math.isNaN(p)) throw "NaN";
+				if (Math.isNaN(p)) throw "NaN";
 			#else
-				if(Math.isNaN(p)) p = 0;
+				if (Math.isNaN(p)) p = 0;
 			#end
 			return p;
 		}

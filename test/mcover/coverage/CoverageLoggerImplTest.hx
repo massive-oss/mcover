@@ -297,7 +297,7 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 
 	function copyBranchResult(r:BranchResult):BranchResult
 	{
-		if(r == null) return null;
+		if (r == null) return null;
 
 		return {id:r.id, trueCount:r.trueCount, falseCount:r.falseCount, total:r.total};
 	}

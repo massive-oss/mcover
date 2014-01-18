@@ -21,7 +21,7 @@ class Main
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
 		#if sys
-			while(!completed)
+			while (!completed)
 			{
 				Sys.sleep(.1);
 			}

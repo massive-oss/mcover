@@ -40,9 +40,9 @@ import mcover.coverage.data.CoverageResult;
 	override public function getClasses():Array<Clazz>
 	{
 		var a:Array<Clazz> = [];
-		for(item in itemsById)
+		for (item in itemsById)
 		{
-			if(Type.getClass(item) == Clazz)
+			if (Type.getClass(item) == Clazz)
 			{
 				a.push(cast(item, Clazz));	
 			}

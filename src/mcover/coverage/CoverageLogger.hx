@@ -130,7 +130,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		generateReportResults(false);
 
-		if(!skipClients)
+		if (!skipClients)
 		{	
 			reportToClients();
 		}
@@ -138,10 +138,10 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public function reportCurrentTest(?skipClients:Bool=false)
 	{
-		if(currentTest == null) throw new CoverageException("No test specified to report on.");
+		if (currentTest == null) throw new CoverageException("No test specified to report on.");
 		generateReportResults(true);	
 		
-		if(!skipClients)
+		if (!skipClients)
 		{
 			reportToClients();
 		}
@@ -149,12 +149,12 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	function generateReportResults(?currentTestOnly:Bool=false)
 	{
-		if(coverage == null)
+		if (coverage == null)
 		{
 			initializeCoverage(null);	
 		}
 		
-		if(currentTestOnly)
+		if (currentTestOnly)
 		{
 			coverage.setStatementResultsMap(currentFilteredResults.statementResultsById);
 			coverage.setBranchResultsMap(currentFilteredResults.branchResultsById);	
@@ -171,10 +171,10 @@ class CoverageLoggerImpl implements CoverageLogger
 	
 	public function addClient(client:CoverageReportClient)
 	{
-		if(client == null) throw "Null Client";
-		for(c in clients)
+		if (client == null) throw "Null Client";
+		for (c in clients)
 		{
-			if(c == client) return;
+			if (c == client) return;
 		}
 
 		client.completionHandler = clientCompletionHandler;
@@ -194,9 +194,9 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public function initializeCoverage(resourceName:String):Void
 	{
-		if(resourceName == null) resourceName = MCoverage.RESOURCE_DATA;
+		if (resourceName == null) resourceName = MCoverage.RESOURCE_DATA;
 		var serializedData:String = haxe.Resource.getString(resourceName);
-		if(serializedData == null) throw new CoverageException("No generated coverage data found in haxe Resource '" + resourceName  + "'");
+		if (serializedData == null) throw new CoverageException("No generated coverage data found in haxe Resource '" + resourceName  + "'");
 		try
 		{
 			coverage = haxe.Unserializer.run(serializedData);
@@ -215,13 +215,13 @@ class CoverageLoggerImpl implements CoverageLogger
 	public function logStatement(id:Int)
 	{	
 		#if (neko||cpp)
-			if(mutex == null) mutex = new Mutex();
+			if (mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 
 		updateStatementMap(allStatementResultsById, id);
 
-		if(currentFilteredResults != null)
+		if (currentFilteredResults != null)
 		{				
 			updateStatementMap(currentFilteredResults.statementResultsById, id);
 		}
@@ -233,7 +233,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		var count = 1;
 
-		if(map.exists(id))
+		if (map.exists(id))
 		{
 			count = map.get(id) + 1;
 		}
@@ -251,13 +251,13 @@ class CoverageLoggerImpl implements CoverageLogger
 	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
 	{
 		#if (neko||cpp)
-			if(mutex == null) mutex = new Mutex();
+			if (mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
 
 		var bool = false;
 
-		if(compareValue != null)
+		if (compareValue != null)
 		{
 			bool = value == compareValue;
 		}
@@ -268,7 +268,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 		updateBranchMap(allBranchResultsById, id, bool);
 
-		if(currentFilteredResults != null)
+		if (currentFilteredResults != null)
 		{
 			updateBranchMap(currentFilteredResults.branchResultsById, id, bool);
 		}
@@ -282,7 +282,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		var r:BranchResult = null;
 		
-		if(map.exists(id))
+		if (map.exists(id))
 		{
 			r = map.get(id);
 		}
@@ -293,7 +293,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		}
 
 		//record current value
-		if(value) r.trueCount ++;
+		if (value) r.trueCount ++;
 		else r.falseCount ++;
 
 		r.total ++;
@@ -305,13 +305,13 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		currentTest = value;
 
-		if(value == null)
+		if (value == null)
 		{
 			currentFilteredResults = null;
 			return value;
 		}
 
-		if(!filteredResultsMap.exists(value))
+		if (!filteredResultsMap.exists(value))
 		{
 			var result:FilteredCoverageResults = {filter:value, statementResultsById:new Map(), branchResultsById:new Map()};
 			filteredResultsMap.set(value, result); 
@@ -325,7 +325,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	function reportToClients()
 	{
-		if(clients.length == 0)
+		if (clients.length == 0)
 		{
 			addClient(new TraceClient());
 		}

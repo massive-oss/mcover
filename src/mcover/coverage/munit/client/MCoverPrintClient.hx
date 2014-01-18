@@ -93,13 +93,13 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	{
 		id = DEFAULT_ID;
 
-		if(munitClient == null) munitClient = new RichPrintClient();
+		if (munitClient == null) munitClient = new RichPrintClient();
 		this.client = munitClient;
 
-		if(mcoverClient == null) mcoverClient = new mcover.coverage.client.PrintClient();
+		if (mcoverClient == null) mcoverClient = new mcover.coverage.client.PrintClient();
 		this.mcoverClient = mcoverClient;
 
-		if(mcoverLogger == null) mcoverLogger = initializeMCoverLogger();
+		if (mcoverLogger == null) mcoverLogger = initializeMCoverLogger();
 
 		this.mcoverLogger = mcoverLogger;
 		
@@ -194,9 +194,9 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	
 		var hasChanged = currentCoveredClass != coveredClassName;
 
-		if(hasChanged && currentCoveredClass != null)
+		if (hasChanged && currentCoveredClass != null)
 		{
-			if(mcoverLogger.currentTest != null)
+			if (mcoverLogger.currentTest != null)
 			{
 				updateTestClassCoverage();
 			}	
@@ -204,7 +204,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 		client.setCurrentTestClass(className);
 
-		if(hasChanged)
+		if (hasChanged)
 		{
 			currentCoveredClass = coveredClassName;
 			mcoverLogger.currentTest = currentCoveredClass;
@@ -239,7 +239,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 		var cls = mcoverLogger.coverage.getClassByName(currentCoveredClass);
 
-		if(cls == null) return;
+		if (cls == null) return;
 
 		coveredClasses.set(cls.name, cls);
 		
@@ -262,18 +262,18 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		var classBreakdown:String = null;
 		var packageBreakdown:String = null;
 
-		if(includeMissingBlocks)
+		if (includeMissingBlocks)
 		{
 			coverageResults = createOutstandingCoverageResults();
 		}
 		
-		if(includeClassAndPackageBreakdowns)
+		if (includeClassAndPackageBreakdowns)
 		{
 			classBreakdown = mcoverClient.classBreakdown;
 			packageBreakdown = mcoverClient.packageBreakdown;	
 		}
 
-		if(includeExecutionFrequency)
+		if (includeExecutionFrequency)
 		{
 			executionFrequencies = mcoverClient.executionFrequency;
 		}
@@ -294,10 +294,10 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	{
 		var classes = mcoverLogger.coverage.getClasses();
 		var results:Array<CoverageResult> = [];
-		for(cls in classes)
+		for (cls in classes)
 		{
-			if(cls.getPercentage() == 100) continue;
-			//if(coveredClasses.exists(cls.name)) continue;
+			if (cls.getPercentage() == 100) continue;
+			//if (coveredClasses.exists(cls.name)) continue;
 
 			var result = createCoverageResultForClass(cls);
 			results.push(result);
@@ -310,17 +310,17 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		var percent = cls.getPercentage();
 		var blocks:Array<String> = [];
 
-		if(percent != 100 && includeMissingBlocks)
+		if (percent != 100 && includeMissingBlocks)
 		{
 			var str:String = "";
 			var statements = cls.getMissingStatements();
 
-			if(statements.length > 0)
+			if (statements.length > 0)
 			{
-				for(block in statements)
+				for (block in statements)
 				{
 					var blockString = block.methodName + " (" + block.location + ")";
-					if(str != "") str += "\n";
+					if (str != "") str += "\n";
 
 					str += blockString;
 				}
@@ -328,21 +328,21 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 			}
 
 			var branches = cls.getMissingBranches();
-			if(branches.length > 0)
+			if (branches.length > 0)
 			{
 				str = "";
-				for(block in branches)
+				for (block in branches)
 				{
 					var blockString =block.methodName + " (" + block.location + ")";
-					if(!block.isCovered())
+					if (!block.isCovered())
 					{
 						blockString += " ";
-						if(block.trueCount == 0) blockString += "t";
-						if(block.trueCount == 0 && block.falseCount == 0) blockString +=",";
-						if(block.falseCount == 0) blockString += "f";
+						if (block.trueCount == 0) blockString += "t";
+						if (block.trueCount == 0 && block.falseCount == 0) blockString +=",";
+						if (block.falseCount == 0) blockString += "f";
 					
 					}
-					if(str != "") str += "\n";
+					if (str != "") str += "\n";
 					str += blockString;
 				}
 				blocks.push(str);

@@ -69,7 +69,7 @@ class Exception
 		this.cause = cause;
 		this.info = info;
 
-		if(cause != null)
+		if (cause != null)
 		{
 			causeExceptionStack = CallStack.exceptionStack();
 			causeCallStack = CallStack.callStack();

@@ -48,7 +48,7 @@ import mcover.coverage.data.CoverageResult;
 
 	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode
 	{
-		if(!items.exists(name))
+		if (!items.exists(name))
 		{
 			var item:AbstractNode = Type.createInstance(cls, []);
 			item.id = itemCount ++;
@@ -62,14 +62,14 @@ import mcover.coverage.data.CoverageResult;
 	override public function lookupBranch(path:Array<Int>):Branch
 	{
 		var itemId = path.shift();
-		if(itemId == null || !itemsById.exists(itemId)) return null;
+		if (itemId == null || !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupBranch(path);
 	}
 
 	override public function lookupStatement(path:Array<Int>):Statement
 	{
 		var itemId = path.shift();
-		if(itemId == null|| !itemsById.exists(itemId)) return null;
+		if (itemId == null|| !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupStatement(path);
 	}
 
@@ -77,7 +77,7 @@ import mcover.coverage.data.CoverageResult;
 	override public function getMissingBranches():Array<Branch>
 	{
 		var a:Array<Branch> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getMissingBranches();
 			a = a.concat(tmp);
@@ -89,7 +89,7 @@ import mcover.coverage.data.CoverageResult;
 	override public function getMissingStatements():Array<Statement>
 	{
 		var a:Array<Statement> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getMissingStatements();
 			a = a.concat(tmp);
@@ -102,7 +102,7 @@ import mcover.coverage.data.CoverageResult;
 	override public function getClasses():Array<Clazz>
 	{
 		var a:Array<Clazz> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getClasses();
 			a = a.concat(tmp);
@@ -113,10 +113,10 @@ import mcover.coverage.data.CoverageResult;
 	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
-			for(node in itemsById)
+			for (node in itemsById)
 			{
 				var tmp = node.getResults(cache);
 				resultCache = appendResults(resultCache, tmp);

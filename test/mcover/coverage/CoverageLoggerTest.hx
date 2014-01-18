@@ -44,7 +44,7 @@ class CoverageLoggerTest
 	@After
 	public function tearDown():Void
 	{
-		if(originalTrace != null)
+		if (originalTrace != null)
 		{
 			haxe.Log.trace = originalTrace;
 		}

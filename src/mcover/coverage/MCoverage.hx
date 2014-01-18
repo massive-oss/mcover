@@ -56,10 +56,10 @@ class MCoverage
 	public static function getLogger():CoverageLogger
 	{
 		#if (neko||cpp)
-			if(mutex == null) mutex = new Mutex();
+			if (mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
-		if(logger == null)
+		if (logger == null)
 		{
 			logger = new CoverageLoggerImpl();
 		}

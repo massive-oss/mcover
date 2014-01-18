@@ -111,7 +111,7 @@ class Timer
 
 		public function stop()
 		{
-			#if( php || flash9 || flash || js )
+			#if ( php || flash9 || flash || js )
 				if (id == null) return;
 			#end
 			#if flash9
@@ -141,7 +141,7 @@ class Timer
 			function runLoop(time_ms)
 			{
 				var shouldStop = false;
-				while( !shouldStop )
+				while ( !shouldStop )
 				{
 					Sys.sleep(time_ms/1000);
 					try

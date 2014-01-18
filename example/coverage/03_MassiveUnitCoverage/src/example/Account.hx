@@ -26,7 +26,7 @@ class Account
 	public function totalValue():Int
 	{
 		var total = 0;
-		for(value in values)
+		for (value in values)
 		{
 			total = Calculator.add(total, value);
 		}
@@ -35,7 +35,7 @@ class Account
 
 	public function double(value:Int)
 	{
-		@:IgnoreCover if(false)
+		@:IgnoreCover if (false)
 		{
 			return value;
 		}

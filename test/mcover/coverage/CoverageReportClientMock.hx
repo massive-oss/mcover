@@ -48,7 +48,7 @@ class CoverageReportClientMock implements AdvancedCoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}

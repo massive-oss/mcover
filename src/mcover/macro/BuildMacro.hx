@@ -51,7 +51,7 @@ class BuildMacro
 		var map = new Map<String,Bool>();
 		var values = ["IgnoreCover",":IgnoreCover",":ignore",":macro"];
 
-		for(v in values)
+		for (v in values)
 		{
 			map.set(v, true);
 		}
@@ -94,7 +94,7 @@ class BuildMacro
 
 		info = new ClassInfo();
 
-		switch(type)
+		switch (type)
 		{
 			case TInst(t, _):
 			{
@@ -107,7 +107,7 @@ class BuildMacro
 			default: null;
 		}
 
-		if(fields.length > 0)
+		if (fields.length > 0)
 		{
 			info.fileName = Context.getPosInfos(fields[0].pos).file;
 		}
@@ -118,16 +118,16 @@ class BuildMacro
 	 */
 	public function parseFields():Array<Field>
 	{
-		for(field in fields)
+		for (field in fields)
         {
-        	if(ignoreField(field)) continue;
+        	if (ignoreField(field)) continue;
 
-        	switch(field.kind)
+        	switch (field.kind)
 			{
 				case FFun(func): 
 					info.methodName = field.name;
 
-					if(func.expr != null )
+					if (func.expr != null )
 					{
 						functionStack = [func];
 						func.expr = parseExpr(func.expr);
@@ -142,9 +142,9 @@ class BuildMacro
 	
 	function ignoreField(field:Field):Bool
 	{
-		for(item in field.meta)
+		for (item in field.meta)
 		{
-			if(ignoreFieldMeta.exists(item.name)) return true;
+			if (ignoreFieldMeta.exists(item.name)) return true;
 		}
 		return false;
 	}
@@ -158,12 +158,12 @@ class BuildMacro
 
 	function parseExpr(e:Expr):Expr
 	{
-		return switch(e.expr)
+		return switch (e.expr)
 		{
 			case EFunction(name, func):
 				//e.g. var f = function()
 				
-				if(func.expr == null)
+				if (func.expr == null)
 					e;
 				else
 				{
@@ -176,7 +176,7 @@ class BuildMacro
 			case EIf(econd,eif,eelse):
 				econd = coverBranch(econd.map(parseExpr));
 				eif = eif.map(parseExpr);
-				if(eelse != null)
+				if (eelse != null)
 					eelse = eelse.map(parseExpr);
 				EIf(econd,eif,eelse).at(e.pos);
 
@@ -207,7 +207,7 @@ class BuildMacro
 
 			case EMeta(s, expr):
 			{
-				if(ignoreFieldMeta.exists(s.name))
+				if (ignoreFieldMeta.exists(s.name))
 					e;
 				else
 					EMeta(s, expr.map(parseExpr)).at(e.pos);
@@ -227,10 +227,10 @@ class BuildMacro
 		var startPos:Position;
 		var endPos:Position;
 
-		if(length == 0)
+		if (length == 0)
 		{
 			//ensure empty methods are still covered (e.g. empty constructor) 
-			if(expr != functionStack[functionStack.length-1].expr) return exprs;
+			if (expr != functionStack[functionStack.length-1].expr) return exprs;
 			startPos = endPos = expr.pos;
 		}
 		else
@@ -248,7 +248,7 @@ class BuildMacro
 	//e.g. i<2; a||b, i==b
 	function coverBinop(op:Binop, e1:Expr, e2:Expr):ExprDef
 	{
-		switch(op)
+		switch (op)
 		{
 			case OpBoolOr:
 				
@@ -285,7 +285,7 @@ class BuildMacro
 		
 		var args = [blockId, expr];
 
-		if(compareExpr != null)
+		if (compareExpr != null)
 			args.push(compareExpr);
 
 		return macro mcover.coverage.MCoverage.getLogger().logBranch($a{args});
@@ -309,7 +309,7 @@ class BuildMacro
 		}
 		catch(e:Dynamic)
 		{
-			if(!FileSystem.exists(file))
+			if (!FileSystem.exists(file))
 				throw e;
 			else
 				posFile = file;
@@ -324,7 +324,7 @@ class BuildMacro
 			classFile =  FileSystem.fullPath(info.fileName);
 		}
 
-		if(file != classFile)
+		if (file != classFile)
 		{
 			strict = false;
 		}
@@ -332,19 +332,19 @@ class BuildMacro
 		for (cp in classPaths.keys())
 		{
 
-			if(file.indexOf(cp) == 0)
+			if (file.indexOf(cp) == 0)
 			{	
-				if(strict)
+				if (strict)
 					return createReference(cp, file, startPos, endPos, isBranch, null, classFile);
 
-				if(!USING_MPARTIAL) continue;
+				if (!USING_MPARTIAL) continue;
 
 				//the current file pos file location doesn't match the class being compiled.
 				//this case needs to be handled for mpartial macros
 				
 				var alternateLocation:String = null;
 
-				if(file.indexOf(info.packagePath) != -1)
+				if (file.indexOf(info.packagePath) != -1)
 				{
 					var temp = file.split(info.packagePath);
 					
@@ -352,7 +352,7 @@ class BuildMacro
 					var fileClassPath = temp.join(info.packagePath);//in case package dir repeated in full path
 
 
-					if(fileName.indexOf("_") != -1)
+					if (fileName.indexOf("_") != -1)
 					{
 						var parts = fileName.split("_");
 
@@ -373,7 +373,7 @@ class BuildMacro
 		//and has different position info to the target class being parsed.
 		for (cp in classPaths.keys())
 		{
-			if(classFile.indexOf(cp) == 0)
+			if (classFile.indexOf(cp) == 0)
 			{
 				file = classFile;
 				var alternateLocation:String = posFile;
@@ -398,11 +398,11 @@ class BuildMacro
 
 	function createReference(cp:String, file:String, startPos:Position, endPos:Position, isBranch:Bool, ?info:ClassInfo, ?alternateLocation:String, ?generatedByMacro:Bool=false):AbstractBlock
 	{
-		if(info == null) info = this.info;
+		if (info == null) info = this.info;
 
 		var block:AbstractBlock;
 		
-		if(isBranch)
+		if (isBranch)
 		{
 			block = new Branch();
 			block.id = branchCount ++;
@@ -413,7 +413,7 @@ class BuildMacro
 			block.id = statementCount++;
 		}
 
-		if(cp.charAt(cp.length-1) == "/") cp = cp.substr(0, cp.length-1);
+		if (cp.charAt(cp.length-1) == "/") cp = cp.substr(0, cp.length-1);
 		file = file.substr(cp.length+1,  file.length-cp.length-1);
 
 		block.file = file;
@@ -421,7 +421,7 @@ class BuildMacro
 		var filePath = file.substr(0, file.length-3);//remove '.hx'
 		var parts:Array<String> = null;
 
-		if(IS_WINDOWS)
+		if (IS_WINDOWS)
 			parts = filePath.split("\\");
 		else
 			parts = filePath.split("/");
@@ -444,9 +444,9 @@ class BuildMacro
 
 		posString = posString.split(" characters ").join(" chars ");
 
-		if(alternateLocation != null)
+		if (alternateLocation != null)
 		{
-			if(IS_WINDOWS)
+			if (IS_WINDOWS)
 				alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
 
 			var p = posString.split(":");
@@ -454,7 +454,7 @@ class BuildMacro
 
 			block.location = alternateLocation + ":" + p.join(":");
 
-			if(generatedByMacro)
+			if (generatedByMacro)
 				block.location += " @:macro";
 		}
 		else
@@ -466,7 +466,7 @@ class BuildMacro
 		var startLine = -1;
 		var endLine = -1;
 
-		if(posReg.match(posString))
+		if (posReg.match(posString))
 		{
 			startLine = Std.parseInt(posReg.matched(2));
 		}
@@ -474,9 +474,9 @@ class BuildMacro
 		posString = Std.string(endPos);
 		posString = posString.substr(5, posString.length-6);
 
-		if(posReg.match(posString))
+		if (posReg.match(posString))
 		{
-			if(posReg.matched(3) == "lines")
+			if (posReg.matched(3) == "lines")
 			{
 				endLine = Std.parseInt(posReg.matched(5));
 			}
@@ -486,16 +486,16 @@ class BuildMacro
 			}
 		}
 
-		for(i in startLine...endLine+1)
+		for (i in startLine...endLine+1)
 		{
-			if(!coveredLines.exists(i))
+			if (!coveredLines.exists(i))
 			{
 				coveredLines.set(i, true);
 				block.lines.push(i);
 			}
 		}
 
-		if(isBranch)
+		if (isBranch)
 			MCover.coverageData.addBranch(cast(block, Branch));
 		else
 			MCover.coverageData.addStatement(cast(block, Statement));

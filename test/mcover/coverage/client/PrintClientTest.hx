@@ -248,9 +248,9 @@ class PrintClientTest extends CoverageReportClientTest
 
 		var hasMatch = false;
 
-		for(line in lines)
+		for (line in lines)
 		{
-			if(line.indexOf(value) != -1)
+			if (line.indexOf(value) != -1)
 			{
 				hasMatch = true;
 				break;

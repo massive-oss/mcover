@@ -40,9 +40,9 @@ import mcover.coverage.data.CoverageResult;
 	public function getFiles():Array<File>
 	{
 		var a:Array<File> = [];
-		for(item in itemsById)
+		for (item in itemsById)
 		{
-			if(Type.getClass(item) == File)
+			if (Type.getClass(item) == File)
 			{
 				a.push(cast(item, File));	
 			}

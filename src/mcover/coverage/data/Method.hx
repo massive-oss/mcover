@@ -58,36 +58,36 @@ import mcover.coverage.data.Branch;
 
 	public function getStatementById(id:Int):Statement
 	{
-		if(statementsById.exists(id)) return statementsById.get(id);
+		if (statementsById.exists(id)) return statementsById.get(id);
 		return null;
 	}
 
 	public function getBranchById(id:Int):Branch
 	{
-		if(branchesById.exists(id)) return branchesById.get(id);
+		if (branchesById.exists(id)) return branchesById.get(id);
 		return null;
 	}
 
 	override public function lookupBranch(path:Array<Int>):Branch
 	{
 		var itemId = path.shift();
-		if(itemId == null || !branchesById.exists(itemId)) return null;
+		if (itemId == null || !branchesById.exists(itemId)) return null;
 		return branchesById.get(itemId);
 	}
 
 	override  public function lookupStatement(path:Array<Int>):Statement
 	{
 		var itemId = path.shift();
-		if(itemId == null || !statementsById.exists(itemId)) return null;
+		if (itemId == null || !statementsById.exists(itemId)) return null;
 		return statementsById.get(itemId);
 	}
 
 	override public function getMissingBranches():Array<Branch>
 	{
 		var a:Array<Branch> = [];
-		for(branch in branchesById)
+		for (branch in branchesById)
 		{
-			if(!branch.isCovered()) a.push(branch);
+			if (!branch.isCovered()) a.push(branch);
 		}
 		return a;
 	}
@@ -95,34 +95,34 @@ import mcover.coverage.data.Branch;
 	override public function getMissingStatements():Array<Statement>
 	{
 		var a:Array<Statement> = [];
-		for(statement in statementsById)
+		for (statement in statementsById)
 		{
-			if(!statement.isCovered()) a.push(statement);
+			if (!statement.isCovered()) a.push(statement);
 		}
 		return a;
 	}
 
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
 
 			var covered:Bool;
 
-			for(statement in statementsById)
+			for (statement in statementsById)
 			{
 				covered = (statement.count > 0);
 				resultCache.sc += covered ? 1 : 0;
 				resultCache.s += 1;
 
-				for(line in statement.lines)
+				for (line in statement.lines)
 				{
 					resultCache.lc += covered ? 1: 0;
 					resultCache.l += 1;
 				}
 			}
-			for(branch in branchesById)
+			for (branch in branchesById)
 			{
 				covered = branch.isCovered();
 				resultCache.bt += (branch.trueCount > 0) ? 1 : 0;
@@ -132,13 +132,13 @@ import mcover.coverage.data.Branch;
 
 				var partiallyCovered = branch.isPartiallyCovered();
 
-				for(line in branch.lines)
+				for (line in branch.lines)
 				{
-					if(covered)
+					if (covered)
 					{
 						resultCache.lc += 1;
 					}
-					else if(partiallyCovered)
+					else if (partiallyCovered)
 					{
 						resultCache.lp += 1;
 					}

@@ -128,7 +128,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
@@ -151,7 +151,7 @@ class PrintClient implements AdvancedCoverageReportClient
 	{
 		var output = "";
 	
-		if(includeHeader)
+		if (includeHeader)
 		{
 			output += divider;
 			output += newline;
@@ -159,31 +159,31 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += divider;	
 		}
 
-		if(includeExecutionFrequency)
+		if (includeExecutionFrequency)
 		{
 			output += newline;
 			output += executionFrequency;
 		}
 
-		if(includeMissingBlocks)
+		if (includeMissingBlocks)
 		{
 			output += newline;
 			output += missingBlocks;
 		}
 	
-		if(includeClassBreakdown)
+		if (includeClassBreakdown)
 		{
 			output += newline;
 			output += classBreakdown;
 		}
 
-		if(includePackageBreakdown)
+		if (includePackageBreakdown)
 		{
 			output += newline;
 			output += packageBreakdown;
 		}	
 		
-		if(includeSummary)
+		if (includeSummary)
 		{
 			output += newline;
 			output += divider;
@@ -191,7 +191,7 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += summary;
 		}
 	
-		if(includeOverallPercentage)
+		if (includeOverallPercentage)
 		{
 			output += newline;
 			output += divider;
@@ -238,7 +238,7 @@ class PrintClient implements AdvancedCoverageReportClient
 	{
 		var a:Array<String> = [""];
 		a.push(name);
-		if(count == 0)
+		if (count == 0)
 		{
 			a.push("0%");
 		}
@@ -269,7 +269,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var packages = coverage.getPackages();
 
-		if(Lambda.count(packages) == 0)
+		if (Lambda.count(packages) == 0)
 		{
 			output += printTabs(["", "None"]);
 			return output;
@@ -277,7 +277,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		output += printTabs(["", "Result","Files","Classes", "Package"]);
 		
-		for(pckg in packages)
+		for (pckg in packages)
 		{
 			var r = pckg.getResults();
 			var packgName = (pckg.name == "")? "[Default]" : pckg.name;
@@ -296,7 +296,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		
 		var classes = coverage.getClasses();
 
-		if(Lambda.count(classes) == 0)
+		if (Lambda.count(classes) == 0)
 		{
 			output += printTabs(["", "None"]);
 			return output;
@@ -304,7 +304,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		output += printTabs(["", "Result","Methods","Statements","Branches","Lines","Class"]);
 		
-		for(cls in classes)
+		for (cls in classes)
 		{
 			var r = cls.getResults();
 			output += printTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, r.lc + "/" + r.l, cls.name]);
@@ -325,16 +325,16 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var statements = coverage.getMissingStatements();
 
-		if(Lambda.count(statements) == 0)
+		if (Lambda.count(statements) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			var currentClass = null;
-			for(block in statements)
+			for (block in statements)
 			{
-				if(currentClass != block.qualifiedClassName)
+				if (currentClass != block.qualifiedClassName)
 				{
 					currentClass =  block.qualifiedClassName;
 					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
@@ -351,16 +351,16 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var branches = coverage.getMissingBranches();
 
-		if(Lambda.count(branches) == 0)
+		if (Lambda.count(branches) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			var currentClass = null;
-			for(block in branches)
+			for (block in branches)
 			{
-				if(currentClass != block.qualifiedClassName)
+				if (currentClass != block.qualifiedClassName)
 				{
 					currentClass =  block.qualifiedClassName;
 					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
@@ -387,10 +387,10 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var statements:Array<Statement> = [];
 
-		for(key in coverage.statementResultsById.keys())
+		for (key in coverage.statementResultsById.keys())
 		{
 			var statement = coverage.getStatementById(key);
-			if(statement.count > 0)
+			if (statement.count > 0)
 			{
 				statements.push(statement);
 			}
@@ -399,7 +399,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		output = printLine("TOP " + maxBlockExecutionListSize + " STATEMENTS BY EXECUTION FREQUENCY:");
 		output += newline;
 
-		if(Lambda.count(statements) == 0)
+		if (Lambda.count(statements) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
@@ -414,11 +414,11 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += printTabs(["", "Count", "Statement"]);
 			
 			var count = 0;
-			for(statement in statements)
+			for (statement in statements)
 			{
 				output += printTabs(["", statement.count, statement.toString()]);
 				count ++;
-				if(count >= maxBlockExecutionListSize)
+				if (count >= maxBlockExecutionListSize)
 				{
 					break;
 				}
@@ -426,10 +426,10 @@ class PrintClient implements AdvancedCoverageReportClient
 		}
 
 		var branches:Array<Branch> = [];
-		for(key in coverage.branchResultsById.keys())
+		for (key in coverage.branchResultsById.keys())
 		{
 			var branch = coverage.getBranchById(key);
-			if(branch.totalCount > 0)
+			if (branch.totalCount > 0)
 			{
 				branches.push(branch);
 			}
@@ -440,7 +440,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		
 		output += newline;
 
-		if(Lambda.count(branches) == 0)
+		if (Lambda.count(branches) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
@@ -456,7 +456,7 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += printTabs(["", "Count", "True", "False", "Branch"]);
 
 			var count = 0;
-			for(branch in branches)
+			for (branch in branches)
 			{
 				output += printTabs(["",
 					branch.totalCount,
@@ -464,7 +464,7 @@ class PrintClient implements AdvancedCoverageReportClient
 					branch.falseCount,
 					branch.toString()]);
 				count ++;
-				if(count >= maxBlockExecutionListSize)
+				if (count >= maxBlockExecutionListSize)
 				{
 					break;
 				}
@@ -486,18 +486,18 @@ class PrintClient implements AdvancedCoverageReportClient
 		var isFirst:Bool = true;
 		var isSecond:Bool = false;
 
-		if(secondColumnWidth == -1) secondColumnWidth = columnWidth;
+		if (secondColumnWidth == -1) secondColumnWidth = columnWidth;
 
-		for(arg in args)
+		for (arg in args)
 		{
 			arg = Std.string(arg);
-			if(isFirst)
+			if (isFirst)
 			{
 				isFirst = false;
 				isSecond = true;
 				s += StringTools.rpad(arg, tab, initialColumnWidth);
 			}
-			else if(isSecond)
+			else if (isSecond)
 			{
 				isSecond = false;
 				s += StringTools.rpad(arg, tab, secondColumnWidth);

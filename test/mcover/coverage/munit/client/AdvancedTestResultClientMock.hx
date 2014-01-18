@@ -66,7 +66,7 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 
 	public function setCurrentTestClass(className:String):Void
 	{
-		if(currentTestClass == className) return;
+		if (currentTestClass == className) return;
 		
 		testClasses.push(className);
 		currentTestClass = className;
