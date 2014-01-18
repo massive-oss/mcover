@@ -342,7 +342,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		clientCompleteCount ++;
 		
-		if (clientCompleteCount == clients.length)
+		if (clientCompleteCount >= clients.length)
 		{
 			if (completionHandler != null)
 			{

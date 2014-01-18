@@ -32,4 +32,14 @@ class Account
 		}
 		return total;
 	}
+
+	public function double(value:Int)
+	{
+		@:IgnoreCover if(false)
+		{
+			return value;
+		}
+		return value*2;
+
+	}
 }

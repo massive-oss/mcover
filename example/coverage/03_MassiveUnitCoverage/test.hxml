@@ -5,27 +5,17 @@
 -cp src
 -cp test
 -swf-version 9
--swf build/test/as3_test.swf
+-swf bin/test/as3_test.swf
 -lib mconsole
 --next
-#Flash 8
 
--main TestMain
--lib munit
--lib hamcrest
--cp src
--cp test
--swf-version 8
--swf build/test/as2_test.swf
--lib mconsole
---next
 # JavaScript
 -main TestMain
 -lib munit
 -lib hamcrest
 -cp src
 -cp test
--js build/test/js_test.js
+-js bin/test/js_test.js
 -lib mconsole
 --next
 
@@ -35,5 +25,5 @@
 -lib hamcrest
 -cp src
 -cp test
--neko build/test/neko_test.n
+-neko bin/test/neko_test.n
 -lib mconsole

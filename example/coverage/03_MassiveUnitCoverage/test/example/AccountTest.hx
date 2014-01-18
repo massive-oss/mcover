@@ -53,4 +53,10 @@ class AccountTest
 		instance.add(1);
 		Assert.areEqual(11, instance.totalValue());
 	}
+	@Test
+	public function shouldDouble()
+	{
+		instance = new Account();
+		Assert.areEqual(4, instance.double(2));
+	}
 }

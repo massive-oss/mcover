@@ -205,6 +205,13 @@ class BuildMacro
 				e2 = e2.map(parseExpr);
 				coverBinop(op, e1, e2).at(e.pos);
 
+			case EMeta(s, expr):
+			{
+				if(ignoreFieldMeta.exists(s.name))
+					e;
+				else
+					EMeta(s, expr.map(parseExpr)).at(e.pos);
+			}
 			case _: e.map(parseExpr);
 		}
 	}

@@ -5,8 +5,8 @@ class Example
 	@IgnoreCover
 	static public function log(?cover:Null<Bool>=true, ?pos:haxe.PosInfos)
 	{
-		//var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
-		//trace(s);
+		// var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
+		// trace(s);
 	}
 
 	public var fieldA:String;
@@ -17,6 +17,8 @@ class Example
 		//notCovered();//isn't called so that reported as misssing coverage
 		//notCoveredEmpty();//isn't called so that reported as misssing coverage
 		//ignored();//isn't called, but ignored via @ignoreCover metadata
+
+		ignoredExpr();
 
 		ifMethod(true);
 		ifMethod(false);
@@ -91,6 +93,14 @@ class Example
 	function ignored()
 	{
 		log(false);
+	}
+
+	/**
+	Expr ignored by coverage report becuase of metadata
+	*/
+	function ignoredExpr()
+	{
+		@IgnoreCover if(false) log(false);
 	}
 
 	/**
@@ -176,7 +186,7 @@ class Example
 			i++;
 		}
 
-		i = 0;
+		//i = 0;
 		while(i < 2) //note: will never be true (ie. i == 2)
 		{
 			if(i == 1) break;

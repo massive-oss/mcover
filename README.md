@@ -21,10 +21,11 @@ See CHANGES for full changes
 
 **New since 3.0.0**
 
-- Removed legacy Haxe 2.10 support 
-- Retired mcover.logger
-- Optimised macro coverage generation
-
+- Removed support for Haxe 2.x 
+- Removed mcover.logger
+- Refactored internals to use macro retification
+- Issue 26 - Added support for ignoring individual expressions via metadata
+- Issue 23 - Add support for packages with underscores
 
 ## Features
 
@@ -117,8 +118,9 @@ Install mcover:
 Add the mcover macro to your build.hxml file:
 
 	-lib mcover
-	--macro mcover.MCover.configure()
-	--macro mcover.MCover.include('', ['src'])
+	--macro mcover.MCover.coverage([''], ['src'])
+
+>Note where `mcover.MCover.coverage({packages}, {classPaths}, {ignoredClasses})
 
 ### Step 3.
 
@@ -132,7 +134,7 @@ Print a report at runtime (once your tests/code have finished executing):
 View results!
 	
 	----------------------------------------------------------------
-	MCover v1.0 Coverage Report, generated 2011-10-10 11:44:16
+	MCover v1.x Coverage Report, generated 2011-10-10 11:44:16
 	----------------------------------------------------------------
 
 	NON-EXECUTED BRANCHES:
@@ -397,7 +399,7 @@ You can also run the unit tests (requires munit haxelib) to see coverage of the 
 
 MCover includes a macro for specifying which classes to cover in your application:
 
-	--macro mcover.MCover.cover(['{package}'], {classPaths}, {ignoredClasses})
+	--macro mcover.MCover.coverage(['{package}'], {classPaths}, {ignoredClasses})
 
 Where:
 
@@ -479,9 +481,9 @@ Results can then be accessed directly from the logger
 	logger.coverage.getPercentages();
 
 
-### Ignoring individual classes or methods via metadata
+### Ignoring individual classes, methods or expressions
 
-You can flag an entire class, or single method to be excluded from coverage using @IgnoreCover metadata
+You can ignore an entire class, method or expression from coverage using @IgnoreCover metadata
 
 Ignoring a class:
 
@@ -497,6 +499,18 @@ Ignoring a method:
 	{
 		public function new() {}
 		@IgnoreCover function bar() {}
+	}
+
+Ingoring an expression
+
+	class Foo
+	{
+		public function new(){}
+
+		function bar()
+		{
+			@IgnoreCover if(false) {}
+		}
 	}
 
 

@@ -17,13 +17,11 @@ class Main
 	{
 		//execute appliction code
 		var example = new Example();
-
 		logger = MCoverage.getLogger();
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
-
 		#if sys
-			while(completed != true)
+			while(!completed)
 			{
 				Sys.sleep(.1);
 			}
