@@ -1,3 +1,9 @@
+v 3.0.0
+- removed haxe 2.x support
+- refactored macros to use retification
+- added support for expression metadata, ignoring individual expressions
+- added support for packages with underscores
+
 v 2.0.3
 - added haxelib.json
 

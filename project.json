@@ -2,7 +2,7 @@
 	"project": 
 	{
 		"name": "MassiveCover",
-		"version": "2.0.3",
+		"version": "3.0.0",
 		"id": "mcover",
 		"dependencies":
 		{
@@ -10,8 +10,9 @@
 		},
 		"devDependencies": 
 		{
-			"mlib":"2.x",
-			"mtask":"2.x"
+			"mockatoo": "2.x",
+			"mlib":"2",
+			"mtask":"3.x"
 		}
 	},
 	"haxelib":
