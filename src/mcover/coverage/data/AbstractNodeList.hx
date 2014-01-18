@@ -1,35 +1,36 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage.data;
 
 import mcover.coverage.data.AbstractNode;
 import mcover.coverage.data.CoverageResult;
+
 @IgnoreLogging
 @:keep class AbstractNodeList extends AbstractNode
 {
@@ -47,7 +48,7 @@ import mcover.coverage.data.CoverageResult;
 
 	public function getItemByName(name:String, cls:Class<AbstractNode>):AbstractNode
 	{
-		if(!items.exists(name))
+		if (!items.exists(name))
 		{
 			var item:AbstractNode = Type.createInstance(cls, []);
 			item.id = itemCount ++;
@@ -61,22 +62,21 @@ import mcover.coverage.data.CoverageResult;
 	override public function lookupBranch(path:Array<Int>):Branch
 	{
 		var itemId = path.shift();
-		if(itemId == null || !itemsById.exists(itemId)) return null;
+		if (itemId == null || !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupBranch(path);
 	}
 
 	override public function lookupStatement(path:Array<Int>):Statement
 	{
 		var itemId = path.shift();
-		if(itemId == null|| !itemsById.exists(itemId)) return null;
+		if (itemId == null|| !itemsById.exists(itemId)) return null;
 		return itemsById.get(itemId).lookupStatement(path);
 	}
-
 
 	override public function getMissingBranches():Array<Branch>
 	{
 		var a:Array<Branch> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getMissingBranches();
 			a = a.concat(tmp);
@@ -88,7 +88,7 @@ import mcover.coverage.data.CoverageResult;
 	override public function getMissingStatements():Array<Statement>
 	{
 		var a:Array<Statement> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getMissingStatements();
 			a = a.concat(tmp);
@@ -101,7 +101,7 @@ import mcover.coverage.data.CoverageResult;
 	override public function getClasses():Array<Clazz>
 	{
 		var a:Array<Clazz> = [];
-		for(node in itemsById)
+		for (node in itemsById)
 		{
 			var tmp = node.getClasses();
 			a = a.concat(tmp);
@@ -112,10 +112,10 @@ import mcover.coverage.data.CoverageResult;
 	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
 			resultCache = emptyResult();
-			for(node in itemsById)
+			for (node in itemsById)
 			{
 				var tmp = node.getResults(cache);
 				resultCache = appendResults(resultCache, tmp);
@@ -124,7 +124,6 @@ import mcover.coverage.data.CoverageResult;
 
 		return resultCache;
 	}
-
 
 
 	function appendResults(to:CoverageResult, from:CoverageResult):CoverageResult
@@ -168,6 +167,5 @@ import mcover.coverage.data.CoverageResult;
         items = s.unserialize();
         itemCount = s.unserialize();
     }
-
 
 }

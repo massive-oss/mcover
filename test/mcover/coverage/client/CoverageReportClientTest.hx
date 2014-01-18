@@ -7,13 +7,11 @@ import mcover.coverage.data.Coverage;
 import mcover.coverage.CoverageReportClientMock;
 import mcover.coverage.CoverageReportClient;
 
-
 class CoverageReportClientTest
 {
 	var client:CoverageReportClient;
 	var coverage:Coverage;
 	var completionCount:Int;
-
 
 	public function new()
 	{
@@ -44,7 +42,6 @@ class CoverageReportClientTest
 		
 	}
 
-	
 	@AsyncTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
 	{	
@@ -76,18 +73,15 @@ class CoverageReportClientTest
 		completionCount ++;	
 	}
 
-
 	function assertCompletionCountIsOne()
 	{
 		Assert.areEqual(1, completionCount);
 	}
 
-
 	function assertCompletionCountIsZero()
 	{
 		Assert.areEqual(0, completionCount);
 	}
-
 
 	////////////
 

@@ -7,7 +7,7 @@ import example.Example;
 
 /**
 Main class as @IgnoreCover meta to ensure it is not included in the coverage
-*/
+**/
 @IgnoreCover
 class Main
 {
@@ -34,7 +34,7 @@ class Main
 		logger.report();//print report to screen
 
 		#if sys
-			while(completed != true)
+			while (completed != true)
 			{
 				Sys.sleep(.1);
 			}
@@ -46,7 +46,6 @@ class Main
 		completed = true;
 		trace("Coverage report complete: " + percent + "%");
 	}
-
 }
 
 @IgnoreLogging
@@ -65,9 +64,8 @@ class CustomPrintClient extends PrintClient
 
 		var lines = output.split("\n");
 
-
 		var s = "\n*************************";
-		for(line in lines)
+		for (line in lines)
 		{
 			s += "\n*  " + line;
 		}

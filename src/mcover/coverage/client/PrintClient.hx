@@ -1,30 +1,30 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage.client;
 
@@ -33,13 +33,12 @@ import mcover.coverage.DataTypes;
 import mcover.util.Timer;
 import mcover.util.NumberUtil;
 
-
 @IgnoreLogging
 class PrintClient implements AdvancedCoverageReportClient
 {
 		/**
-	 * Handler which if present, is called when the client has completed generating its results.
-	 */
+		Handler which if present, is called when the client has completed generating its results.
+	**/
 	public var completionHandler(default, default):CoverageReportClient -> Void;
 
 	public var includeHeader(default, default):Bool;
@@ -53,12 +52,12 @@ class PrintClient implements AdvancedCoverageReportClient
 	public var maxBlockExecutionListSize(default, default):Int;
 		
 	/**
-	 * Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
-	 * 
-	 * <p>
-	 * Should be set before the client is passed to a test runner.
-	 * </p>
-	 */
+		Newline delimiter. Defaults to '\n' for all platforms except 'js' where it defaults to '<br/>'.
+		
+		<p>
+		Should be set before the client is passed to a test runner.
+		</p>
+	**/
 	public var newline:String;
 
 	public var output(default, null):String;
@@ -128,7 +127,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
@@ -151,7 +150,7 @@ class PrintClient implements AdvancedCoverageReportClient
 	{
 		var output = "";
 	
-		if(includeHeader)
+		if (includeHeader)
 		{
 			output += divider;
 			output += newline;
@@ -159,31 +158,31 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += divider;	
 		}
 
-		if(includeExecutionFrequency)
+		if (includeExecutionFrequency)
 		{
 			output += newline;
 			output += executionFrequency;
 		}
 
-		if(includeMissingBlocks)
+		if (includeMissingBlocks)
 		{
 			output += newline;
 			output += missingBlocks;
 		}
 	
-		if(includeClassBreakdown)
+		if (includeClassBreakdown)
 		{
 			output += newline;
 			output += classBreakdown;
 		}
 
-		if(includePackageBreakdown)
+		if (includePackageBreakdown)
 		{
 			output += newline;
 			output += packageBreakdown;
 		}	
 		
-		if(includeSummary)
+		if (includeSummary)
 		{
 			output += newline;
 			output += divider;
@@ -191,7 +190,7 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += summary;
 		}
 	
-		if(includeOverallPercentage)
+		if (includeOverallPercentage)
 		{
 			output += newline;
 			output += divider;
@@ -219,7 +218,6 @@ class PrintClient implements AdvancedCoverageReportClient
 		var output = "";
 		var r = coverage.getResults();
 
-	
 		output = printLine("OVERALL COVERAGE STATS:");
 		output += printLine("");
 
@@ -238,7 +236,7 @@ class PrintClient implements AdvancedCoverageReportClient
 	{
 		var a:Array<String> = [""];
 		a.push(name);
-		if(count == 0)
+		if (count == 0)
 		{
 			a.push("0%");
 		}
@@ -258,7 +256,6 @@ class PrintClient implements AdvancedCoverageReportClient
 	function getPercentage(count:Int, total:Int):Float
 	{
 		return NumberUtil.round((count/total)*100, 2);
-
 	}
 
 	function serializePackageResults():String
@@ -269,7 +266,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var packages = coverage.getPackages();
 
-		if(Lambda.count(packages) == 0)
+		if (Lambda.count(packages) == 0)
 		{
 			output += printTabs(["", "None"]);
 			return output;
@@ -277,7 +274,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		output += printTabs(["", "Result","Files","Classes", "Package"]);
 		
-		for(pckg in packages)
+		for (pckg in packages)
 		{
 			var r = pckg.getResults();
 			var packgName = (pckg.name == "")? "[Default]" : pckg.name;
@@ -296,7 +293,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		
 		var classes = coverage.getClasses();
 
-		if(Lambda.count(classes) == 0)
+		if (Lambda.count(classes) == 0)
 		{
 			output += printTabs(["", "None"]);
 			return output;
@@ -304,7 +301,7 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		output += printTabs(["", "Result","Methods","Statements","Branches","Lines","Class"]);
 		
-		for(cls in classes)
+		for (cls in classes)
 		{
 			var r = cls.getResults();
 			output += printTabs(["", cls.getPercentage() + "%",r.mc + "/" + r.m, r.sc + "/" + r.s, r.bc + "/" + r.b, r.lc + "/" + r.l, cls.name]);
@@ -314,8 +311,8 @@ class PrintClient implements AdvancedCoverageReportClient
 	}
 
 	/**
-	* Prints summary of branches and statements that have not been executed
-	*/
+		Prints summary of branches and statements that have not been executed
+	**/
 	function serializeMissingBlocks():String
 	{
 		var output = "";
@@ -325,23 +322,22 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var statements = coverage.getMissingStatements();
 
-		if(Lambda.count(statements) == 0)
+		if (Lambda.count(statements) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			var currentClass = null;
-			for(block in statements)
+			for (block in statements)
 			{
-				if(currentClass != block.qualifiedClassName)
+				if (currentClass != block.qualifiedClassName)
 				{
 					currentClass =  block.qualifiedClassName;
 					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
 				}
 
 				output += printTabs(["", block.toLocalString()], SHORT_FIRST_TAB_WIDTH*2);
-
 			}
 		}
 
@@ -351,16 +347,16 @@ class PrintClient implements AdvancedCoverageReportClient
 
 		var branches = coverage.getMissingBranches();
 
-		if(Lambda.count(branches) == 0)
+		if (Lambda.count(branches) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
 		else
 		{
 			var currentClass = null;
-			for(block in branches)
+			for (block in branches)
 			{
-				if(currentClass != block.qualifiedClassName)
+				if (currentClass != block.qualifiedClassName)
 				{
 					currentClass =  block.qualifiedClassName;
 					output += printTabs(["",  "Class: " + block.qualifiedClassName]);
@@ -373,24 +369,22 @@ class PrintClient implements AdvancedCoverageReportClient
 	}
 
 
-
 	
 	/**
-	* Outputs all branch and statement logs sorted by highest frequency.
-	* For branches reports also totals for true/false  
-	*/
+		Outputs all branch and statement logs sorted by highest frequency.
+		For branches reports also totals for true/false  
+	**/
 
 	function serializeExecutionFrequency():String
 	{
 		var output = "";
 
-
 		var statements:Array<Statement> = [];
 
-		for(key in coverage.statementResultsById.keys())
+		for (key in coverage.statementResultsById.keys())
 		{
 			var statement = coverage.getStatementById(key);
-			if(statement.count > 0)
+			if (statement.count > 0)
 			{
 				statements.push(statement);
 			}
@@ -399,7 +393,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		output = printLine("TOP " + maxBlockExecutionListSize + " STATEMENTS BY EXECUTION FREQUENCY:");
 		output += newline;
 
-		if(Lambda.count(statements) == 0)
+		if (Lambda.count(statements) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
@@ -414,11 +408,11 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += printTabs(["", "Count", "Statement"]);
 			
 			var count = 0;
-			for(statement in statements)
+			for (statement in statements)
 			{
 				output += printTabs(["", statement.count, statement.toString()]);
 				count ++;
-				if(count >= maxBlockExecutionListSize)
+				if (count >= maxBlockExecutionListSize)
 				{
 					break;
 				}
@@ -426,10 +420,10 @@ class PrintClient implements AdvancedCoverageReportClient
 		}
 
 		var branches:Array<Branch> = [];
-		for(key in coverage.branchResultsById.keys())
+		for (key in coverage.branchResultsById.keys())
 		{
 			var branch = coverage.getBranchById(key);
-			if(branch.totalCount > 0)
+			if (branch.totalCount > 0)
 			{
 				branches.push(branch);
 			}
@@ -440,7 +434,7 @@ class PrintClient implements AdvancedCoverageReportClient
 		
 		output += newline;
 
-		if(Lambda.count(branches) == 0)
+		if (Lambda.count(branches) == 0)
 		{
 			output += printTabs(["", "None"]);
 		}
@@ -456,7 +450,7 @@ class PrintClient implements AdvancedCoverageReportClient
 			output += printTabs(["", "Count", "True", "False", "Branch"]);
 
 			var count = 0;
-			for(branch in branches)
+			for (branch in branches)
 			{
 				output += printTabs(["",
 					branch.totalCount,
@@ -464,7 +458,7 @@ class PrintClient implements AdvancedCoverageReportClient
 					branch.falseCount,
 					branch.toString()]);
 				count ++;
-				if(count >= maxBlockExecutionListSize)
+				if (count >= maxBlockExecutionListSize)
 				{
 					break;
 				}
@@ -486,18 +480,18 @@ class PrintClient implements AdvancedCoverageReportClient
 		var isFirst:Bool = true;
 		var isSecond:Bool = false;
 
-		if(secondColumnWidth == -1) secondColumnWidth = columnWidth;
+		if (secondColumnWidth == -1) secondColumnWidth = columnWidth;
 
-		for(arg in args)
+		for (arg in args)
 		{
 			arg = Std.string(arg);
-			if(isFirst)
+			if (isFirst)
 			{
 				isFirst = false;
 				isSecond = true;
 				s += StringTools.rpad(arg, tab, initialColumnWidth);
 			}
-			else if(isSecond)
+			else if (isSecond)
 			{
 				isSecond = false;
 				s += StringTools.rpad(arg, tab, secondColumnWidth);

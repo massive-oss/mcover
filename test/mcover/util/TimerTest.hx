@@ -11,7 +11,6 @@ class TimerTest
 	var originalTrace:Dynamic;
 	var traceOutput:String;
 
-
 	public function new()
 	{
 		
@@ -37,9 +36,9 @@ class TimerTest
 	@After
 	public function tearDown():Void
 	{
-		if(timer != null) timer.stop();
+		if (timer != null) timer.stop();
 
-		if(originalTrace != null)
+		if (originalTrace != null)
 		{
 			haxe.Log.trace = originalTrace;
 		}
@@ -65,7 +64,6 @@ class TimerTest
 
 		var delay = Timer.delay(handler, 100);
 	}
-
 
 	function timerTick()
 	{
@@ -100,13 +98,12 @@ class TimerTest
 		Assert.isTrue(stamp2 > stamp);
 	}
 
-
 	#if js
 
 	@Test
 	public function shouldCleanUpOldIntervalsInJS()
 	{	
-		for(i in 0...101)
+		for (i in 0...101)
 		{
 			timer = new Timer(30);
 			timer.stop();
@@ -122,7 +119,6 @@ class TimerTest
 
 	#elseif neko
 
-	
 	@AsyncTest
 	public function shouldCatchAndTraceExceptionInRunMethod(factory:AsyncFactory)
 	{
@@ -134,7 +130,6 @@ class TimerTest
 
 		var handler = factory.createHandler(this, assertExceptionWasTraced, 200);
 		var delay = Timer.delay(handler, 50);
-
 	}
 
 	function throwException()
@@ -154,8 +149,6 @@ class TimerTest
 	}
 
 	#end
-
-
 
 
 }

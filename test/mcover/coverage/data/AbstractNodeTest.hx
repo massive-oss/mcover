@@ -94,7 +94,6 @@ class AbstractNodeTest
 		Assert.areEqual(100, p);
 	}
 
-
 	@Test
 	public function shouldReturnZeroPercentIfResultContainsNaN()
 	{
@@ -151,7 +150,6 @@ class AbstractNodeTest
 		var a = node.getMissingBranches();
 		Assert.areEqual(0, a.length);
 	}
-
 
 	@Test
 	public function shouldHaveNoMissingStatements():Void

@@ -2,10 +2,6 @@ package mcover.coverage.munit.client;
 
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
-/**
- * ...
- * @author Mike Stead
- */
 
 class TestResultClientStub implements IAdvancedTestResultClient
 {
@@ -29,7 +25,13 @@ class TestResultClientStub implements IAdvancedTestResultClient
 	public var currentTestClass:String;
 	public var testClasses:Array<String>;
 
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar 
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
+	
 	private function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
@@ -54,7 +56,7 @@ class TestResultClientStub implements IAdvancedTestResultClient
 
 	public function setCurrentTestClass(className:String):Void
 	{
-		if(currentTestClass == className) return;
+		if (currentTestClass == className) return;
 		
 		testClasses.push(className);
 		currentTestClass = className;
@@ -109,5 +111,4 @@ class TestResultClientStub implements IAdvancedTestResultClient
 		str += "errorCount: " + errorCount + "\n";
 		return str;
 	}
-
 }

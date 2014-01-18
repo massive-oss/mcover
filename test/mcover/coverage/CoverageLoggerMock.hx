@@ -6,7 +6,6 @@ class CoverageLoggerMock implements CoverageLogger
 {
 	public var completionHandler(default, default):Float -> Void;
 
-
 	public var coverage(default, null):Coverage;
 
 	public var currentTest(default, set_currentTest):String;
@@ -15,7 +14,6 @@ class CoverageLoggerMock implements CoverageLogger
 		currentTest = value;
 		return value;
 	}
-
 
 	public var clients:Array<CoverageReportClient>;
 
@@ -26,7 +24,6 @@ class CoverageLoggerMock implements CoverageLogger
 	public var branchValue:Dynamic;
 	public var branchCompareValue:Dynamic;
 	
-		
 
 	public function new()
 	{
@@ -51,10 +48,9 @@ class CoverageLoggerMock implements CoverageLogger
 		var timer = massive.munit.util.Timer.delay(executeCompletionHandler, 1);
 	}
 
-
 	function executeCompletionHandler()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(0);
 		}
@@ -75,7 +71,6 @@ class CoverageLoggerMock implements CoverageLogger
 		return clients;
 	}
 	
-
 	public function initializeCoverage(resourceName:String):Void
 	{
 		this.resourceName = resourceName;
@@ -94,5 +89,4 @@ class CoverageLoggerMock implements CoverageLogger
 		branchCompareValue = compareValue;
 		return value;
 	}
-
 }

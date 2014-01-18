@@ -9,7 +9,7 @@ import sys.FileSystem;
 
 /**
 Main class as @IgnoreCover meta to ensure it is not included in the coverage
-*/
+**/
 @IgnoreCover
 class Main
 {
@@ -20,13 +20,11 @@ class Main
 	{
 		//execute appliction code
 		var example = new Example();
-
 		logger = MCoverage.getLogger();
 		logger.completionHandler = completionHandler;
 		logger.report();//print report to screen
-
 		#if sys
-			while(completed != true)
+			while (!completed)
 			{
 				Sys.sleep(.1);
 			}
@@ -51,7 +49,5 @@ class Main
 				File.saveContent(".temp/mcover/data/php.mcover", serializedData);
 			#end
 		#end
-		
 	}
-
 }

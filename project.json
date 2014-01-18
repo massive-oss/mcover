@@ -1,5 +1,22 @@
 {
-	"name":"MassiveCover",
-	"version":"1.4.2",
-	"id":"mcover"
+	"project": 
+	{
+		"name": "MassiveCover",
+		"version": "3.0.0",
+		"id": "mcover",
+		"dependencies":
+		{
+			"munit":"2.x"
+		},
+		"devDependencies": 
+		{
+			"mockatoo": "2.x",
+			"mlib":"2",
+			"mtask":"3.x"
+		}
+	},
+	"haxelib":
+	{
+		"user": "massive"
+	}
 }

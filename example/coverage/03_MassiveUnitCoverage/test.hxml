@@ -5,41 +5,18 @@
 -cp src
 -cp test
 -swf-version 9
-<<<<<<< HEAD
 -swf bin/test/as3_test.swf
-=======
--swf build/test/as3_test.swf
 -lib mconsole
->>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 --next
-#Flash 8
 
--main TestMain
--lib munit
--lib hamcrest
--cp src
--cp test
--swf-version 8
-<<<<<<< HEAD
--swf bin/test/as2_test.swf
-=======
--swf build/test/as2_test.swf
--lib mconsole
->>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
---next
 # JavaScript
 -main TestMain
 -lib munit
 -lib hamcrest
 -cp src
 -cp test
-<<<<<<< HEAD
 -js bin/test/js_test.js
-
-=======
--js build/test/js_test.js
 -lib mconsole
->>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d
 --next
 
 # Neko
@@ -48,9 +25,5 @@
 -lib hamcrest
 -cp src
 -cp test
-<<<<<<< HEAD
 -neko bin/test/neko_test.n
-=======
--neko build/test/neko_test.n
 -lib mconsole
->>>>>>> 7aa23971598a4c28b5cdc1bd43ff1b05ca70b67d

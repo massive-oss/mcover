@@ -35,8 +35,13 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 	public var finalCoveragePackageBreakdown:String;
 	public var finalCoverageExecutionFrequency:String;
 	
-
-	@:isVar public var completionHandler(get, set):ITestResultClient -> Void;
+	@:isVar 
+	#if haxe3
+	public var completionHandler(get, set):ITestResultClient -> Void;
+	#else
+	public var completionHandler(get_completionHandler, set_completionHandler):ITestResultClient -> Void;
+	#end
+	
 	private function get_completionHandler():ITestResultClient -> Void 
 	{
 		return completionHandler;
@@ -61,7 +66,7 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 
 	public function setCurrentTestClass(className:String):Void
 	{
-		if(currentTestClass == className) return;
+		if (currentTestClass == className) return;
 		
 		testClasses.push(className);
 		currentTestClass = className;
@@ -110,7 +115,6 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 		testCoverage = result;
 	}
 
-
 	public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
@@ -123,7 +127,6 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 		finalCoverageClassBreakdown = classBreakdown;
 		finalCoveragePackageBreakdown = packageBreakdown;
 		finalCoverageExecutionFrequency = executionFrequency;
-
 	}
 	
 	public function toString():String

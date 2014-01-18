@@ -85,9 +85,8 @@ class NodeMock extends AbstractNode
 
 	static public function createBranchResult(?branch:Branch):BranchResult
 	{
-		if(branch == null) branch = createBranch();
+		if (branch == null) branch = createBranch();
 		
 		return {id:branch.id,trueCount:branch.trueCount, falseCount:branch.falseCount, total:branch.totalCount};
 	}
-
 }

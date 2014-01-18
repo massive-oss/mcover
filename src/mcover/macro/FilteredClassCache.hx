@@ -1,30 +1,30 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.macro;
 
@@ -39,7 +39,8 @@ Format:
 @id
 file|stamp|included class,included class|excluded class,excluded class
 
-*/
+**/
+
 #if macro
 
 import sys.io.File;
@@ -69,10 +70,9 @@ class FilteredClassCache
 			md5 = "";
 		}
 
-
 		#if !MCOVER_NO_CACHE
 			file = mcover.MCover.TEMP_DIR + "/" + path;
-			if(FileSystem.exists(file))
+			if (FileSystem.exists(file))
 			{
 				load(file);
 			}
@@ -80,26 +80,26 @@ class FilteredClassCache
 	}
 
 	/**
-	Creates a string representation of the current filters to use as an id for the cache (to determine if conditions have changed since cache was saved)
+		Creates a string representation of the current filters to use as an id for the cache (to determine if conditions have changed since cache was saved)
 
 	@param classPaths 	array of class path directories (defaults to [''])
 	@param packages 	array of packages (defaults to [''])
 	@param exclusions 	array of classes or wildcards to ignored (defaults to [''])
-	*/
+	**/
 	public function init(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>)
 	{
 		var tempId = "";
-		if(classPaths != null) tempId += classPaths.join(",");
+		if (classPaths != null) tempId += classPaths.join(",");
 		tempId += ",";
-		if(packages != null) tempId += packages.join(",");
+		if (packages != null) tempId += packages.join(",");
 		tempId += ",";
-		if(exclusions != null) tempId += exclusions.join(",");
+		if (exclusions != null) tempId += exclusions.join(",");
 
 		tempId += "," + md5;
 
 		trace("tempId = " + tempId);
 		trace("id = " + id);
-		if(tempId != id)
+		if (tempId != id)
 		{
 			trace("reset cache");
 			id = tempId;
@@ -108,33 +108,33 @@ class FilteredClassCache
 	}
 
 	/**
-	Checks if file is in cache and has not been modified.
+		Checks if file is in cache and has not been modified.
 
 	@param path 	path to file
 	@return true if cached version has same modifed date as current file. 
-	*/
+	**/
 	public function isCached(path:String):Bool
 	{
 		#if MCOVER_NO_CACHE
 			return false;
 		#end
 
-		if(fileMap.exists(path))
+		if (fileMap.exists(path))
 		{
 			var file = fileMap.get(path);
 			var stamp = getStamp(path);
 
-			if(file.stamp == stamp) return true;	
+			if (file.stamp == stamp) return true;	
 		}
 		return false;
 	}
 
 	/**
-	Returns the cached included classes in a file
+		Returns the cached included classes in a file
 	
 	@param path 	to file
 	@return array of qualified classes (example.Foo)
-	*/
+	**/
 	public function getIncludedClassesInFile(path:String):Array<String>
 	{
 		var file = fileMap.get(path);
@@ -143,11 +143,11 @@ class FilteredClassCache
 	}
 
 	/**
-	Returns the cached excluded classes in a file
+		Returns the cached excluded classes in a file
 	
 	@param path 	to file
 	@return array of qualified classes (example.Foo)
-	*/
+	**/
 	public function getExcludedClassesInFile(path:String):Array<String>
 	{
 		var file = fileMap.get(path);
@@ -156,8 +156,8 @@ class FilteredClassCache
 	}
 
 	/**
-	Adds a files included/excluded classes to the cache
-	*/
+		Adds a files included/excluded classes to the cache
+	**/
 	public function addToCache(path:String, includes:Array<String>,excludes:Array<String>)
 	{
 		var stamp = getStamp(path);
@@ -166,8 +166,8 @@ class FilteredClassCache
 	}
 
 	/**
-	Writes the current cache to file
-	*/
+		Writes the current cache to file
+	**/
 	public function save()
 	{
 		#if MCOVER_NO_CACHE
@@ -188,7 +188,6 @@ class FilteredClassCache
 		f.close();
 	}
 
-
 	function load(file:String)
 	{
 		var f = File.read(file, true);
@@ -198,7 +197,7 @@ class FilteredClassCache
 			{
 				var line = StringTools.trim(f.readLine());
 				
-				if(line.charAt(0) == "@")
+				if (line.charAt(0) == "@")
 				{
 					id = line.substr(1);
 				}
@@ -215,14 +214,14 @@ class FilteredClassCache
 	}
 
 	/**
-	Utility for generating the modified time stamp for a file
+		Utility for generating the modified time stamp for a file
 
 	@param path 	a file path
 	@return a timestamp in format yyyy-mm-dd hh:mm:ss
-	*/
+	**/
 	function getStamp(path:String):String
 	{
-		if(FileSystem.exists(path) && !FileSystem.isDirectory(path))
+		if (FileSystem.exists(path) && !FileSystem.isDirectory(path))
 		{
 			var stat = FileSystem.stat(path);
 			return stat.mtime.toString();

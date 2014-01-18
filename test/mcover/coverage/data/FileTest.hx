@@ -98,5 +98,4 @@ class FileTest extends AbstractNodeListTest
 		return new File();
 	}
 
-
 }

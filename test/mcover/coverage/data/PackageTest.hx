@@ -72,5 +72,4 @@ class PackageTest extends AbstractNodeListTest
 		return new Package();
 	}
 
-
 }

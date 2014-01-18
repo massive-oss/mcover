@@ -5,14 +5,13 @@ import mcover.coverage.data.Branch;
 import mcover.coverage.data.Coverage;
 import mcover.coverage.CoverageReportClient;
 
-
 class CoverageReportClientMock implements AdvancedCoverageReportClient
 {
 	public var coverage:Coverage;
 
 	/**
-	 * Handler which if present, is called when the client has completed generating its results.
-	 */
+		Handler which if present, is called when the client has completed generating its results.
+	**/
 	public var completionHandler(default, default):CoverageReportClient -> Void;
 
 	public var includeHeader(default, default):Bool;
@@ -33,7 +32,6 @@ class CoverageReportClientMock implements AdvancedCoverageReportClient
 	public var summary(default, null):String;
 	public var overallPercentage(default, null):String;
 
-
 	public function new()
 	{
 		
@@ -48,10 +46,9 @@ class CoverageReportClientMock implements AdvancedCoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
 	}
-
 }

@@ -11,8 +11,8 @@ import mcover.coverage.CoverageLoggerMock;
 import mcover.coverage.data.Coverage;
 import mcover.coverage.data.NodeMock;
 /**
-* Auto generated MassiveUnit Test Class  for mcover.coverage.munit.client.MCoverPrintClient 
-*/
+	Auto generated MassiveUnit Test Class  for mcover.coverage.munit.client.MCoverPrintClient 
+**/
 class MCoverPrintClientTest 
 {
 	var instance:MCoverPrintClient; 
@@ -121,7 +121,6 @@ class MCoverPrintClientTest
 		Assert.areEqual(2, munitClient.testClasses.length);
 	}
 
-
 	@Test
 	public function shouldUpdateLoggerCurrentTestIfTestChanges()
 	{
@@ -174,7 +173,6 @@ class MCoverPrintClientTest
 		Assert.areEqual(3, munitClient.finalTestCount);
 	}
 
-	
 	@Test
 	public function shouldCallCompletionHandler()
 	{
@@ -184,7 +182,6 @@ class MCoverPrintClientTest
 
 		Assert.areEqual(1, completionCount);
 	}
-
 
 	//////
 	function completionHandler(client:ITestResultClient)
@@ -200,5 +197,4 @@ class MCoverPrintClientTest
 		var item2 = cast(coverage.getItemByName("item2", NodeMock), NodeMock);
 		var item3 = cast(coverage.getItemByName("item3", NodeMock), NodeMock);
 	}
-
 }

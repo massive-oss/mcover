@@ -7,7 +7,6 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 import mcover.coverage.data.Coverage;
 
-
 class CoverageLoggerTest
 {
 	var logger:CoverageLogger;
@@ -15,7 +14,6 @@ class CoverageLoggerTest
 	var coverage:Coverage;
 
 	var originalTrace:Dynamic;
-
 
 	public function new()
 	{
@@ -38,13 +36,12 @@ class CoverageLoggerTest
 		logger = createLogger();
 		client = new CoverageReportClientMock();
  		coverage = new Coverage();
-
 	}
 	
 	@After
 	public function tearDown():Void
 	{
-		if(originalTrace != null)
+		if (originalTrace != null)
 		{
 			haxe.Log.trace = originalTrace;
 		}
@@ -59,7 +56,6 @@ class CoverageLoggerTest
 		logger.initializeCoverage(MCoverage.RESOURCE_DATA);
 		Assert.isNotNull(logger.coverage);
 	}
-
 
 	@AsyncTest
 	public function shouldCallCompletionHandlerAfterReport(factory:AsyncFactory)
@@ -94,9 +90,7 @@ class CoverageLoggerTest
 		Assert.areEqual(0, logger.getClients().length);
 	}
 
-
 	/////////////
-
 
 	function createLogger():CoverageLogger
 	{
@@ -111,7 +105,5 @@ class CoverageLoggerTest
 		trace(pos.methodName);
 		#end
 	}
-
-
 
 }

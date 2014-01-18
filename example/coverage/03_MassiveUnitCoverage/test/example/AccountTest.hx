@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import example.Account;
 
 /**
-* Auto generated MassiveUnit Test Class  for example.Account 
-*/
+	Auto generated MassiveUnit Test Class  for example.Account 
+**/
 class AccountTest 
 {
 	var instance:Account; 
@@ -37,7 +37,6 @@ class AccountTest
 	{
 	}
 	
-	
 	@Test
 	public function shouldBeEmptyAtConstructor():Void
 	{
@@ -52,5 +51,11 @@ class AccountTest
 		instance.add(10);
 		instance.add(1);
 		Assert.areEqual(11, instance.totalValue());
+	}
+	@Test
+	public function shouldDouble()
+	{
+		instance = new Account();
+		Assert.areEqual(4, instance.double(2));
 	}
 }

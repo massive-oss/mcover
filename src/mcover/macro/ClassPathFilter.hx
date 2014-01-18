@@ -1,32 +1,34 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.macro;
+
+import haxe.crypto.Md5;
 
 #if macro
 	
@@ -39,13 +41,13 @@ class ClassPathFilter
 	/**
 	optional class @metadata to exclude from list 
 	e.g. @IgnoreFoo 
-	*/
+	**/
 	public var ignoreClassMeta:String;
 
 	/**
 	optional class @metadata to filter by 
 	e.g. @IncludeFoo 
-	*/
+	**/
 	public var includeClassMeta:String;
 
 	var classMap:Map<String,Bool>;
@@ -59,18 +61,17 @@ class ClassPathFilter
 		includeClassMeta = null;
 	}
 	/**
-	* Recursively loops through classpaths and filter matching classes
-	*
-	* @param classPaths - array of classpaths to include in coverage (defaults to local scope only - i.e. ['']
-	* @param packages - array of package names to filter on (e.g. "com.example"). Defaults to all - i.e. ['']
-	* @param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
-	* @return array of classes
-	*/
+		Recursively loops through classpaths and filter matching classes
+		@param classPaths - array of classpaths to include in coverage (defaults to local scope only - i.e. ['']
+		@param packages - array of package names to filter on (e.g. "com.example"). Defaults to all - i.e. ['']
+		@param exclusions - array of qualified class names /packages to exclude from coverage (supports '*' wildcard patterns)
+		@return array of classes
+	**/
 	public function filter(?classPaths : Array<String>, ?packages : Array<String>, ?exclusions : Array<String>):Map<String,Bool>
 	{
 		classMap = new Map();
 
-		if(exclusions == null || exclusions.length == 0)
+		if (exclusions == null || exclusions.length == 0)
 		{
 			skip = function(c:String) return false;
 		}
@@ -79,29 +80,27 @@ class ClassPathFilter
 			skip = function(c:String) return isExcludedClass(exclusions, c);
 		}
 
-		if(null == classPaths)
+		if (null == classPaths)
 			classPaths = [""];
 
-		if(null == packages)
+		if (null == packages)
 			packages = [""];
 
-
-		var cacheName = includeClassMeta + "-" + ignoreClassMeta;
-		cache = new FilteredClassCache("cache-" + haxe.crypto.Md5.encode(cacheName) + ".txt");
+		cache = new FilteredClassCache("cache.txt");
 		cache.init(classPaths, packages, exclusions);
 		
 		//normalize class paths
-		for( i in 0...classPaths.length )
+		for ( i in 0...classPaths.length )
 		{
 			var cp = StringTools.replace(classPaths[i], "\\", "/");
 			
-			if(StringTools.endsWith(cp, "/")) cp = cp.substr(0, -1);
+			if (StringTools.endsWith(cp, "/")) cp = cp.substr(0, -1);
 			classPaths[i] = cp;
 		}
 		
-		for(cp in classPaths)
+		for (cp in classPaths)
 		{
-			for(pack in packages)
+			for (pack in packages)
 			{
 				includePackage(cp, pack);
 			}
@@ -112,32 +111,31 @@ class ClassPathFilter
 		return classMap;
 	}
 
-
 	/**
 	Recursively searches a package within a class path for matching classes
-	*/
+	**/
 	function includePackage(cp:String, pack:String)
 	{
 		var classes:Array<String> = [];
 		var prefix:String = pack;
 		var path:String = cp;
 
-		if(pack != "")
+		if (pack != "")
 		{
 			prefix += ".";
 			path += "/" + pack.split(".").join("/");
 		}
-		if( !FileSystem.exists(path) || !FileSystem.isDirectory(path) ) return;
+		if ( !FileSystem.exists(path) || !FileSystem.isDirectory(path) ) return;
 
-		for(file in FileSystem.readDirectory(path))
+		for (file in FileSystem.readDirectory(path))
 		{	
 			var filePath = path + "/" + file;
 
-			if(StringTools.endsWith(file, ".hx") )
+			if (StringTools.endsWith(file, ".hx") )
 			{
 				includeFile(filePath);
 			}
-			else if(FileSystem.isDirectory(filePath) && !skip(prefix + file) )
+			else if (FileSystem.isDirectory(filePath) && !skip(prefix + file) )
 			{
 				includePackage(cp, prefix + file);
 			}
@@ -148,19 +146,19 @@ class ClassPathFilter
 	/**
 	Includes the classes in a file to the classMap.
 	Adds the path to the cache if not up to date
-	*/
+	**/
 	function includeFile(path:String)
 	{
-		if(!cache.isCached(path))
+		if (!cache.isCached(path))
 		{
 			addClassesInFileToCache(path);
 		}
 		
-		for(cls in cache.getIncludedClassesInFile(path))
+		for (cls in cache.getIncludedClassesInFile(path))
 		{
 			classMap.set(cls, true);
 		}
-		for(cls in cache.getExcludedClassesInFile(path))
+		for (cls in cache.getExcludedClassesInFile(path))
 		{
 			classMap.set(cls, false);
 		}	
@@ -173,7 +171,7 @@ class ClassPathFilter
 	which can fail compilation in some edge cases for classes with generics (e.g. class Foo<T:Bar> extends Base<T:BarBase>)
 	
 	@param path - the file path to cache
-	*/
+	**/
 
 	function addClassesInFileToCache(path:String)
 	{
@@ -188,16 +186,15 @@ class ClassPathFilter
 
 		var temp:String;
 
-		if(ignoreClassMeta != null)
+		if (ignoreClassMeta != null)
 		{
 			var ignoreClassMetas = "(" + ignoreClassMeta.split(",").join("|") + ")";//e.g. :(IgnoreCover|:IgnoreCover|:ignore|:macro)
 
-			trace("ignoreClassMetas: " + ignoreClassMetas);
 			temp = contents;
 			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
 			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		
-			while(regIgnore.match(temp))
+			while (regIgnore.match(temp))
 			{
 				excludesMap.set(prefix + regIgnore.matched(3), true);
 				temp = regIgnore.matchedRight();
@@ -206,7 +203,7 @@ class ClassPathFilter
 
 		var regInclude:EReg = null;
 
-		if(includeClassMeta != null)
+		if (includeClassMeta != null)
 		{
 			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
 		}
@@ -224,17 +221,11 @@ class ClassPathFilter
 
 		temp = contents;
 
-		while(regInclude.match(temp))
+		while (regInclude.match(temp))
 		{
 			var cls = prefix + regInclude.matched(2);
-
-			if(isPartialClass(cls, path))
-			{
-				//Added support for MCore Partials Macros
-				excludes.push(cls);
-				excludes.push(cls + "_generated");
-			}
-			else if(excludesMap.exists(cls) || skip(cls))
+			
+			if (excludesMap.exists(cls) || skip(cls))
 			{
 				excludes.push(cls);
 			}
@@ -248,48 +239,22 @@ class ClassPathFilter
 		cache.addToCache(path, includes, excludes);
 	}
 
-
 	/**
-	Customisation for MCore partials.
-	Checks for pattern Class_xxx.hx where there also exists a Class.hx at the same location
-	
-	Ignores Class_xxx_generated.hx
-	*/
-	function isPartialClass(cls:String, path:String):Bool
-	{
-		var parts = cls.split("_");
+		Looks for match in exlucded class patterns.
+		Supports optional '*' wildcards
+		e.g. foo.Foo
+		e.g. foo.*
+		e.g. *.Foo
 
-		if(parts.length == 2)
-		{
-			var baseCls = parts[0].split(".").pop();
-			var paths = path.split("/");
-
-			paths.pop();
-
-			var basePath = paths.join("/") + "/" + baseCls + ".hx";
-			return FileSystem.exists(basePath);
-		}
-
-		return false;
-	}
-
-
-	/**
-	* Looks for match in exlucded class patterns.
-	* Supports optional '*' wildcards
-	* e.g. foo.Foo
-	* e.g. foo.*
-	* e.g. *.Foo
-	*
-	* @return true if excluded
-	*/
+		@return true if excluded
+	**/
 	function isExcludedClass(exclusions:Array<String>, clazz:String):Bool
 	{
-		for(pattern in exclusions)
+		for (pattern in exclusions)
 		{
-			if(pattern.indexOf("*") == -1)
+			if (pattern.indexOf("*") == -1)
 			{
-				 if(clazz == pattern) return true;
+				 if (clazz == pattern) return true;
 				 continue;
 			}
 
@@ -298,21 +263,21 @@ class ClassPathFilter
 
 			var reg = new EReg(expr, "");
 
-			if(reg.match(clazz))return true;
+			if (reg.match(clazz))return true;
 		}
 
 		return false;
 	}
 
 	/**
-	* looks for a valid package definition in a class
-	*/
+		looks for a valid package definition in a class
+	**/
 	function getPackageDefinitionInFile(contents:String):String
 	{
 		//var contents = File.getContent(path);
-		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\.])+);/m;
+		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])+);/m;
 
-		if(reg.match(contents))
+		if (reg.match(contents))
 		{
 			return reg.matched(1) + ".";
 		}

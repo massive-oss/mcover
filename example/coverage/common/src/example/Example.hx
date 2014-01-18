@@ -5,8 +5,8 @@ class Example
 	@IgnoreCover
 	static public function log(?cover:Null<Bool>=true, ?pos:haxe.PosInfos)
 	{
-		//var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
-		//trace(s);
+		// var s = (cover ? "" : "! ") + pos.className + "." + pos.methodName + "(" + pos.lineNumber + ")";
+		// trace(s);
 	}
 
 	public var fieldA:String;
@@ -17,6 +17,8 @@ class Example
 		//notCovered();//isn't called so that reported as misssing coverage
 		//notCoveredEmpty();//isn't called so that reported as misssing coverage
 		//ignored();//isn't called, but ignored via @ignoreCover metadata
+
+		ignoredExpr();
 
 		ifMethod(true);
 		ifMethod(false);
@@ -63,30 +65,29 @@ class Example
 	}
 
 	/**
-	simple method that needs coverage
-	*/
+		simple method that needs coverage
+	**/
 	function covered()
 	{
 		log();
 	}
 
-
 	/**
-	method containing branch that isn't executed anywhere
-	*/
+		method containing branch that isn't executed anywhere
+	**/
 	function notCovered(?value:Bool=false)
 	{
 		log(false);
 
-		if(value)
+		if (value)
 		{
 			log(false);
 		}
 	}
 
 	/**
-	Method ignored by coverage report becuase of metadata
-	*/
+		Method ignored by coverage report becuase of metadata
+	**/
 	@IgnoreCover
 	function ignored()
 	{
@@ -94,14 +95,22 @@ class Example
 	}
 
 	/**
-	Empty method that isn't executed anywhere
-	*/
+		Expr ignored by coverage report becuase of metadata
+	**/
+	function ignoredExpr()
+	{
+		@IgnoreCover if (false) log(false);
+	}
+
+	/**
+		Empty method that isn't executed anywhere
+	**/
 	function notCoveredEmpty()
 	{}
 
 	/**
-	various exressions that don't require coverage (ie fields and array instantiation)
-	*/
+		various exressions that don't require coverage (ie fields and array instantiation)
+	**/
 	function notCoverable(?value:Bool=true)
 	{
 		var i = 0;
@@ -116,7 +125,7 @@ class Example
 
 	function ifMethod(?value:Bool=false)
 	{
-		if(value)
+		if (value)
 		{
 			log();
 		}
@@ -128,7 +137,7 @@ class Example
 
 	function elseIfMethod(?value:Int=0)
 	{
-		if(value == 0)
+		if (value == 0)
 		{
 			log();
 		}
@@ -144,7 +153,7 @@ class Example
 
 	function switchMethod(?value:Int)
 	{
-		switch(value)
+		switch (value)
 		{
 			case 0: log();
 			case 1: log();
@@ -157,7 +166,7 @@ class Example
 		try
 		{
 			log();
-			if(value == true)
+			if (value == true)
 			{
 				throw ("exception");
 			}
@@ -171,29 +180,29 @@ class Example
 	function whileLoop()
 	{
 		var i = 0;
-		while(i < 2)
+		while (i < 2)
 		{
 			i++;
 		}
 
-		i = 0;
-		while(i < 2) //note: will never be true (ie. i == 2)
+		//i = 0;
+		while (i < 2) //note: will never be true (ie. i == 2)
 		{
-			if(i == 1) break;
+			if (i == 1) break;
 			i++;
 		}
 	}
 
 	function forLoops()
 	{
-		for(i in 0...5)
+		for (i in 0...5)
 		{
 			log();
 		}
 
 		var a:Array<Int> = [1,2,3,4,5];
 
-		for(i in a)
+		for (i in a)
 		{
 			log();
 		}
@@ -215,22 +224,22 @@ class Example
 	}
 	function branchBool(a:Bool, b:Bool)
 	{
-		if(a || b)
+		if (a || b)
 		{
 			log();
 		}
 
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
 
-		if(a != b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a && b)
+		if (a && b)
 		{
 			log();
 		}
@@ -238,42 +247,42 @@ class Example
 
 	function branchInt(a:Int, b:Int)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
-		{
-			log();
-		}
-
-		if(a < b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a <= b)
+		if (a < b)
 		{
 			log();
 		}
 
-		if(a > b)
+		if (a <= b)
 		{
 			log();
 		}
 
-		if(a >= b)
+		if (a > b)
+		{
+			log();
+		}
+
+		if (a >= b)
 		{
 			log();
 		}
 	}
 	function branchString(a:String, b:String)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
+		if (a != b)
 		{
 			log();
 		}
@@ -281,31 +290,31 @@ class Example
 
 	function branchFloat(a:Float, b:Float)
 	{
-		if(a == b)
+		if (a == b)
 		{
 			log();
 		}
-		if(a != b)
-		{
-			log();
-		}
-
-		if(a < b)
+		if (a != b)
 		{
 			log();
 		}
 
-		if(a <= b)
+		if (a < b)
 		{
 			log();
 		}
 
-		if(a > b)
+		if (a <= b)
 		{
 			log();
 		}
 
-		if(a >= b)
+		if (a > b)
+		{
+			log();
+		}
+
+		if (a >= b)
 		{
 			log();
 		}

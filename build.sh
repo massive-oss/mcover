@@ -2,10 +2,16 @@
 
 set -e
 
+
 echo '  create missing build directories'
+
+haxelib dev mcover `pwd`/src
+
+
 mkdir -p bin
 mkdir -p bin/output
 mkdir -p bin/coverage
+
 
 echo '  compile CLI'
 cd cli
@@ -18,6 +24,7 @@ haxe buildAllClasses.hxml
 
 
 echo '  create md5 hash stamp'
+
 day=$( date +%s )
 fname="src/stamp.txt"
 

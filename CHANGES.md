@@ -1,3 +1,23 @@
+v 3.0.0
+- removed haxe 2.x support
+- refactored macros to use retification
+- added support for expression metadata, ignoring individual expressions
+- added support for packages with underscores
+
+v 2.0.3
+- added haxelib.json
+
+v 2.0.1
+- added support for haxe3 RC
+- removed dependency on mconsole
+
+v 1.5.1
+- hotfix for edge case with position file path not found using Context.resolvePath
+- hotfix for excpetion thrown when creating temp directory on windows 
+
+v 1.5.0
+- added better coverage handling/ support for macro generated functions/code blocks
+
 v 1.4.2
 - cache file naming causing issues on some platforms
 - minor compatibility updates for building with haxe svn (2.11)

@@ -1,30 +1,30 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage.client;
 
@@ -74,7 +74,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 	function reportComplete()
 	{
-		if(completionHandler != null)
+		if (completionHandler != null)
 		{
 			completionHandler(this);
 		}
@@ -110,13 +110,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 		
-		
-		for(pck in coverage.getPackages())
+		for (pck in coverage.getPackages())
 		{
 			var pckNode = createPackageNode(pck);
 			node.addChild(pckNode);
@@ -134,12 +133,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(file in pck.getFiles())
+		for (file in pck.getFiles())
 		{
 			var fileNode = createFileNode(file);
 			node.addChild(fileNode);
@@ -156,12 +155,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, ALL);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(clazz in file.getClasses())
+		for (clazz in file.getClasses())
 		{
 			var clazzNode = createClassNode(clazz);
 			node.addChild(clazzNode);
@@ -178,12 +177,12 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, CLAZZ);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
 
-		for(method in clazz.getMethods())
+		for (method in clazz.getMethods())
 		{
 			var methodNode = createMethodNode(method);
 			node.addChild(methodNode);
@@ -200,7 +199,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		var coverageNodes = createCoverageNodes(result, METHOD);
 
-		for(coverageNode in coverageNodes)
+		for (coverageNode in coverageNodes)
 		{
 			node.addChild(coverageNode);
 		}
@@ -208,11 +207,10 @@ class EMMAPrintClient implements CoverageReportClient
 		return node;
 	}
 
-
-	/*
-	* generates the coverage summary up to the specified level
-	* @param level (0 == line, 1 == block, 2 == method, 3 == class)
-	*/
+	/**
+		generates the coverage summary up to the specified level
+		@param level (0 == line, 1 == block, 2 == method, 3 == class)
+	**/
 	function createCoverageNodes(result:CoverageResult, level:CoverageLevel):Array<Xml>
 	{
 		var nodes:Array<Xml> = [];
@@ -226,9 +224,9 @@ class EMMAPrintClient implements CoverageReportClient
 		node = createCoverageNode("block", bc, bt);
 		nodes.unshift(node);
 
-		if(level == METHOD)
+		if (level == METHOD)
 		{
-			if(bc > 0)
+			if (bc > 0)
 			{
 				node = createCoverageNode("method", 1, 1);
 			}
@@ -247,9 +245,9 @@ class EMMAPrintClient implements CoverageReportClient
 			nodes.unshift(node);
 		}
 
-		if(level == CLAZZ)
+		if (level == CLAZZ)
 		{
-			if(result.mc > 0)
+			if (result.mc > 0)
 			{
 				node = createCoverageNode("class", 1, 1);
 			}
@@ -267,7 +265,6 @@ class EMMAPrintClient implements CoverageReportClient
 			node = createCoverageNode("class", result.cc, result.c);
 			nodes.unshift(node);
 		}
-
 
 		return nodes;
 	
@@ -290,9 +287,9 @@ class EMMAPrintClient implements CoverageReportClient
 			var p = (count == 0 ? 0 : Math.round((count/total)*100));
 
 			#if (!neko && !flash9) 
-				if(Math.isNaN(p)) throw "NaN";
+				if (Math.isNaN(p)) throw "NaN";
 			#else
-				if(Math.isNaN(p)) p = 0;
+				if (Math.isNaN(p)) p = 0;
 			#end
 			return p;
 		}

@@ -11,7 +11,7 @@ class Calculator
 
 	static public function greatestValue(a:Int, b:Int):Int
 	{
-		if(a > b) return a;
+		if (a > b) return a;
 		return b;
 	}
 }

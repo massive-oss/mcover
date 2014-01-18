@@ -1,30 +1,30 @@
-/****
-* Copyright 2012 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage.data;
 
@@ -37,14 +37,14 @@ import mcover.coverage.data.Branch;
 	var statements:Map<Int,Array<Int>>;
 	var branches:Map<Int,Array<Int>>;
 
-	/*
-	 * total execution count for statements by id
-	*/
+	/**
+		total execution count for statements by id
+	**/
 	public var statementResultsById(default, null):Map<Int,Int>;
 	
-	/*
-	 * total execution summary for branches by id
-	*/
+	/**
+		total execution summary for branches by id
+	**/
 	public var branchResultsById(default, null):Map<Int,BranchResult>;
 
 	public function new()
@@ -69,7 +69,7 @@ import mcover.coverage.data.Branch;
 	public function addStatement(block:Statement)
 	{
 		verifyBlockData(block);
-		if(statements.exists(block.id)) throw new Exception("Statement already exists: " + block.id + " " + block.toString());
+		if (statements.exists(block.id)) throw new Exception("Statement already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -85,7 +85,7 @@ import mcover.coverage.data.Branch;
 	public function addBranch(block:Branch)
 	{
 		verifyBlockData(block);
-		if(branches.exists(block.id)) throw new Exception("Branch already exists: " + block.id + " " + block.toString());
+		if (branches.exists(block.id)) throw new Exception("Branch already exists: " + block.id + " " + block.toString());
 		
 		var packg = cast(getItemByName(block.packageName, Package), Package);
 		var file = cast(packg.getItemByName(block.file, File), File);
@@ -100,29 +100,27 @@ import mcover.coverage.data.Branch;
 
 	function verifyBlockData(block:AbstractBlock)
 	{
-		if(block.id == null) throw new Exception("id cannot be null");
-		if(block.packageName == null) throw new Exception("packageName cannot be null");
-		if(block.file == null) throw new Exception("file cannot be null");
-		if(block.qualifiedClassName == null) throw new Exception("qualifiedClassName cannot be null");
-		if(block.methodName == null) throw new Exception("methodName cannot be null");
+		if (block.id == null) throw new Exception("id cannot be null");
+		if (block.packageName == null) throw new Exception("packageName cannot be null");
+		if (block.file == null) throw new Exception("file cannot be null");
+		if (block.qualifiedClassName == null) throw new Exception("qualifiedClassName cannot be null");
+		if (block.methodName == null) throw new Exception("methodName cannot be null");
 	}
 
 	public function getBranchById(id:Int):Branch
 	{
-		if(!branches.exists(id)) throw new Exception("Branch does not exist: " + id);
+		if (!branches.exists(id)) throw new Exception("Branch does not exist: " + id);
 
 		var lookup:Array<Int> = branches.get(id).concat([]);
 		return lookupBranch(lookup);
 	}
 
-
 	public function getStatementById(id:Int):Statement
 	{
-		if(!statements.exists(id)) throw new Exception("Statement does not exist: " + id);
+		if (!statements.exists(id)) throw new Exception("Statement does not exist: " + id);
 		var lookup:Array<Int> = statements.get(id).concat([]);
 		return lookupStatement(lookup);
 	}
-
 
 
     override public function getMissingBranches():Array<Branch>
@@ -152,7 +150,7 @@ import mcover.coverage.data.Branch;
 
 		var packageName = index > 1 ? name.substr(0, index) : "";
 
-		if(!items.exists(packageName)) return null;
+		if (!items.exists(packageName)) return null;
 
 		var pckgId = items.get(packageName);
 		
@@ -160,9 +158,9 @@ import mcover.coverage.data.Branch;
 		
 		var classes = pckg.getClasses();
 
-		for(cls in classes)
+		for (cls in classes)
 		{
-			if(cls.name == name)
+			if (cls.name == name)
 			{
 				return cls;
 			}
@@ -174,7 +172,7 @@ import mcover.coverage.data.Branch;
 	public function getPackages():Array<Package>
 	{
 		var a:Array<Package> = [];
-		for(item in itemsById)
+		for (item in itemsById)
 		{
 			a.push(cast(item, Package));
 		}
@@ -186,12 +184,12 @@ import mcover.coverage.data.Branch;
 	@IgnoreLogging
 	override public function getResults(?cache:Bool=true):CoverageResult
 	{
-		if(resultCache == null || !cache)
+		if (resultCache == null || !cache)
 		{
-			for(lookup in statements)
+			for (lookup in statements)
 			{
 				var statement = lookupStatement(lookup.concat([]));
-				if(statementResultsById.exists(statement.id))
+				if (statementResultsById.exists(statement.id))
 				{
 					statement.count = statementResultsById.get(statement.id);
 				}
@@ -200,10 +198,10 @@ import mcover.coverage.data.Branch;
 					statement.count = 0;
 				}
 			}
-			for(lookup in branches)
+			for (lookup in branches)
 			{
 				var branch = lookupBranch(lookup.concat([]));
-				if(branchResultsById.exists(branch.id))
+				if (branchResultsById.exists(branch.id))
 				{
 					var result = branchResultsById.get(branch.id);
 					branch.trueCount = result.trueCount;

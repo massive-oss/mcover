@@ -11,9 +11,15 @@ import mcover.coverage.data.CoverageResult;
 
 import mcover.coverage.data.NodeMock;
 
+#if haxe3
+import haxe.ds.IntMap;
+#else
+private typedef IntMap<T> = IntHash<T>
+#end
+
 /**
-* Auto generated MassiveUnit Test Class  for mcover.coverage.client.EMMAPrintClient 
-*/
+	Auto generated MassiveUnit Test Class  for mcover.coverage.client.EMMAPrintClient 
+**/
 class EMMAPrintClientTest extends CoverageReportClientTest
 {
 	var instance:EMMAPrintClient; 
@@ -23,7 +29,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		super();
 	}
 	
-	
 	@Before
 	override public function setup():Void
 	{
@@ -32,7 +37,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		coverage = new Coverage();
 	}
 	
-
 
 	@Test
 	public function shouldIncludeEmptyStats():Void
@@ -61,7 +65,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 
 		node = stats.elementsNamed("srclines").next();
 		assertStatNodeValue(node, 0);
-
 	}
 
 	@Test
@@ -93,7 +96,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 
 		node = stats.elementsNamed("srclines").next();
 		assertStatNodeValue(node, 0);
-
 	}
 
 	@Test
@@ -138,7 +140,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		return new EMMAPrintClient();
 	}
 
-
 	static public function createMockCoverage(?statementCount:Int=10, ?branchTrueCount:Int=5, ?branchFalseCount:Int=5):Coverage
 	{
 		var coverage = new Coverage();
@@ -146,7 +147,7 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		var statement =NodeMock.createStatement();
 		coverage.addStatement(statement);
 
-		var map:Map<Int,Int> = new Map();
+		var map:IntMap<Int> = new IntMap();
 		map.set(statement.id, statementCount);
 		coverage.setStatementResultsMap(map);
 
@@ -157,7 +158,7 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		var branch = NodeMock.createBranch();
 		coverage.addBranch(branch);
 
-		var map:Map<Int,BranchResult> = new Map();
+		var map:IntMap<BranchResult> = new IntMap();
 
 		var result:BranchResult = {id:branch.id, trueCount:branchTrueCount, falseCount:branchFalseCount, total:branchTrueCount + branchFalseCount};
 

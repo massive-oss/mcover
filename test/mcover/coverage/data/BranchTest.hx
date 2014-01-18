@@ -91,7 +91,6 @@ class BranchTest extends AbstractBlockTest
 		Assert.areEqual(str, branch.toString());
 	}
 
-
 	////////////////////////////////
 
 	override function createEmptyNode():AbstractNode
