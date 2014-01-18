@@ -1,30 +1,30 @@
-/****
-* Copyright 2013 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.macro;
 
@@ -63,26 +63,23 @@ class BuildMacro
 	static var USING_MPARTIAL:Bool = Context.defined("mpartial");
 
 
-
 	var classPaths:Map<String,Bool>;
 	var fields:Array<Field>;
 	var type:Null<haxe.macro.Type>;
 	var info(default, null):ClassInfo;
 
 	/**
-	Current function stack (ususally just the current method field (unless inside inline function))
-	*/
+		Current function stack (ususally just the current method field (unless inside inline function))
+	**/
 	var functionStack:Array<Function>;
 
 	static var statementCount:Int = 0;
 	static var branchCount:Int = 0;
 	
-
 	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
 	var coveredLines:Map<Int,Bool>;
 
-	
 	public function new(classPaths:Map<String,Bool>)
 	{
 		this.classPaths = classPaths;
@@ -102,7 +99,6 @@ class BuildMacro
 				info.className = parts.pop();
 				info.packageName = parts.join(".");
 				info.packagePath = parts.join(SLASH);
-
 			}
 			default: null;
 		}
@@ -114,8 +110,8 @@ class BuildMacro
 	}
 
 	/**
-	 * loops through all class fields and interogates contents recursively
-	 */
+		loops through all class fields and interogates contents recursively
+	**/
 	public function parseFields():Array<Field>
 	{
 		for (field in fields)
@@ -139,7 +135,6 @@ class BuildMacro
         return fields;
 	}
 
-	
 	function ignoreField(field:Field):Bool
 	{
 		for (item in field.meta)
@@ -149,12 +144,11 @@ class BuildMacro
 		return false;
 	}
 
-
 	/**
-	Wraps code branches and statement blocks with coverage logs
+		Wraps code branches and statement blocks with coverage logs
 	@param e 		the current expression
 	@return the updated expression
-	*/
+	**/
 
 	function parseExpr(e:Expr):Expr
 	{
@@ -217,9 +211,9 @@ class BuildMacro
 	}
 
 	/**
-	adds coverage log to start of code block
+		adds coverage log to start of code block
 	Excludes empty code blocks that are NOT a top level class method
-	*/
+	**/
 	function coverBlock(expr:Expr, exprs:Array<Expr>):Array<Expr>
 	{
 		var length = exprs.length;
@@ -260,13 +254,12 @@ class BuildMacro
 		return EBinop(op, e1, e2);
 	}
 
-
 	/////////////
 
 	/**
-	* generates a call to the runner to insert into the code block containing a unique id
+		generates a call to the runner to insert into the code block containing a unique id
 	*		mcover.MCoverRunner.log(id)
-	* @see createCodeBlock for key format
+		@see createCodeBlock for key format
 	**/
 	function createBlockCoverageExpr(expr:Expr, startPos:Position, endPos:Position):Expr
 	{
@@ -276,7 +269,7 @@ class BuildMacro
 	}
 
 	/**
-	* wraps a boolean value within a branch in a call to MCoverage.getLogger().logBranch(id, value, compareValue);
+		wraps a boolean value within a branch in a call to MCoverage.getLogger().logBranch(id, value, compareValue);
 	**/
 	function coverBranch(expr:Expr, ?compareExpr:Expr = null):Expr
 	{
@@ -299,7 +292,6 @@ class BuildMacro
 
 		file = FileSystem.fullPath(file);
 		
-
 		var posFile:String = null;
 		var classFile:String = null;
 
@@ -351,7 +343,6 @@ class BuildMacro
 					var fileName = temp.pop();
 					var fileClassPath = temp.join(info.packagePath);//in case package dir repeated in full path
 
-
 					if (fileName.indexOf("_") != -1)
 					{
 						var parts = fileName.split("_");
@@ -382,7 +373,6 @@ class BuildMacro
 			}
 		}
 
-		
 		var error = "Unable to find referenced file (" + file + ") or target file (" + classFile + ") in any class paths.";
 		error += "\n    Location: " + info.location;
 		error += "\n    Referenced pos: " + Std.string(startPos);

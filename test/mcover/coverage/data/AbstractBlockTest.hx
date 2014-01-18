@@ -63,7 +63,6 @@ class AbstractBlockTest extends AbstractNodeTest
 	}
 
 
-
 	////////////////////////////////
 
 	override function createEmptyNode():AbstractNode

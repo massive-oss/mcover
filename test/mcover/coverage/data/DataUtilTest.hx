@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import mcover.coverage.data.DataUtil;
 
 /**
-* Auto generated MassiveUnit Test Class  for mcover.coverage.data.DataUtil 
-*/
+	Auto generated MassiveUnit Test Class  for mcover.coverage.data.DataUtil 
+**/
 class DataUtilTest 
 {
 	var instance:DataUtil; 

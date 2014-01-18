@@ -7,7 +7,7 @@ import example.Example;
 
 /**
 Main class as @IgnoreCover meta to ensure it is not included in the coverage
-*/
+**/
 @IgnoreCover
 class Main
 {
@@ -46,5 +46,4 @@ class Main
 		completed = true;
 		trace("Coverage report complete: " + percent + "%");
 	}
-
 }

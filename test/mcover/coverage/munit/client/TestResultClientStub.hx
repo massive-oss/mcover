@@ -2,10 +2,6 @@ package mcover.coverage.munit.client;
 
 import massive.munit.ITestResultClient;
 import massive.munit.TestResult;
-/**
- * ...
- * @author Mike Stead
- */
 
 class TestResultClientStub implements IAdvancedTestResultClient
 {
@@ -115,5 +111,4 @@ class TestResultClientStub implements IAdvancedTestResultClient
 		str += "errorCount: " + errorCount + "\n";
 		return str;
 	}
-
 }

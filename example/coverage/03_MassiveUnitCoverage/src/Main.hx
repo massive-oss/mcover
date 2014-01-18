@@ -19,6 +19,5 @@ class Main
 		var total = account.totalValue();
 
 		trace(account.toString());
-
 	}
 }	

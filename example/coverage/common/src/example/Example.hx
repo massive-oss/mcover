@@ -65,17 +65,16 @@ class Example
 	}
 
 	/**
-	simple method that needs coverage
-	*/
+		simple method that needs coverage
+	**/
 	function covered()
 	{
 		log();
 	}
 
-
 	/**
-	method containing branch that isn't executed anywhere
-	*/
+		method containing branch that isn't executed anywhere
+	**/
 	function notCovered(?value:Bool=false)
 	{
 		log(false);
@@ -87,8 +86,8 @@ class Example
 	}
 
 	/**
-	Method ignored by coverage report becuase of metadata
-	*/
+		Method ignored by coverage report becuase of metadata
+	**/
 	@IgnoreCover
 	function ignored()
 	{
@@ -96,22 +95,22 @@ class Example
 	}
 
 	/**
-	Expr ignored by coverage report becuase of metadata
-	*/
+		Expr ignored by coverage report becuase of metadata
+	**/
 	function ignoredExpr()
 	{
 		@IgnoreCover if (false) log(false);
 	}
 
 	/**
-	Empty method that isn't executed anywhere
-	*/
+		Empty method that isn't executed anywhere
+	**/
 	function notCoveredEmpty()
 	{}
 
 	/**
-	various exressions that don't require coverage (ie fields and array instantiation)
-	*/
+		various exressions that don't require coverage (ie fields and array instantiation)
+	**/
 	function notCoverable(?value:Bool=true)
 	{
 		var i = 0;

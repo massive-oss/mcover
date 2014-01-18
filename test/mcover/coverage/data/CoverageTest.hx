@@ -11,7 +11,6 @@ import haxe.ds.IntMap;
 private typedef IntMap<T> = IntHash<T>
 #end
 
-
 class CoverageTest extends AbstractNodeListTest
 {	
 	var coverage:Coverage;
@@ -62,7 +61,6 @@ class CoverageTest extends AbstractNodeListTest
 	}
 
 
-
 	@Test
 	public function shouldSortMissingStatementsByName()
 	{
@@ -80,7 +78,6 @@ class CoverageTest extends AbstractNodeListTest
 		Assert.areEqual("a.b", missing[1].qualifiedClassName);
 		Assert.areEqual("c", missing[2].qualifiedClassName);
 	}
-
 
 	
 	@Test
@@ -109,7 +106,6 @@ class CoverageTest extends AbstractNodeListTest
 		var item2 = cast(coverage.getItemByName("item2", Package), Package);
 		
 		var item3 = cast(coverage.getItemByName("item1a", Package), Package);
-		
 		
 		var packages = coverage.getPackages();
 
@@ -178,7 +174,6 @@ class CoverageTest extends AbstractNodeListTest
 	{
 		var block = NodeMock.createStatement();
 	
-
 		coverage.addStatement(block);
 
 		var packages = coverage.getPackages();
@@ -190,7 +185,6 @@ class CoverageTest extends AbstractNodeListTest
 		var file = packages[0].getItemByName("file", File);
 
 		Assert.areEqual(1, cast(file, File).itemCount);
-
 
 		var classes = coverage.getClasses();
 		Assert.areEqual(1, classes.length);
@@ -207,7 +201,6 @@ class CoverageTest extends AbstractNodeListTest
 	{
 		var block = NodeMock.createBranch();
 	
-
 		coverage.addBranch(block);
 
 		var packages = coverage.getPackages();
@@ -219,7 +212,6 @@ class CoverageTest extends AbstractNodeListTest
 		var file = packages[0].getItemByName("file", File);
 
 		Assert.areEqual(1, cast(file, File).itemCount);
-
 
 		var classes = coverage.getClasses();
 		Assert.areEqual(1, classes.length);
@@ -271,7 +263,6 @@ class CoverageTest extends AbstractNodeListTest
 		testMissingBlockFieldsThrowError(createMethod, addMethod);
 	}
 
-
 	@Test
 	public function shouldThrowExcepctionIfBranchHasMissingFields()
 	{
@@ -279,7 +270,6 @@ class CoverageTest extends AbstractNodeListTest
 		var addMethod = coverage.addBranch;		
 		testMissingBlockFieldsThrowError(createMethod, addMethod);
 	}
-
 
 	function testMissingBlockFieldsThrowError(createMethod:Int ->Dynamic, addMethod:Dynamic ->Void)
 	{
@@ -341,7 +331,6 @@ class CoverageTest extends AbstractNodeListTest
 		}
 	}
 
-
 	@Test
 	public function shouldReturnStatementById()
 	{
@@ -357,7 +346,6 @@ class CoverageTest extends AbstractNodeListTest
 
 			Assert.isNotNull(statement);
 			Assert.areEqual(item1.statement, statement);
-
 
 			statement = coverage.getStatementById(2);
 			Assert.fail("invalid statement id should throw exception.");
@@ -382,7 +370,6 @@ class CoverageTest extends AbstractNodeListTest
 
 			Assert.isNotNull(branch);
 			Assert.areEqual(item1.branch, branch);
-
 
 			branch = coverage.getBranchById(2);
 			Assert.fail("invalid branch id should throw exception.");
@@ -430,7 +417,6 @@ class CoverageTest extends AbstractNodeListTest
 		Assert.isNotNull(cls);
 	}
 
-
 	//////////////////
 
 	override function createEmptyNode():AbstractNode
@@ -447,8 +433,6 @@ class CoverageTest extends AbstractNodeListTest
 	{
 		return new Coverage();
 	}
-
-
 
 
 }

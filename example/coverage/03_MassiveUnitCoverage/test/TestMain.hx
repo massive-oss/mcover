@@ -11,9 +11,9 @@ import js.Lib;
 #end
 
 /**
- * Auto generated Test Application.
- * Refer to munit command line tool for more information (haxelib run munit)
- */
+ 	Auto generated Test Application.
+ 	Refer to munit command line tool for more information (haxelib run munit)
+**/
 class TestMain
 {
     static function main(){	new TestMain(); }
@@ -41,7 +41,7 @@ class TestMain
     /*
         updates the background color and closes the current browser
         for flash and html targets (useful for continous integration servers)
-    */
+   **/
     function completionHandler(successful:Bool):Void
     {
         try

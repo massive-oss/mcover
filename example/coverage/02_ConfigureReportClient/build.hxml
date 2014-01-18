@@ -22,7 +22,6 @@
 -cp ../common/src
 -lib mconsole
 
-
 --next
 
 -main Main

@@ -18,8 +18,8 @@ private typedef IntMap<T> = IntHash<T>
 #end
 
 /**
-* Auto generated MassiveUnit Test Class  for mcover.coverage.client.EMMAPrintClient 
-*/
+	Auto generated MassiveUnit Test Class  for mcover.coverage.client.EMMAPrintClient 
+**/
 class EMMAPrintClientTest extends CoverageReportClientTest
 {
 	var instance:EMMAPrintClient; 
@@ -29,7 +29,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		super();
 	}
 	
-	
 	@Before
 	override public function setup():Void
 	{
@@ -38,7 +37,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 		coverage = new Coverage();
 	}
 	
-
 
 	@Test
 	public function shouldIncludeEmptyStats():Void
@@ -67,7 +65,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 
 		node = stats.elementsNamed("srclines").next();
 		assertStatNodeValue(node, 0);
-
 	}
 
 	@Test
@@ -99,7 +96,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 
 		node = stats.elementsNamed("srclines").next();
 		assertStatNodeValue(node, 0);
-
 	}
 
 	@Test
@@ -143,7 +139,6 @@ class EMMAPrintClientTest extends CoverageReportClientTest
 	{
 		return new EMMAPrintClient();
 	}
-
 
 	static public function createMockCoverage(?statementCount:Int=10, ?branchTrueCount:Int=5, ?branchFalseCount:Int=5):Coverage
 	{

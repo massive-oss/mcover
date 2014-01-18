@@ -115,7 +115,6 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 		testCoverage = result;
 	}
 
-
 	public function reportFinalCoverage(?percent:Float=0, missingCoverageResults:Array<CoverageResult>, summary:String,
 		?classBreakdown:String=null,
 		?packageBreakdown:String=null,
@@ -128,7 +127,6 @@ class AdvancedTestResultClientMock implements ICoverageTestResultClient
 		finalCoverageClassBreakdown = classBreakdown;
 		finalCoveragePackageBreakdown = packageBreakdown;
 		finalCoverageExecutionFrequency = executionFrequency;
-
 	}
 	
 	public function toString():String

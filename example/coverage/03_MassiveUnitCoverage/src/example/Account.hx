@@ -3,6 +3,7 @@ package example;
 class Account 
 {
 	var values:Array<Int>;
+
 	public function new() 
 	{
 		values = [];
@@ -40,6 +41,5 @@ class Account
 			return value;
 		}
 		return value*2;
-
 	}
 }

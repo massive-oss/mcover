@@ -13,7 +13,6 @@ class PrintClientTest extends CoverageReportClientTest
 {
 	var printClient:PrintClient;
 	
-
 	public function new()
 	{
 		super();
@@ -50,8 +49,6 @@ class PrintClientTest extends CoverageReportClientTest
 	static var branchFrequency = "BRANCHES BY EXECUTION FREQUENCY";
 	static var statementMissing = "MISSING STATEMENT COVERAGE";
 	static var branchMissing = "MISSING BRANCH COVERAGE";
-
-
 
 
 
@@ -105,7 +102,6 @@ class PrintClientTest extends CoverageReportClientTest
 	}
 
 
-
 	@Test
 	public function shouldPrintEmptyBlockFrequencyIfBlockCountEqualsZero()
 	{
@@ -147,7 +143,6 @@ class PrintClientTest extends CoverageReportClientTest
 		addBranchToCoverage(0, 1, 0, 1);
 		addBranchToCoverage(1, 0, 1, 1);
 	
-
 		coverage.getResults();
 
 		printClient.includeExecutionFrequency = true;
@@ -241,7 +236,6 @@ class PrintClientTest extends CoverageReportClientTest
 			 
 	}
 
-	
 	function assertContainsString(source:String, value:String)
 	{
 		var lines = source.split("\n");
@@ -263,7 +257,6 @@ class PrintClientTest extends CoverageReportClientTest
 	function assertPropertyIsIncludedInOutput(flagProperty:String, outputProperty:String)
 	{
 
-
 		Reflect.setField(printClient, flagProperty, false);
 	
 		printClient.report(coverage);
@@ -275,12 +268,10 @@ class PrintClientTest extends CoverageReportClientTest
 		Assert.isTrue(printClient.output.indexOf(result) == -1);
 		
 
-
 		Reflect.setField(printClient, flagProperty, true);
 		printClient.report(coverage);
 		result = Reflect.field(printClient, outputProperty);
 
-		
 		Assert.isTrue(printClient.output.indexOf(result) > -1);
 	}
 }

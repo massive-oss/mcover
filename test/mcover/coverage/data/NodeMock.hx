@@ -89,5 +89,4 @@ class NodeMock extends AbstractNode
 		
 		return {id:branch.id,trueCount:branch.trueCount, falseCount:branch.falseCount, total:branch.totalCount};
 	}
-
 }

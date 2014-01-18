@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import example.Account;
 
 /**
-* Auto generated MassiveUnit Test Class  for example.Account 
-*/
+	Auto generated MassiveUnit Test Class  for example.Account 
+**/
 class AccountTest 
 {
 	var instance:Account; 
@@ -36,7 +36,6 @@ class AccountTest
 	public function tearDown():Void
 	{
 	}
-	
 	
 	@Test
 	public function shouldBeEmptyAtConstructor():Void

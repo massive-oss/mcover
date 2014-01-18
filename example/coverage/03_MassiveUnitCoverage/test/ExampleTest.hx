@@ -5,10 +5,10 @@ import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
 /**
-* Auto generated ExampleTest for MassiveUnit. 
-* This is an example test class can be used as a template for writing normal and async tests 
-* Refer to munit command line tool for more information (haxelib run munit)
-*/
+	Auto generated ExampleTest for MassiveUnit. 
+	This is an example test class can be used as a template for writing normal and async tests 
+	Refer to munit command line tool for more information (haxelib run munit)
+**/
 class ExampleTest 
 {
 	private var timer:Timer;
@@ -38,7 +38,6 @@ class ExampleTest
 	{
 	}
 	
-	
 	@Test
 	public function testExample():Void
 	{
@@ -57,14 +56,12 @@ class ExampleTest
 		Assert.isFalse(false);
 	}
 	
-	
 	/**
-	* test that only runs when compiled with the -D testDebug flag
-	*/
+		test that only runs when compiled with the -D testDebug flag
+	**/
 	@TestDebug
 	public function testExampleThatOnlyRunsWithDebugFlag():Void
 	{
 		Assert.isTrue(true);
 	}
-
 }

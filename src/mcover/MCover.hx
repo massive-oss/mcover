@@ -1,30 +1,30 @@
-/****
-* Copyright 2013 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover;
 
@@ -51,7 +51,7 @@ To enable function entry/exit logging
 	
 	--macro mcover.MCover.logger(['package.name'],['sourcePath'], ['ignored patterns'])
 
-*/
+**/
 @:keep class MCover
 {
 	/** 
@@ -63,13 +63,12 @@ To enable function entry/exit logging
 	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
 	@param classPaths 	array of classpaths to search in (defaults to local scope only [''])
 	@param exclusions 	array of qualified class names to exclude (supports '*' wildcard patterns)
-	*/
+	**/
 	public static function coverage(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)	
 	{	
 		include(packages, classPaths, exclusions);
 	}
 
-	
 	public static function logger(?packages : Array<String>=null, ?classPaths : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
 		Context.error("MCover.logger has been removed in version 3", Context.currentPos());
@@ -77,12 +76,11 @@ To enable function entry/exit logging
 
 	public static var TEMP_DIR:String = ".temp/mcover/";
 
-
 	static var classPaths:Map<String,Bool> = new Map();
 
 	/**
-	Used by BuildMacro to store generated coverage data classes that will be compiled into application.
-	*/
+		Used by BuildMacro to store generated coverage data classes that will be compiled into application.
+	**/
 	static public var coverageData = new Coverage();
 
 	/** 
@@ -92,7 +90,7 @@ To enable function entry/exit logging
 	@param packages 	array of packages to include (e.g. "com.example") (defaults to all [""])
 	@param cps 		array of classpaths to search in (defaults to local scope only [''])
 	@param exclusions array of qualified class names to exclude (supports '*' wildcard patterns)
-	*/
+	**/
 	static function include(?packages : Array<String>=null, ?cps : Array<String>=null, ?exclusions : Array<String>=null)
 	{	
 		var temp = TEMP_DIR.split("/");
@@ -124,17 +122,14 @@ To enable function entry/exit logging
 		if (exclusions == null)
 			exclusions = [];
 
-
 		for (cp in cps)
 		{
 			classPaths.set(cp, true);
 		}
 
-
 		var filter = new ClassPathFilter();
 		filter.ignoreClassMeta = "IgnoreCover,:IgnoreCover,:ignore";
 		var classes = filter.filter(cps, packages, exclusions);
-
 
 		if (classes.count() == 0)
 			Context.warning("No classes match criteria in MCover macro:\n	packages: " + packages + ",\n	classPaths: " + classPaths + ",\n	exclusions: " + exclusions, Context.currentPos());
@@ -149,7 +144,6 @@ To enable function entry/exit logging
 			}
 			else
 				exclusions.push(cls);
-
 		}
 
 		trace("Excluding: " + exclusions);
@@ -174,9 +168,9 @@ To enable function entry/exit logging
 	}
 
 	/**
-	Per class build macro to add coverage expressions
+		Per class build macro to add coverage expressions
 	@return updated array of fields for the class
-	*/
+	**/
 	macro public static function build():Array<Field>
 	{
 		var classParser = new BuildMacro(classPaths); 
@@ -194,21 +188,19 @@ To enable function entry/exit logging
 
 		return null;
 		
-		
 	}
 	
 	/**
-	Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
+		Inserts reference to all identified code coverage blocks into a haxe.Resource file called 'MCover'.
 	This resource is used by MCoverRunner to determine code coverage results
 
 	@param types 		macro types passed through from the compiler
-	*/
+	**/
 	static function onGenerate(types:Array<haxe.macro.Type>):Void
 	{
 		var serializedData = haxe.Serializer.run(MCover.coverageData);
        	Context.addResource(MCoverage.RESOURCE_DATA, haxe.io.Bytes.ofString(serializedData));
 	}
-
 
 
 	static function initLogging()
@@ -217,12 +209,10 @@ To enable function entry/exit logging
 		// Console.addPrinter(new FilePrinter(TEMP_DIR + "mcover.log"));
 		// Console.start();
 
-
 		var path = TEMP_DIR + "mcover.log";
 
 		if (FileSystem.exists(path))
 			FileSystem.deleteFile(path);
-
 
 		var file = sys.io.File.write(path, false);
 		file.writeString("");
@@ -236,7 +226,6 @@ To enable function entry/exit logging
 		}
 
 	}
-
 }
 
 #end

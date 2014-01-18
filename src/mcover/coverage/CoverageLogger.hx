@@ -1,30 +1,30 @@
-/****
-* Copyright 2013 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage;
 
@@ -40,16 +40,14 @@ import neko.vm.Mutex;
 import cpp.vm.Mutex;
 #end
 
-
 interface CoverageLogger
 {
 		/*
-	 * Handler which if present, should be called when the client has completed its processing of the results.
-	 */
+		Handler which if present, should be called when the client has completed its processing of the results.
+	**/
 	var completionHandler(default, default):Float -> Void;
 
 	var coverage(default, null):Coverage;
-
 
 	var currentTest(default, set_currentTest):String;
 
@@ -57,24 +55,21 @@ interface CoverageLogger
 	function reportCurrentTest(?skipClients:Bool=false):Void;
 
 	/**
-	 * Add a coverage clients to interpret coverage results.
-	 * 
-	 * @param client  client to interpret coverage results 
-	 * @see mcover.coverage.CoverageReportClient
-	 * @see mcover.coverage.client.PrintClient
-	 */
+		Add a coverage clients to interpret coverage results.
+		
+		@param client  client to interpret coverage results 
+		@see mcover.coverage.CoverageReportClient
+		@see mcover.coverage.client.PrintClient
+	**/
 	function addClient(client:CoverageReportClient):Void;
 	function removeClient(client:CoverageReportClient):Void;
 	function getClients():Array<CoverageReportClient>;
-
 
 	function initializeCoverage(resourceName:String):Void;
 
 	function logStatement(id:Int):Void;
 
 	function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic;
-
-
 }
 
 @IgnoreLogging
@@ -85,33 +80,33 @@ class CoverageLoggerImpl implements CoverageLogger
 	#end
 
 	/**
-	 * Handler called when all clients 
-	 * have completed processing the results.
-	 */
+		Handler called when all clients 
+		have completed processing the results.
+	**/
 	public var completionHandler(default, default):Float -> Void;
 
 	public var coverage(default, null):Coverage;
 
 	public var currentTest(default, set_currentTest):String;
 
-	/*
-	 * total execution count for statements by id
-	*/
+	/**
+		total execution count for statements by id
+	**/
 	var allStatementResultsById:Map<Int,Int>;
 	
-	/*
-	 * total execution summary for branches by id
-	*/
+	/**
+		total execution summary for branches by id
+	**/
 	var allBranchResultsById:Map<Int,BranchResult>;
 
-	/*
-	 * stores a cache of test results against currentTest string
-	*/
+	/**
+		stores a cache of test results against currentTest string
+	**/
 	var filteredResultsMap:Map<String,FilteredCoverageResults>;
 
-	/*
-	 * results for active 'currentTest'
-	*/
+	/**
+		results for active 'currentTest'
+	**/
 	var currentFilteredResults:FilteredCoverageResults;
 
 	var clients:Array<CoverageReportClient>;
@@ -168,7 +163,6 @@ class CoverageLoggerImpl implements CoverageLogger
 		coverage.getResults(false);
 	}
 
-	
 	public function addClient(client:CoverageReportClient)
 	{
 		if (client == null) throw "Null Client";
@@ -208,8 +202,8 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 	/**
-	* Method called from injected code each time a code block executes. 
-	* Developers should not class this method directly.
+		Method called from injected code each time a code block executes. 
+		Developers should not class this method directly.
 	**/
 	@IgnoreCover
 	public function logStatement(id:Int)
@@ -241,11 +235,11 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 	
 	/**
-	* Method called from injected code each time a binary operation resolves to true or false 
-	* Developers should not class this method directly.
-	* @param id				branch id
-	* @param value 			boolean or value to compare with compareValue
-	* @param compareValue	secondary value to compare with
+		Method called from injected code each time a binary operation resolves to true or false 
+		Developers should not class this method directly.
+		@param id				branch id
+		@param value 			boolean or value to compare with compareValue
+		@param compareValue	secondary value to compare with
 	**/
 	@IgnoreCover
 	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
@@ -322,7 +316,6 @@ class CoverageLoggerImpl implements CoverageLogger
 		return value;
 	}
 
-
 	function reportToClients()
 	{
 		if (clients.length == 0)
@@ -363,24 +356,23 @@ class CoverageLoggerImpl implements CoverageLogger
 		var percent:Float = coverage.getPercentage();
 		completionHandler(percent);
 	}
-
 }
 
 typedef FilteredCoverageResults =
 {
-	/*
-	 * name of class being covered
-	*/	
+	/**
+		name of class being covered
+	**/	
 	filter:String,
 
-	/*
-	 * statement execution counts for current test
-	*/
+	/**
+		statement execution counts for current test
+	**/
 	statementResultsById:Map<Int,Int>,
 	
-	/*
-	 * branch execution counts for current test
-	*/
+	/**
+		branch execution counts for current test
+	**/
 	branchResultsById:Map<Int,BranchResult>
 }
 

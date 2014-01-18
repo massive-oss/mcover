@@ -75,7 +75,6 @@ class AbstractNodeListTest extends AbstractNodeTest
 		Assert.isNull(statement);
 	}
 	
-
 	@Test
 	public function shouldGetMissingBranchesInItems()
 	{

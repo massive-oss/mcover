@@ -6,6 +6,7 @@ class RichPrintClientHelperMock extends massive.munit.client.RichPrintClientHelp
 	public var queue:Array<String>;
 	public var prints:Array<String>;
 	public var printLines:Array<String>;
+
 	public function new()
 	{
 		super();

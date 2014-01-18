@@ -11,7 +11,6 @@ class TimerTest
 	var originalTrace:Dynamic;
 	var traceOutput:String;
 
-
 	public function new()
 	{
 		
@@ -66,7 +65,6 @@ class TimerTest
 		var delay = Timer.delay(handler, 100);
 	}
 
-
 	function timerTick()
 	{
 		timerCount ++;
@@ -100,7 +98,6 @@ class TimerTest
 		Assert.isTrue(stamp2 > stamp);
 	}
 
-
 	#if js
 
 	@Test
@@ -122,7 +119,6 @@ class TimerTest
 
 	#elseif neko
 
-	
 	@AsyncTest
 	public function shouldCatchAndTraceExceptionInRunMethod(factory:AsyncFactory)
 	{
@@ -134,7 +130,6 @@ class TimerTest
 
 		var handler = factory.createHandler(this, assertExceptionWasTraced, 200);
 		var delay = Timer.delay(handler, 50);
-
 	}
 
 	function throwException()
@@ -154,8 +149,6 @@ class TimerTest
 	}
 
 	#end
-
-
 
 
 }

@@ -1,33 +1,32 @@
-/****
-* Copyright 2013 Massive Interactive. All rights reserved.
-* 
-* Redistribution and use in source and binary forms, with or without modification, are
-* permitted provided that the following conditions are met:
-* 
-*    1. Redistributions of source code must retain the above copyright notice, this list of
-*       conditions and the following disclaimer.
-* 
-*    2. Redistributions in binary form must reproduce the above copyright notice, this list
-*       of conditions and the following disclaimer in the documentation and/or other materials
-*       provided with the distribution.
-* 
-* THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
-* WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-* FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
-* CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-* ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
-* NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
-* ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
-* The views and conclusions contained in the software and documentation are those of the
-* authors and should not be interpreted as representing official policies, either expressed
-* or implied, of Massive Interactive.
-****/
+/**
+	Copyright 2013 Massive Interactive. All rights reserved.
+	
+	Redistribution and use in source and binary forms, with or without modification, are
+	permitted provided that the following conditions are met:
+	
+	   1. Redistributions of source code must retain the above copyright notice, this list of
+	      conditions and the following disclaimer.
+	
+	   2. Redistributions in binary form must reproduce the above copyright notice, this list
+	      of conditions and the following disclaimer in the documentation and/or other materials
+	      provided with the distribution.
+	
+	THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
+	WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+	FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
+	CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+	CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+	SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+	ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
+	ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	
+	The views and conclusions contained in the software and documentation are those of the
+	authors and should not be interpreted as representing official policies, either expressed
+	or implied, of Massive Interactive.
+**/
 
 package mcover.coverage.munit.client;
-
 
 import massive.munit.client.RichPrintClient;
 import massive.munit.TestResult;
@@ -38,23 +37,23 @@ import mcover.coverage.DataTypes;
 import massive.munit.ITestResultClient;
 
 /**
-Addes coverage percentage to each test class as well as coverage summary once tests have finished
-*/
+	Addes coverage percentage to each test class as well as coverage summary once tests have finished
+**/
 class MCoverPrintClient implements IAdvancedTestResultClient
 {
 	/**
-	 * Default id of this client.
-	 */
+		Default id of this client.
+	**/
 	@:extern public static inline var DEFAULT_ID:String = "MCoverPrintClient";
 
 	/**
-	 * The unique identifier for the client.
-	 */
+		The unique identifier for the client.
+	**/
 	public var id(default, null):String;
 	
 	/**
-	 * Handler which if present, is called when the client has completed generating its results.
-	 */
+		Handler which if present, is called when the client has completed generating its results.
+	**/
 	@:isVar 
 	public var completionHandler(get, set):ITestResultClient -> Void;
 
@@ -62,19 +61,18 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
 	
 	/**
-	* includes detailed missing class blocks (statements/branches) in output
-	*/
+		includes detailed missing class blocks (statements/branches) in output
+	**/
 	public var includeMissingBlocks:Bool;
 
 	/**
-	* includes detailed missing class blocks (statements/branches) in output
-	*/
+		includes detailed missing class blocks (statements/branches) in output
+	**/
 	public var includeExecutionFrequency:Bool;
 
-
 	/**
-	* includes detailed coverage data for classes and packages
-	*/
+		includes detailed coverage data for classes and packages
+	**/
 	public var includeClassAndPackageBreakdowns:Bool;
 
 	var client:ICoverageTestResultClient;
@@ -107,45 +105,44 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	}
 
 	/**
-	 * Called when a test passes.
-	 *  
-	 * @param	result			a passed test result
-	 */
+		Called when a test passes.
+		 
+		@param result			a passed test result
+	**/
 	public function addPass(result:TestResult):Void
 	{
 		client.addPass(result);
 	}
 
 	/**
-	 * Called when a test fails.
-	 *  
-	 * @param	result			a failed test result
-	 */
+		Called when a test fails.
+		 
+		@param result			a failed test result
+	**/
 	public function addFail(result:TestResult):Void
 	{
 		client.addFail(result);
 	}
 
 	/**
-	 * Called when a test triggers an unexpected exception.
-	 *  
-	 * @param	result			an erroneous test result
-	 */
+		Called when a test triggers an unexpected exception.
+		 
+		@param result	an erroneous test result
+	**/
 	public function addError(result:TestResult):Void
 	{
 		client.addError(result);
 	}
 	
 	/**
-	 * Called when a test has been ignored.
+		Called when a test has been ignored.
 	 *
-	 * @param	result			an ignored test
-	 */
+		@param result	an ignored test
+	**/
 	public function addIgnore(result:TestResult):Void
 	{
 		client.addIgnore(result);	
 	}
-
 
 
 	@IgnoreCover
@@ -212,16 +209,16 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	}
 
 	/**
-	 * Called when all tests are complete.
-	 *  
-	 * @param	testCount		total number of tests run
-	 * @param	passCount		total number of tests which passed
-	 * @param	failCount		total number of tests which failed
-	 * @param	errorCount		total number of tests which were erroneous
-	 * @param	ignoreCount		total number of ignored tests
-	 * @param	time			number of milliseconds taken for all tests to be executed
-	 * @return	collated test result data if any
-	 */
+		Called when all tests are complete.
+		 
+		@param testCount		total number of tests run
+		@param passCount		total number of tests which passed
+		@param failCount		total number of tests which failed
+		@param errorCount		total number of tests which were erroneous
+		@param ignoreCount		total number of ignored tests
+		@param time			number of milliseconds taken for all tests to be executed
+		@return	collated test result data if any
+	**/
 	public function reportFinalStatistics(testCount:Int, passCount:Int, failCount:Int, errorCount:Int, ignoreCount:Int, time:Float):Dynamic
 	{
 		updateFinalCoverageReport();
@@ -349,7 +346,6 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 			}
 		}
 
-		
 		return {className:cls.name, percent:percent, blocks:blocks};
 	}
 }

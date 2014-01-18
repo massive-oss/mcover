@@ -147,7 +147,6 @@ class MethodTest extends AbstractNodeTest
 		Assert.areEqual(1, r.b);	
 	}
 
-
 	@Test
 	public function shouldAppendBranchesAndStatementsToResults()
 	{
@@ -189,7 +188,6 @@ class MethodTest extends AbstractNodeTest
 
 		var string = haxe.Serializer.run(method);
 		var copy:Method = haxe.Unserializer.run(string);
-
 
 		Assert.areEqual(method.id, copy.id);
 		Assert.areEqual(method.name, copy.name);

@@ -72,5 +72,4 @@ class ClazzTest extends AbstractNodeListTest
 		return new Clazz();
 	}
 
-
 }

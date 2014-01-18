@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import mcover.macro.ClassInfo;
 
 /**
-* Auto generated MassiveUnit Test Class  for mcover.macro.ClassInfo 
-*/
+	Auto generated MassiveUnit Test Class  for mcover.macro.ClassInfo 
+**/
 class ClassInfoTest 
 {
 	var instance:ClassInfo; 

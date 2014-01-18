@@ -7,7 +7,7 @@ import example.Example;
 
 /**
 Main class as @IgnoreCover meta to ensure it is not included in the coverage
-*/
+**/
 @IgnoreCover
 class Main
 {
@@ -46,7 +46,6 @@ class Main
 		completed = true;
 		trace("Coverage report complete: " + percent + "%");
 	}
-
 }
 
 @IgnoreLogging
@@ -64,7 +63,6 @@ class CustomPrintClient extends PrintClient
 		output += newline;
 
 		var lines = output.split("\n");
-
 
 		var s = "\n*************************";
 		for (line in lines)

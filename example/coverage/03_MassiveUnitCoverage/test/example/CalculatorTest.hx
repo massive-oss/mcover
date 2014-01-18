@@ -6,8 +6,8 @@ import massive.munit.async.AsyncFactory;
 import example.Calculator;
 
 /**
-* Auto generated MassiveUnit Test Class  for example.Calculator 
-*/
+	Auto generated MassiveUnit Test Class  for example.Calculator 
+**/
 class CalculatorTest 
 {
 	var instance:Calculator; 
@@ -36,7 +36,6 @@ class CalculatorTest
 	public function tearDown():Void
 	{
 	}
-	
 	
 	@Test
 	public function shouldAddValues():Void

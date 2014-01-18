@@ -1,6 +1,5 @@
 package mcover.coverage;
 
-
 import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
@@ -41,7 +40,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		super.setup();
 		originalTrace = haxe.Log.trace;
 		instance = new CoverageLoggerImpl();
-
 	}
 	
 	@After
@@ -49,7 +47,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	{
 		super.tearDown();
 		haxe.Log.trace = originalTrace;
-
 	}
 	
 	@Test
@@ -76,7 +73,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	}
 
 
-
 	@Test
 	public function shouldAddCoverageToClientOnReport()
 	{
@@ -97,7 +93,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		Assert.isNull(mockClient.coverage);
 	}
 
-
 	@Test
 	public function shouldCreateDefaultClientIfNonAvailable()
 	{
@@ -109,7 +104,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		instance.reportCurrentTest();
 
 		haxe.Log.trace = originalTrace;
-
 
 		var clients = instance.getClients().concat([]);
 
@@ -132,8 +126,8 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 	}
 	
 	/**
-	* This test is a bit pointless, but it is to ensure branch coverage when completionHandler is null
-	*/
+		This test is a bit pointless, but it is to ensure branch coverage when completionHandler is null
+	**/
 	@AsyncTest
 	public function shouldNotCallCompletionHandlerIfNoneSet(factory:AsyncFactory)
 	{
@@ -146,12 +140,10 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		instance.report();
 	}
 
-
 	function reportCompletionHandlerHasntExecuted()
 	{
 		Assert.isTrue(true);
 	}
-
 
 	@Test
 	public function shouldInitializeCoverageOnReport()
@@ -174,7 +166,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		Assert.areEqual(coverage, instance.coverage);
 	}
 
-	
 
 	@Test
 	public function shouldInitializeCoverage()
@@ -195,7 +186,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		catch(e:Exception)
 		{
 			Assert.isTrue(true);
-
 		}
 	}
 
@@ -210,7 +200,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		catch(e:Exception)
 		{
 			Assert.isTrue(true);
-
 		}
 	}
 
@@ -227,7 +216,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 			Assert.isTrue(true);
 		}	
 	}
-
 
 	@Test
 	public function shouldOnlyReportLogsSinceCurrentTestWasSet()
@@ -279,7 +267,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		Assert.isTrue(percent > 0);
 	}
 
-
 	@Test
 	public function shouldNotUpdateClientIfReportCurrentTestSkipClientsIsTrue()
 	{
@@ -291,7 +278,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		var mockClient = cast(client, CoverageReportClientMock);
 		Assert.isTrue(mockClient.coverage == null);
 	}
-
 
 	//////////////////////////
 
@@ -310,7 +296,6 @@ class CoverageLoggerImplTest extends CoverageLoggerTest
 		Assert.areEqual(r1.total, r2.total);
 			
 	}
-
 
 	/////////////
 	override function createLogger():CoverageLogger
@@ -352,7 +337,5 @@ class CoverageMock extends Coverage
 		b.lookup = [0,0,0,0,0];
 
 		addBranch(b);
-
 	}
-
 }

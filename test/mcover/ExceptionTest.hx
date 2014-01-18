@@ -37,7 +37,6 @@ class ExceptionTest
 	}
 
 
-
 	@Test
 	public function shouldDefineInfoAndTypeInConstructor()
 	{
@@ -52,7 +51,6 @@ class ExceptionTest
 		
 	}
 
-	
 
 	@Test
 	public function shouldSetCauseStacksInConstructor()
@@ -70,7 +68,6 @@ class ExceptionTest
 		Assert.isNull(exception.info);
 	}
 
-	
 
 	@Test
 	public function shouldOutputToStringWithMessageAndInfo()
