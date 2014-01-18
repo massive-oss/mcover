@@ -57,5 +57,4 @@ import mcover.coverage.data.CoverageResult;
 		to.f += 1;	
 		return to;
 	}
-
 }

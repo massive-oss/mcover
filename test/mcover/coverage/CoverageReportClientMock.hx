@@ -41,7 +41,7 @@ class CoverageReportClientMock implements AdvancedCoverageReportClient
 	{
 		this.coverage = coverage;
 
-		var timer = massive.munit.util.Timer.delay(reportComplete, 50);
+		var timer = massive.munit.util.Timer.delay(reportComplete, 1);
 	}
 
 	function reportComplete()

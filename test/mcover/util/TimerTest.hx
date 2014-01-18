@@ -48,21 +48,21 @@ class TimerTest
 	@AsyncTest
 	public function shouldRunMultipleTimes(factory:AsyncFactory)
 	{	
-		timer = new Timer(20);
+		timer = new Timer(1);
 		timer.run = timerTick;
 		
-		var handler = factory.createHandler(this, assertTimerTickedMoreThanOnce, 700);
-		var delay = Timer.delay(handler, 500);
+		var handler = factory.createHandler(this, assertTimerTickedMoreThanOnce, 500);
+		var delay = Timer.delay(handler, 1);
 	}
 
 	@AsyncTest
 	public function shouldOnlyRunOnce(factory:AsyncFactory)
 	{	
-		timer = Timer.delay(timerTick, 20);
+		timer = Timer.delay(timerTick, 1);
 
-		var handler = factory.createHandler(this, assertTimerTickedOnce, 400);
+		var handler = factory.createHandler(this, assertTimerTickedOnce, 500);
 
-		var delay = Timer.delay(handler, 100);
+		var delay = Timer.delay(handler, 1);
 	}
 
 	function timerTick()
@@ -88,8 +88,8 @@ class TimerTest
 	{	
 		stamp = Timer.stamp();
 
-		var handler = factory.createHandler(this, assertStampHasIncremented, 200);
-		var delay = Timer.delay(handler, 50);
+		var handler = factory.createHandler(this, assertStampHasIncremented, 500);
+		var delay = Timer.delay(handler, 1);
 	}
 	
 	function assertStampHasIncremented ()
@@ -126,10 +126,10 @@ class TimerTest
 		haxe.Log.trace = traceToString;
 		traceOutput = "";
 
-		timer = Timer.delay(throwException, 10);
+		timer = Timer.delay(throwException, 1);
 
 		var handler = factory.createHandler(this, assertExceptionWasTraced, 200);
-		var delay = Timer.delay(handler, 50);
+		var delay = Timer.delay(handler, 1);
 	}
 
 	function throwException()

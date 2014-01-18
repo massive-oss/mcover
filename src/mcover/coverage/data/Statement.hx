@@ -43,7 +43,6 @@ package mcover.coverage.data;
 		return count > 0;
 	}
 
-	///////////
 	@IgnoreLogging
 	override function hxSerialize( s : haxe.Serializer )
 	{

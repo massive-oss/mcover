@@ -47,6 +47,8 @@ import mcover.coverage.data.Branch;
 	**/
 	public var branchResultsById(default, null):Map<Int,BranchResult>;
 
+
+
 	public function new()
 	{
 		super();

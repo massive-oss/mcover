@@ -10,7 +10,6 @@
 		},
 		"devDependencies": 
 		{
-			"mockatoo": "2.x",
 			"mlib":"2",
 			"mtask":"3.x"
 		}

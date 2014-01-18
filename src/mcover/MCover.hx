@@ -187,7 +187,6 @@ To enable function entry/exit logging
 		}
 
 		return null;
-		
 	}
 	
 	/**
@@ -224,7 +223,6 @@ To enable function entry/exit logging
 			file.writeString(infos.className + "." + infos.methodName + "[" + infos.lineNumber + "] " + Std.string(v) + "\n");
 			file.close();
 		}
-
 	}
 }
 
