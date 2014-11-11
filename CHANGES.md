@@ -1,3 +1,8 @@
+## 2.1.1
+
+- fix: Issue #28 - support package with space at the end before ';'
+- fix: Issue #29 - support class/package with single character name
+
 ## 2.1.0
 
 - Fix: Support packages with underscore in their name
