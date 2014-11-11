@@ -2,7 +2,7 @@
 	"project": 
 	{
 		"name": "MassiveCover",
-		"version": "2.0.3",
+		"version": "2.1.0",
 		"id": "mcover",
 		"devDependencies": 
 		{
@@ -14,7 +14,7 @@
 			"munit": "2.x"
 		}
 	},
-	"haxelib":
+	"haxelib": 
 	{
 		"user": "massive"
 	}
