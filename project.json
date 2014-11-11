@@ -10,8 +10,10 @@
 		},
 		"devDependencies": 
 		{
-			"mlib":"2",
-			"mtask":"3.x"
+			"mockatoo": "3.x",
+			"mcover": "2.x",
+			"mtask": "3.x",
+			"mlib":"2"
 		}
 	},
 	"haxelib":
