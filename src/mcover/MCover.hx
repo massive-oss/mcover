@@ -167,7 +167,10 @@ To enable function entry/exit logging
 			{
 				var argsString = "[\"" + args.join("\",\"") + "\"]";
 				Compiler.addMetadata("@:build(mcover.MCover.build(" + argsString + "))", cls);
-				Compiler.keep(cls, null, true);//ignored in haxe 2_0_8
+				
+				#if (haxe_ver < 3.1)
+				Compiler.keep(cls, null, true);//doesnt work as expected in haxe 3.1.x
+				#end
 			}
 			else
 			{
