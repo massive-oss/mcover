@@ -10,9 +10,7 @@ import massive.munit.ITestResultClient;
 import mcover.coverage.CoverageLoggerMock;
 import mcover.coverage.data.Coverage;
 import mcover.coverage.data.NodeMock;
-/**
-	Auto generated MassiveUnit Test Class  for mcover.coverage.munit.client.MCoverPrintClient 
-**/
+
 class MCoverPrintClientTest 
 {
 	var instance:MCoverPrintClient; 

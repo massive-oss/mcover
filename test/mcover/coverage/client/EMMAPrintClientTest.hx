@@ -17,9 +17,6 @@ import haxe.ds.IntMap;
 private typedef IntMap<T> = IntHash<T>
 #end
 
-/**
-	Auto generated MassiveUnit Test Class  for mcover.coverage.client.EMMAPrintClient 
-**/
 class EMMAPrintClientTest extends CoverageReportClientTest
 {
 	var instance:EMMAPrintClient; 

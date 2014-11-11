@@ -139,7 +139,9 @@ To enable function entry/exit logging
 			if (classes.get(cls))
 			{
 				Compiler.addMetadata("@:build(mcover.MCover.build())", cls);
+				#if (haxever < 3.1)
 				Compiler.keep(cls, null, true);
+				#end
 				
 			}
 			else
@@ -173,11 +175,9 @@ To enable function entry/exit logging
 	**/
 	macro public static function build():Array<Field>
 	{
-		var classParser = new BuildMacro(classPaths); 
 		try
 		{
-			var fields = classParser.parseFields();
-			return fields;
+			return CoverageMacro.parseBuildFields(classPaths);
 		}
 		catch(e:Exception)
 		{

@@ -42,14 +42,55 @@ import mcover.coverage.DataTypes;
 using haxe.macro.Tools;
 using mcover.macro.Tools;
 
-class BuildMacro
+class CoverageMacro
 {
+	static public function createClassInfo():ClassInfo
+	{
+		var info = new ClassInfo();
+
+		switch (Context.getLocalType())
+		{
+			case TInst(t, _):
+			{
+				var parts = Std.string(t).split(".");
+				info.className = parts.pop();
+				info.packageName = parts.join(".");
+				info.packagePath = parts.join(SLASH);
+			}
+			default: null;
+		}
+
+		return info;
+	}
+	static public function parseBuildFields(classPaths:Map<String,Bool>):Array<Field>
+	{
+		var info = createClassInfo();
+
+		var fields = Context.getBuildFields();
+
+		if (fields.length > 0)
+			info.fileName = Context.getPosInfos(fields[0].pos).file;
+
+		var instance = new CoverageMacro(info);
+
+		var fields = instance.parseFields(fields, classPaths);
+
+		for(branch in instance.branches)
+			MCover.coverageData.addBranch(branch);
+
+		for(statement in instance.statements)
+			MCover.coverageData.addStatement(statement);
+
+
+		return fields;
+	}
+
 	static var ignoreFieldMeta:Map<String,Bool> = createIgnoreMeta();
 
 	static function createIgnoreMeta():Map<String,Bool>
 	{
 		var map = new Map<String,Bool>();
-		var values = ["IgnoreCover",":IgnoreCover",":ignore",":macro"];
+		var values = ["IgnoreCover",":IgnoreCover",":ignore"];
 
 		for (v in values)
 		{
@@ -62,58 +103,43 @@ class BuildMacro
 	static var SLASH = IS_WINDOWS ? "\\" : "/";
 	static var USING_MPARTIAL:Bool = Context.defined("mpartial");
 
+	static var statementCount:Int = 0;
+	static var branchCount:Int = 0;
+	
+	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 
 	var classPaths:Map<String,Bool>;
 	var fields:Array<Field>;
-	var type:Null<haxe.macro.Type>;
-	var info(default, null):ClassInfo;
+	
+	public var info(default, null):ClassInfo;
 
 	/**
 		Current function stack (ususally just the current method field (unless inside inline function))
 	**/
 	var functionStack:Array<Function>;
-
-	static var statementCount:Int = 0;
-	static var branchCount:Int = 0;
-	
-	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
 	
 	var coveredLines:Map<Int,Bool>;
 
-	public function new(classPaths:Map<String,Bool>)
+	var statements:Array<Statement>;
+	var branches:Array<Branch>;
+
+	public function new(info:ClassInfo, ?classPaths:Map<String,Bool>)
 	{
+		this.info = info;
 		this.classPaths = classPaths;
-
-		fields = Context.getBuildFields();
-		type = Context.getLocalType();
-
 		coveredLines = new Map();
-
-		info = new ClassInfo();
-
-		switch (type)
-		{
-			case TInst(t, _):
-			{
-				var parts = Std.string(t).split(".");
-				info.className = parts.pop();
-				info.packageName = parts.join(".");
-				info.packagePath = parts.join(SLASH);
-			}
-			default: null;
-		}
-
-		if (fields.length > 0)
-		{
-			info.fileName = Context.getPosInfos(fields[0].pos).file;
-		}
+		branches = [];
+		statements = [];
+		functionStack = [];
 	}
 
 	/**
 		loops through all class fields and interogates contents recursively
 	**/
-	public function parseFields():Array<Field>
+	public function parseFields(fields:Array<Field>, classPaths:Map<String,Bool>):Array<Field>
 	{
+		this.classPaths = classPaths;
+
 		for (field in fields)
         {
         	if (ignoreField(field)) continue;
@@ -135,7 +161,7 @@ class BuildMacro
         return fields;
 	}
 
-	function ignoreField(field:Field):Bool
+	public function ignoreField(field:Field):Bool
 	{
 		for (item in field.meta)
 		{
@@ -146,11 +172,10 @@ class BuildMacro
 
 	/**
 		Wraps code branches and statement blocks with coverage logs
-	@param e 		the current expression
-	@return the updated expression
+		@param e 		the current expression
+		@return the updated expression
 	**/
-
-	function parseExpr(e:Expr):Expr
+	public function parseExpr(e:Expr):Expr
 	{
 		return switch (e.expr)
 		{
@@ -162,28 +187,35 @@ class BuildMacro
 				else
 				{
 					functionStack.push(func);
-					func.expr = func.expr.map(parseExpr);
+					func.expr = parseExpr(wrapExpr(func.expr));
 					functionStack.pop();
 					EFunction(name, func).at(e.pos);
 				}
 
 			case EIf(econd,eif,eelse):
-				econd = coverBranch(econd.map(parseExpr));
+				econd = coverBranch(parseExpr(econd));
 				eif = eif.map(parseExpr);
+
 				if (eelse != null)
-					eelse = eelse.map(parseExpr);
+					eelse = parseExpr(wrapExpr(eelse));
+				
 				EIf(econd,eif,eelse).at(e.pos);
 
 			case EWhile(econd, expr, normalWhile):
-				expr = expr.map(parseExpr);
-				econd = coverBranch(econd);
-				EWhile(econd, e, normalWhile).at(e.pos);
+				econd = coverBranch(parseExpr(econd));
+
+				if(normalWhile)
+					expr = expr.map(parseExpr);
+				else
+					expr = parseExpr(wrapExpr(expr)); // a do while
+				
+				EWhile(econd, expr, normalWhile).at(e.pos);
 
 			case ETernary(econd, eif, eelse): 
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
-				econd = coverBranch(econd);
-				eif = eif.map(parseExpr);
-				eelse = eelse.map(parseExpr);
+				econd = coverBranch(parseExpr(econd));
+				eif = parseExpr(eif);
+				eelse = parseExpr(eelse);
 
 				ETernary(econd, eif, eelse).at(e.pos);
 
@@ -195,8 +227,8 @@ class BuildMacro
 
 			case EBinop(op, e1, e2):
 				//e.g. i<2; a||b, i==b
-				e1 = e1.map(parseExpr);
-				e2 = e2.map(parseExpr);
+				e1 = parseExpr(e1);
+				e2 = parseExpr(e2);
 				coverBinop(op, e1, e2).at(e.pos);
 
 			case EMeta(s, expr):
@@ -204,15 +236,43 @@ class BuildMacro
 				if (ignoreFieldMeta.exists(s.name))
 					e;
 				else
-					EMeta(s, expr.map(parseExpr)).at(e.pos);
+					EMeta(s, parseExpr(expr)).at(e.pos);
 			}
-			case _: e.map(parseExpr);
+			case _: 
+				e.map(parseExpr);
+		}
+	}
+
+	/**
+		Utility to wrap an expr in an EBlock if required for coverage.
+		Primarily cases where developer has ommited the block {} around a
+		single expr.
+
+		In the following examples, the expr for `f()` is wrapped in a block:
+
+		Before
+
+			if(true) f()
+			function() f()
+
+		After
+
+			if(true) { f(); }
+			function() { f(); }
+	**/
+	function wrapExpr(e:Expr):Expr
+	{
+		return switch(e.expr)
+		{
+			case EBlock(exprs): e;
+			case EIf(econd,eif,eelse): e;
+			case _: EBlock([e]).at(e.pos);
 		}
 	}
 
 	/**
 		adds coverage log to start of code block
-	Excludes empty code blocks that are NOT a top level class method
+		Excludes empty code blocks that are NOT a top level class method
 	**/
 	function coverBlock(expr:Expr, exprs:Array<Expr>):Array<Expr>
 	{
@@ -244,7 +304,7 @@ class BuildMacro
 	{
 		switch (op)
 		{
-			case OpBoolOr:
+			case OpBoolOr, OpBoolAnd:
 				
 				e1 = coverBranch(e1);
 				e2 = coverBranch(e2);
@@ -258,7 +318,7 @@ class BuildMacro
 
 	/**
 		generates a call to the runner to insert into the code block containing a unique id
-	*		mcover.MCoverRunner.log(id)
+		mcover.MCoverRunner.log(id)
 		@see createCodeBlock for key format
 	**/
 	function createBlockCoverageExpr(expr:Expr, startPos:Position, endPos:Position):Expr
@@ -317,13 +377,10 @@ class BuildMacro
 		}
 
 		if (file != classFile)
-		{
 			strict = false;
-		}
 
 		for (cp in classPaths.keys())
 		{
-
 			if (file.indexOf(cp) == 0)
 			{	
 				if (strict)
@@ -354,8 +411,7 @@ class BuildMacro
 					info = ClassInfo.fromFile(file, cp);
 
 					info.methodName = info.methodName;
-				}
-				
+				}	
 				return createReference(cp, file, startPos, endPos, isBranch, info, alternateLocation, true);
 			}
 		}
@@ -377,10 +433,12 @@ class BuildMacro
 		error += "\n    Location: " + info.location;
 		error += "\n    Referenced pos: " + Std.string(startPos);
 		error += "\n    Searched classpaths:";
+		
 		for (cp in classPaths.keys())
 		{
 			error += "\n      " + cp;
 		}
+
 		Context.error(error, Context.currentPos());
 		throw new mcover.coverage.CoverageException(error);
 		return null;
@@ -448,18 +506,14 @@ class BuildMacro
 				block.location += " @:macro";
 		}
 		else
-		{
 			block.location = posString;
-		}
 
 		var lines:Array<Int> = [];
 		var startLine = -1;
 		var endLine = -1;
 
 		if (posReg.match(posString))
-		{
 			startLine = Std.parseInt(posReg.matched(2));
-		}
 
 		posString = Std.string(endPos);
 		posString = posString.substr(5, posString.length-6);
@@ -467,13 +521,9 @@ class BuildMacro
 		if (posReg.match(posString))
 		{
 			if (posReg.matched(3) == "lines")
-			{
 				endLine = Std.parseInt(posReg.matched(5));
-			}
 			else
-			{
 				endLine = Std.parseInt(posReg.matched(2));
-			}
 		}
 
 		for (i in startLine...endLine+1)
@@ -486,9 +536,9 @@ class BuildMacro
 		}
 
 		if (isBranch)
-			MCover.coverageData.addBranch(cast(block, Branch));
+			branches.push(cast block);
 		else
-			MCover.coverageData.addStatement(cast(block, Statement));
+			statements.push(cast block);
 
 		return block;
 	}

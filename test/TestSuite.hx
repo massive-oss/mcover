@@ -21,6 +21,7 @@ import mcover.coverage.MCoverageTest;
 import mcover.coverage.munit.client.MCoverPrintClientTest;
 import mcover.ExceptionTest;
 import mcover.macro.ClassInfoTest;
+import mcover.macro.CoverageMacroTest;
 import mcover.util.TimerTest;
 
 /**
@@ -56,6 +57,7 @@ class TestSuite extends massive.munit.TestSuite
 		add(mcover.coverage.munit.client.MCoverPrintClientTest);
 		add(mcover.ExceptionTest);
 		add(mcover.macro.ClassInfoTest);
+		add(mcover.macro.CoverageMacroTest);
 		add(mcover.util.TimerTest);
 	}
 }

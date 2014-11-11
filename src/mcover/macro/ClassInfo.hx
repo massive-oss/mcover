@@ -32,7 +32,7 @@ class ClassInfo
 {
 	
 	static var IS_WINDOWS = #if sys Sys.systemName() == "Windows" #else false #end; 
-	static var SLASH = IS_WINDOWS ? "\\" : "/";
+	public static var SLASH = IS_WINDOWS ? "\\" : "/";
 	
 	public var fileName:String;
 	public var className:String;

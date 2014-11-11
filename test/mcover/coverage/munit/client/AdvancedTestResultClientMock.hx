@@ -5,7 +5,6 @@ import massive.munit.TestResult;
 
 class AdvancedTestResultClientMock implements ICoverageTestResultClient
 {
-	
 	public static inline var DEFAULT_ID:String = "stub";
 
 	public var id(default, null):String;
