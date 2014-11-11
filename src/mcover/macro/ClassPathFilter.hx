@@ -318,7 +318,7 @@ class ClassPathFilter
 	function getPackageDefinitionInFile(contents:String):String
 	{
 		//var contents = File.getContent(path);
-		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])+);/m;
+		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])+)( )?;/m;
 
 		if(reg.match(contents))
 		{
