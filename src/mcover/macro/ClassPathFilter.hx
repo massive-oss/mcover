@@ -202,7 +202,7 @@ class ClassPathFilter
 			var ignoreClassMetas = "(" + ignoreClassMeta.split(",").join("|") + ")";//e.g. :(IgnoreCover|:IgnoreCover|:ignore|:macro)
 
 			temp = contents;
-			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
+
 			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])*)", "m");
 		
 			while(regIgnore.match(temp))
@@ -220,7 +220,7 @@ class ClassPathFilter
 		}
 		else
 		{
-			regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])+)/m;
+			regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])*)/m;
 		}
 
 		temp = contents;
