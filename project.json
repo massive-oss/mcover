@@ -4,14 +4,14 @@
 		"name": "MassiveCover",
 		"version": "2.0.3",
 		"id": "mcover",
-		"dependencies":
-		{
-			"munit":"2"
-		},
 		"devDependencies": 
 		{
-			"mlib":"2",
-			"mtask":">=1.4 <2"
+			"hamcrest": "1.x",
+			"mtask": "3.x"
+		},
+		"dependencies": 
+		{
+			"munit": "2.x"
 		}
 	},
 	"haxelib":
