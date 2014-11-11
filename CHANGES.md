@@ -4,6 +4,20 @@ v 3.0.0
 - added support for expression metadata, ignoring individual expressions
 - added support for packages with underscores
 
+## 2.1.1
+
+- fix: Issue #28 - support package with space at the end before ';'
+- fix: Issue #29 - support class/package with single character name
+
+## 2.1.0
+
+- Fix: Support packages with underscore in their name
+- Fix: paths on Windows: use regexp instead of splitting on :, because windows paths contain :
+- Ported NodeJS timer support from MUnit repository
+- Merge pull request #24 from nadako/master
+- Fix: issue #31 - Compiler.keep not consistent in Haxe 3.1
+
+
 v 2.0.3
 - added haxelib.json
 
