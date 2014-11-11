@@ -191,8 +191,8 @@ class ClassPathFilter
 			var ignoreClassMetas = "(" + ignoreClassMeta.split(",").join("|") + ")";//e.g. :(IgnoreCover|:IgnoreCover|:ignore|:macro)
 
 			temp = contents;
-			//var regIgnore:EReg = ~/@IgnoreCover([^{]*)class ([A-Z]([A-Za-z0-9])+)/m;
-			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
+
+			var regIgnore:EReg = new EReg("@" + ignoreClassMetas + "([^{]*)class ([A-Z]([A-Za-z0-9_])*)", "m");
 		
 			while (regIgnore.match(temp))
 			{
@@ -205,18 +205,11 @@ class ClassPathFilter
 
 		if (includeClassMeta != null)
 		{
-			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])+)", "m");
+			regInclude = new EReg("@" + includeClassMeta + "([^{]*)class ([A-Z]([A-Za-z0-9_])*)", "m");
 		}
 		else
 		{
-
-			//Note(Dom, Feb 2013): Commenting out alternative as i'm assuming this is a change from from 210 on...
-			// #if haxe_210
-				regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])+)/m;
-			// #else
-			// 	regInclude = ~/(.*)class ([A-Z]([A-Za-z0-9_])+)/m;
-			// #end
-
+			regInclude = ~/^([^\*;]*)class ([A-Z]([A-Za-z0-9_])*)/m;
 		}
 
 		temp = contents;
@@ -275,7 +268,7 @@ class ClassPathFilter
 	function getPackageDefinitionInFile(contents:String):String
 	{
 		//var contents = File.getContent(path);
-		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])+)( )?;/m;
+		var reg:EReg = ~/^package ([a-z]([A-Za-z0-9\._])*)( )?;/m;
 
 		if (reg.match(contents))
 		{
