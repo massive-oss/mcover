@@ -13,3 +13,5 @@ bin
 /.idea/
 /.project
 /MassiveCover.iml
+
+.haxelib
