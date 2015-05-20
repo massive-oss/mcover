@@ -53,7 +53,6 @@ class EMMAPrintClient implements CoverageReportClient
 	{
 		xml = Xml.createElement("report");
 
-		
 		this.coverage = coverage;
 		
 		result = coverage.getResults();		
@@ -166,8 +165,8 @@ class EMMAPrintClient implements CoverageReportClient
 
 	function createFileNode(file:File):Xml
 	{
-        // Jenkins EMMA-Plugin does not support relative path names in "srcfile"
-        // use baseName to just put the filename in srcfile
+		// Jenkins EMMA-Plugin does not support relative path names in "srcfile"
+		// use baseName to just put the filename in srcfile
 		var node = createNodeWithName("srcfile", baseName(file.name));
 
 		var result = file.getResults();
