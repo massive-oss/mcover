@@ -153,7 +153,6 @@ class EMMAPrintClient implements CoverageReportClient
 	function createFileNode(file:File):Xml
 	{
 		// Jenkins EMMA-Plugin does not support relative path names in "srcfile"
-		// use baseName to just put the filename in srcfile
 		var node = createNodeWithName("srcfile", Path.withoutDirectory(file.name));
 
 		var result = file.getResults();
