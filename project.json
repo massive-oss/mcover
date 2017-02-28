@@ -1,20 +1,21 @@
 {
-	"project": 
+	"project":
 	{
 		"name": "MassiveCover",
 		"version": "2.1.1",
 		"id": "mcover",
-		"devDependencies": 
+		"devDependencies":
 		{
 			"hamcrest": "1.x",
 			"mtask": "3.x"
 		},
-		"dependencies": 
+		"dependencies":
 		{
-			"munit": "2.x"
+			"munit": "2.x",
+			"mconsole": "1.x"
 		}
 	},
-	"haxelib": 
+	"haxelib":
 	{
 		"user": "massive"
 	}

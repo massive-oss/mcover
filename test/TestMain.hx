@@ -9,15 +9,15 @@ import js.Lib;
 #end
 
 /**
- * Auto generated Test Application.	
+ * Auto generated Test Application.
  * Refer to munit command line tool for more information (haxelib run munit)
  */
 
-class TestMain 
-{	
+class TestMain
+{
 	static function main()
 	{
-		
+
 		new TestMain();
 	}
 
@@ -34,13 +34,13 @@ class TestMain
 			var httpClient = new HTTPClient(new SummaryReportClient());
 		#end
 
-		var runner:TestRunner = new TestRunner(client);	
+		var runner:TestRunner = new TestRunner(client);
 		runner.addResultClient(httpClient);
-		//runner.addResultClient(new HTTPClient(new JUnitReportClient()));	
+		runner.addResultClient(new HTTPClient(new JUnitReportClient()));
 		runner.completionHandler = completionHandler;
 		runner.run(suites);
 	}
-	
+
 	/*
 		updates the background color and closes the current browser
 		for flash and html targets (useful for continous integration servers)
