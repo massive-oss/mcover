@@ -354,11 +354,13 @@ class ClassParserImpl implements ClassParser
 				it = parseExpr(it);
 				e = parseExpr(e);
 				expr.expr = EFor(it, e);
+#if (haxe_ver < 4.0)
 			case EIn(e1, e2):
 				//e.g. for(i in 0...5){}
 				e1 = parseExpr(e1);
 				e2 = parseExpr(e2);
 				expr.expr = EIn(e1, e2);
+#end
 			case EArrayDecl(values):
 				//e.g. a = [1,2,3];
 				for(v in values)
