@@ -148,7 +148,7 @@ class Timer
 				var shouldStop = false;
 				while( !shouldStop )
 				{
-					//Sys.sleep(time_ms/1000);
+					Sys.sleep(time_ms/1000);
 					try
 					{
 						run();
