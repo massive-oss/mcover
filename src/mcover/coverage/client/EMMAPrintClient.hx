@@ -28,6 +28,8 @@
 
 package mcover.coverage.client;
 
+import haxe.io.Path;
+
 import mcover.coverage.CoverageReportClient;
 import mcover.coverage.DataTypes;
 
@@ -65,7 +67,7 @@ class EMMAPrintClient implements CoverageReportClient
 
 		xml.addChild(all);
 
-		#if php
+		#if (php||eval)
 			reportComplete();
 		#else
 			var timer = Timer.delay(reportComplete, 10);
@@ -150,7 +152,8 @@ class EMMAPrintClient implements CoverageReportClient
 
 	function createFileNode(file:File):Xml
 	{
-		var node = createNodeWithName("srcfile", file.name);
+		// Jenkins EMMA-Plugin does not support relative path names in "srcfile"
+		var node = createNodeWithName("srcfile", Path.withoutDirectory(file.name));
 
 		var result = file.getResults();
 

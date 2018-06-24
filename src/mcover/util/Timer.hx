@@ -195,7 +195,7 @@ class Timer
 			return flash.Lib.getTimer() / 1000;
 		#elseif js
 			return Date.now().getTime() / 1000;
-		#elseif (neko||cpp||php)
+		#elseif (neko||cpp||php||eval)
 			return Sys.time();
 		#elseif cpp
 			return untyped __time_stamp();

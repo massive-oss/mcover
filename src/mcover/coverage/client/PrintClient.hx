@@ -119,7 +119,7 @@ class PrintClient implements AdvancedCoverageReportClient
 				
 		printReport();
 
-		#if php
+		#if (php||eval)
 			reportComplete();
 		#else
 			var timer = Timer.delay(reportComplete, 10);
