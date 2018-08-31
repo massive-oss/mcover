@@ -33,7 +33,7 @@ package mcover.coverage.data;
 	public var trueCount:Int;
 	public var falseCount:Int;
 
-	public var totalCount(get_totalCount, null):Int;
+	public var totalCount(get, null):Int;
 
 	public function new()
 	{

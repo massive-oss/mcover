@@ -34,7 +34,7 @@ class ClassInfo
 	public var className:String;
 	public var packageName:String;
 	public var methodName:String;
-	public var location(get_location, null):String;
+	public var location(get, null):String;
 	public function new()
 	{
 	}

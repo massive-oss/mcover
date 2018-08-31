@@ -9,7 +9,7 @@ class CoverageLoggerMock implements CoverageLogger
 
 	public var coverage(default, null):Coverage;
 
-	public var currentTest(default, set_currentTest):String;
+	public var currentTest(default, set):String;
 	function set_currentTest(value:String):String
 	{
 		currentTest = value;
