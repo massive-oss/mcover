@@ -234,10 +234,6 @@ class ClassParserImpl implements ClassParser
 
 		for(parser in fieldParsers)
 		{
-            if (Std.string (expr.pos) == "#pos((unknown))")
-            {
-                continue;
-            }
 			expr = parser.parseExpr(expr);
 		}
 
