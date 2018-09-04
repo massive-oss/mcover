@@ -59,7 +59,7 @@ interface CoverageLogger
 	var coverage(default, null):Coverage;
 
 
-	var currentTest(default, set_currentTest):String;
+	var currentTest(default, set):String;
 
 	function report(?skipClients:Bool=false):Void;
 	function reportCurrentTest(?skipClients:Bool=false):Void;
@@ -100,7 +100,7 @@ class CoverageLoggerImpl implements CoverageLogger
 
 	public var coverage(default, null):Coverage;
 
-	public var currentTest(default, set_currentTest):String;
+	public var currentTest(default, set):String;
 
 	/*
 	 * total execution count for statements by id

@@ -33,7 +33,7 @@ import mcover.util.NumberUtil;
 class Log
 {
 	public var id:Int;
-	public var name(get_name, null):String;
+	public var name(get, null):String;
 
 	public var children:Array<Log>;
 
@@ -45,7 +45,7 @@ class Log
 	
 	//timestamp
 	public var entryTime:Float;
-	public var exitTime(default, set_exitTime):Float;
+	public var exitTime(default, set):Float;
 
 	/**
 	Total time method was running (exitTime-entryTime)
