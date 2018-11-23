@@ -134,6 +134,10 @@ import sys.FileSystem;
 
 
 		var startPos:Position = (exprs.length == 0) ? expr.pos : exprs[0].pos;
+		var posInfo = Context.getPosInfos(startPos);
+		if ((posInfo.min == -1) || (posInfo.max == -1)) {
+			return;
+		}
 
 		var endPos:Position = (exprs.length == 0) ? expr.pos : exprs[exprs.length-1].pos;
 
