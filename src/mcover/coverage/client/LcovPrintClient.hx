@@ -61,14 +61,12 @@ class LcovPrintClient implements CoverageReportClient {
 
 		var num:Int = 0;
 		for (method in cls.getMethods()) {
-			// TODO get first line number of method
-			text.add(makeLine("FN", '${num++},${method.name}'));
+			text.add(makeLine("FN", '${firstMethodLine(method)},${method.name}'));
 		}
 		text.add("\n");
 
 		for (method in cls.getMethods()) {
-			var methodResults:CoverageResult = method.getResults();
-			text.add(makeLine("FNDA", '${methodResults.m},${method.name}'));
+			text.add(makeLine("FNDA", '${methodCount(method)},${method.name}'));
 		}
 		text.add("\n");
 		text.add(makeLine("FNF", '${results.m}'));
@@ -117,6 +115,62 @@ class LcovPrintClient implements CoverageReportClient {
 
 		text.add("end_of_record\n\n");
 		appendCoverageFile(text.toString());
+	}
+
+	@:access(mcover.coverage.data.Method)
+	function methodCount(method:Method):Int {
+		var count:Int = 0;
+		var lowest:Int = findLowestId(method.branchesById.keys());
+		if (lowest >= 0) {
+			var branch:Branch = method.branchesById.get(lowest);
+			return branch.totalCount;
+		} else {
+			var lowest:Int = findLowestId(method.statementsById.keys());
+			if (lowest < 0) {
+				return 0;
+			}
+			var statement:Statement = method.statementsById.get(lowest);
+			return statement.count;
+		}
+	}
+
+	@:access(mcover.coverage.data.Method)
+	function firstMethodLine(method:Method):Int {
+		var firstLine:Int = -1;
+		var lowest:Int = findLowestId(method.branchesById.keys());
+		if (lowest >= 0) {
+			var branch:Branch = method.branchesById.get(lowest);
+			if (branch.lines.length > 0) {
+				firstLine = branch.lines[0];
+			}
+		}
+		var lowest:Int = findLowestId(method.statementsById.keys());
+		if (lowest >= 0) {
+			var statement:Statement = method.statementsById.get(lowest);
+			if (statement.lines.length > 0) {
+				if (firstLine < 0 || statement.lines[0] < firstLine) {
+					firstLine = statement.lines[0];
+				}
+			}
+		}
+		if (firstLine < 0) {
+			return 0;
+		}
+		return firstLine;
+	}
+
+	function findLowestId(keys:Iterator<Int>):Int {
+		var lowest:Int = -1;
+		for (id in keys) {
+			if (lowest < 0) {
+				lowest = id;
+				continue;
+			}
+			if (id < lowest) {
+				lowest = id;
+			}
+		}
+		return lowest;
 	}
 
 	@:access(mcover.coverage.data.Method)
