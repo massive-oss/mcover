@@ -1,3 +1,10 @@
+## 2.2.0
+
+- Haxe 4 compatibility
+- Fixed line number detection
+- Skip unknown positions
+- Add lcov print client
+
 ## 2.1.1
 
 - fix: Issue #28 - support package with space at the end before ';'
