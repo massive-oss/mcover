@@ -58,8 +58,8 @@ import sys.FileSystem;
 
 	public var target(default, default):ClassParser;
 
-	static var posReg:EReg = ~/([a-zA-z0-9\/].*.hx):([0-9].*): (characters|lines) ([0-9].*)-([0-9].*)/;
-	
+	static var posReg:EReg = ~/([a-zA-Z0-9\/]+\.hx):([0-9]+): (chars|lines) ([0-9]+)-([0-9]+)/;
+
 	var coveredLines:IntMap<Bool>;
 	var exprPos:Position;
 
@@ -418,6 +418,7 @@ import sys.FileSystem;
 
 		posString = Std.string(endPos);
 		posString = posString.substr(5, posString.length-6);
+		posString = posString.split(" characters ").join(" chars ");
 
 		if(posReg.match(posString))
 		{
