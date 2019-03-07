@@ -28,11 +28,19 @@
 
 package mcover.coverage.client;
 
-#if sys
+#if macro
+import haxe.macro.Expr;
+import haxe.macro.Context;
+#end
+
+#if (sys || nodejs)
+import haxe.io.Path;
 import sys.io.FileOutput;
+import sys.FileSystem;
 import mcover.coverage.CoverageReportClient;
 import mcover.coverage.DataTypes;
 import mcover.util.Timer;
+
 
 class LcovPrintClient implements CoverageReportClient {
 
@@ -41,13 +49,14 @@ class LcovPrintClient implements CoverageReportClient {
 
 	var testName:String;
 	var lcovFileName:String;
+	var lastKnownAbsoluteBasePath:String;
 
 	public function new(name:String, ?fileName:String) {
 		testName = name;
-		if (fileName == null) 
+		if (fileName == null)
 		{
 			lcovFileName = "lcov.info";
-		} 
+		}
 		else
 		{
 			lcovFileName = fileName;
@@ -55,12 +64,11 @@ class LcovPrintClient implements CoverageReportClient {
 	}
 
 	public function report(coverage:Coverage) {
-		sys.io.File.saveContent(lcovFileName, makeLine("TN", testName) + "\n");
-
+		sys.io.File.saveContent(lcovFileName, "\n");
 		for (cls in coverage.getClasses()) {
 			reportClass(cls);
 		}
-	
+
 		#if (php||eval)
 			reportComplete();
 		#else
@@ -76,10 +84,57 @@ class LcovPrintClient implements CoverageReportClient {
 		}
 	}
 
+    macro public static function getClassPaths():Expr
+    {
+		var classPaths:Array<String> = Context.getClassPath();
+        return macro $v{classPaths};
+    }
+
+    macro public static function getCompileCwd():Expr
+    {
+		var cwd:String = Sys.getCwd();
+		return macro $v{cwd};
+    }
+
+	function makeAbsolutePath(path:String):String {
+		if (Path.isAbsolute(path)) {
+			return path;
+		}
+		var classPaths:Array<String> = getClassPaths();
+		var cwd:String = getCompileCwd();
+		var fullPath:String;
+		var lastKnown:String;
+		for (cp in classPaths) {
+			if (Path.isAbsolute(cp)) {
+				fullPath = Path.join([cp, path]);
+				lastKnown= cp;
+			} else {
+				fullPath = Path.join([cwd, cp, path]);
+				lastKnown = Path.join([cwd, cp]);
+			}
+			if (FileSystem.exists(fullPath)) {
+				lastKnownAbsoluteBasePath = lastKnown;
+				return fullPath;
+			}
+		}
+		fullPath = Path.join([cwd, path]);
+		if (FileSystem.exists(fullPath)) {
+			return fullPath;
+		}
+		if (lastKnownAbsoluteBasePath != null) {
+			// multiple types inside a single file will not match a simple class -> file mapping
+			return Path.join([lastKnownAbsoluteBasePath, path]);
+		}
+		return path;
+	}
+
 	function reportClass(cls:Clazz) {
 		var results:CoverageResult = cls.getResults();
-		var c = StringTools.replace(cls.name, ".", "/") + ".hx";
+		// TODO find a better solution to get absolute file path
+		var c = makeAbsolutePath(StringTools.replace(cls.name, ".", "/") + ".hx");
 		var text:StringBuf = new StringBuf();
+
+		text.add(makeLine("TN", cls.name));
 		text.add(makeLine("SF", c));
 		text.add("\n");
 
@@ -258,9 +313,15 @@ class LcovPrintClient implements CoverageReportClient {
 	}
 
 	function appendCoverageFile(text:String) {
-		var file:FileOutput = sys.io.File.append(lcovFileName);
-		file.writeString(text.toString());
-		file.close();
+		#if nodejs
+			var content:String = sys.io.File.getContent(lcovFileName);
+			content += text;
+			sys.io.File.saveContent(lcovFileName, content);
+		#else
+			var file:FileOutput = sys.io.File.append(lcovFileName);
+			file.writeString(text.toString());
+			file.close();
+		#end
 	}
 
 	inline function makeLine(key:String, value:String):String {

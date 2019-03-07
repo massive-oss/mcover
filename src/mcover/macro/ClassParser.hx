@@ -257,7 +257,11 @@ class ClassParserImpl implements ClassParser
 				f.expr = parseExpr(f.expr);
 				expr.expr = EFunction(name, f);
 				functionStack.pop();
+<<<<<<< HEAD
 
+=======
+			
+>>>>>>> fixed absolute path names
 			case EDisplay(e, var isCall):
 				//no idea what this is???
 				e = parseExpr(e);
