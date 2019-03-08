@@ -258,7 +258,7 @@ class ClassParserImpl implements ClassParser
 				expr.expr = EFunction(name, f);
 				functionStack.pop();
 			
-			case EDisplay(e, isCall):
+			case EDisplay(e, var isCall):
 				//no idea what this is???
 				e = parseExpr(e);
 				expr.expr = EDisplay(e, isCall);
