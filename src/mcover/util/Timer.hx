@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -52,10 +52,16 @@
  */
 package mcover.util;
 
-#if neko
+import haxe.Json;
+
+#if ((haxe_ver >= 4.0) && (neko||cpp||java||hl||eval))
+import sys.thread.Thread;
+#elseif neko
 import neko.vm.Thread;
 #elseif cpp
 import cpp.vm.Thread;
+#elseif java
+import java.vm.Thread;
 #end
 
 #if haxe3
@@ -68,21 +74,21 @@ private typedef CallStack = haxe.Stack;
 @IgnoreCover
 @IgnoreLogging
 @:expose('mcover.util.Timer')
-class Timer 
+class Timer
 {
 	public var run:Void -> Void;
-	
-	
+
+
 	#if php
 
 	#else
 
 		var id:Null<Int>;
-		
+
 		#if js
 			static var arr:Array<Timer> = [];
 			var timerId:Int;
-		#elseif (neko||cpp||php)
+		#elseif (neko||cpp||java||hl||eval)
 			var runThread:Thread;
 		#end
 
@@ -104,7 +110,7 @@ class Timer
 				id = arr.length;
 				arr[id] = this;
 				timerId = untyped window.setInterval("mcover.util.Timer.arr["+id+"].run();",time_ms);
-			#elseif (neko||cpp||php)
+			#elseif (neko||cpp||java||hl||eval)
 				var me = this;
 				runThread = Thread.create(function() { me.runLoop(time_ms); } );
 			#end
@@ -116,7 +122,7 @@ class Timer
 
 		public function stop()
 		{
-			#if( php || flash9 || flash || js )
+			#if(flash9||flash||js)
 				if (id == null) return;
 			#end
 			#if flash9
@@ -128,21 +134,21 @@ class Timer
 			#elseif js
 				untyped window.clearInterval(timerId);
 				arr[id] = null;
-				if (id > 100 && id == arr.length - 1) 
+				if (id > 100 && id == arr.length - 1)
 				{
 					// compact array
 					var p = id - 1;
 					while ( p >= 0 && arr[p] == null) p--;
 					arr = arr.slice(0, p + 1);
 				}
-			#elseif (neko||cpp||php)
+			#elseif (neko||cpp||java||hl||eval)
 				run = defaultRun;
 				runThread.sendMessage("stop");
 			#end
 			id = null;
 		}
 
-		#if (neko||cpp||php)
+		#if (neko||cpp||java||hl||eval)
 			function runLoop(time_ms)
 			{
 				var shouldStop = false;
@@ -195,10 +201,8 @@ class Timer
 			return flash.Lib.getTimer() / 1000;
 		#elseif js
 			return Date.now().getTime() / 1000;
-		#elseif (neko||cpp||php||eval)
+		#elseif (neko||cpp||php||java||hl||eval)
 			return Sys.time();
-		#elseif cpp
-			return untyped __time_stamp();
 		#else
 			return 0;
 		#end

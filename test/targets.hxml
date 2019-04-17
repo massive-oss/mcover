@@ -7,6 +7,7 @@
 -swf bin/test/as3_test.swf
 -D MCOVER_DEBUG
 -resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
+-resource test/mcover/coverage/MockMCoverData.txt@MCoverData
 -lib munit
 -lib mlib
 
@@ -24,6 +25,7 @@
 -js bin/test/js_test.js
 -D MCOVER_DEBUG
 -resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
+-resource test/mcover/coverage/MockMCoverData.txt@MCoverData
 -cp src
 -cp test
 --next
@@ -37,6 +39,7 @@
 -neko bin/test/neko_test.n
 -D MCOVER_DEBUG
 -resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
+-resource test/mcover/coverage/MockMCoverData.txt@MCoverData
 -cp src
 -cp test
 
@@ -55,3 +58,18 @@
 
 # -cp src
 # -cp test
+
+--next
+
+## java
+-main TestMain
+
+-lib munit
+-lib mlib
+-debug
+-java bin/test/java_test
+-D MCOVER_DEBUG
+-resource test/mcover/coverage/MockResouce.txt@MockMCoverResource
+-resource test/mcover/coverage/MockMCoverData.txt@MCoverData
+-cp src
+-cp test
