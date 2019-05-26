@@ -1,3 +1,7 @@
+## 2.2.1
+
+- Support `eval`, `hl`, `java` targets
+
 ## 2.2.0
 
 - Haxe 4 compatibility
@@ -27,7 +31,7 @@ v 2.0.1
 
 v 1.5.1
 - hotfix for edge case with position file path not found using Context.resolvePath
-- hotfix for excpetion thrown when creating temp directory on windows 
+- hotfix for excpetion thrown when creating temp directory on windows
 
 v 1.5.0
 - added better coverage handling/ support for macro generated functions/code blocks
@@ -98,11 +102,11 @@ v1.2.3 - 24.05.12
 	{
 		if(true) return true
 		else return false;
-	} 
+	}
 - Fixed same issue above for anonymous functions inside of methods
 - Added support for single line methods that dont use curly braces (yuck)
 
-	function isTrue():Bool return true; 
+	function isTrue():Bool return true;
 
 - changed missing entryLog in Logger.logExit() from an exception to a trace warning
 - updated examples with above scenarios
@@ -110,7 +114,7 @@ v1.2.3 - 24.05.12
 v1.2.2
 - Fixed minor bug on windows preventing code coverage from appearing against individual classes in munit print client
 
-v1.2.1 
+v1.2.1
 - Added caching of filtered classes to improve compilation times
 - Moved debug log (and caches) to local .mcover directory in project
 - Added @IgnoreCover classes to Compiler.include ignore list
@@ -122,7 +126,7 @@ v1.2.0 - 28.02.12
 - Reinstated class level @IgnoreCoverage
 - internal refactoring to leverage common macro code between coverage and logging packages
 - Added better examples and documentation
-- Fixed bug with relative/absolute class paths 
+- Fixed bug with relative/absolute class paths
 
 v1.1.0 - 22.11.11
 
