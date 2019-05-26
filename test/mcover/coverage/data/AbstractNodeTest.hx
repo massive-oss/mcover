@@ -4,36 +4,36 @@ import massive.munit.util.Timer;
 import massive.munit.Assert;
 import massive.munit.async.AsyncFactory;
 
-class AbstractNodeTest 
-{	
+class AbstractNodeTest
+{
 	var node:AbstractNode;
 
-	public function new() 
+	public function new()
 	{
-		
+
 	}
-	
+
 	@BeforeClass
 	public function beforeClass():Void
 	{
 	}
-	
+
 	@AfterClass
 	public function afterClass():Void
 	{
 	}
-	
+
 	@Before
 	public function setup():Void
 	{
 		node = createEmptyNode();
 	}
-	
+
 	@After
 	public function tearDown():Void
 	{
 	}
-	
+
 	@Test
 	public function shouldHaveEmptyResults():Void
 	{
@@ -45,7 +45,7 @@ class AbstractNodeTest
 	public function shouldReturnCachedResults()
 	{
 		var r1 = node.getResults();
-	
+
 		var r2 = node.getResults(true);
 		Assert.areEqual(r1, r2);
 
@@ -102,7 +102,7 @@ class AbstractNodeTest
 
 		#if flash
 			r1.sc = untyped __global__["NaN"];
-		#elseif !cpp
+		#elseif (!cpp && !java)
 			r1.sc = null;
 		#end
 

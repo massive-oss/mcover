@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -141,7 +141,7 @@ class ClassParserImpl implements ClassParser
 
 		for(field in fields)
         {
-        	field = parseField(field);  	
+        	field = parseField(field);
         }
 
         for(field in generatedFields)
@@ -163,7 +163,7 @@ class ClassParserImpl implements ClassParser
 		}
 
 		if(fieldParsers.length == 0) return field;
-		
+
 		switch(field.kind)
     	{
     		case FFun(f): parseMethod(field, f);
@@ -185,7 +185,7 @@ class ClassParserImpl implements ClassParser
 				{
 					if(item.name == meta) return false;
 				}
-				
+
 			}
 		}
 		else if(parser.includeFieldMeta != null)
@@ -217,7 +217,7 @@ class ClassParserImpl implements ClassParser
 			parser.parseMethod(field, f);
 		}
 	}
-		
+
 
 
 	/**
@@ -227,8 +227,8 @@ class ClassParserImpl implements ClassParser
 	{
 		if(expr == null) return null;
 		if(expr.expr == null && expr.pos == null) return expr;
-		
-		exprStack.push(expr);	
+
+		exprStack.push(expr);
 
 		expr = parse(expr);
 
@@ -248,30 +248,30 @@ class ClassParserImpl implements ClassParser
 	{
 		switch(expr.expr)
 		{
-		
+
 			case EContinue: null;
 			case EBreak: null;
-			case EFunction(name, f): 
+			case EFunction(name, f):
 				//e.g. var f = function()
 				functionStack.push(f);
 				f.expr = parseExpr(f.expr);
 				expr.expr = EFunction(name, f);
 				functionStack.pop();
-			
-			case EDisplay(e, isCall):
+
+			case EDisplay(e, var isCall):
 				//no idea what this is???
 				e = parseExpr(e);
 				expr.expr = EDisplay(e, isCall);
-			
+
 			case ECast(e, t):
 				// cast(foo, Foo);
 				e = parseExpr(e);
 				expr.expr = ECast(e, t);
-			
+
 			case EIf(econd, eif, eelse):
 				//e.g. if(){}else{}
 				parseEIf(expr, econd, eif, eelse);
-		
+
 			case ESwitch(e, cases, edef):
 				parseESwitch(expr, e, cases, edef);
 
@@ -283,50 +283,50 @@ class ClassParserImpl implements ClassParser
 					parseExpr(c.expr);
 				}
 
-			case EThrow(e): 
+			case EThrow(e):
 				//e.g. throw "ARRGH!"
 				e = parseExpr(e);
 				expr.expr = EThrow(e);
-			
+
 			case EWhile(econd, e, normalWhile):
 				//e.g. while(i<2){}
 				econd = parseExpr(econd);
 				e = parseExpr(e);
 				expr.expr = EWhile(econd, e, normalWhile);
-			
+
 			case EField(e, field):
 				//e.g. isFoo
 				e = parseExpr(e);
 				expr.expr = EField(e, field);
-			
-			case EParenthesis(e): 
+
+			case EParenthesis(e):
 				//e.g. (...)
 				e = parseExpr(e);
 				expr.expr = EParenthesis(e);
-			
+
 			case ENew(t, params):
 				//e.g. new Foo();
 				params = parseExprs(params);
 				expr.expr = ENew(t, params);
-			
+
 			case ECall(e, params):
-				//e.g. method(); 
+				//e.g. method();
 				e = parseExpr(e);
 				params = parseExprs(params);
 				expr.expr = ECall(e, params);
-			
+
 			case EReturn(e):
 				//e.g. return foo;
 				e = parseExpr(e);
 				expr.expr = EReturn(e);
-			
+
 			case EVars(vars):
 				//e.g. var i = xxx;
 				for(v in vars)
 				{
 					v.expr = parseExpr(v.expr);
 				}
-			
+
 			case EBinop(op, e1, e2):
 				//e.g. i<2; a||b, i==b
 				e1 = parseExpr(e1);
@@ -336,7 +336,7 @@ class ClassParserImpl implements ClassParser
 				//e.g. i++;
 				e = parseExpr(e);
 				expr.expr = EUnop(op, postFix, e);
-			case ETernary(econd, eif, eelse): 
+			case ETernary(econd, eif, eelse):
 				//e.g. var n = (1 + 1 == 2) ? 4 : 5;
 				parseETernary(expr, econd, eif, eelse);
 			case EObjectDecl(fields):
@@ -368,11 +368,11 @@ class ClassParserImpl implements ClassParser
 				e1 = parseExpr(e1);
 				e2 = parseExpr(e2);
 				expr.expr = EArray(e1, e2);
-			case EBlock(exprs): 
+			case EBlock(exprs):
 				//array of expressions e.g. {...}
 				exprs = parseExprs(exprs);
 				expr.expr = EBlock(exprs);
-		
+
 			#if haxe3
 				case EUntyped(_): null;//don't want to mess around with untyped code
 				case EConst(_): null;//i.e. any constant (string, type, int, regex, ident (local var ref))
@@ -386,7 +386,7 @@ class ClassParserImpl implements ClassParser
 					expr.expr = EType(e, field);
 				case EUntyped(e1): null;//don't want to mess around with untyped code
 			#end
-			
+
 			default: debug(expr.expr);
 		}
 
@@ -410,7 +410,7 @@ class ClassParserImpl implements ClassParser
 		for(c in cases)
 		{
 			c.values = parseExprs(c.values);
-			c.expr = parseExpr(c.expr);	
+			c.expr = parseExpr(c.expr);
 		}
 
 		edef = parseExpr(edef);
@@ -458,6 +458,6 @@ class ClassParserImpl implements ClassParser
 			Sys.println(msg);
 		#end
 	}
-}	
+}
 
 #end

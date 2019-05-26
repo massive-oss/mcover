@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -58,11 +58,11 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	 * The unique identifier for the client.
 	 */
 	public var id(default, null):String;
-	
+
 	/**
 	 * Handler which if present, is called when the client has completed generating its results.
 	 */
-	@:isVar 
+	@:isVar
 	#if haxe3
 	public var completionHandler(get, set):ITestResultClient -> Void;
 	#else
@@ -70,7 +70,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	#end
 	function get_completionHandler():ITestResultClient -> Void {return completionHandler;}
 	function set_completionHandler(value:ITestResultClient -> Void):ITestResultClient -> Void {return completionHandler = value;}
-	
+
 	/**
 	* includes detailed missing class blocks (statements/branches) in output
 	*/
@@ -112,13 +112,13 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		if(mcoverLogger == null) mcoverLogger = initializeMCoverLogger();
 
 		this.mcoverLogger = mcoverLogger;
-		
+
 		init();
 	}
 
 	/**
 	 * Called when a test passes.
-	 *  
+	 *
 	 * @param	result			a passed test result
 	 */
 	public function addPass(result:TestResult):Void
@@ -128,7 +128,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when a test fails.
-	 *  
+	 *
 	 * @param	result			a failed test result
 	 */
 	public function addFail(result:TestResult):Void
@@ -138,14 +138,14 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when a test triggers an unexpected exception.
-	 *  
+	 *
 	 * @param	result			an erroneous test result
 	 */
 	public function addError(result:TestResult):Void
 	{
 		client.addError(result);
 	}
-	
+
 	/**
 	 * Called when a test has been ignored.
 	 *
@@ -153,7 +153,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	 */
 	public function addIgnore(result:TestResult):Void
 	{
-		client.addIgnore(result);	
+		client.addIgnore(result);
 	}
 
 
@@ -163,7 +163,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 	{
 		try
 		{
-			return MCoverage.getLogger();	
+			return MCoverage.getLogger();
 		}
 		catch(e:Dynamic)
 		{
@@ -177,23 +177,23 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	function init()
 	{
-		#if (neko||cpp||php||eval)
+		#if (neko||cpp||php||eval||java)
 			var VERBOSE:Bool = false;
 		#else
 			var VERBOSE:Bool = Std.is(client, RichPrintClient);
 		#end
-		
+
 		includeMissingBlocks = VERBOSE;
 		includeExecutionFrequency = VERBOSE;
 		includeClassAndPackageBreakdowns = VERBOSE;
-		
+
 		currentCoveredClass = null;
 		classPercentage = 0;
 		coveredClasses = new StringMap();
 
 		mcoverClient.includeMissingBlocks = includeMissingBlocks;
 		mcoverClient.includeExecutionFrequency = includeExecutionFrequency;
-		mcoverLogger.addClient(mcoverClient);	
+		mcoverLogger.addClient(mcoverClient);
 	}
 
 	public function setCurrentTestClass(className:String):Void
@@ -201,7 +201,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		var hasMatch = className != null && className.lastIndexOf("Test") == className.length-4;
 
 		var coveredClassName :String = hasMatch ? className.substr(0, className.length-4) : null;
-	
+
 		var hasChanged = currentCoveredClass != coveredClassName;
 
 		if(hasChanged && currentCoveredClass != null)
@@ -209,7 +209,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 			if(mcoverLogger.currentTest != null)
 			{
 				updateTestClassCoverage();
-			}	
+			}
 		}
 
 		client.setCurrentTestClass(className);
@@ -223,7 +223,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 
 	/**
 	 * Called when all tests are complete.
-	 *  
+	 *
 	 * @param	testCount		total number of tests run
 	 * @param	passCount		total number of tests which passed
 	 * @param	failCount		total number of tests which failed
@@ -237,8 +237,8 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		updateFinalCoverageReport();
 
 		var result = client.reportFinalStatistics(testCount, passCount, failCount, errorCount, ignoreCount, time);
-		
-		if (completionHandler != null) completionHandler(this); 
+
+		if (completionHandler != null) completionHandler(this);
 
 		return result;
 	}
@@ -252,12 +252,12 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		if(cls == null) return;
 
 		coveredClasses.set(cls.name, cls);
-		
+
 		classPercentage = cls.getPercentage();
 
 		var coverageResult = createCoverageResultForClass(cls);
 
-		client.setCurrentTestClassCoverage(coverageResult);	
+		client.setCurrentTestClassCoverage(coverageResult);
 	}
 
 	//////////
@@ -276,11 +276,11 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		{
 			coverageResults = createOutstandingCoverageResults();
 		}
-		
+
 		if(includeClassAndPackageBreakdowns)
 		{
 			classBreakdown = mcoverClient.classBreakdown;
-			packageBreakdown = mcoverClient.packageBreakdown;	
+			packageBreakdown = mcoverClient.packageBreakdown;
 		}
 
 		if(includeExecutionFrequency)
@@ -289,7 +289,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 		}
 
 		var summary = mcoverClient.summary + "\n" + mcoverClient.overallPercentage;
-		
+
 		client.reportFinalCoverage(
 				percent,
 				coverageResults,
@@ -350,7 +350,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 						if(block.trueCount == 0) blockString += "t";
 						if(block.trueCount == 0 && block.falseCount == 0) blockString +=",";
 						if(block.falseCount == 0) blockString += "f";
-					
+
 					}
 					if(str != "") str += "\n";
 					str += blockString;
@@ -359,7 +359,7 @@ class MCoverPrintClient implements IAdvancedTestResultClient
 			}
 		}
 
-		
+
 		return {className:cls.name, percent:percent, blocks:blocks};
 	}
 }

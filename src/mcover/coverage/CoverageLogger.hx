@@ -1,16 +1,16 @@
 /****
 * Copyright 2013 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -35,10 +35,14 @@ import mcover.coverage.DataTypes;
 import mcover.coverage.client.TraceClient;
 import mcover.coverage.CoverageReportClient;
 
-#if neko
+#if ((haxe_ver >= 4.0) && (neko||cpp||java||hl||eval))
+import sys.thread.Mutex;
+#elseif neko
 import neko.vm.Mutex;
 #elseif cpp
 import cpp.vm.Mutex;
+#elseif java
+import java.vm.Mutex;
 #end
 
 #if haxe3
@@ -66,8 +70,8 @@ interface CoverageLogger
 
 	/**
 	 * Add a coverage clients to interpret coverage results.
-	 * 
-	 * @param client  client to interpret coverage results 
+	 *
+	 * @param client  client to interpret coverage results
 	 * @see mcover.coverage.CoverageReportClient
 	 * @see mcover.coverage.client.PrintClient
 	 */
@@ -88,12 +92,12 @@ interface CoverageLogger
 @IgnoreLogging
 class CoverageLoggerImpl implements CoverageLogger
 {
-	#if (neko||cpp)
+	#if (neko||cpp||java||hl||eval)
 	static public var mutex:Mutex;
 	#end
 
 	/**
-	 * Handler called when all clients 
+	 * Handler called when all clients
 	 * have completed processing the results.
 	 */
 	public var completionHandler(default, default):Float -> Void;
@@ -106,7 +110,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	 * total execution count for statements by id
 	*/
 	var allStatementResultsById:IntMap<Int>;
-	
+
 	/*
 	 * total execution summary for branches by id
 	*/
@@ -139,7 +143,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		generateReportResults(false);
 
 		if(!skipClients)
-		{	
+		{
 			reportToClients();
 		}
 	}
@@ -147,8 +151,8 @@ class CoverageLoggerImpl implements CoverageLogger
 	public function reportCurrentTest(?skipClients:Bool=false)
 	{
 		if(currentTest == null) throw new CoverageException("No test specified to report on.");
-		generateReportResults(true);	
-		
+		generateReportResults(true);
+
 		if(!skipClients)
 		{
 			reportToClients();
@@ -159,13 +163,13 @@ class CoverageLoggerImpl implements CoverageLogger
 	{
 		if(coverage == null)
 		{
-			initializeCoverage(null);	
+			initializeCoverage(null);
 		}
-		
+
 		if(currentTestOnly)
 		{
 			coverage.setStatementResultsMap(currentFilteredResults.statementResultsById);
-			coverage.setBranchResultsMap(currentFilteredResults.branchResultsById);	
+			coverage.setBranchResultsMap(currentFilteredResults.branchResultsById);
 		}
 		else
 		{
@@ -176,7 +180,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		coverage.getResults(false);
 	}
 
-	
+
 	public function addClient(client:CoverageReportClient)
 	{
 		if(client == null) throw "Null Client";
@@ -216,13 +220,13 @@ class CoverageLoggerImpl implements CoverageLogger
 	}
 
 	/**
-	* Method called from injected code each time a code block executes. 
+	* Method called from injected code each time a code block executes.
 	* Developers should not class this method directly.
 	**/
 	@IgnoreCover
 	public function logStatement(id:Int)
-	{	
-		#if (neko||cpp)
+	{
+		#if (neko||cpp||java||hl||eval)
 			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
@@ -230,10 +234,10 @@ class CoverageLoggerImpl implements CoverageLogger
 		updateStatementMap(allStatementResultsById, id);
 
 		if(currentFilteredResults != null)
-		{				
+		{
 			updateStatementMap(currentFilteredResults.statementResultsById, id);
 		}
-		#if (neko||cpp) mutex.release(); #end
+		#if (neko||cpp||java||hl||eval) mutex.release(); #end
 	}
 
 	@IgnoreCover
@@ -247,9 +251,9 @@ class CoverageLoggerImpl implements CoverageLogger
 		}
 		map.set(id, count);
 	}
-	
+
 	/**
-	* Method called from injected code each time a binary operation resolves to true or false 
+	* Method called from injected code each time a binary operation resolves to true or false
 	* Developers should not class this method directly.
 	* @param id				branch id
 	* @param value 			boolean or value to compare with compareValue
@@ -258,7 +262,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	@IgnoreCover
 	public function logBranch(id:Int, value:Dynamic, ?compareValue:Dynamic=null):Dynamic
 	{
-		#if (neko||cpp)
+		#if (neko||cpp||java||hl||eval)
 			if(mutex == null) mutex = new Mutex();
 		 	mutex.acquire();
 		#end
@@ -281,7 +285,7 @@ class CoverageLoggerImpl implements CoverageLogger
 			updateBranchMap(currentFilteredResults.branchResultsById, id, bool);
 		}
 
-		#if (neko||cpp) mutex.release(); #end
+		#if (neko||cpp||java||hl||eval) mutex.release(); #end
 		return value;
 	}
 
@@ -289,7 +293,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	function updateBranchMap(map:IntMap<BranchResult>, id:Int, value:Bool)
 	{
 		var r:BranchResult = null;
-		
+
 		if(map.exists(id))
 		{
 			r = map.get(id);
@@ -322,7 +326,7 @@ class CoverageLoggerImpl implements CoverageLogger
 		if(!filteredResultsMap.exists(value))
 		{
 			var result:FilteredCoverageResults = {filter:value, statementResultsById:new IntMap(), branchResultsById:new IntMap()};
-			filteredResultsMap.set(value, result); 
+			filteredResultsMap.set(value, result);
 		}
 
 		currentFilteredResults = filteredResultsMap.get(value);
@@ -337,11 +341,11 @@ class CoverageLoggerImpl implements CoverageLogger
 		{
 			addClient(new TraceClient());
 		}
-		
+
 		clientCompleteCount = 0;
-			
+
 		for (client in clients)
-		{	
+		{
 			client.report(coverage);
 		}
 	}
@@ -349,7 +353,7 @@ class CoverageLoggerImpl implements CoverageLogger
 	function clientCompletionHandler(client:CoverageReportClient):Void
 	{
 		clientCompleteCount ++;
-		
+
 		if (clientCompleteCount == clients.length)
 		{
 			if (completionHandler != null)
@@ -361,7 +365,7 @@ class CoverageLoggerImpl implements CoverageLogger
 				// #else
 				// 	Timer.delay(executeCompletionHandler, 1);
 				// #end
-				
+
 			}
 		}
 	}
@@ -378,14 +382,14 @@ typedef FilteredCoverageResults =
 {
 	/*
 	 * name of class being covered
-	*/	
+	*/
 	filter:String,
 
 	/*
 	 * statement execution counts for current test
 	*/
 	statementResultsById:IntMap<Int>,
-	
+
 	/*
 	 * branch execution counts for current test
 	*/
