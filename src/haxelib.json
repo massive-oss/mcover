@@ -11,10 +11,10 @@
 	"contributors": [
 	"massive"
 ],
-	"releasenote": "Add haxelib.json",
-	"version": "2.2.0",
+	"releasenote": "See CHANGES.md in the repository",
+	"version": "2.2.1",
 	"url": "http://github.com/massiveinteractive/mcover",
-	"dependencies": 
+	"dependencies":
 	{
 		"mconsole": "",
 		"munit": ""

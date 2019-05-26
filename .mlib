@@ -2,6 +2,5 @@
 	<resources>
 		<resource type="src" path="src" />
 		<resource type="license" path="resource/license.mtt" />
-		<resource path="bin/haxedoc.xml" dest="" />
 	</resources>
 </mlib>
