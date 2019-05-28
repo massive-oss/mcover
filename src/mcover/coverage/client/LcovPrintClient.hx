@@ -62,7 +62,8 @@ class LcovPrintClient implements CoverageReportClient {
 		for (cls in coverage.getClasses()) {
 			var path = getAbsolutePath(cls);
 			if (fileClassMap.exists(path)) {
-				fileClassMap.get(path).push(cls);continue;
+				fileClassMap.get(path).push(cls);
+				continue;
 			}
 			fileClassMap.set(path, [cls]);
 		}
@@ -324,9 +325,7 @@ class LcovPrintClient implements CoverageReportClient {
 
 	function appendCoverageFile(text:String) {
 		#if nodejs
-			var content:String = sys.io.File.getContent(lcovFileName);
-			content += text;
-			sys.io.File.saveContent(lcovFileName, content);
+			js.node.Fs.appendFileSync(lcovFileName, text);
 		#else
 			var file:FileOutput = sys.io.File.append(lcovFileName);
 			file.writeString(text.toString());
