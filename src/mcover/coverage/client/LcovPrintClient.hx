@@ -1,16 +1,16 @@
 /****
 * Copyright 2019 Massive Interactive. All rights reserved.
-* 
+*
 * Redistribution and use in source and binary forms, with or without modification, are
 * permitted provided that the following conditions are met:
-* 
+*
 *    1. Redistributions of source code must retain the above copyright notice, this list of
 *       conditions and the following disclaimer.
-* 
+*
 *    2. Redistributions in binary form must reproduce the above copyright notice, this list
 *       of conditions and the following disclaimer in the documentation and/or other materials
 *       provided with the distribution.
-* 
+*
 * THIS SOFTWARE IS PROVIDED BY MASSIVE INTERACTIVE ``AS IS'' AND ANY EXPRESS OR IMPLIED
 * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
 * FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL MASSIVE INTERACTIVE OR
@@ -20,7 +20,7 @@
 * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 * NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF
 * ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-* 
+*
 * The views and conclusions contained in the software and documentation are those of the
 * authors and should not be interpreted as representing official policies, either expressed
 * or implied, of Massive Interactive.
@@ -28,7 +28,7 @@
 
 package mcover.coverage.client;
 
-#if sys
+#if (sys || nodejs)
 import sys.io.FileOutput;
 import mcover.coverage.CoverageReportClient;
 import mcover.coverage.DataTypes;
@@ -41,13 +41,14 @@ class LcovPrintClient implements CoverageReportClient {
 
 	var testName:String;
 	var lcovFileName:String;
+	var lastKnownAbsoluteBasePath:String;
 
 	public function new(name:String, ?fileName:String) {
 		testName = name;
-		if (fileName == null) 
+		if (fileName == null)
 		{
 			lcovFileName = "lcov.info";
-		} 
+		}
 		else
 		{
 			lcovFileName = fileName;
@@ -55,12 +56,21 @@ class LcovPrintClient implements CoverageReportClient {
 	}
 
 	public function report(coverage:Coverage) {
-		sys.io.File.saveContent(lcovFileName, makeLine("TN", testName) + "\n");
+		sys.io.File.saveContent(lcovFileName, "\n");
 
+		var fileClassMap:Map<String, Array<Clazz>>=new Map<String, Array<Clazz>>();
 		for (cls in coverage.getClasses()) {
-			reportClass(cls);
+			var path = getAbsolutePath(cls);
+			if (fileClassMap.exists(path)) {
+				fileClassMap.get(path).push(cls);
+				continue;
+			}
+			fileClassMap.set(path, [cls]);
 		}
-	
+		for (path in fileClassMap.keys()) {
+			reportFile(path, fileClassMap.get(path));
+		}
+
 		#if (php||eval)
 			reportComplete();
 		#else
@@ -76,11 +86,37 @@ class LcovPrintClient implements CoverageReportClient {
 		}
 	}
 
-	function reportClass(cls:Clazz) {
-		var results:CoverageResult = cls.getResults();
-		var c = StringTools.replace(cls.name, ".", "/") + ".hx";
+	@:access(mcover.coverage.data.AbstractNodeList)
+	@:access(mcover.coverage.data.Method)
+	function getAbsolutePath(cls:Clazz):String {
+		for (item in cls.itemsById) {
+			if (Type.getClass(item) == Method){
+				var method:Method = cast item;
+				for (branch in method.branchesById) {
+					return locationToPath(branch.location);
+				}
+				for (stmt in method.statementsById) {
+					return locationToPath(stmt.location);
+				}
+			}
+		}
+		return StringTools.replace(cls.name, ".", "/") + ".hx";
+	}
+
+	function locationToPath(location:String):String {
+		var index:Int = location.lastIndexOf(".hx:");
+		if (index < 0) {
+			return location;
+		}
+		return location.substr(0, index + 3);
+	}
+
+	function reportFile(path:String, classes:Array<Clazz>){
+
 		var text:StringBuf = new StringBuf();
-		text.add(makeLine("SF", c));
+
+		text.add(makeLine("TN", classes[0].name));
+		text.add(makeLine("SF", path));
 		text.add("\n");
 
 		var lineCov:Map<Int, Int> = new Map<Int, Int>();
@@ -88,24 +124,38 @@ class LcovPrintClient implements CoverageReportClient {
 		var maxLineNumber:Int = 0;
 
 		var num:Int = 0;
-		for (method in cls.getMethods()) {
-			text.add(makeLine("FN", '${firstMethodLine(method)},${method.name}'));
+		for (cls in classes) {
+			for (method in cls.getMethods()) {
+				text.add(makeLine("FN", '${firstMethodLine(method)},${method.name}'));
+			}
 		}
 		text.add("\n");
 
-		for (method in cls.getMethods()) {
-			text.add(makeLine("FNDA", '${methodCount(method)},${method.name}'));
+		for (cls in classes) {
+			for (method in cls.getMethods()) {
+				text.add(makeLine("FNDA", '${methodCount(method)},${method.name}'));
+			}
 		}
+
 		text.add("\n");
-		text.add(makeLine("FNF", '${results.m}'));
-		text.add(makeLine("FNH", '${results.mc}'));
+		var countF:Int = 0;
+		var countH:Int = 0;
+		for (cls in classes) {
+			var results:CoverageResult = cls.getResults();
+			countF += results.m;
+			countH += results.mc;
+		}
+		text.add(makeLine("FNF", '$countF'));
+		text.add(makeLine("FNH", '$countH'));
 		text.add("\n");
 
 		maxLineNumber = 0;
-		for (method in cls.getMethods()) {
-			var max:Int = reportBranches(text, method, branchCov);
-			if (max > maxLineNumber) {
-				maxLineNumber = max;
+		for (cls in classes) {
+			for (method in cls.getMethods()) {
+				var max:Int = reportBranches(text, method, branchCov);
+				if (max > maxLineNumber) {
+					maxLineNumber = max;
+				}
 			}
 		}
 		for (line in 0...maxLineNumber + 1) {
@@ -117,15 +167,24 @@ class LcovPrintClient implements CoverageReportClient {
 		}
 
 		text.add("\n");
-		text.add(makeLine("BRF", '${results.b}'));
-		text.add(makeLine("BRH", '${results.bt}'));
+		countF = 0;
+		countH = 0;
+		for (cls in classes) {
+			var results:CoverageResult = cls.getResults();
+			countF += results.b;
+			countH += results.bt;
+		}
+		text.add(makeLine("BRF", '$countF'));
+		text.add(makeLine("BRH", '$countH'));
 		text.add("\n");
 
 		maxLineNumber = 0;
-		for (method in cls.getMethods()) {
-			var max:Int = reportStatements(text, method, lineCov);
-			if (max > maxLineNumber) {
-				maxLineNumber = max;
+		for (cls in classes) {
+			for (method in cls.getMethods()) {
+				var max:Int = reportStatements(text, method, lineCov);
+				if (max > maxLineNumber) {
+					maxLineNumber = max;
+				}
 			}
 		}
 		for (line in 0...maxLineNumber + 1) {
@@ -135,10 +194,17 @@ class LcovPrintClient implements CoverageReportClient {
 			var count:Int = lineCov.get(line);
 			text.add(makeLine("DA", '${line},${count}'));
 		}
-		text.add("\n");
 
-		text.add(makeLine("LF", '${results.l}'));
-		text.add(makeLine("LH", '${results.lc}'));
+		text.add("\n");
+		countF = 0;
+		countH = 0;
+		for (cls in classes) {
+			var results:CoverageResult = cls.getResults();
+			countF += results.l;
+			countH += results.lc;
+		}
+		text.add(makeLine("LF", '$countF'));
+		text.add(makeLine("LH", '$countH'));
 		text.add("\n");
 
 		text.add("end_of_record\n\n");
@@ -258,9 +324,13 @@ class LcovPrintClient implements CoverageReportClient {
 	}
 
 	function appendCoverageFile(text:String) {
-		var file:FileOutput = sys.io.File.append(lcovFileName);
-		file.writeString(text.toString());
-		file.close();
+		#if nodejs
+			js.node.Fs.appendFileSync(lcovFileName, text);
+		#else
+			var file:FileOutput = sys.io.File.append(lcovFileName);
+			file.writeString(text.toString());
+			file.close();
+		#end
 	}
 
 	inline function makeLine(key:String, value:String):String {
