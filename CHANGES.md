@@ -1,3 +1,7 @@
+## 2.2.2
+
+- LcovPrintClient improvements
+
 ## 2.2.1
 
 - Support `eval`, `hl`, `java` targets

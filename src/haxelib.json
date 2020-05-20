@@ -12,7 +12,7 @@
 	"massive"
 ],
 	"releasenote": "See CHANGES.md in the repository",
-	"version": "2.2.1",
+	"version": "2.2.2",
 	"url": "http://github.com/massiveinteractive/mcover",
 	"dependencies":
 	{

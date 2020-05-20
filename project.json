@@ -2,7 +2,7 @@
 	"project":
 	{
 		"name": "MassiveCover",
-		"version": "2.2.1",
+		"version": "2.2.2",
 		"id": "mcover",
 		"devDependencies":
 		{
