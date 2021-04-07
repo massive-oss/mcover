@@ -395,6 +395,11 @@ import sys.FileSystem;
 
 		if(alternateLocation != null)
 		{
+			// because of double eval() call later in JS part
+			// single '\' were being removed
+			// or code was blowing up (if '\u')
+			if(IS_WINDOWS) alternateLocation = alternateLocation.split("\\").join("\\\\\\\\");
+
 			// match everything before line number as path
 			// we can't simply split on ":" because
 			// on windows, paths contain ":" 
