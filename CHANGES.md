@@ -1,3 +1,9 @@
+## 2.3.0
+
+- Removed `EDisplayNew` which is now removed in Haxe 4.3
+- Moved `haxelib.json` to the root of the repository, so that it can be added as a git haxelib dependency
+- Replaced the deprecated `@:extern` metadata with the `extern` keyword
+
 ## 2.2.2
 
 - LcovPrintClient improvements

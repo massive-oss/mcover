@@ -1,6 +1,6 @@
 set -e
 
-haxelib dev mcover `pwd`/src
+haxelib dev mcover `pwd`
 
 mkdir -p bin
 mkdir -p bin/output
